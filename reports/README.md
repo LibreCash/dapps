@@ -1,6 +1,15 @@
-# lotto_tablo
+> Blockchain report DAPP for Libre Project
 
-> Info page for gogo loto users
+This DAPP use `Storage.sol` smartcontract from `ethcontract` repo
+
+## Settings
+You can configure DAPP setting:
+1. Smartcontract address
+2. Node (ethereum network) address. By default: rinkeby metamask (infura) node
+3. Smartcontract ABI
+
+Setting location: `src/plugins/eth/`
+
 
 ## Build Setup
 
@@ -17,5 +26,3 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
