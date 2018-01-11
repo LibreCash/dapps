@@ -30,7 +30,7 @@ class ETH {
   }
 
   static reportAddress () {
-    return '0x507c4ff51f549e4bd3511ac5cb2187547b2456a0'
+    return '0x7DBE3c4856886114aE406fcF82e622469CDB3D25'
   }
 
   load () {
