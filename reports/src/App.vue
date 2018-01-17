@@ -9,8 +9,8 @@ export default {
   name: 'app'
 }
 </script>
-
 <style>
+
 @font-face {
 	font-family: 'GothamProMedium';
 	src: url('/static/fonts/GothamProMedium.woff') format('woff');

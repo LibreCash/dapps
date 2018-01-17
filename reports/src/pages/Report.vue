@@ -1,13 +1,54 @@
 <template>
-  <div class="container">
-      <h1 class="title">
-        <div class="level">
-          <div class="level-item">
-            <img src="static/img/logo.png" width="200" height="180"/>
-          </div>
-        </div>
-      </h1>
-    <section v-if="owner" class="box">
+  <div class="main" id="Mainblock">
+			 <button class="button navbar-burger" data-target="Mainblock">
+						  <span></span>
+						  <span></span>
+						  <span></span>
+			</button>
+		<div class="LeftNav" id="navMenu">
+			<a href="#" class="logo">
+				<img src="static/img/logo.png" width="200" height="180"/>
+			</a>
+			<ul class="MenuLeft">
+				<li class="active">
+					<a href="#">
+						<div class="Rectangle"></div>
+						<span>Reports</span>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<div class="Rectangle"></div>
+						<span>Analytics</span>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<div class="Rectangle"></div>
+						<span>Analytics</span>
+					</a>
+				</li>
+			</ul>
+			<ul class="conditions">
+				<li>
+					<a href="#">
+						Условия предоставления услуг
+					</a>
+				</li>
+				<li>
+					<a href="#">				
+						Политика конфиденциальности
+					</a>
+				</li>		
+				<li>
+					<a href="#">
+						О системе
+					</a>
+				</li>		
+			</ul>
+		</div>
+	
+    <section v-if="owner" class="">
       <b-field>
         <b-input
           v-model="reportText"
@@ -17,15 +58,17 @@
       </b-field>
       <a class="button is-info" v-on:click="newReport">Submit</a>
     </section>
-    <section class="box">
-      <div class="level-item">
-        <h2 class="subtitle">Reports History</h2>&nbsp;
+    <section class="allMain">
+      <div class="h2-contain">			 
+		<h2 class="subtitle">Reports History</h2>
       </div>
         <search-results :tableData='searchData'></search-results>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
   </div>
 </template>
+
+
 
 <script>
 import SearchResults from '@/components/SearchResults'
@@ -99,3 +142,4 @@ export default {
   }
 }
 </script>
+
