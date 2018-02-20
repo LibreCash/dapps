@@ -11,15 +11,15 @@
 			</a>
 			<ul class="MenuLeft">
 				<li class="active">
-					<a href="#">
+					<a href="/">
 						<div class="Rectangle"></div>
 						<span>Reports</span>
 					</a>
 				</li>
 				<li>
-					<a href="#">
+					<a href="/status">
 						<div class="Rectangle"></div>
-						<span>Analytics</span>
+						<span>Status</span>
 					</a>
 				</li>
 				<li>
