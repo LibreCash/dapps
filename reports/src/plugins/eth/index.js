@@ -30,12 +30,12 @@ class ETH {
   }
 
   static reportAddress () {
-    return '0x7DBE3c4856886114aE406fcF82e622469CDB3D25'
+    return '0x6AF43411Ee83354C53FC6ff1c8987790fa84AE4d'
   }
 
   load () {
     try {
-      window.web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io'))
+      window.web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io'))
       this._web3 = window.web3
       this._reportContract = this._web3.eth.contract(reportAbi).at(ETH.reportAddress())
     } catch (err) {
