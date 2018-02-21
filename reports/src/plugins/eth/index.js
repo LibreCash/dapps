@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import Web3 from 'web3'
 import reportAbi from './reportAbi'
+import rinkebyABI from './rinkebyABI'
 
 class ETH {
   static install (vue, options) {
@@ -23,6 +24,9 @@ class ETH {
       this._web3 = window.web3
       this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
       this._reportContract = this._web3.eth.contract(reportAbi).at(ETH.reportAddress())
+
+
+      this._exchangerContract = this._web3.eth.contract()
     } else {
       this.load()
       console.log('No web3? You should consider trying MetaMask!')
