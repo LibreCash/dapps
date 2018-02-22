@@ -95,7 +95,12 @@ export default {
             balanceUSD = coins[i].price * balance;
 
         allBalances += balanceUSD
-        this.coinsData.push({name: coins[i].name, balance: balance, balanceUSD: balanceUSD})
+        this.coinsData.push({
+          name: coins[i].name, 
+          balance: balance, 
+          balanceUSD: balanceUSD,
+          href: coins[i].href(coins[i].address)
+        })
       }
 
       this.coinsData.push({name: 'Total:', balanceUSD: allBalances})

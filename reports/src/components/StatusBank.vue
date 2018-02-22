@@ -12,7 +12,7 @@
       :pagination-simple="isPaginationSimple"
       :mobile-cards="hasMobileCards">
       <template slot-scope="props">
-        <b-table-column field="name" label='Name' centered>
+        <b-table-column field="name" label='Name'>
           {{ props.row.name }}
         </b-table-column>
         <b-table-column label='Balance' centered>
