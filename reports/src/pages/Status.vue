@@ -107,62 +107,19 @@ export default {
 
     async getStatusBank () {
       this.isLoadingBank = true
-      this.exchangerData.push({name: 'Hello', data: 'World!'})
-      var varsObject = {
-        tokenAddress: {
-            default: "LibreCash",
-            translate: "VAR_tokenAddress"
-        },
-        buyRate: {
-            default: "Buy Rate",
-            translate: "VAR_buyRate",
-            process: (data)=>`${normalizeRate(data)} LIBRE/ETH`
-        },
-        sellRate: {
-            default: "Sell Rate",
-            translate: "VAR_sellRate",
-            process: (data)=>`${normalizeRate(data)} LIBRE/ETH`
-        },
-        buyFee: {
-            default: "Buy Fee",
-            translate: "VAR_buyFee",
-            process: (data) =>`${data/100} %`
-        },
-        sellFee: {
-            default: "Sell Fee",
-            translate: "VAR_sellFee",
-            process: (data) =>`${data/100} %`
-        },
-        oracleCount: {
-            default: "Oracle Count",
-            translate: "VAR_countOracles"
-        },
-        requestPrice:{
-           default:"Request price",
-           translate: "VAR_requestPrice", // translate later
-           process: (price) => `${etherUnits.toEther(price, 'wei')} ETH`
-        },
-        getState: {
-            default: "State",
-            translate: "VAR_contractState",
-            process: (state) => stateMsg[stateName(state)]
-        },
-        requestTime:{
-            default: "Request time",
-            translate: "VAR_requestTime", //append later
-            process: (timestamp)=> timestamp == 0 ? '-' : toUnixtime(timestamp)
-        },
-        calcTime: {
-            default: "Calc time",
-            translate: "VAR_calcTime", //append later
-            process: (timestamp)=> timestamp == 0 ? '-' : toUnixtime(timestamp)
-        },
-        tokenBalance: {
-            default: "Exchanger tokens",
-            translate: "VAR_tokenBalance",
-            process: (tokens) => `${tokens / Math.pow(10, libreService.coeff.tokenDecimals)} LIBRE`
-        }
-      };
+      this.exchangerData.push({name: 'LibreExchanger', data: Config.bank.address})
+      this.exchangerData.push({name: 'LibreCash', data: await this.$eth.bankContract.tokenAddress()})
+      this.exchangerData.push({name: 'Buy Rate', data: await this.$eth.bankContract.buyRate()})
+      this.exchangerData.push({name: 'Sell Rate', data: await this.$eth.bankContract.sellRate()})
+      this.exchangerData.push({name: 'Buy Fee', data: await this.$eth.bankContract.buyFee()})
+      this.exchangerData.push({name: 'Sell Fee', data: await this.$eth.bankContract.sellFee()})
+      this.exchangerData.push({name: 'Oracle Count', data: await this.$eth.bankContract.oracleCount()})
+      this.exchangerData.push({name: 'Request price', data: await this.$eth.bankContract.requestPrice()})
+      this.exchangerData.push({name: 'State', data: await this.$eth.bankContract.getState()})
+      this.exchangerData.push({name: 'Request time', data: await this.$eth.bankContract.requestTime()})
+      this.exchangerData.push({name: 'Calc time', data: await this.$eth.bankContract.calcTime()})
+      this.exchangerData.push({name: 'Exchanger tokens', data: await this.$eth.bankContract.tokenBalance()})
+
       this.isLoadingBank = false
 
       if (!this.isLoadingBalance)

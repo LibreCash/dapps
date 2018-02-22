@@ -1,8 +1,7 @@
 /* eslint-disable no-trailing-spaces */
 import Vue from 'vue'
 import Web3 from 'web3'
-import reportAbi from './reportAbi'
-import rinkebyABI from './rinkebyABI'
+import Config from '@/config'
 
 class ETH {
   static install (vue, options) {
@@ -19,32 +18,27 @@ class ETH {
   }
 
   loadWeb3 () {
-    if (typeof web3 !== 'undefined') {
-      window.web3 = new Web3(window.web3.currentProvider)
+    try {
+      //if (typeof web3 !== 'undefined') {
+        //window.web3 = new Web3(window.web3.currentProvider)
+      //} else {
+        window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
+        //console.log('No web3? You should consider trying MetaMask!')
+      //}
       this._web3 = window.web3
       this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
-      this._reportContract = this._web3.eth.contract(reportAbi).at(ETH.reportAddress())
+      this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
+      .at(ETH.reportAddress())
 
-
-      this._exchangerContract = this._web3.eth.contract()
-    } else {
-      this.load()
-      console.log('No web3? You should consider trying MetaMask!')
+      this.bankContract = this._web3.eth.contract(JSON.parse(Config.bank.abi))
+      .at(Config.bank.address)
+    } catch (err) {
+      console.log(err)
     }
   }
 
   static reportAddress () {
-    return '0x6AF43411Ee83354C53FC6ff1c8987790fa84AE4d'
-  }
-
-  load () {
-    try {
-      window.web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io'))
-      this._web3 = window.web3
-      this._reportContract = this._web3.eth.contract(reportAbi).at(ETH.reportAddress())
-    } catch (err) {
-      console.log(err)
-    }
+    return Config.report.address
   }
 
   async reportCounter () {
