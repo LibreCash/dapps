@@ -116,7 +116,7 @@ module.exports = {
       }
     ],
     coinmarketcap: {
-      request: limit => `https://api3.coinmarketcap.com/v1/ticker/?limit=${+limit}`
+      request: limit => `https://api.coinmarketcap.com/v1/ticker/?limit=${+limit}`
     }
   },
   provider: 'https://rinkeby.infura.io'
