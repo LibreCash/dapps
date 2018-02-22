@@ -112,18 +112,21 @@ export default {
 
     async getStatusBank () {
       this.isLoadingBank = true
-      this.exchangerData.push({name: 'LibreExchanger', data: Config.bank.address})
-      this.exchangerData.push({name: 'LibreCash', data: await this.$eth.bankContract.tokenAddress()})
-      this.exchangerData.push({name: 'Buy Rate', data: await this.$eth.bankContract.buyRate()})
-      this.exchangerData.push({name: 'Sell Rate', data: await this.$eth.bankContract.sellRate()})
-      this.exchangerData.push({name: 'Buy Fee', data: await this.$eth.bankContract.buyFee()})
-      this.exchangerData.push({name: 'Sell Fee', data: await this.$eth.bankContract.sellFee()})
-      this.exchangerData.push({name: 'Oracle Count', data: await this.$eth.bankContract.oracleCount()})
-      this.exchangerData.push({name: 'Request price', data: await this.$eth.bankContract.requestPrice()})
-      this.exchangerData.push({name: 'State', data: await this.$eth.bankContract.getState()})
-      this.exchangerData.push({name: 'Request time', data: await this.$eth.bankContract.requestTime()})
-      this.exchangerData.push({name: 'Calc time', data: await this.$eth.bankContract.calcTime()})
-      this.exchangerData.push({name: 'Exchanger tokens', data: await this.$eth.bankContract.tokenBalance()})
+
+      var exchanger = this.$eth.bankContract,
+          status = Config.bank.status;
+
+      this.exchangerData.push({name: 'LibreExchanger', data: Config.bank.address});
+
+      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]))
+      console.log(dataBank);
+
+      for (let i=0; i < status.length; i++) {
+        this.exchangerData.push({
+          name: status[i].name,
+          data: status[i].process(dataBank[i])
+        })
+      }
 
       this.isLoadingBank = false
 

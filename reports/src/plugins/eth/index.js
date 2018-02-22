@@ -19,19 +19,29 @@ class ETH {
 
   loadWeb3 () {
     try {
-      //if (typeof web3 !== 'undefined') {
-        //window.web3 = new Web3(window.web3.currentProvider)
-      //} else {
+      if (typeof web3 !== 'undefined') {
+        window.web3 = new Web3(window.web3.currentProvider)
+      } else {
         window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
-        //console.log('No web3? You should consider trying MetaMask!')
-      //}
+        console.log('No web3? You should consider trying MetaMask!')
+      }
       this._web3 = window.web3
       this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
       .at(ETH.reportAddress())
 
-      this.bankContract = this._web3.eth.contract(JSON.parse(Config.bank.abi))
+      this._bankContract = this._web3.eth.contract(JSON.parse(Config.bank.abi))
       .at(Config.bank.address)
+
+      //wrapper for MetaMask
+      this.bankContract = new Proxy(this._bankContract,{get: async (bank,name) => {
+        return new Promise((resolve, reject) => {
+          bank[name]((err, counter) => {
+            if (err) reject(err)
+            else resolve(counter)
+          })
+        })
+      }})
     } catch (err) {
       console.log(err)
     }
