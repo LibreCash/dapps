@@ -70,40 +70,50 @@ export default {
 
       var coins = Config.balance.coins
 
-      let response = await axios.get(Config.balance.coinmarketcap.request(0)),
+      let response = await axios.get(Config.balance.coinmarketcap.request(0)).catch(e => 'error'),
           nameCoins = coins.map((coin) => coin.name),
           countFind = 0;
 
-      for (let i = 0; i < response.data.length; i++) {
-        let coin = response.data[i],
-            index = nameCoins.indexOf(coin.symbol);
+      if (response != 'error') {
+        for (let i = 0; i < response.data.length; i++) {
+          let coin = response.data[i],
+              index = nameCoins.indexOf(coin.symbol);
 
-        if (index >= 0) {
-          coins[index].price = coin.price_usd
+          if (index >= 0) {
+            coins[index].price = coin.price_usd
 
-          if (coins.length === ++countFind) {
-            break
+            if (coins.length === ++countFind) {
+              break
+            }
           }
         }
+
+        let allBalances = 0,
+            resolves = await Promise.all(coins.map((coin) => axios.get(coin.request(coin.address))
+              .catch(e => 'error')));
+
+        for (let i = 0; i < coins.length; i++) {
+          let balance, balanceUSD;
+
+          if (resolves[i] != 'error') {
+            balance = coins[i].process(resolves[i].data)
+            balanceUSD = coins[i].price * balance
+            allBalances += balanceUSD
+          } else {
+            balance = balanceUSD = '-'
+          }
+
+          this.coinsData.push({
+            name: coins[i].name, 
+            balance: balance, 
+            balanceUSD: balanceUSD,
+            href: coins[i].href(coins[i].address)
+          })
+        }
+
+        this.coinsData.push({name: 'Total:', balanceUSD: allBalances})
       }
 
-      let resolves = await Promise.all(coins.map((coin) => axios.get(coin.request(coin.address)))),
-          allBalances = 0;
-
-      for (let i = 0; i < coins.length; i++) {
-        let balance = coins[i].process(resolves[i].data),
-            balanceUSD = coins[i].price * balance;
-
-        allBalances += balanceUSD
-        this.coinsData.push({
-          name: coins[i].name, 
-          balance: balance, 
-          balanceUSD: balanceUSD,
-          href: coins[i].href(coins[i].address)
-        })
-      }
-
-      this.coinsData.push({name: 'Total:', balanceUSD: allBalances})
       this.isLoadingBalance = false
 
       if (!this.isLoadingBank)
@@ -118,13 +128,13 @@ export default {
 
       this.exchangerData.push({name: 'LibreExchanger', data: Config.bank.address});
 
-      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]))
-      console.log(dataBank);
+      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]
+        .catch(e => 'error')))
 
       for (let i=0; i < status.length; i++) {
         this.exchangerData.push({
           name: status[i].name,
-          data: status[i].process(dataBank[i])
+          data: dataBank[i] != 'error' ? status[i].process(dataBank[i]) : '-'
         })
       }
 
