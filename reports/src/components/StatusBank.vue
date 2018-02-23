@@ -15,7 +15,7 @@
         <b-table-column field="name" label='Name'>
           {{ props.row.name }}
         </b-table-column>
-        <b-table-column label='Balance' centered>
+        <b-table-column label='Status' centered>
           {{ props.row.data }}
         </b-table-column>
       </template>
