@@ -21,6 +21,14 @@ class ETH {
     try {
       if (typeof web3 !== 'undefined') {
         window.web3 = new Web3(window.web3.currentProvider)
+        web3.version.getNetwork((error, result) => {
+          if (error) alert(error)
+          else {
+            let network = {'1':'Main','2':'Modern','3':'Ropsten','4':'Rinkeby','42':'Kovan'}[result]
+            if (network != 'Rinkeby')
+              alert('Please use Rinkeby nerwork!!')
+          }
+        })
       } else {
         window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
         console.log('No web3? You should consider trying MetaMask!')
@@ -33,7 +41,7 @@ class ETH {
       this._bankContract = this._web3.eth.contract(JSON.parse(Config.bank.abi))
       .at(Config.bank.address)
 
-      //wrapper for MetaMask
+      // wrapper for MetaMask
       this.bankContract = new Proxy(this._bankContract,{get: async (bank,name) => {
         return new Promise((resolve, reject) => {
           bank[name]((err, counter) => {

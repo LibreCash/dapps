@@ -38,11 +38,13 @@
         <h2 class="subtitle">LibreBank Status Page</h2>
       </div>
       <br>
-      <h3 class="subtitle"><center>Balances</center></h3>
-      <status-coins :tableData='coinsData'></status-coins>
-      <br>
-      <h3 class="subtitle"><center>Exchanger status</center></h3>
-      <status-bank :tableData='exchangerData'></status-bank>
+      <div class="table-padding">
+        <h3 class="subtitle"><center>Balances</center></h3>
+        <status-coins :tableData='coinsData'></status-coins>
+        <br>
+        <h3 class="subtitle"><center>Exchanger status</center></h3>
+        <status-bank :tableData='exchangerData'></status-bank>
+      </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
 	</div>
