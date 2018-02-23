@@ -128,13 +128,14 @@ export default {
       var exchanger = this.$eth.bankContract,
           status = Config.bank.status;
 
-      this.exchangerData.push({name: 'LibreExchanger', data: Config.bank.address});
+      this.exchangerData.push({type: 'input', name: 'LibreExchanger', data: Config.bank.address});
 
       let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]
         .catch(e => 'error')))
 
       for (let i=0; i < status.length; i++) {
         this.exchangerData.push({
+          type: status[i].type,
           name: status[i].name,
           data: dataBank[i] != 'error' ? status[i].process(dataBank[i]) : '-'
         })

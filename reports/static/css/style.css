@@ -181,3 +181,9 @@
 .table-padding {
   padding: 20px;
 }
+
+input.address {
+  border-width: 0 0 1px 0;
+  border-color: #949191;
+  background-color: white;
+}

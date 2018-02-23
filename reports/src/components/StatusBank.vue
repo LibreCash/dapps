@@ -16,7 +16,8 @@
           {{ props.row.name }}
         </b-table-column>
         <b-table-column label='Status' centered>
-          {{ props.row.data }}
+          <input class="address" v-if="props.row.type == 'input'" type="text" :value="props.row.data" disabled="disabled" size="30">
+          <span v-else>{{ props.row.data }}</span>
         </b-table-column>
       </template>
       </b-table>
