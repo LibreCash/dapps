@@ -96,16 +96,16 @@ module.exports = {
       {
         name: 'LTC',
         address: '3CDJNfdWX8m2NwuGUV3nhXHXEeLygMXoAj',
-        request: address => `https://api.blockcypher.com/v1/ltc/main/addrs/${address}?limit=1`,
-        process: data => data.final_balance / 10 ** 8,
+        request: address => `https://chain.so/api/v2/get_address_balance/ltc/${address}`,
+        process: data => data.data.confirmed_balance,
         href: address => `https://live.blockcypher.com/ltc/address/${address}`
       },
       {
         name: 'ZEC',
         address: 't1hASvMj8e6TXWryuB3L5TKXJB7XfNioZP3',
-        request: address => `https://api.zcha.in/v2/mainnet/accounts/${address}`,
+        request: address => `https://zcash.blockexplorer.com/api/addr/${address}`,
         process: data => data.balance,
-        href: address => `https://explorer.zcha.in/accounts/${address}`
+        href: address => `https://zcash.blockexplorer.com/address/${address}`
       },
       {
         name: 'ZEN',

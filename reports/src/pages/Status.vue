@@ -97,7 +97,7 @@ export default {
 
           if (resolves[i] != 'error') {
             balance = coins[i].process(resolves[i].data)
-            balanceUSD = coins[i].price * balance
+            balanceUSD = Math.round(coins[i].price * balance * 100) / 100
             allBalances += balanceUSD
           } else {
             balance = balanceUSD = '-'
@@ -106,12 +106,12 @@ export default {
           this.coinsData.push({
             name: coins[i].name, 
             balance: balance, 
-            balanceUSD: balanceUSD,
+            balanceUSD: balanceUSD.toLocaleString(),
             href: coins[i].href(coins[i].address)
           })
         }
 
-        this.coinsData.push({name: 'Total:', balanceUSD: allBalances})
+        this.coinsData.push({name: 'Total:', balanceUSD: allBalances.toLocaleString()})
       }
 
       this.isLoadingBalance = false
