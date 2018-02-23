@@ -44,12 +44,30 @@ class ETH {
       // wrapper for MetaMask
       this.bankContract = new Proxy(this._bankContract,{get: async (bank,name) => {
         return new Promise((resolve, reject) => {
-          bank[name]((err, counter) => {
+          bank[name]((err, result) => {
             if (err) reject(err)
-            else resolve(counter)
+            else resolve(result)
           })
         })
       }})
+
+      // token contract from Exchanger
+      this.bankContract.tokenAddress.then(address => {
+        Config.token.address = address
+        this._tokenContract = this._web3.eth.contract(JSON.parse(Config.token.abi))
+        .at(Config.token.address)
+
+        // token wrapper for MetaMask
+        this.tokenContract = new Proxy(this._tokenContract,{get: async (token,name) => {
+          return new Promise((resolve, reject) => {
+            token[name]((err, result) => {
+              if (err) reject(err)
+              else resolve(result)
+            })
+          })
+        }})
+      })
+
     } catch (err) {
       console.log(err)
     }
