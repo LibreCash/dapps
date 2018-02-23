@@ -140,9 +140,10 @@ export default {
         })
       }
 
+      let totalSupply = await this.$eth.tokenContract.totalSupply.catch(e => 'error')
       this.exchangerData.push({
         name: 'All tokens',
-        data: `${(await this.$eth.tokenContract.totalSupply) / 10 ** 18} LIBRE`
+        data: totalSupply != 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'
       })
 
       this.isLoadingBank = false
