@@ -13,7 +13,8 @@
       :mobile-cards="hasMobileCards">
       <template slot-scope="props">
         <b-table-column field="report.date" label='Name' centered>
-          <a :href="props.row.href" target="_blank">{{ props.row.name }}</a>
+          <a :href="props.row.href" target="_blank" v-if="props.row.href">{{ props.row.name }}</a>
+          <span v-else>{{ props.row.name }}</span>
         </b-table-column>
         <b-table-column label='Balance' centered>
           {{ props.row.balance }}
