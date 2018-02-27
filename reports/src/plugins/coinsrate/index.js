@@ -1,7 +1,8 @@
 /* eslint-disable no-trailing-spaces */
 import Vue from 'vue'
 import Web3 from 'web3'
-import Config from '@/config'
+import reportAbi from './reportAbi'
+
 
 class ETH {
   static install (vue, options) {
@@ -18,63 +19,29 @@ class ETH {
   }
 
   loadWeb3 () {
-    try {
-      if (typeof web3 !== 'undefined') {
-        window.web3 = new Web3(window.web3.currentProvider)
-        web3.version.getNetwork((error, result) => {
-          if (error) alert(error)
-          else {
-            let network = {'1':'Main','2':'Modern','3':'Ropsten','4':'Rinkeby','42':'Kovan'}[result]
-            if (network != 'Rinkeby')
-              alert('Please use Rinkeby nerwork!!')
-          }
-        })
-      } else {
-        window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
-        console.log('No web3? You should consider trying MetaMask!')
-      }
+    if (typeof web3 !== 'undefined') {
+      window.web3 = new Web3(window.web3.currentProvider)
       this._web3 = window.web3
       this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
-      this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
-      .at(ETH.reportAddress())
-
-      this._bankContract = this._web3.eth.contract(JSON.parse(Config.bank.abi))
-      .at(Config.bank.address)
-
-      // wrapper for MetaMask
-      this.bankContract = new Proxy(this._bankContract,{get: async (bank,name) => {
-        return new Promise((resolve, reject) => {
-          bank[name]((err, result) => {
-            if (err) reject(err)
-            else resolve(result)
-          })
-        })
-      }})
-
-      // token contract from Exchanger
-      this.bankContract.tokenAddress.then(address => {
-        Config.token.address = address
-        this._tokenContract = this._web3.eth.contract(JSON.parse(Config.token.abi))
-        .at(Config.token.address)
-
-        // token wrapper for MetaMask
-        this.tokenContract = new Proxy(this._tokenContract,{get: async (token,name) => {
-          return new Promise((resolve, reject) => {
-            token[name]((err, result) => {
-              if (err) reject(err)
-              else resolve(result)
-            })
-          })
-        }})
-      })
-
-    } catch (err) {
-      console.log(err)
+      this._reportContract = this._web3.eth.contract(reportAbi).at(ETH.reportAddress())
+    } else {
+      this.load()
+      console.log('No web3? You should consider trying MetaMask!')
     }
   }
 
   static reportAddress () {
-    return Config.report.address
+    return '0x6AF43411Ee83354C53FC6ff1c8987790fa84AE4d'
+  }
+
+  load () {
+    try {
+      window.web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io'))
+      this._web3 = window.web3
+      this._reportContract = this._web3.eth.contract(reportAbi).at(ETH.reportAddress())
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   async reportCounter () {

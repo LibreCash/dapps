@@ -1,38 +1,5 @@
 <template>
-  <div class="main" id="Mainblock">
-			 <button class="button navbar-burger" data-target="Mainblock">
-						  <span></span>
-						  <span></span>
-						  <span></span>
-			</button>
-		<div class="LeftNav" id="navMenu">
-			<a href="#" class="logo">
-				<img src="static/img/logo.png" width="200" height="180"/>
-			</a>
-			<ul class="MenuLeft">
-				<li class="active">
-					<a href="#">
-						<div class="Rectangle"></div>
-						<span>Reports</span>
-					</a>
-				</li>
-				<li>
-					<a href="#">
-						<div class="Rectangle"></div>
-						<span>Analytics</span>
-					</a>
-				</li>
-				<li>
-					<a href="#">
-						<div class="Rectangle"></div>
-						<span>Analytics</span>
-					</a>
-				</li>
-			</ul>
-			<ul class="conditions">
-			</ul>
-		</div>
-	
+    <div>
     <section v-if="owner" class="">
       <b-field>
         <b-input
@@ -44,13 +11,13 @@
       <a class="button is-info" v-on:click="newReport">Submit</a>
     </section>
     <section class="allMain">
-      <div class="h2-contain">			 
-		<h2 class="subtitle">Reports History</h2>
+      <div class="h2-contain">           
+        <h2 class="subtitle">Reports History</h2>
       </div>
-        <search-results :tableData='searchData'></search-results>
+      <search-results :tableData='searchData'></search-results>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
-  </div>
+    </div>
 </template>
 
 
@@ -127,4 +94,3 @@ export default {
   }
 }
 </script>
-
