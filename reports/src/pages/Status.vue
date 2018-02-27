@@ -1,38 +1,5 @@
+/* eslint-disable-one-var */
 <template>
-  <div class="main" id="Mainblock">
-    <button class="button navbar-burger" data-target="Mainblock">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="LeftNav" id="navMenu">
-      <a href="#" class="logo">
-        <img src="static/img/logo.png" width="200" height="180"/>
-      </a>
-      <ul class="MenuLeft">
-        <li>
-          <a href="/">
-            <div class="Rectangle"></div>
-            <span>Reports</span>
-          </a>
-        </li>
-        <li class="active">
-          <a href="/status">
-            <div class="Rectangle"></div>
-            <span>Status</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <div class="Rectangle"></div>
-            <span>Analytics</span>
-          </a>
-        </li>
-      </ul>
-      <ul class="conditions">
-      </ul>
-    </div>
-
     <section class="allMain">
       <div class="h2-contain">
         <h2 class="subtitle">LibreBank Status Page</h2>
@@ -47,7 +14,6 @@
       </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
-	</div>
 </template>
 
 <script>
@@ -72,14 +38,16 @@ export default {
 
       var coins = Config.balance.coins
 
-      let response = await axios.get(Config.balance.coinmarketcap.request(0)).catch(e => 'error'),
-          nameCoins = coins.map((coin) => coin.name),
-          countFind = 0;
+      let
+        response = await axios.get(Config.balance.coinmarketcap.request(0)).catch(e => 'error'),
+        nameCoins = coins.map((coin) => coin.name),
+        countFind = 0
 
-      if (response != 'error') {
+      if (response !== 'error') {
         for (let i = 0; i < response.data.length; i++) {
-          let coin = response.data[i],
-              index = nameCoins.indexOf(coin.symbol);
+          let
+            coin = response.data[i],
+            index = nameCoins.indexOf(coin.symbol)
 
           if (index >= 0) {
             coins[index].price = coin.price_usd
@@ -90,14 +58,15 @@ export default {
           }
         }
 
-        let allBalances = 0,
-            resolves = await Promise.all(coins.map((coin) => axios.get(coin.request(coin.address))
-              .catch(e => 'error')));
+        let
+          allBalances = 0,
+          resolves = await Promise.all(coins.map((coin) => axios.get(coin.request(coin.address))
+              .catch(e => 'error')))
 
         for (let i = 0; i < coins.length; i++) {
-          let balance, balanceUSD;
+          let balance, balanceUSD
 
-          if (resolves[i] != 'error') {
+          if (resolves[i] !== 'error') {
             balance = coins[i].process(resolves[i].data)
             balanceUSD = Math.round(coins[i].price * balance * 100) / 100
             allBalances += balanceUSD
@@ -106,8 +75,8 @@ export default {
           }
 
           this.coinsData.push({
-            name: coins[i].name, 
-            balance: balance, 
+            name: coins[i].name,
+            balance: balance,
             balanceUSD: balanceUSD.toLocaleString(),
             href: coins[i].href(coins[i].address)
           })
@@ -118,39 +87,46 @@ export default {
 
       this.isLoadingBalance = false
 
-      if (!this.isLoadingBank)
+      if (!this.isLoadingBank) {
         this.isLoading = false
+      }
     },
 
     async getStatusBank () {
       this.isLoadingBank = true
 
-      var exchanger = this.$eth.bankContract,
-          status = Config.bank.status;
+      var
+        exchanger = this.$eth.bankContract,
+        status = Config.bank.status
 
-      this.exchangerData.push({type: 'input', name: 'LibreExchanger', data: Config.bank.address});
+      this.exchangerData.push({
+        type: 'input',
+        name: 'LibreExchanger',
+        data: Config.bank.address
+      })
 
       let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]
         .catch(e => 'error')))
 
-      for (let i=0; i < status.length; i++) {
+      for (let i = 0; i < status.length; i++) {
         this.exchangerData.push({
           type: status[i].type,
           name: status[i].name,
-          data: dataBank[i] != 'error' ? status[i].process(dataBank[i]) : '-'
+          data: dataBank[i] !== 'error' ? status[i].process(dataBank[i]) : '-'
         })
       }
 
       let totalSupply = await this.$eth.tokenContract.totalSupply.catch(e => 'error')
       this.exchangerData.push({
         name: 'All tokens',
-        data: totalSupply != 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'
+        data: totalSupply !== 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'
       })
 
       this.isLoadingBank = false
 
-      if (!this.isLoadingBalance)
+      if (!this.isLoadingBalance) {
         this.isLoading = false
+      }
     }
   },
   created () {

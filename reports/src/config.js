@@ -47,12 +47,12 @@ module.exports = {
         name: 'State',
         getter: 'getState',
         process: data => [
-            'Locked',
-            'Processing Orders',
-            'Wait Oracles',
-            'Calculate Rates',
-            'Request Rates'
-          ][data]
+          'Locked',
+          'Processing Orders',
+          'Wait Oracles',
+          'Calculate Rates',
+          'Request Rates'
+        ][data]
       },
       {
         name: 'Request time',
@@ -72,7 +72,7 @@ module.exports = {
     ]
   },
   token: {
-    abi: '[{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]',
+    abi: '[{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]'
   },
   balance: {
     coins: [
