@@ -47,12 +47,12 @@ module.exports = {
         name: 'State',
         getter: 'getState',
         process: data => [
-            'Locked',
-            'Processing Orders',
-            'Wait Oracles',
-            'Calculate Rates',
-            'Request Rates'
-          ][data]
+          'Locked',
+          'Processing Orders',
+          'Wait Oracles',
+          'Calculate Rates',
+          'Request Rates'
+        ][data]
       },
       {
         name: 'Request time',
@@ -72,14 +72,14 @@ module.exports = {
     ]
   },
   token: {
-    abi: '[{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]',
+    abi: '[{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]'
   },
   balance: {
     coins: [
       {
         name: 'BTC',
         address: '1H6ZZpRmMnrw8ytepV3BYwMjYYnEkWDqVP',
-        request: address => `https://blockchain.info/ru/balance?active=${address}`,
+        request: address => `https://blockchain.info/ru/balance?active=${address}&cors=true`,
         process: data => data[Object.keys(data)[0]].final_balance / 10 ** 8,
         href: address => `https://blockchain.info/address/${address}`
       },
@@ -114,9 +114,9 @@ module.exports = {
       {
         name: 'ZEN',
         address: 'znaULW3nSEiuiMVa2P9WKXH6mxp4GpVvmpS',
-        request: address => `http://explorer.zenmine.pro/insight-api-zen/addr/${address}/?noTxList=1`,
+        request: address => `https://explorer.zensystem.io/insight-api-zen/addr/${address}/?noTxList=1`,
         process: data => data.balance,
-        href: address => `http://explorer.zenmine.pro/insight/address/${address}`
+        href: address => `https://explorer.zenmine.pro/insight/address/${address}`
       }
     ],
     coinmarketcap: {
