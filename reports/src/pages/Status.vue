@@ -6,6 +6,7 @@
       </div>
       <br>
       <div class="table-padding">
+        <div id="piechart" style="width: 100%; height: 500px;"></div>
         <h3 class="subtitle"><center>Balances</center></h3>
         <status-coins :tableData='coinsData'></status-coins>
         <br>
@@ -25,7 +26,7 @@ export default {
     return {
       coinsData: [],
       exchangerData: [],
-      proportion: {},
+      proportion: [],
       allBalances: 0,
       allChange24h: 0,
       isLoading: false,
@@ -136,18 +137,32 @@ export default {
         this.isLoading = false
     },
 
-    getProportion () {
+    drawChart() {
+      var peiData = [['Coin','USD']];
       Config.balance.coins.forEach(coin => {
         if (coin.balanceUSD !== '-')
-          this.proportion[coin.name] = coin.balanceUSD * 100 / this.allBalances
+          peiData.push([coin.name, coin.balanceUSD])
       })
+        var data = google.visualization.arrayToDataTable(peiData);
+
+        var options = {
+          title: 'Coins proportion',
+        };
+
+      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+      chart.draw(data, options);
     }
   },
   created () {
     try {
       this.getBalancesData()
-      .then(() => this.getProportion())
+      .then(() => {
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(this.drawChart);
+      })
       this.getStatusBank()
+
     } catch (err) {
       console.log(err)
     }
