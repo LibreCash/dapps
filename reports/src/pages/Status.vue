@@ -61,6 +61,7 @@ export default {
       exchangerData: [],
       proportion: {},
       allBalances: 0,
+      allChange24h: 0,
       isLoading: false,
       isLoadingBalance: false,
       isLoadingBank: false
@@ -85,6 +86,7 @@ export default {
 
           if (index >= 0) {
             coins[index].price = coin.price_usd
+            coins[index].change24h = +coin.percent_change_24h
 
             if (coins.length === ++countFind) {
               break
@@ -92,7 +94,7 @@ export default {
           }
         }
 
-        this.allBalances = 0
+        this.allChange24h = this.allBalances = 0
         let resolves = await Promise.all(coins.map((coin) => axios.get(coin.request(coin.address))
               .catch(e => 'error')));
 
@@ -101,19 +103,26 @@ export default {
             coins[i].balance = coins[i].process(resolves[i].data)
             coins[i].balanceUSD = Math.round(coins[i].price * coins[i].balance * 100) / 100
             this.allBalances += coins[i].balanceUSD
+            coins[i].change24h = Math.round(coins[i].balanceUSD * coins[i].change24h /(100 + coins[i].change24h) * 100 ) / 100
+            this.allChange24h += coins[i].change24h
           } else {
-            coins[i].balance = coins[i].balanceUSD = '-'
+            coins[i].change24h = coins[i].balance = coins[i].balanceUSD = '-'
           }
 
           this.coinsData.push({
             name: coins[i].name,
             balance: coins[i].balance,
             balanceUSD: coins[i].balanceUSD.toLocaleString(),
+            change24h: coins[i].change24h.toLocaleString(),
             href: coins[i].href(coins[i].address)
           })
         }
 
-        this.coinsData.push({name: 'Total:', balanceUSD: this.allBalances.toLocaleString()})
+        this.coinsData.push({
+          name: 'Total:',
+          balanceUSD: this.allBalances.toLocaleString(),
+          change24h: this.allChange24h.toLocaleString()
+        })
       }
 
       this.isLoadingBalance = false
