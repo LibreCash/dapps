@@ -23,6 +23,12 @@
               <span>Status</span>
               </router-link>
             </li>
+						<li>
+              <router-link to="/dao">
+              <div class="Rectangle"></div>
+              <span>DAO</span>
+              </router-link>
+            </li>
           </ul>
           <ul class="conditions"></ul>
         </div>
