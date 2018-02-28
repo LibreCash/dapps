@@ -59,6 +59,8 @@ export default {
     return {
       coinsData: [],
       exchangerData: [],
+      proportion: {},
+      allBalances: 0,
       isLoading: false,
       isLoadingBalance: false,
       isLoadingBank: false
@@ -90,30 +92,28 @@ export default {
           }
         }
 
-        let allBalances = 0,
-            resolves = await Promise.all(coins.map((coin) => axios.get(coin.request(coin.address))
+        this.allBalances = 0
+        let resolves = await Promise.all(coins.map((coin) => axios.get(coin.request(coin.address))
               .catch(e => 'error')));
 
         for (let i = 0; i < coins.length; i++) {
-          let balance, balanceUSD;
-
           if (resolves[i] != 'error') {
-            balance = coins[i].process(resolves[i].data)
-            balanceUSD = Math.round(coins[i].price * balance * 100) / 100
-            allBalances += balanceUSD
+            coins[i].balance = coins[i].process(resolves[i].data)
+            coins[i].balanceUSD = Math.round(coins[i].price * coins[i].balance * 100) / 100
+            this.allBalances += coins[i].balanceUSD
           } else {
-            balance = balanceUSD = '-'
+            coins[i].balance = coins[i].balanceUSD = '-'
           }
 
           this.coinsData.push({
-            name: coins[i].name, 
-            balance: balance, 
-            balanceUSD: balanceUSD.toLocaleString(),
+            name: coins[i].name,
+            balance: coins[i].balance,
+            balanceUSD: coins[i].balanceUSD.toLocaleString(),
             href: coins[i].href(coins[i].address)
           })
         }
 
-        this.coinsData.push({name: 'Total:', balanceUSD: allBalances.toLocaleString()})
+        this.coinsData.push({name: 'Total:', balanceUSD: this.allBalances.toLocaleString()})
       }
 
       this.isLoadingBalance = false
@@ -151,11 +151,19 @@ export default {
 
       if (!this.isLoadingBalance)
         this.isLoading = false
+    },
+
+    getProportion () {
+      Config.balance.coins.forEach(coin => {
+        if (coin.balanceUSD !== '-')
+          this.proportion[coin.name] = coin.balanceUSD * 100 / this.allBalances
+      })
     }
   },
   created () {
     try {
       this.getBalancesData()
+      .then(() => this.getProportion())
       this.getStatusBank()
     } catch (err) {
       console.log(err)
