@@ -1,5 +1,5 @@
 <template>
-  <div id="proposal-dao">
+  <div id="DaoTable">
     <b-table
       :data="isEmpty ? [] : tableData"
       :bordered="isBordered"
@@ -12,15 +12,28 @@
       :pagination-simple="isPaginationSimple"
       :mobile-cards="hasMobileCards">
       <template slot-scope="props">
-        <b-table-column label='Type' centered>
+        <b-table-column field="report.type" label='Type' centered>
           {{ props.row.type }}
         </b-table-column>
-        <b-table-column label='Date' centered>
-          {{ props.row.date }}
+        <b-table-column label='Recipient' centered>
+          {{ props.row.recipient }}
         </b-table-column>
-        <b-table-column label='State' centered>
-          {{ props.row.state }}
+        <b-table-column field="report.amount" label='Amount' centered>
+          {{ props.row.amount }}
         </b-table-column>
+        <b-table-column label='Desription' centered>
+          {{ props.row.description }}
+        </b-table-column>
+        <b-table-column label='Votes Data' centered>
+          {{ props.row.votingData.yea }} / {{ props.row.votingData.nay }}
+        </b-table-column>
+         <b-table-column label='Deadline' centered>
+          {{ props.row.deadline }}
+        </b-table-column>
+        <b-table-column label='Actions' centered>
+          buttons
+        </b-table-column>
+
       </template>
       </b-table>
   </div>
@@ -37,7 +50,7 @@ export default {
       isNarrowed: false,
       isLoading: false,
       hasMobileCards: true,
-      isPaginated: false,
+      isPaginated: true,
       isPaginationSimple: false,
       currentPage: 1,
       perPage: 5

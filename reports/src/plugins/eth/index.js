@@ -14,6 +14,7 @@ class ETH {
   constructor () {
     this._web3 = null
     this._reportContract = null
+    this._daoContract = null
     this.loadWeb3()
   }
 
@@ -24,9 +25,16 @@ class ETH {
         web3.version.getNetwork((error, result) => {
           if (error) alert(error)
           else {
-            let network = {'1':'Main','2':'Modern','3':'Ropsten','4':'Rinkeby','42':'Kovan'}[result]
-            if (network != 'Rinkeby')
+            let network = {
+              '1': 'Main',
+              '2': 'Modern',
+              '3': 'Ropsten',
+              '4': 'Rinkeby',
+              '42': 'Kovan'
+            }[result]
+            if (network !== 'Rinkeby') {
               alert('Please use Rinkeby nerwork!!')
+            }
           }
         })
       } else {
@@ -42,14 +50,7 @@ class ETH {
       .at(Config.bank.address)
 
       // wrapper for MetaMask
-      this.bankContract = new Proxy(this._bankContract,{get: async (bank,name) => {
-        return new Promise((resolve, reject) => {
-          bank[name]((err, result) => {
-            if (err) reject(err)
-            else resolve(result)
-          })
-        })
-      }})
+      this.bankContract = new Proxy(this._bankContract, { get: async (bank, name) => this.promisifyContract(bank, name) })
 
       // token contract from Exchanger
       this.bankContract.tokenAddress.then(address => {
@@ -58,16 +59,13 @@ class ETH {
         .at(Config.token.address)
 
         // token wrapper for MetaMask
-        this.tokenContract = new Proxy(this._tokenContract,{get: async (token,name) => {
-          return new Promise((resolve, reject) => {
-            token[name]((err, result) => {
-              if (err) reject(err)
-              else resolve(result)
-            })
-          })
-        }})
+        this.tokenContract = new Proxy(this._tokenContract, { get: async (token, name) => this.promisifyContract(token, name) })
       })
+      
+      this._daoContract = this._web3.eth.contract(JSON.parse(Config.dao.abi))
+      .at(Config.dao.address)
 
+      this.daoContract = new Proxy(this._daoContract, { get: async (dao, name) => this.promisifyContract(dao, name) })
     } catch (err) {
       console.log(err)
     }
@@ -77,11 +75,55 @@ class ETH {
     return Config.report.address
   }
 
+  static daoAddress () {
+    return Config.dao.address
+  }
+
+  async promisifyContract (contract, name) {
+    return new Promise((resolve, reject) => {
+      contract[name]((err, result) => {
+        err ? reject(err) : resolve(result)
+      })
+    })
+  }
+
+  async proposalCounter () {
+    return new Promise((resolve, reject) => {
+      this._daoContract.numProposals((err, counter) => {
+        err ? reject(err) : resolve(counter)
+      })
+    })
+  }
+
+  async getProposal (number) {
+    return new Promise((resolve, reject) => {
+      this._daoContract.getProposal(number, (err, report) => {
+        err ? reject(err) : resolve(report)
+      })
+    })
+  }
+  async getVotingData (number) {
+    const voteStruct = {        
+      'yea': 0,        
+      'nay': 1,        
+      'canVote': 2,        
+      'deadline': 3      
+    }
+    return new Promise((resolve, reject) => {
+      this._daoContract.getVotingData(number, (err, report) => {
+        err ? reject(err) : resolve({
+          yea: report[voteStruct.yea],
+          nay: report[voteStruct.nay],
+          canVote: report[voteStruct.canVote],
+          deadline: report[voteStruct.deadline]
+        })
+      })
+    })
+  }
   async reportCounter () {
     return new Promise((resolve, reject) => {
       this._reportContract.counter((err, counter) => {
-        if (err) reject(err)
-        else resolve(counter)
+        err ? reject(err) : resolve(counter)
       })
     })
   }
@@ -89,8 +131,7 @@ class ETH {
   async isOwner () {
     return new Promise((resolve, reject) => {
       this._reportContract.owner((err, owner) => {
-        if (err) reject(err)
-        else resolve(owner === this._web3.eth.accounts[0])
+        err ? reject(err) : resolve(owner === this._web3.eth.accounts[0])
       })
     })
   }
@@ -99,8 +140,7 @@ class ETH {
     console.log(this._reportContract, report, this._web3)
     return new Promise((resolve, reject) => {
       this._reportContract.addNewReport(report, (err, report) => {
-        if (err) reject(err)
-        else resolve(report)
+        err ? reject(err) : resolve(report)
       })
     })
   }
@@ -108,8 +148,7 @@ class ETH {
   async getReport (number) {
     return new Promise((resolve, reject) => {
       this._reportContract.reports(number, (err, report) => {
-        if (err) reject(err)
-        else resolve(report)
+        err ? reject(err) : resolve(report)
       })
     })
   }
@@ -125,8 +164,7 @@ class ETH {
   getBlockNumber () {
     return new Promise((resolve, reject) => {
       this._web3.eth.getBlockNumber((err, blockNumber) => {
-        if (err) reject(err)
-        else resolve(blockNumber)
+        err ? reject(err) : resolve(blockNumber)
       })
     })
   }

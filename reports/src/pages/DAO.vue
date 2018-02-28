@@ -4,7 +4,7 @@
       <div class="h2-contain">
         <h2 class="subtitle">DAO Proposal</h2>
       </div>
-      <proposal-dao :tableData='proposalData'></proposal-dao>
+      <dao-table :tableData='searchData'></dao-table>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
     </div>
@@ -13,18 +13,93 @@
 
 
 <script>
-import ProposalDao from '@/components/ProposalDAO'
+import DaoTable from '@/components/DaoTable'
+import BRadioButton from 'buefy/src/components/radio/RadioButton'
+// replace it to dao data
 export default {
   data () {
     return {
-      proposalData: [],
+      daoAddress: this.$eth.daoAddress,
+      reportText: '',
+      owner: false,
+      reportNumber: 0,
+      searchData: [],
       isLoading: false
     }
   },
   methods: {
+    async newReport () {
+      try {
+        await this.$eth.addNewReport(this.reportText)
+      } catch (err) {
+        console.log(err)
+      }
+    },
     async loadProposals () {
-      this.proposalData.push({date: new Date(), state: 'New', type: 'Hello everyone!'})
-      this.proposalData.push({date: new Date(), state: 'Old', type: 'Good Bye!'})
+      const struct = {
+        'type':0,
+        'recipient':1,
+        'amount':2,
+        'buffer':3,
+        'bytecode':4,
+        'description':5
+      }
+      const TypeProposal = {
+        0: 'CLEAN',
+        1: 'UNIVERSAL',
+        2: 'TRANSFER_OWNERSHIP',
+        3: 'SET_BUY_LIMITS',
+        4: 'SET_SELL_LIMITS',
+        5: 'CANCEL_BUY_ORDER',
+        6: 'CANCEL_SELL_ORDE',
+        7: 'ATTACH_TOKEN',
+        8: 'SET_BANK_ADDRESS',
+        9: 'RELEVANCE_PERIOD',
+        10: 'QUEUE_PERIOD',
+        11: 'SET_FEES',
+        12: 'ADD_ORACLE',
+        13: 'DISABLE_ORACLE',
+        14: 'ENABLE_ORACLE',
+        15: 'DELETE_ORACLE',
+        16: 'SET_SCHEDULER',
+        17: 'WITHDRAW_BALANCE'
+     }
+    
+      this.searchData = []
+      this.isLoading = true
+      try {
+        let j = await this.$eth.proposalCounter()
+        for (let i = j - 1; i > 0; --i) {
+          var 
+            proposal = await this.$eth.getProposal(i),
+            vote = await this.$eth.getVotingData(i)
+          this.searchData.push({
+              type: TypeProposal[proposal[struct.type]],
+              recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
+              amount: proposal[struct.amount],
+              buffer: proposal[struct.buffer],
+              bytecode: proposal[struct.bytecode],
+              votingData: vote,
+              deadline: new Date(vote.deadline * 1000).toLocaleString(),
+              description: proposal[struct.description]
+          })
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      this.isLoading = false
+    },
+    async loadETH () {
+      this.isLoading = true
+      try {
+        await this.loadReport()
+      } catch (err) {
+        console.log(err)
+      }
+      this.isLoading = false
+    },
+    async mayVote () {
+      this.owner = await this.$eth.mayVote()
     }
   },
   created () {
@@ -35,7 +110,8 @@ export default {
     }
   },
   components: {
-    ProposalDao
+    DaoTable,
+    BRadioButton
   }
 }
 </script>

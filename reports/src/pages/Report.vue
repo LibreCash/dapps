@@ -74,8 +74,8 @@ export default {
       }
       this.isLoading = false
     },
-    async checkOwner () {
-      this.owner = await this.$eth.isOwner()
+    async canVote (number) {
+      return true;
     }
   },
   created () {
