@@ -55,7 +55,7 @@ export default {
         15: 'DELETE_ORACLE',
         16: 'SET_SCHEDULER',
         17: 'WITHDRAW_BALANCE'
-     }
+      }
     
       this.proposalData = []
       this.isLoading = true
@@ -63,8 +63,8 @@ export default {
           var 
             proposal = await this.$eth.getProposal(this.$route.params.id),
             vote = await this.$eth.getVotingData(this.$route.params.id)
-            console.log("PROP",proposal)
-            console.log("VOTE",vote)
+            console.log("PROP", proposal)
+            console.log("VOTE", vote)
           this.proposalData.push({
               type: TypeProposal[proposal[struct.type]],
               recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
@@ -80,7 +80,7 @@ export default {
       }
       this.isLoading = false
       
-      
+
     },
     async mayVote () {
       this.owner = await this.$eth.mayVote()

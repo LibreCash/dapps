@@ -32,6 +32,8 @@
         </b-table-column>
         <b-table-column label='Actions' centered>
           <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}">info</router-link>
+          <button v-on:click="yea(props.row.id)">+</button>
+          <button v-on:click="nay(props.row.id)">-</button>
         </b-table-column>
 
       </template>
@@ -42,6 +44,14 @@
 <script>
 export default {
   props: ['tableData'],
+  methods: {
+    yea: function(id) {
+      console.log("yea", id);
+    },
+    nay: function(id) {
+      console.log("nay", id);
+    }
+  },
   data () {
     return {
       isEmpty: false,
