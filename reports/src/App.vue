@@ -270,6 +270,13 @@ input.address {
   border-color: #949191;
   background-color: white;
 }
+
+.half-width {
+  width: 49%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
  
 #app {
   font-family: 'GothamProRegular', 'Avenir', Helvetica, Arial, sans-serif;

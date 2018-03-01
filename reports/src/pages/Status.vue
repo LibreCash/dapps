@@ -5,8 +5,16 @@
         <h2 class="subtitle">LibreBank Status Page</h2>
       </div>
       <br>
+      <div class="half-width">
+        <div id="piechart"></div>
+      </div>
+      <div class="half-width">
+        <div>Min diff is {{ minCoin.name }} ({{ minCoin.change24h.toLocaleString() }} USD)</div>
+        <div>Max diff is {{ maxCoin.name }} ({{ maxCoin.change24h.toLocaleString() }} USD)</div>
+        <div>Total balance change24h: {{ allChange24h.toLocaleString() }} USD</div>
+        <!--<status-statistics :tableData='statisticsData'>Statistics</status-statistics>-->
+      </div>
       <div class="table-padding">
-        <div id="piechart" style="width: 100%; height: 500px;"></div>
         <h3 class="subtitle"><center>Balances</center></h3>
         <status-coins :tableData='coinsData'></status-coins>
         <br>
@@ -20,15 +28,18 @@
 <script>
 import StatusCoins from '@/components/StatusCoins'
 import StatusBank from '@/components/StatusBank'
+import StatusStatistics from '@/components/StatusStatistics'
 import Config from '@/config'
 export default {
   data () {
     return {
       coinsData: [],
       exchangerData: [],
-      proportion: [],
+      statisticsData: [],
       allBalances: 0,
       allChange24h: 0,
+      maxCoin: {name:'',change24h:0},
+      minCoin: {name:'',change24h:0},
       isLoading: false,
       isLoadingBalance: false,
       isLoadingBank: false
@@ -45,7 +56,8 @@ export default {
       let
         response = await axios.get(Config.balance.coinmarketcap.request(0)).catch(e => 'error'),
         nameCoins = coins.map((coin) => coin.name),
-        countFind = 0
+        countFind = 0,
+        maxCoin, minCoin;
 
       if (response !== 'error') {
         for (let i = 0; i < response.data.length; i++) {
@@ -74,6 +86,13 @@ export default {
             this.allBalances += coins[i].balanceUSD
             coins[i].change24h = Math.round(coins[i].balanceUSD * coins[i].change24h /(100 + coins[i].change24h) * 100 ) / 100
             this.allChange24h += coins[i].change24h
+
+            if (maxCoin == undefined || (maxCoin.change24h < coins[i].change24h))
+              maxCoin = coins[i]
+
+            if (minCoin == undefined || (minCoin.change24h > coins[i].change24h))
+              minCoin = coins[i]
+
           } else {
             coins[i].change24h = coins[i].balance = coins[i].balanceUSD = '-'
           }
@@ -94,6 +113,24 @@ export default {
         })
       }
 
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(this.drawChart);
+
+      this.maxCoin = maxCoin;
+      this.minCoin = minCoin;
+      /*
+      this.statisticsData.push({
+        name: 'Max:', 
+        coin: maxCoin.name, 
+        value: maxCoin.change24h.toLocaleString()
+      })
+      this.statisticsData.push({
+        name: 'Min:',
+        coin: minCoin.name, 
+        value: minCoin.change24h.toLocaleString()
+      })
+      this.statisticsData.push({name: 'Total:', value: this.allChange24h.toLocaleString()})
+      */
       this.isLoadingBalance = false
 
       if (!this.isLoadingBank) {
@@ -147,6 +184,7 @@ export default {
 
         var options = {
           title: 'Coins proportion',
+          chartArea:{left:40,top:0,width:'100%',height:'100%'}
         };
 
       var chart = new google.visualization.PieChart(document.getElementById('piechart'));
@@ -157,10 +195,6 @@ export default {
   created () {
     try {
       this.getBalancesData()
-      .then(() => {
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(this.drawChart);
-      })
       this.getStatusBank()
 
     } catch (err) {
@@ -169,7 +203,8 @@ export default {
   },
   components: {
     StatusCoins,
-    StatusBank
+    StatusBank,
+    StatusStatistics
   }
 }
 </script>
