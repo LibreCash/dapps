@@ -4,6 +4,7 @@
       <div class="h2-contain">
         <h2 class="subtitle">DAO Proposal {{ $route.params.id }}</h2>
       </div>
+      <br>
       <dao-proposal :tableData='proposalData'></dao-proposal>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>

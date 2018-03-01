@@ -4,6 +4,7 @@ import Report from '@/pages/Report'
 import Status from '@/pages/Status'
 import DAO from '@/pages/DAO'
 import Proposal from '@/pages/Proposal'
+import NewProposal from '@/pages/NewProposal'
 
 
 Vue.use(Router)
@@ -29,6 +30,11 @@ export default new Router({
       path: '/dao/proposal/:id',
       name: 'DAO Proposal',
       component: Proposal
+    },
+    {
+      path: '/dao/new_proposal',
+      name: 'New proposal',
+      component: NewProposal
     }
   ],
   mode: 'hash'

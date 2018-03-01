@@ -4,7 +4,9 @@
       <div class="h2-contain">
         <h2 class="subtitle">DAO Proposal</h2>
       </div>
+      <br>
       <dao-table :tableData='searchData'></dao-table>
+      <router-link :to="{ path: '/dao/new_proposal' }">New Proposal</router-link>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
     </div>
