@@ -106,7 +106,7 @@ class ETH {
     const voteStruct = {        
       'yea': 0,        
       'nay': 1,        
-      'canVote': 2,        
+      'voted': 2,        
       'deadline': 3      
     }
     return new Promise((resolve, reject) => {
@@ -114,7 +114,7 @@ class ETH {
         err ? reject(err) : resolve({
           yea: report[voteStruct.yea],
           nay: report[voteStruct.nay],
-          canVote: report[voteStruct.canVote],
+          voted: report[voteStruct.voted],
           deadline: report[voteStruct.deadline]
         })
       })
