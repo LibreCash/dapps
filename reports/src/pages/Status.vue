@@ -27,7 +27,6 @@
 <script>
 import StatusCoins from '@/components/StatusCoins'
 import StatusBank from '@/components/StatusBank'
-import StatusStatistics from '@/components/StatusStatistics'
 import Config from '@/config'
 export default {
   data () {
@@ -190,8 +189,7 @@ export default {
   },
   components: {
     StatusCoins,
-    StatusBank,
-    StatusStatistics
+    StatusBank
   }
 }
 </script>
