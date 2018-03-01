@@ -12,7 +12,6 @@
         <div>Min diff is {{ minCoin.name }} ({{ minCoin.change24h.toLocaleString() }} USD)</div>
         <div>Max diff is {{ maxCoin.name }} ({{ maxCoin.change24h.toLocaleString() }} USD)</div>
         <div>Total balance change24h: {{ allChange24h.toLocaleString() }} USD</div>
-        <!--<status-statistics :tableData='statisticsData'>Statistics</status-statistics>-->
       </div>
       <div class="table-padding">
         <h3 class="subtitle"><center>Balances</center></h3>
@@ -118,19 +117,7 @@ export default {
 
       this.maxCoin = maxCoin;
       this.minCoin = minCoin;
-      /*
-      this.statisticsData.push({
-        name: 'Max:', 
-        coin: maxCoin.name, 
-        value: maxCoin.change24h.toLocaleString()
-      })
-      this.statisticsData.push({
-        name: 'Min:',
-        coin: minCoin.name, 
-        value: minCoin.change24h.toLocaleString()
-      })
-      this.statisticsData.push({name: 'Total:', value: this.allChange24h.toLocaleString()})
-      */
+
       this.isLoadingBalance = false
 
       if (!this.isLoadingBank) {
