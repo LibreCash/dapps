@@ -2,40 +2,31 @@
     <div>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">DAO Proposal</h2>
+        <h2 class="subtitle">DAO Proposal {{ $route.params.id }}</h2>
       </div>
-      <dao-table :tableData='searchData'></dao-table>
+      <dao-proposal :tableData='proposalData'></dao-proposal>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
     </div>
 </template>
 
-
-
 <script>
-import DaoTable from '@/components/DaoTable'
+import DaoProposal from '@/components/DAOProposal'
 import BRadioButton from 'buefy/src/components/radio/RadioButton'
-// replace it to dao data
+
 export default {
   data () {
     return {
       daoAddress: this.$eth.daoAddress,
+      proposalId: this.$route.params.id,
       reportText: '',
       owner: false,
-      reportNumber: 0,
-      searchData: [],
+      proposalData: [],
       isLoading: false
     }
   },
   methods: {
-    async newReport () {
-      try {
-        await this.$eth.addNewReport(this.reportText)
-      } catch (err) {
-        console.log(err)
-      }
-    },
-    async loadProposals () {
+    async loadProposal () {
       const struct = {
         'type':0,
         'recipient':1,
@@ -65,16 +56,15 @@ export default {
         17: 'WITHDRAW_BALANCE'
      }
     
-      this.searchData = []
+      this.proposalData = []
       this.isLoading = true
       try {
-        let j = await this.$eth.proposalCounter()
-        for (let i = j - 1; i > 0; --i) {
           var 
-            proposal = await this.$eth.getProposal(i),
-            vote = await this.$eth.getVotingData(i)
-          this.searchData.push({
-              id: i,
+            proposal = await this.$eth.getProposal(this.$route.params.id),
+            vote = await this.$eth.getVotingData(this.$route.params.id)
+            console.log("PROP",proposal)
+            console.log("VOTE",vote)
+          this.proposalData.push({
               type: TypeProposal[proposal[struct.type]],
               recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
               amount: proposal[struct.amount],
@@ -84,20 +74,12 @@ export default {
               deadline: new Date(vote.deadline * 1000).toLocaleString(),
               description: proposal[struct.description]
           })
-        }
       } catch (err) {
         console.log(err)
       }
       this.isLoading = false
-    },
-    async loadETH () {
-      this.isLoading = true
-      try {
-        await this.loadReport()
-      } catch (err) {
-        console.log(err)
-      }
-      this.isLoading = false
+      
+      
     },
     async mayVote () {
       this.owner = await this.$eth.mayVote()
@@ -105,13 +87,13 @@ export default {
   },
   created () {
     try {
-      this.loadProposals()
+      this.loadProposal()
     } catch (err) {
       console.log(err)
     }
   },
   components: {
-    DaoTable,
+    DaoProposal,
     BRadioButton
   }
 }

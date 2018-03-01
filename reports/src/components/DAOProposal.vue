@@ -1,15 +1,11 @@
 <template>
-  <div id="DaoTable">
+  <div id="DaoProposal">
     <b-table
       :data="isEmpty ? [] : tableData"
       :bordered="isBordered"
       :striped="isStriped"
       :narrowed="isNarrowed"
       :loading="isLoading"
-      :paginated="isPaginated"
-      :per-page="perPage"
-      :current-page.sync="currentPage"
-      :pagination-simple="isPaginationSimple"
       :mobile-cards="hasMobileCards">
       <template slot-scope="props">
         <b-table-column field="report.type" label='Type' centered>
@@ -30,12 +26,8 @@
          <b-table-column label='Deadline' centered>
           {{ props.row.deadline }}
         </b-table-column>
-        <b-table-column label='Actions' centered>
-          <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}">info</router-link>
-        </b-table-column>
-
       </template>
-      </b-table>
+    </b-table>
   </div>
 </template>
 
