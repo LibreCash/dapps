@@ -105,7 +105,7 @@ export default {
         data: Config.bank.address
       })
 
-      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]
+      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]()
         .catch(e => 'error')))
 
       for (let i = 0; i < status.length; i++) {
@@ -116,7 +116,7 @@ export default {
         })
       }
 
-      let totalSupply = await this.$eth.tokenContract.totalSupply.catch(e => 'error')
+      let totalSupply = await this.$eth.tokenContract.totalSupply().catch(e => 'error')
       this.exchangerData.push({
         name: 'All tokens',
         data: totalSupply !== 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'

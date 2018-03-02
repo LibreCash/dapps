@@ -51,22 +51,22 @@ class ETH {
       .at(Config.bank.address)
 
       // wrapper for MetaMask
-      this.bankContract = new Proxy(this._bankContract, { get: async (bank, name) => this.promisifyContract(bank, name) })
+      this.bankContract = new Proxy(this._bankContract, { get: (bank, name) => this.promisifyContract(bank, name) })
 
       // token contract from Exchanger
-      this.bankContract.tokenAddress.then(address => {
+      this.bankContract.tokenAddress().then(address => {
         Config.token.address = address
         this._tokenContract = this._web3.eth.contract(JSON.parse(Config.token.abi))
         .at(Config.token.address)
 
         // token wrapper for MetaMask
-        this.tokenContract = new Proxy(this._tokenContract, { get: async (token, name) => this.promisifyContract(token, name) })
+        this.tokenContract = new Proxy(this._tokenContract, { get: (token, name) => this.promisifyContract(token, name) })
       })
       
       this._daoContract = this._web3.eth.contract(JSON.parse(Config.dao.abi))
       .at(Config.dao.address)
 
-      this.daoContract = new Proxy(this._daoContract, { get: async (dao, name) => this.promisifyContract(dao, name) })
+      this.daoContract = new Proxy(this._daoContract, { get: (dao, name) => this.promisifyContract(dao, name) })
     } catch (err) {
       console.log(err)
     }
@@ -80,12 +80,14 @@ class ETH {
     return Config.dao.address
   }
 
-  async promisifyContract (contract, name) {
-    return new Promise((resolve, reject) => {
-      contract[name]((err, result) => {
-        err ? reject(err) : resolve(result)
+  promisifyContract (contract, name) {
+    return function() {
+      return new Promise((resolve, reject) => {
+        contract[name](...arguments,(err, result) => {
+          err ? reject(err) : resolve(result)
+        })
       })
-    })
+    }
   }
 
   async proposalCounter () {
