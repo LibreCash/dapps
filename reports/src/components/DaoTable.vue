@@ -45,11 +45,17 @@
 export default {
   props: ['tableData'],
   methods: {
-    yea: function(id) {
-      console.log("yea", id);
+    yea: async function(id) {
+      console.log(this.$eth.voteForProposal)
+      this.$eth.voteForProposal(id, true).then(async (hash) => {
+        //await this.$eth.getReceipt(hash)
+        console.log(hash)
+      });
     },
-    nay: function(id) {
-      console.log("nay", id);
+    nay: async function(id) {
+      this.$eth.voteForProposal(id, false).then((hash) => {
+        console.log(hash)
+      });
     }
   },
   data () {

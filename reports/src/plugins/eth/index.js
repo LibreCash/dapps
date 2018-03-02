@@ -43,6 +43,7 @@ class ETH {
       }
       this._web3 = window.web3
       this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
+      console.log("def acc", this._web3.eth.defaultAccount)
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
       .at(ETH.reportAddress())
 
@@ -92,6 +93,28 @@ class ETH {
       this._daoContract.numProposals((err, counter) => {
         err ? reject(err) : resolve(counter)
       })
+    })
+  }
+
+  async voteForProposal(number, supports) {
+    this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
+    return new Promise((resolve, reject) => {
+      this._daoContract.vote.sendTransaction(number, supports, (err, report) => {
+        err ? reject(err) : resolve(report)
+      })
+    })
+  }
+
+  // WIP
+  async getReceipt(txhash) {
+    return new Promise((resolve, reject) => {
+      var i = 1, checkInterval = setInterval(function() {
+        console.log(i); i++;
+        if (i > 5) {
+          clearInterval(checkInterval);
+          resolve();
+        }
+      }, 3000)
     })
   }
 
