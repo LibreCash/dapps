@@ -25,15 +25,20 @@
           {{ props.row.description }}
         </b-table-column>
         <b-table-column label='Votes Data' centered>
-          {{ props.row.votingData.yea }} / {{ props.row.votingData.nay }}
+          {{ props.row.yea }} / {{ props.row.nay }}
         </b-table-column>
          <b-table-column label='Deadline' centered>
           {{ props.row.deadline }}
         </b-table-column>
         <b-table-column label='Actions' centered>
           <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}">info</router-link>
-          <button v-on:click="yea(props.row.id)">+</button>
-          <button v-on:click="nay(props.row.id)">-</button>
+          <span v-if="!props.row.votingData.voted">
+            <button v-on:click="vote(props.row.id, true, props.row.votingData)">+</button>
+            <button v-on:click="vote(props.row.id, false, props.row.votingData)">-</button>
+          </span>
+          <span v-else>
+            voted
+          </span>
         </b-table-column>
 
       </template>
@@ -45,17 +50,19 @@
 export default {
   props: ['tableData'],
   methods: {
-    yea: async function(id) {
-      console.log(this.$eth.voteForProposal)
-      this.$eth.voteForProposal(id, true).then(async (hash) => {
-        //await this.$eth.getReceipt(hash)
-        console.log(hash)
-      });
-    },
-    nay: async function(id) {
-      this.$eth.voteForProposal(id, false).then((hash) => {
-        console.log(hash)
-      });
+    vote: async function (id, support, votingData) {
+      this.$eth.voteForProposal(id, support).then(async (hash) => {
+        this.$eth.getReceipt(hash).then((result) => {
+          if (+result.status === 1) {
+            votingData.voted = true
+            // TODO update info
+          } else {
+            console.log('else', result)
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      })
     }
   },
   data () {

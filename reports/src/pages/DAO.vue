@@ -83,6 +83,8 @@ export default {
               buffer: proposal[struct.buffer],
               bytecode: proposal[struct.bytecode],
               votingData: vote,
+              yea: vote.yea / 10**18,
+              nay: vote.nay / 10**18,
               deadline: new Date(vote.deadline * 1000).toLocaleString(),
               description: proposal[struct.description]
           })
