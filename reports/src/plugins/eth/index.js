@@ -33,7 +33,7 @@ class ETH {
               '42': 'Kovan'
             }[result]
             if (network !== 'Rinkeby') {
-              alert('Please use Rinkeby nerwork!!')
+              alert('Please use Rinkeby network!!')
             }
           }
         })
@@ -43,7 +43,9 @@ class ETH {
       }
       this._web3 = window.web3
       this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
-      console.log("def acc", this._web3.eth.defaultAccount)
+      console.log('def acc', this._web3.eth.defaultAccount)
+      console.log(this._web3.eth.getAccounts())
+      console.log(this._web3.eth.coinbase)
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
       .at(ETH.reportAddress())
 
@@ -96,23 +98,34 @@ class ETH {
     })
   }
 
-  async voteForProposal(number, supports) {
-    this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
+  async voteForProposal (number, supports) {
+    // this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
     return new Promise((resolve, reject) => {
-      this._daoContract.vote.sendTransaction(number, supports, (err, report) => {
+      this._daoContract.vote(number, supports, (err, report) => {
         err ? reject(err) : resolve(report)
       })
     })
   }
 
   // WIP
-  async getReceipt(txhash) {
+  async getReceipt (txHash) {
+    var that = this
     return new Promise((resolve, reject) => {
-      var i = 1, checkInterval = setInterval(function() {
-        console.log(i); i++;
-        if (i > 5) {
-          clearInterval(checkInterval);
-          resolve();
+      var i = 1;
+      var checkInterval = setInterval(function () {
+        that._web3.eth.getTransactionReceipt(txHash, (err, receipt) => {
+          if (err) {
+            clearInterval(checkInterval)
+            reject(err)
+          } else if (receipt !== null) {
+            clearInterval(checkInterval)
+            resolve(receipt)
+          }
+        })
+        i++
+        if (i > 50) {
+          clearInterval(checkInterval)
+          reject('timeout')
         }
       }, 3000)
     })
