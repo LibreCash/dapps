@@ -33,7 +33,7 @@
         </b-field>
         <b-field horizontal>
             <p class="control">
-                <button class="button is-primary" v-on:click="createProposal()" :disabled="disButton">
+                <button class="button is-primary" v-on:click="createProposal()" v-model="disButton" :disabled="disButton">
                   Create Proposal
                 </button>
             </p>
@@ -95,16 +95,17 @@ export default {
     validData() {
       let valid = true
 
-      if (selectedType['benef'] && !isAddress(beneficiary))
+      if (this.selectedType['benef'] && !this.isAddress(this.beneficiary))
         valid = false
-      else if (selectedType['amount'] && !isInteger(weiAmount))
+      else if (this.selectedType['amount'] && !this.isInteger(this.weiAmount))
         valid = false
-      else if (selectedType['buf'] && !isInteger(buffer))
+      else if (this.selectedType['buf'] && !this.isInteger(this.buffer))
         valid = false
-      else if (selectedType['code'] && !isByteCode(transactionBytecode))
+      else if (this.selectedType['code'] && !this.isByteCode(this.transactionBytecode))
         valid = false
 
-      this.disButton = valid
+      this.disButton = !valid
+      console.log("button",this.disButton)
     },
 
     async createProposal() {
