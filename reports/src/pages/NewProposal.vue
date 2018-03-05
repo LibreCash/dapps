@@ -26,15 +26,15 @@
             <b-input type="textarea" v-model="description"></b-input>
         </b-field>
         <b-field horizontal label="Debating (in sec.)" :type="isInteger(debatingPeriodInMinutes) ? '' : 'is-danger'">
-            <b-input v-model="debatingPeriodInMinutes" placeholder="0"></b-input>
+            <b-input type="date" v-model="debatingPeriodInMinutes" placeholder="0"></b-input>
         </b-field>
         <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
             <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
         </b-field>
         <b-field horizontal>
             <p class="control">
-                <button class="button is-primary" v-on:click="createProposal()" v-model="disButton" :disabled="disButton">
-                  Create Proposal
+                <button class="button is-primary" v-on:click="createProposal()" v-model="button" :disabled="button.disabled">
+                  {{ button.name }}
                 </button>
             </p>
         </b-field>
@@ -55,7 +55,7 @@ export default {
       debatingPeriodInMinutes:'',
       transactionBytecode: '',
       buffer: '',
-      disButton: true,
+      button: {name: 'Create Proposal', disabled: true},
       typeProposals: [
         //{text: 'Clean', key: 'CLEAN', fields:[]}, // 
         {text: 'Universal', key: 'UNIVERSAL', benef:'Beneficiary',amount:'Amount Wei',code:'Bytecode'},
@@ -103,16 +103,19 @@ export default {
         valid = false
       else if (this.selectedType['code'] && !this.isByteCode(this.transactionBytecode))
         valid = false
+      else if (this.debatingPeriodInMinutes <= 0)
+        valid = false
 
-      this.disButton = !valid
-      console.log("button",this.disButton)
+      this.button.disabled = !valid
     },
 
     async createProposal() {
+      let txHash;
+
       switch(this.selectedType.key) {
         //case 'CLEAN': break;
         case 'UNIVERSAL':
-          await this.$eth.daoContract.proposalUniversal(
+          txHash = await this.$eth.daoContract.proposalUniversal(
             this.beneficiary, 
             this.weiAmount,
             this.description,
@@ -120,103 +123,113 @@ export default {
             this.transactionBytecode)
           break;
         case 'TRANSFER_OWNERSHIP':
-          await this.$eth.daoContract.proposalTransferOwnership(
+          txHash = await this.$eth.daoContract.proposalTransferOwnership(
             this.beneficiary, 
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'SET_BUY_LIMITS':
-          await this.$eth.daoContract.proposalSetBuyLimits(
+          txHash = await this.$eth.daoContract.proposalSetBuyLimits(
             this.weiAmount,
             this.buffer,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'SET_SELL_LIMITS':
-          await this.$eth.daoContract.proposalSetSellLimits(
+          txHash = await this.$eth.daoContract.proposalSetSellLimits(
             this.weiAmount,
             this.buffer,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'CANCEL_BUY_ORDER':
-          await this.$eth.daoContract.proposalCancelBuyOrder(
+          txHash = await this.$eth.daoContract.proposalCancelBuyOrder(
             this.weiAmount,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'CANCEL_SELL_ORDER':
-          await this.$eth.daoContract.proposalCancelSellOrder(
+          txHash = await this.$eth.daoContract.proposalCancelSellOrder(
             this.weiAmount,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'ATTACH_TOKEN':
-          await this.$eth.daoContract.proposalAttachToken(
+          txHash = await this.$eth.daoContract.proposalAttachToken(
             this.beneficiary,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'SET_BANK_ADDRESS':
-          await this.$eth.daoContract.proposalBankAddress(
+          txHash = await this.$eth.daoContract.proposalBankAddress(
             this.beneficiary,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'RELEVANCE_PERIOD':
-          await this.$eth.daoContract.proposalRelevancePeriod(
+          txHash = await this.$eth.daoContract.proposalRelevancePeriod(
             this.weiAmount,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'QUEUE_PERIOD':
-          await this.$eth.daoContract.proposalQueuePeriod(
+          txHash = await this.$eth.daoContract.proposalQueuePeriod(
             this.weiAmount,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'SET_FEES':
-          await this.$eth.daoContract.proposalFees(
+          txHash = await this.$eth.daoContract.proposalFees(
             this.weiAmount,
             this.buffer,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'ADD_ORACLE':
-          await this.$eth.daoContract.proposalAddOracle(
+          txHash = await this.$eth.daoContract.proposalAddOracle(
             this.beneficiary,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'DISABLE_ORACLE':
-          await this.$eth.daoContract.proposalDisableOracle(
+          txHash = await this.$eth.daoContract.proposalDisableOracle(
             this.beneficiary,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'ENABLE_ORACLE':
-          await this.$eth.daoContract.proposalEnableOracle(
+          txHash = await this.$eth.daoContract.proposalEnableOracle(
             this.beneficiary,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'DELETE_ORACLE':
-          await this.$eth.daoContract.proposalDeleteOracle(
+          txHash = await this.$eth.daoContract.proposalDeleteOracle(
             this.beneficiary,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'SET_SCHEDULER':
-          await this.$eth.daoContract.proposalScheduler(
+          txHash = await this.$eth.daoContract.proposalScheduler(
             this.beneficiary,
             this.description,
             this.debatingPeriodInMinutes)
           break;
         case 'WITHDRAW_BALANCE':
-          this.$eth.daoContract.proposalWithdrawBalance(
+          txHash = await this.$eth.daoContract.proposalWithdrawBalance(
             this.description,
             this.debatingPeriodInMinutes)
           break;
+      }
+
+      this.button = {name: 'Pending...', disabled: true}
+      try {
+        await this.$eth.getReceipt(txHash)
+        this.$router.push('/dao')
+      }
+      catch(e) {
+        console.log(e);
+        this.button = {name: 'Create Proposal', disabled: true}
       }
     }
   },
