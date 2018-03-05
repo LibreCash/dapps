@@ -87,7 +87,8 @@ export default {
               nay: vote.nay / 10**18,
               deadlineUnix: vote.deadline,
               deadline: new Date(vote.deadline * 1000).toLocaleString(),
-              description: proposal[struct.description]
+              description: proposal[struct.description],
+              loading: false
           })
         }
       } catch (err) {
