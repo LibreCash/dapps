@@ -85,6 +85,7 @@ export default {
               votingData: vote,
               yea: vote.yea / 10**18,
               nay: vote.nay / 10**18,
+              deadlineUnix: vote.deadline,
               deadline: new Date(vote.deadline * 1000).toLocaleString(),
               description: proposal[struct.description]
           })

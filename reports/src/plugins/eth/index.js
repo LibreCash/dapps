@@ -15,6 +15,7 @@ class ETH {
     this._web3 = null
     this._reportContract = null
     this._daoContract = null
+    this.updatingByCycle = false
     this.loadWeb3()
   }
 
@@ -105,6 +106,15 @@ class ETH {
     return new Promise((resolve, reject) => {
       this._daoContract.vote(number, supports, (err, report) => {
         err ? reject(err) : resolve(report)
+      })
+    })
+  }
+
+  async getLatestBlockTime () {
+    return new Promise((resolve, reject) => {
+      web3.eth.getBlock("latest", (error, dt) => {
+        if (error) reject(error)
+        resolve(dt.timestamp)
       })
     })
   }
