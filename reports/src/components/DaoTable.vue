@@ -14,7 +14,7 @@
       :responsive="isResponsive">
       <template slot-scope="props">
         <b-table-column field="report.type" label='Type' centered>
-          {{ props.row.type }}
+          {{ props.row.loading ? 'loading...' : props.row.type }}
         </b-table-column>
         <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
             not set
@@ -39,15 +39,18 @@
         </b-table-column>
         <b-table-column label='Actions' centered>
           <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
-          <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime)">
-            <button v-on:click="vote(props.row.id, true, props.row.votingData)"><i class="mdi mdi-check"></i></button>
-            <button v-on:click="vote(props.row.id, false, props.row.votingData)"><i class="mdi mdi-close"></i></button>
+          <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime) && !props.row.loading">
+            <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
+            <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
           </span>
           <span v-else-if="props.row.votingData.voted">
             voted
           </span>
-          <span v-else>
+          <span v-else-if="props.row.deadlineUnix <= curBlockchainTime">
             outdated
+          </span>
+          <span v-else>
+            loading
           </span>
         </b-table-column>
       </template>
@@ -59,17 +62,27 @@
 export default {
   props: ['tableData'],
   methods: {
-    vote: async function (id, support, votingData) {
+    vote: async function (row, support) {
+      var id = row.id,
+          votingData = row.votingData;
+      row.loading = true
       this.$eth.voteForProposal(id, support).then(async (hash) => {
         this.$eth.getReceipt(hash).then((result) => {
           if (+result.status === 1) {
             votingData.voted = true
-            // TODO update info
+            alert("vote tx ok")
           } else {
-            console.log('else', result)
+            alert("vote tx failed")
           }
+          row.loading = false
+          this.$eth.getVotingData(row.id).then((vData) => {
+            row.yea = +vData.yea / 10**18
+            row.nay = +vData.nay / 10**18
+            row.votingData = vData
+          })
         }).catch((err) => {
-          console.log(err)
+          alert("error", err)
+          row.loading = false
         })
       })
     },
