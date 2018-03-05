@@ -35,7 +35,7 @@
           {{ props.row.yea }} / {{ props.row.nay }}
         </b-table-column>
          <b-table-column label='Deadline' centered>
-          {{ props.row.deadline }}{{curBlockchainTime}}
+          {{ props.row.deadline }}
         </b-table-column>
         <b-table-column label='Actions' centered>
           <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
@@ -74,27 +74,27 @@ export default {
       })
     },
     updateBlockTime: function () {
-      var that = this
-      this.$eth.getLatestBlockTime().then(function (timestamp) {
-        that.curBlockchainTime = +timestamp
+      this.$eth.getLatestBlockTime().then((timestamp) => {
+        this.curBlockchainTime = +timestamp
       })
     },
     startUpdatingTime: function () {
-      if (this.$eth.updatingByCycle) return
-      this.$eth.updatingByCycle = true
       this.curBlockchainTime = 0
-      var that = this
-      this.updatingTicker = setInterval(function () {
-        that.curBlockchainTime++
+      this.updatingTicker = setInterval(() => {
+        this.curBlockchainTime++
       }, 1000)
-      this.updatingBlockData = setInterval(function () {
-        that.updateBlockTime()
+      this.updatingBlockData = setInterval(() => {
+        this.updateBlockTime()
       }, 10 * 60 * 1000 /*10 minutes */)
       this.updateBlockTime()
     },
   },
   created () {
     this.startUpdatingTime()
+  },
+  destroyed () {
+    clearInterval(this.updatingTicker)
+    clearInterval(this.updatingBlockData)
   },
   data () {
     return {
