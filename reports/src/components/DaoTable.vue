@@ -10,16 +10,23 @@
       :per-page="perPage"
       :current-page.sync="currentPage"
       :pagination-simple="isPaginationSimple"
-      :mobile-cards="hasMobileCards">
+      :mobile-cards="hasMobileCards"
+      :responsive="isResponsive">
       <template slot-scope="props">
         <b-table-column field="report.type" label='Type' centered>
           {{ props.row.type }}
         </b-table-column>
-        <b-table-column label='Recipient' centered>
-          {{ props.row.recipient }}
+        <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
+            not set
+        </b-table-column>
+        <b-table-column label='Recipient' centered v-else>
+          <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
         </b-table-column>
         <b-table-column field="report.amount" label='Amount' centered>
           {{ props.row.amount }}
+        </b-table-column>
+        <b-table-column field="report.buffer" label='Buffer' centered>
+          {{ props.row.buffer }}
         </b-table-column>
         <b-table-column label='Desription' centered>
           {{ props.row.description }}
@@ -31,16 +38,18 @@
           {{ props.row.deadline }}
         </b-table-column>
         <b-table-column label='Actions' centered>
-          <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}">info</router-link>
-          <span v-if="!props.row.votingData.voted">
-            <button v-on:click="vote(props.row.id, true, props.row.votingData)">+</button>
-            <button v-on:click="vote(props.row.id, false, props.row.votingData)">-</button>
+          <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+          <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime)">
+            <button v-on:click="vote(props.row.id, true, props.row.votingData)"><i class="mdi mdi-check"></i></button>
+            <button v-on:click="vote(props.row.id, false, props.row.votingData)"><i class="mdi mdi-close"></i></button>
           </span>
-          <span v-else>
+          <span v-else-if="props.row.votingData.voted">
             voted
           </span>
+          <span v-else>
+            outdated
+          </span>
         </b-table-column>
-
       </template>
       </b-table>
   </div>
@@ -63,7 +72,29 @@ export default {
           console.log(err)
         })
       })
-    }
+    },
+    updateBlockTime: function () {
+      this.$eth.getLatestBlockTime().then((timestamp) => {
+        this.curBlockchainTime = +timestamp
+      })
+    },
+    startUpdatingTime: function () {
+      this.curBlockchainTime = 0
+      this.updatingTicker = setInterval(() => {
+        this.curBlockchainTime++
+      }, 1000)
+      this.updatingBlockData = setInterval(() => {
+        this.updateBlockTime()
+      }, 10 * 60 * 1000 /*10 minutes */)
+      this.updateBlockTime()
+    },
+  },
+  created () {
+    this.startUpdatingTime()
+  },
+  destroyed () {
+    clearInterval(this.updatingTicker)
+    clearInterval(this.updatingBlockData)
   },
   data () {
     return {
@@ -75,8 +106,10 @@ export default {
       hasMobileCards: true,
       isPaginated: true,
       isPaginationSimple: false,
+      isResponsive: true,
       currentPage: 1,
-      perPage: 5
+      perPage: 5,
+      curBlockchainTime: 0
     }
   }
 }
