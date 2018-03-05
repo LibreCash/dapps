@@ -15,11 +15,17 @@
         <b-table-column field="report.type" label='Type' centered>
           {{ props.row.type }}
         </b-table-column>
-        <b-table-column label='Recipient' centered>
-          {{ props.row.recipient }}
+        <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
+            not set
+        </b-table-column>
+        <b-table-column label='Recipient' centered v-else>
+          <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
         </b-table-column>
         <b-table-column field="report.amount" label='Amount' centered>
           {{ props.row.amount }}
+        </b-table-column>
+        <b-table-column field="report.buffer" label='Buffer' centered>
+          {{ props.row.buffer }}
         </b-table-column>
         <b-table-column label='Desription' centered>
           {{ props.row.description }}
