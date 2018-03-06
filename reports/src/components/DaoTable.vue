@@ -31,7 +31,7 @@
         <b-table-column field="report.buffer" label='Buffer' centered>
           {{ props.row.buffer }}
         </b-table-column>
-        <b-table-column label='Desription' centered>
+        <b-table-column label='Description' centered>
           {{ props.row.description }}
         </b-table-column>
         <b-table-column label='Votes Data' centered>
