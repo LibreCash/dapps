@@ -263,6 +263,7 @@ export default {
     beneficiary: function() {this.validData()},
     weiAmount: function() {this.validData()},
     debatingPeriod: function() {this.validData()},
+    debatingTime: function() {this.validData()},
     transactionBytecode: function() {this.validData()},
     buffer: function() {this.validData()},
     selectedType: function() {
