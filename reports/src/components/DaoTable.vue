@@ -1,8 +1,8 @@
 <template>
   <div id="DaoTable">
-    <div v-if="needUpdate">
+    <b-message type="is-warning" v-if="needUpdate">
       The table isn't actual. Please, update the page
-    </div>
+    </b-message>
     <b-table
       :data="isEmpty ? [] : tableData"
       :bordered="isBordered"
