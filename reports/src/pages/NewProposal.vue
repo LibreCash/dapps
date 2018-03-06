@@ -25,8 +25,8 @@
         <b-field horizontal label="Description">
             <b-input type="textarea" v-model="description"></b-input>
         </b-field>
-        <b-field horizontal label="Debating (in sec.)" :type="isInteger(debatingPeriodInMinutes) ? '' : 'is-danger'">
-            <b-input type="date" v-model="debatingPeriodInMinutes" placeholder="0"></b-input>
+        <b-field horizontal label="Debating (in min.)" :type="isDebatingPeriod() ? '' : 'is-danger'">
+            <b-input v-model="debatingPeriodInMinutes" placeholder="0"></b-input>
         </b-field>
         <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
             <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
@@ -52,7 +52,7 @@ export default {
       beneficiary: '',
       weiAmount: '',
       description: '',
-      debatingPeriodInMinutes:'',
+      debatingPeriodInMinutes: '',
       transactionBytecode: '',
       buffer: '',
       button: {name: 'Create Proposal', disabled: true},
@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     isAddress (address) {
-      return (address.length == 42) && (/^0x[0-9a-zA-Z]*$/.test(address))
+      return web3.isAddress(address)
     },
 
     isByteCode(code) {
@@ -90,6 +90,10 @@ export default {
 
     isInteger(number) {
       return +number >= 0
+    },
+
+    isDebatingPeriod() {
+      return this.debatingPeriodInMinutes > 0
     },
 
     validData() {
@@ -103,7 +107,7 @@ export default {
         valid = false
       else if (this.selectedType['code'] && !this.isByteCode(this.transactionBytecode))
         valid = false
-      else if (this.debatingPeriodInMinutes <= 0)
+      else if (!this.isDebatingPeriod())
         valid = false
 
       this.button.disabled = !valid
@@ -247,8 +251,8 @@ export default {
     transactionBytecode: function() {this.validData()},
     buffer: function() {this.validData()},
     selectedType: function() {
-      this.beneficiary = this.weiAmount = this.debatingPeriodInMinutes = 
-      this.transactionBytecode = this.buffer = ''
+      this.beneficiary = this.weiAmount = this.transactionBytecode = this.buffer =
+      this.debatingPeriodInMinutes = '';
     }
   }
 }
