@@ -95,16 +95,23 @@ class ETH {
 
   async proposalCounter () {
     return new Promise((resolve, reject) => {
-      this._daoContract.numProposals((err, counter) => {
+      this._daoContract.proposalsLength((err, counter) => {
         err ? reject(err) : resolve(counter)
       })
     })
   }
 
   async voteForProposal (number, supports) {
-    // this._web3.eth.defaultAccount = this._web3.eth.accounts[0]
     return new Promise((resolve, reject) => {
       this._daoContract.vote(number, supports, (err, report) => {
+        err ? reject(err) : resolve(report)
+      })
+    })
+  }
+
+  async executeProposal (number, supports) {
+    return new Promise((resolve, reject) => {
+      this._daoContract.executeProposal(number, (err, report) => {
         err ? reject(err) : resolve(report)
       })
     })

@@ -75,21 +75,24 @@ export default {
           var 
             proposal = await this.$eth.getProposal(i),
             vote = await this.$eth.getVotingData(i)
-          this.searchData.push({
-              id: i,
-              type: TypeProposal[proposal[struct.type]],
-              recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
-              amount: +proposal[struct.amount],
-              buffer: +proposal[struct.buffer],
-              bytecode: proposal[struct.bytecode],
-              votingData: vote,
-              yea: vote.yea / 10**18,
-              nay: vote.nay / 10**18,
-              deadlineUnix: vote.deadline,
-              deadline: new Date(vote.deadline * 1000).toLocaleString(),
-              description: proposal[struct.description],
-              loading: false
-          })
+          if (+proposal[struct.type] !== 0 /* CLEAN */)
+          {
+            this.searchData.push({
+                id: i,
+                type: TypeProposal[proposal[struct.type]],
+                recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
+                amount: +proposal[struct.amount],
+                buffer: +proposal[struct.buffer],
+                bytecode: proposal[struct.bytecode],
+                votingData: vote,
+                yea: vote.yea / 10**18,
+                nay: vote.nay / 10**18,
+                deadlineUnix: vote.deadline,
+                deadline: new Date(vote.deadline * 1000).toLocaleString(),
+                description: proposal[struct.description],
+                loading: false
+            })
+          }
         }
       } catch (err) {
         console.log(err)
