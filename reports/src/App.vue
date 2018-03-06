@@ -268,7 +268,7 @@ export default {
 }
 
 .table-padding {
-  padding: 40px;
+  padding: 0 40px;
 }
 
 input.address {
@@ -277,10 +277,8 @@ input.address {
   background-color: white;
 }
 
-.half-width {
-  width: 49%;
-  display: inline-block;
-  vertical-align: middle;
+.chart-height {
+  min-height: 200px;
 }
 
  
