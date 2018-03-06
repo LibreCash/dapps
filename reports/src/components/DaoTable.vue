@@ -43,11 +43,13 @@
             <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
             <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
           </span>
-          <span v-else-if="props.row.votingData.voted">
-            voted
-          </span>
           <span v-else-if="props.row.deadlineUnix <= curBlockchainTime">
             outdated
+            <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+            <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+          </span>
+          <span v-else-if="props.row.votingData.voted">
+            voted
           </span>
           <span v-else>
             loading
@@ -81,7 +83,29 @@ export default {
             row.votingData = vData
           })
         }).catch((err) => {
-          alert("error", err)
+          alert(`error ${err} ${hash}`)
+          row.loading = false
+        })
+      })
+    },
+    execute: async function (row) {
+      var id = row.id
+      row.loading = true
+      this.$eth.executeProposal(id).then(async (hash) => {
+        this.$eth.getReceipt(hash).then((result) => {
+          if (+result.status === 1) {
+            alert("execute proposal ok")
+          } else {
+            alert("execute proposal failed")
+          }
+          row.loading = false
+          /*this.$eth.getVotingData(row.id).then((vData) => {
+            row.yea = +vData.yea / 10**18
+            row.nay = +vData.nay / 10**18
+            row.votingData = vData
+          })*/
+        }).catch((err) => {
+          alert(`error ${err} ${hash}`)
           row.loading = false
         })
       })

@@ -238,6 +238,7 @@ export default {
 
       this.button = {name: 'Pending...', disabled: true}
       try {
+        console.log(txHash)
         await this.$eth.getReceipt(txHash)
         this.$router.push('/dao')
       }
