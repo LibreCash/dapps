@@ -108,22 +108,6 @@ class ETH {
     })
   }
 
-  async voteForProposal (number, supports) {
-    return new Promise((resolve, reject) => {
-      this._daoContract.vote(number, supports, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
-    })
-  }
-
-  async executeProposal (number, supports) {
-    return new Promise((resolve, reject) => {
-      this._daoContract.executeProposal(number, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
-    })
-  }
-
   async getLatestBlockTime () {
     return new Promise((resolve, reject) => {
       web3.eth.getBlock("latest", (error, dt) => {

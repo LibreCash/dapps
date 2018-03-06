@@ -70,41 +70,41 @@ export default {
       var id = row.id,
           votingData = row.votingData;
       row.loading = true
-      this.$eth.voteForProposal(id, support).then(async (hash) => {
-        this.$eth.getReceipt(hash).then((result) => {
-          if (+result.status === 1) {
-            votingData.voted = true
-            alert("vote tx ok")
-          } else {
-            alert("vote tx failed")
-          }
-          row.loading = false
-          this.$eth.getVotingData(row.id).then((vData) => {
-            row.yea = +vData.yea / 10**18
-            row.nay = +vData.nay / 10**18
-            row.votingData = vData
-          })
-        }).catch((err) => {
-          alert(`error ${err} ${hash}`)
-          row.loading = false
+      this.$eth.daoContract.vote(id, support).then(async (hash) => {
+        return this.$eth.getReceipt(hash)
+      }).then((result) => {
+        if (+result.status === 1) {
+          votingData.voted = true
+          alert("vote tx ok")
+        } else {
+          alert("vote tx failed")
+        }
+        row.loading = false
+        this.$eth.getVotingData(row.id).then((vData) => {
+          row.yea = +vData.yea / 10**18
+          row.nay = +vData.nay / 10**18
+          row.votingData = vData
         })
+      }).catch((err) => {
+        alert(`error ${err} ${hash}`)
+        row.loading = false
       })
     },
     execute: async function (row) {
       var id = row.id
       row.loading = true
-      this.$eth.executeProposal(id).then(async (hash) => {
-        this.$eth.getReceipt(hash).then((result) => {
-          if (+result.status === 1) {
-            alert("execute proposal ok")
-          } else {
-            alert("execute proposal failed")
-          }
-          row.loading = false
-        }).catch((err) => {
-          alert(`error ${err} ${hash}`)
-          row.loading = false
-        })
+      this.$eth.daoContract.executeProposal(id).then(async (hash) => {
+        return this.$eth.getReceipt(hash)
+      }).then((result) => {
+        if (+result.status === 1) {
+          alert("execute proposal ok")
+        } else {
+          alert("execute proposal failed")
+        }
+        row.loading = false
+      }).catch((err) => {
+        alert(`error ${err} ${hash}`)
+        row.loading = false
       })
     },
     updateBlockTime: function () {
@@ -131,8 +131,7 @@ export default {
         if (this.numProposals == -1) {
           this.numProposals = numProposals
         }
-        console.log(+numProposals)
-      }, 5000)
+      }, 60 * 1000)
     },
   },
   created () {
