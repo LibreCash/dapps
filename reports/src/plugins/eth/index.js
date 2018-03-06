@@ -46,7 +46,7 @@ class ETH {
       this._web3.eth.getAccounts(function(err, accounts) {
         window.web3.eth.defaultAccount = accounts[0]
       })
-      
+
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
       .at(ETH.reportAddress())
 
@@ -65,11 +65,18 @@ class ETH {
         // token wrapper for MetaMask
         this.tokenContract = new Proxy(this._tokenContract, { get: (token, name) => this.promisifyContract(token, name) })
       })
-      
+
       this._daoContract = this._web3.eth.contract(JSON.parse(Config.dao.abi))
       .at(Config.dao.address)
 
       this.daoContract = new Proxy(this._daoContract, { get: (dao, name) => this.promisifyContract(dao, name) })
+
+      this.promiseLibre = this.daoContract.sharesTokenAddress().then(address => {
+        this._libre = this._web3.eth.contract(JSON.parse(Config.erc20.abi))
+        .at(address)
+
+        this.libre = new Proxy(this._libre, { get: (libre, name) => this.promisifyContract(libre, name)})
+      })
     } catch (err) {
       console.log(err)
     }

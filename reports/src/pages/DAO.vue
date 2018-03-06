@@ -5,6 +5,9 @@
         <h2 class="subtitle">DAO Proposal</h2>
       </div>
       <br>
+      <div>Address: {{ defaultAddress }}</div>
+      <div>Tokens count: {{ tokensCount }} LBRS</div>
+      <br>
       <dao-table :tableData='searchData'></dao-table>
       <router-link :to="{ path: '/dao/new_proposal' }">New Proposal</router-link>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
@@ -26,7 +29,9 @@ export default {
       owner: false,
       reportNumber: 0,
       searchData: [],
-      isLoading: false
+      isLoading: false,
+      defaultAddress: window.web3.eth.defaultAccount,
+      tokensCount: ''
     }
   },
   methods: {
@@ -110,11 +115,18 @@ export default {
     },
     async mayVote () {
       this.owner = await this.$eth.mayVote()
+    },
+
+    async getTokensCount() {
+      await this.$eth.promiseLibre;
+
+      this.tokensCount = +await this.$eth.libre.balanceOf(this.defaultAddress) / 10 **18;
     }
   },
   created () {
     try {
       this.loadProposals()
+      this.getTokensCount()
     } catch (err) {
       console.log(err)
     }
