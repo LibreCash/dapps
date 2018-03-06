@@ -1,5 +1,8 @@
 <template>
   <div id="DaoTable">
+    <div v-if="needUpdate">
+      The table isn't actual. Please, update the page
+    </div>
     <b-table
       :data="isEmpty ? [] : tableData"
       :bordered="isBordered"
@@ -45,7 +48,6 @@
           </span>
           <span v-else-if="props.row.deadlineUnix <= curBlockchainTime">
             outdated
-            <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
             <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
           </span>
           <span v-else-if="props.row.votingData.voted">
@@ -99,11 +101,6 @@ export default {
             alert("execute proposal failed")
           }
           row.loading = false
-          /*this.$eth.getVotingData(row.id).then((vData) => {
-            row.yea = +vData.yea / 10**18
-            row.nay = +vData.nay / 10**18
-            row.votingData = vData
-          })*/
         }).catch((err) => {
           alert(`error ${err} ${hash}`)
           row.loading = false
@@ -124,14 +121,27 @@ export default {
         this.updateBlockTime()
       }, 10 * 60 * 1000 /*10 minutes */)
       this.updateBlockTime()
+      this.numProposals = -1
+      this.updateTableData = setInterval(async () => {
+        var numProposals = +(await this.$eth.daoContract.numProposals())
+        if (numProposals != this.numProposals && this.numProposals != -1) {
+          this.needUpdate = true
+          clearInterval(this.updateTableData)
+        }
+        if (this.numProposals == -1) {
+          this.numProposals = numProposals
+        }
+        console.log(+numProposals)
+      }, 5000)
     },
   },
   created () {
-    this.startUpdatingTime()
+    this.startUpdatingTime()    
   },
   destroyed () {
     clearInterval(this.updatingTicker)
     clearInterval(this.updatingBlockData)
+    clearInterval(this.updateTableData)
   },
   data () {
     return {
@@ -146,7 +156,8 @@ export default {
       isResponsive: true,
       currentPage: 1,
       perPage: 5,
-      curBlockchainTime: 0
+      curBlockchainTime: 0,
+      needUpdate: false
     }
   }
 }

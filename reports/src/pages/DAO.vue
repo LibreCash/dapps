@@ -99,13 +99,28 @@ export default {
                 deadlineUnix: vote.deadline,
                 deadline: new Date(vote.deadline * 1000).toLocaleString(),
                 description: proposal[struct.description],
-                loading: false
+                loading: false,
+                update: function () {
+                  console.log(i)
+                },
+                updateTimer: null
             })
           }
         }
       } catch (err) {
         console.log(err)
       }
+      this.searchData.forEach(element => {
+        element.updateTimer = setInterval(async () => {
+          // we can check type of proposal, but we won't
+          // the changing of the type can be seen in another timer by detecting change of numProposals
+          var vote = await this.$eth.getVotingData(element.id)
+          element.yea = vote.yea / 10**18
+          element.nay = vote.nay / 10**18
+          element.votingData = vote
+        }, 60 * 1000 + Math.random() * 5000)
+      });
+
       this.isLoading = false
     },
     async loadETH () {
@@ -134,6 +149,11 @@ export default {
     } catch (err) {
       console.log(err)
     }
+  },
+  destroyed () {
+    this.searchData.forEach(element => {
+      clearInterval(element.updateTimer)
+    })
   },
   components: {
     DaoTable,
