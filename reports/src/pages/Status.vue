@@ -5,13 +5,13 @@
         <h2 class="subtitle">LibreBank Status Page</h2>
       </div>
       <br>
-      <div class="half-width">
-        <div id="piechart"></div>
-      </div>
-      <div class="half-width">
-        <div>Min diff is {{ minCoin.name }} ({{ minCoin.change24h.toLocaleString() }} USD)</div>
-        <div>Max diff is {{ maxCoin.name }} ({{ maxCoin.change24h.toLocaleString() }} USD)</div>
-        <div>Total balance change24h: {{ allChange24h.toLocaleString() }} USD</div>
+      <div class="columns is-vcentered table-padding">
+        <div id="piechart" class="column is-gapless chart-height"></div>
+        <div class="column">
+          <div>Min diff is {{ minCoin.name }} ({{ minCoin.change24h.toLocaleString() }} USD)</div>
+          <div>Max diff is {{ maxCoin.name }} ({{ maxCoin.change24h.toLocaleString() }} USD)</div>
+          <div>Total balance change24h: {{ allChange24h.toLocaleString() }} USD</div>
+        </div>
       </div>
       <div class="table-padding">
         <h3 class="subtitle"><center>Balances</center></h3>
