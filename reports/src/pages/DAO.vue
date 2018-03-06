@@ -5,11 +5,15 @@
         <h2 class="subtitle">DAO Proposal</h2>
       </div>
       <br>
-      <div>Address: {{ defaultAddress }}</div>
-      <div>Tokens count: {{ tokensCount }} LBRS</div>
+      <div class="table-padding">
+        <div>Address: {{ defaultAddress }}</div>
+        <div>Tokens count: {{ tokensCount }} LBRS</div>
+        <br>
+        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">New Proposal</router-link>
+      </div>
+      
       <br>
       <dao-table :tableData='searchData'></dao-table>
-      <router-link :to="{ path: '/dao/new_proposal' }">New Proposal</router-link>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
     </div>

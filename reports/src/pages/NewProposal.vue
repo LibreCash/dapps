@@ -27,6 +27,7 @@
         </b-field>
         <b-field horizontal label="Debating period" :type="isDebatingPeriod() ? '' : 'is-danger'">
             <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
+            <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
         </b-field>
         <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
             <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
@@ -53,6 +54,7 @@ export default {
       weiAmount: '',
       description: '',
       debatingPeriod: new Date(),
+      debatingTime: new Date(),
       transactionBytecode: '',
       buffer: '',
       button: {name: 'Create Proposal', disabled: true},
@@ -99,6 +101,7 @@ export default {
         return false;
       
       let debatingEnd = new Date(this.debatingPeriod);
+      debatingEnd.setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes())
 
       return (debatingEnd - now) > 0
     },
@@ -123,7 +126,8 @@ export default {
     async createProposal() {
       let txHash,
           now = new Date(),
-          debatingEnd = new Date(this.debatingPeriod),
+          debatingEnd = (new Date(this.debatingPeriod))
+          .setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes()),
           debatingPeriodInMinutes = Math.round((debatingEnd - now) / 1000 / 60);
 
       switch(this.selectedType.key) {
@@ -259,11 +263,12 @@ export default {
     beneficiary: function() {this.validData()},
     weiAmount: function() {this.validData()},
     debatingPeriod: function() {this.validData()},
+    debatingTime: function() {this.validData()},
     transactionBytecode: function() {this.validData()},
     buffer: function() {this.validData()},
     selectedType: function() {
       this.beneficiary = this.weiAmount = this.transactionBytecode = this.buffer = '';
-      this.debatingPeriod = new Date();
+      this.debatingPeriod = this.debatingTime = new Date();
     }
   }
 }
