@@ -22,6 +22,9 @@
         <b-table-column label='Balance USD' centered>
           {{ props.row.balanceUSD }}
         </b-table-column>
+        <b-table-column label='Change 24h, USD' centered>
+          {{ props.row.change24h }}
+        </b-table-column>
       </template>
       </b-table>
   </div>
