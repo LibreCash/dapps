@@ -15,7 +15,7 @@
       :pagination-simple="isPaginationSimple"
       :mobile-cards="hasMobileCards"
       :responsive="isResponsive">
-      <template slot-scope="props">
+      <template slot-scope="props" v-if="!props.row.tempHide">
         <b-table-column field="report.type" label='Type' centered>
           {{ props.row.loading ? 'loading...' : props.row.type }}
         </b-table-column>
@@ -34,7 +34,7 @@
         <b-table-column label='Description' centered>
           {{ props.row.description }}
         </b-table-column>
-        <b-table-column label='Votes Data' centered>
+        <b-table-column label='Votes' centered>
           {{ props.row.yea }} / {{ props.row.nay }}
         </b-table-column>
          <b-table-column label='Deadline' centered>
@@ -55,6 +55,9 @@
           </span>
           <span v-else>
             loading
+          </span>
+          <span v-if="isOwner">
+            <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
           </span>
         </b-table-column>
       </template>
@@ -85,9 +88,28 @@ export default {
           row.nay = +vData.nay / 10**18
           row.votingData = vData
         })
-      }).catch((err) => {
-        alert(`error ${err} ${hash}`)
+      }).catch((error) => {
+        if (!error.message.includes('User denied transaction signature')) {
+          alert(error.message)
+        }
         row.loading = false
+      })
+    },
+    block: async function (row) {
+      this.$eth.daoContract.blockingProposal(row.id).then((hash) => {
+        console.log(hash)
+        return this.$eth.getReceipt(hash)
+      }).then((result) => {
+        if (+result.status === 1) {
+          alert('block tx ok')
+          row.tempHide = true
+        } else {
+          alert('block tx failed')
+        }
+      }).catch((error) => {
+        if (!error.message.includes('User denied transaction signature')) {
+          alert(error.message)
+        }
       })
     },
     execute: async function (row) {
@@ -102,8 +124,10 @@ export default {
           alert('execute proposal failed')
         }
         row.loading = false
-      }).catch((err) => {
-        alert(`error ${err} ${hash}`)
+      }).catch((error) => {
+        if (!error.message.includes('User denied transaction signature')) {
+          alert(error.message)
+        }
         row.loading = false
       })
     },
@@ -135,7 +159,20 @@ export default {
     },
   },
   created () {
-    this.startUpdatingTime()    
+    this.startUpdatingTime()
+    this.$eth.daoContract.owner().then((owner) => {
+      this.contractOwner = owner
+      var loginChecker = setInterval(() => {
+        if (this.$eth.yourAccount != null) {
+          clearInterval(loginChecker)
+          if (owner == this.$eth.yourAccount) {
+            this.isOwner = true
+          } else {
+            this.isOwner = false
+          }
+        }
+      }, 1000)
+    })
   },
   destroyed () {
     clearInterval(this.updatingTicker)
@@ -156,7 +193,9 @@ export default {
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
-      needUpdate: false
+      needUpdate: false,
+      isOwner: false,
+      contractOwner: null
     }
   }
 }
