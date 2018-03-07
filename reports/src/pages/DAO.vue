@@ -51,12 +51,14 @@ export default {
       this.isLoading = true
       try {
         let j = await this.$eth.proposalCounter()
+        let activeProposalShown = 0
         for (let i = j - 1; i > 0; --i) {
           var 
             proposal = await this.$eth.getProposal(i),
             vote = await this.$eth.getVotingData(i)
           if (+proposal[struct.type] !== 0 /* CLEAN */)
           {
+            if (++activeProposalShown > 10) this.isLoading = false
             this.searchData.push({
                 id: i,
                 type: this.$libre.typeProposals[proposal[struct.type]].key,
@@ -71,9 +73,6 @@ export default {
                 deadline: new Date(vote.deadline * 1000).toLocaleString(),
                 description: proposal[struct.description],
                 loading: false,
-                update: function () {
-                  console.log(i)
-                },
                 updateTimer: null
             })
           }

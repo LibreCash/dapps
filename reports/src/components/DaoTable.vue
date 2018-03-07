@@ -111,8 +111,8 @@ export default {
       }).catch((error) => {
         if (!error.message.includes('User denied transaction signature')) {
           alert(error.message)
-          row.loading = false
         }
+        row.loading = false
       })
     },
     execute: async function (row) {
@@ -153,6 +153,7 @@ export default {
         var numProposals = +(await this.$eth.daoContract.numProposals())
         if (numProposals !== this.numProposals && this.numProposals !== -1) {
           this.needUpdate = true
+          console.log('you need update')
           clearInterval(this.updateTableData)
         }
         if (this.numProposals === -1) {
