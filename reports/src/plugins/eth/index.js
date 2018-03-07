@@ -46,6 +46,18 @@ class ETH {
       this._web3.eth.getAccounts((err, accounts) => {
         this._web3.eth.defaultAccount = accounts[0]
         this.yourAccount = accounts[0]
+        // if not logged in
+        if (this.yourAccount == null) {
+          this.loginTimer = setInterval(() => {
+            this._web3.eth.getAccounts((err, accounts) => {
+              if (accounts.length !== 0) {
+                this._web3.eth.defaultAccount = accounts[0]
+                this.yourAccount = accounts[0]
+                clearInterval(this.loginTimer)
+              }
+            })
+          }, 1000)
+        }
       })
 
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
