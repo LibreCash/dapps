@@ -59,7 +59,7 @@ export default {
       buffer: '',
       button: {name: 'Create Proposal', disabled: true},
       typeProposals: [
-        //{text: 'Clean', key: 'CLEAN', fields:[]}, // 
+        // {text: 'Clean', key: 'CLEAN', fields:[]}, // 
         {text: 'Universal', key: 'UNIVERSAL', benef:'Beneficiary',amount:'Amount Wei',code:'Bytecode'},
         {text: 'Transfer ownership', key: 'TRANSFER_OWNERSHIP', benef:'New Owner'},
         {text: 'Set buy limits', key:'SET_BUY_LIMITS', amount:'Min Buy In Wei',buf:'Max Buy In Wei'},

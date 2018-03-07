@@ -6,18 +6,22 @@
       </div>
       <br>
       <div class="columns is-vcentered table-padding">
-        <div id="piechart" class="column is-gapless chart-height"></div>
         <div class="column">
+        <h3 class="subtitle has-text-centered">Assets structure</h3>
+        <div id="piechart" class="column is-gapless chart-height"></div>
+        </div>
+        <div class="column">
+          <h3 class="subtitle has-text-centered">Overall stats:</h3>
           <div>Min diff is {{ minCoin.name }} ({{ minCoin.change24h.toLocaleString() }} USD)</div>
           <div>Max diff is {{ maxCoin.name }} ({{ maxCoin.change24h.toLocaleString() }} USD)</div>
-          <div>Total balance change24h: {{ allChange24h.toLocaleString() }} USD</div>
+          <div>Total change (24h): {{ allChange24h.toLocaleString() }} USD</div>
         </div>
       </div>
       <div class="table-padding">
-        <h3 class="subtitle"><center>Balances</center></h3>
+        <h3 class="subtitle"><center>LibreBank Fund Assests:</center></h3>
         <status-coins :tableData='coinsData'></status-coins>
         <br>
-        <h3 class="subtitle"><center>Exchanger status</center></h3>
+        <h3 class="subtitle"><center>Contract status</center></h3>
         <status-bank :tableData='exchangerData'></status-bank>
       </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
