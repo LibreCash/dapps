@@ -49,24 +49,24 @@ export default {
       currentPage: 1,
       perPage: 5,
       typeProposals: [
-        // {text: 'Clean', key: 'CLEAN', fields:[]}, // 
-        {text: 'Universal', key: 'UNIVERSAL', benef:'Beneficiary:',amount:'Amount Wei:',code:'Bytecode:'},
-        {text: 'Transfer ownership', key: 'TRANSFER_OWNERSHIP', benef:'New Owner:'},
-        {text: 'Set buy limits', key:'SET_BUY_LIMITS', amount:'Min Buy In Wei:',buf:'Max Buy In Wei:'},
-        {text: 'Set sell limits', key:'SET_SELL_LIMITS', amount:'Min Sell In Wei:',buf:'Max Sell In Wei:'},
-        {text: 'Cancel buy order', key:'CANCEL_BUY_ORDER', amount:'Order ID:'},
-        {text: 'cancel sell order', key: 'CANCEL_SELL_ORDER', amount:'Order ID:'},
-        {text: 'Attach token', key: 'ATTACH_TOKEN', benef:'Token Address:'},
-        {text: 'Set bank address', key:'SET_BANK_ADDRESS', benef:'Bank Address:'},
-        {text: 'Set relevance period', key: 'RELEVANCE_PERIOD', amount:'Period in seconds:'},
-        {text: 'Set queue period', key: 'QUEUE_PERIOD', amount:'Period in seconds:'},
-        {text: 'Set fees', key: 'SET_FEES', amount:'Buy fee:', buf: 'Sell fee:'},
-        {text: 'Add oracle', key: 'ADD_ORACLE', benef:'Oracle Address:'},
-        {text: 'Disable oracle', key: 'DISABLE_ORACLE', benef:'Oracle Address:'},
-        {text: 'Enable oracle', key: 'ENABLE_ORACLE', benef:'Oracle Address:'},
-        {text: 'Delete oracle', key: 'DELETE_ORACLE', benef:'Oracle Address:'},
-        {text: 'Set scheduler', key: 'SET_SCHEDULER', benef:'Scheduler Address:'},
-        {text: 'Winthdraw balance', key: 'WITHDRAW_BALANCE'}
+        {text: 'Finished', key: 'CLEAN', fields:[]},
+        {text: 'Custom', key: 'UNIVERSAL', benef:'Beneficiary:',amount:'Amount Wei:',code:'Bytecode:'},
+        {text: 'Transfer Ownership', key: 'TRANSFER_OWNERSHIP', benef:'New Owner:'},
+        {text: 'Set Buy Limit', key:'SET_BUY_LIMITS', amount:'Min Buy In Wei:',buf:'Max Buy In Wei:'},
+        {text: 'Set Sell Limit', key:'SET_SELL_LIMITS', amount:'Min Sell In Wei:',buf:'Max Sell In Wei:'},
+        {text: 'Cancel Buy Order', key:'CANCEL_BUY_ORDER', amount:'Order ID:'},
+        {text: 'Cancel Sell Order', key: 'CANCEL_SELL_ORDER', amount:'Order ID:'},
+        {text: 'New token', key: 'ATTACH_TOKEN', benef:'Token Address:'},
+        {text: 'New Bank', key:'SET_BANK_ADDRESS', benef:'Bank Address:'},
+        {text: 'New Rate Period', key: 'RELEVANCE_PERIOD', amount:'Period in seconds:'},
+        {text: 'New Queue Period', key: 'QUEUE_PERIOD', amount:'Period in seconds:'},
+        {text: 'Changer fees', key: 'SET_FEES', amount:'Buy fee:', buf: 'Sell fee:'},
+        {text: 'Add Oracle', key: 'ADD_ORACLE', benef:'Oracle Address:'},
+        {text: 'Disable Oracle', key: 'DISABLE_ORACLE', benef:'Oracle Address:'},
+        {text: 'Enable Oracle', key: 'ENABLE_ORACLE', benef:'Oracle Address:'},
+        {text: 'Delete Oracle', key: 'DELETE_ORACLE', benef:'Oracle Address:'},
+        {text: 'Set schedule', key: 'SET_SCHEDULER', benef:'Scheduler Address:'},
+        {text: 'Withdraw balance', key: 'WITHDRAW_BALANCE'}
       ],
       currentProposal: ''
     }
@@ -80,28 +80,8 @@ export default {
         'buffer':3,
         'bytecode':4,
         'description':5
-      }
-      const TypeProposal = {
-        0: 'Finished',
-        1: 'Custom',
-        2: 'Transfer Ownership',
-        3: 'Set Buy Limit',
-        4: 'Set Sell Limit',
-        5: 'Cancel Buy Order',
-        6: 'Cancel Sell Order',
-        7: 'New token',
-        8: 'New Bank',
-        9: 'New Rate Period',
-        10: 'New Queue Period',
-        11: 'Changer fees',
-        12: 'Add oracle',
-        13: 'Disable oracle',
-        14: 'Enable Oracle',
-        15: 'Delete Oracle',
-        16: 'Set schedule',
-        17: 'Withdraw balance'
-      }
-      const zeroAddress = '0x0000000000000000000000000000000000000000'
+      },
+      zeroAddress = '0x0000000000000000000000000000000000000000'
     
       this.proposalData = []
       this.isLoading = true
@@ -113,9 +93,8 @@ export default {
             console.log("VOTE", vote)
 
           this.currentProposal = this.typeProposals[proposal[struct.type]]
-          console.log("current", this.currentProposal)
 
-          this.proposalData.push({name: 'Type:', value: TypeProposal[proposal[struct.type]]})
+          this.proposalData.push({name: 'Type:', value: this.currentProposal.text})
           if (this.currentProposal["benef"])
             this.proposalData.push({name: this.currentProposal["benef"], value: proposal[struct.recipient] === zeroAddress ? '-' : proposal[struct.recipient]})
           if (this.currentProposal["amount"])
