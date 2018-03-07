@@ -39,13 +39,6 @@ export default {
     }
   },
   methods: {
-    async newReport () {
-      try {
-        await this.$eth.addNewReport(this.reportText)
-      } catch (err) {
-        console.log(err)
-      }
-    },
     async loadProposals () {
       const struct = {
         'type':0,
@@ -55,27 +48,7 @@ export default {
         'bytecode':4,
         'description':5
       }
-      const TypeProposal = {
-        0: 'CLEAN',
-        1: 'UNIVERSAL',
-        2: 'TRANSFER_OWNERSHIP',
-        3: 'SET_BUY_LIMITS',
-        4: 'SET_SELL_LIMITS',
-        5: 'CANCEL_BUY_ORDER',
-        6: 'CANCEL_SELL_ORDE',
-        7: 'ATTACH_TOKEN',
-        8: 'SET_BANK_ADDRESS',
-        9: 'RELEVANCE_PERIOD',
-        10: 'QUEUE_PERIOD',
-        11: 'SET_FEES',
-        12: 'ADD_ORACLE',
-        13: 'DISABLE_ORACLE',
-        14: 'ENABLE_ORACLE',
-        15: 'DELETE_ORACLE',
-        16: 'SET_SCHEDULER',
-        17: 'WITHDRAW_BALANCE'
-     }
-    
+
       this.searchData = []
       this.isLoading = true
       try {
@@ -88,7 +61,7 @@ export default {
           {
             this.searchData.push({
                 id: i,
-                type: TypeProposal[proposal[struct.type]],
+                type: this.$libre.typeProposals[proposal[struct.type]].key,
                 recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
                 amount: +proposal[struct.amount],
                 buffer: +proposal[struct.buffer],
@@ -123,15 +96,7 @@ export default {
 
       this.isLoading = false
     },
-    async loadETH () {
-      this.isLoading = true
-      try {
-        await this.loadReport()
-      } catch (err) {
-        console.log(err)
-      }
-      this.isLoading = false
-    },
+
     async mayVote () {
       this.owner = await this.$eth.mayVote()
     },

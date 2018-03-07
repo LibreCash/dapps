@@ -22,10 +22,10 @@
         <b-field horizontal :label="selectedType['amount']" v-if="selectedType['amount']" :type="isInteger(weiAmount) ? '' : 'is-danger'">
             <b-input v-model="weiAmount" placeholder="0"></b-input>
         </b-field>
-        <b-field horizontal label="Description">
+        <b-field horizontal label="Description:">
             <b-input type="textarea" v-model="description"></b-input>
         </b-field>
-        <b-field horizontal label="Debating period" :type="isDebatingPeriod() ? '' : 'is-danger'">
+        <b-field horizontal label="Debating period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
             <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
             <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
         </b-field>
@@ -40,8 +40,10 @@
             </p>
         </b-field>
       </div>
+      <br>
     </section>
     </div>
+
 </template>
 
 <script>
@@ -58,26 +60,7 @@ export default {
       transactionBytecode: '',
       buffer: '',
       button: {name: 'Create Proposal', disabled: true},
-      typeProposals: [
-        // {text: 'Clean', key: 'CLEAN', fields:[]}, // 
-        {text: 'Universal', key: 'UNIVERSAL', benef:'Beneficiary',amount:'Amount Wei',code:'Bytecode'},
-        {text: 'Transfer ownership', key: 'TRANSFER_OWNERSHIP', benef:'New Owner'},
-        {text: 'Set buy limits', key:'SET_BUY_LIMITS', amount:'Min Buy In Wei',buf:'Max Buy In Wei'},
-        {text: 'Set sell limits', key:'SET_SELL_LIMITS', amount:'Min Sell In Wei',buf:'Max Sell In Wei'},
-        {text: 'Cancel buy order', key:'CANCEL_BUY_ORDER', amount:'Order ID'},
-        {text: 'cancel sell order', key: 'CANCEL_SELL_ORDER', amount:'Order ID'},
-        {text: 'Attach token', key: 'ATTACH_TOKEN', benef:'Token Address'},
-        {text: 'Set bank address', key:'SET_BANK_ADDRESS', benef:'Bank Address'},
-        {text: 'Set relevance period', key: 'RELEVANCE_PERIOD', amount:'Period in seconds'},
-        {text: 'Set queue period', key: 'QUEUE_PERIOD', amount:'Period in seconds'},
-        {text: 'Set fees', key: 'SET_FEES', amount:'Buy fee', buf: 'Sell fee'},
-        {text: 'Add oracle', key: 'ADD_ORACLE', benef:'Oracle Address'},
-        {text: 'Disable oracle', key: 'DISABLE_ORACLE', benef:'Oracle Address'},
-        {text: 'Enable oracle', key: 'ENABLE_ORACLE', benef:'Oracle Address'},
-        {text: 'Delete oracle', key: 'DELETE_ORACLE', benef:'Oracle Address'},
-        {text: 'Set scheduler', key: 'SET_SCHEDULER', benef:'Scheduler Address'},
-        {text: 'Winthdraw balance', key: 'WITHDRAW_BALANCE'}
-      ],
+      typeProposals: this.$libre.typeProposals.slice(1),
       selectedType: ''
     }
   },
