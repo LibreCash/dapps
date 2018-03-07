@@ -15,7 +15,7 @@ class ETH {
     this._web3 = null
     this._reportContract = null
     this._daoContract = null
-    this.updatingByCycle = false
+    this.yourAccount = null
     this.loadWeb3()
   }
 
@@ -43,8 +43,9 @@ class ETH {
         console.log('No web3? You should consider trying MetaMask!')
       }
       this._web3 = window.web3
-      this._web3.eth.getAccounts(function(err, accounts) {
-        window.web3.eth.defaultAccount = accounts[0]
+      this._web3.eth.getAccounts((err, accounts) => {
+        this._web3.eth.defaultAccount = accounts[0]
+        this.yourAccount = accounts[0]
       })
 
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))

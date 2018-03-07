@@ -56,6 +56,9 @@
           <span v-else>
             loading
           </span>
+          <span v-if="isOwner">
+            <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+          </span>
         </b-table-column>
       </template>
       </b-table>
@@ -89,6 +92,9 @@ export default {
         alert(`error ${err} ${hash}`)
         row.loading = false
       })
+    },
+    block: async function (row) {
+      console.log(row.id)
     },
     execute: async function (row) {
       var id = row.id
@@ -135,7 +141,20 @@ export default {
     },
   },
   created () {
-    this.startUpdatingTime()    
+    this.startUpdatingTime()
+    this.$eth.daoContract.owner().then((owner) => {
+      this.contractOwner = owner
+      var loginChecker = setInterval(() => {
+        if (this.$eth.yourAccount != null) {
+          clearInterval(loginChecker)
+          if (owner == this.$eth.yourAccount) {
+            this.isOwner = true
+          } else {
+            this.isOwner = false
+          }
+        }
+      }, 1000)
+    })
   },
   destroyed () {
     clearInterval(this.updatingTicker)
@@ -156,7 +175,9 @@ export default {
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
-      needUpdate: false
+      needUpdate: false,
+      isOwner: false,
+      contractOwner: null
     }
   }
 }
