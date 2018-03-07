@@ -15,7 +15,7 @@
       :pagination-simple="isPaginationSimple"
       :mobile-cards="hasMobileCards"
       :responsive="isResponsive">
-      <template slot-scope="props">
+      <template slot-scope="props" v-if="!props.row.tempHide">
         <b-table-column field="report.type" label='Type' centered>
           {{ props.row.loading ? 'loading...' : props.row.type }}
         </b-table-column>
@@ -88,13 +88,29 @@ export default {
           row.nay = +vData.nay / 10**18
           row.votingData = vData
         })
-      }).catch((err) => {
-        alert(`error ${err} ${hash}`)
+      }).catch((error) => {
+        if (!error.message.includes('User denied transaction signature')) {
+          alert(error.message)
+        }
         row.loading = false
       })
     },
     block: async function (row) {
-      console.log(row.id)
+      this.$eth.daoContract.blockingProposal(row.id).then((hash) => {
+        console.log(hash)
+        return this.$eth.getReceipt(hash)
+      }).then((result) => {
+        if (+result.status === 1) {
+          alert('block tx ok')
+          row.tempHide = true
+        } else {
+          alert('block tx failed')
+        }
+      }).catch((error) => {
+        if (!error.message.includes('User denied transaction signature')) {
+          alert(error.message)
+        }
+      })
     },
     execute: async function (row) {
       var id = row.id
@@ -108,8 +124,10 @@ export default {
           alert('execute proposal failed')
         }
         row.loading = false
-      }).catch((err) => {
-        alert(`error ${err} ${hash}`)
+      }).catch((error) => {
+        if (!error.message.includes('User denied transaction signature')) {
+          alert(error.message)
+        }
         row.loading = false
       })
     },
