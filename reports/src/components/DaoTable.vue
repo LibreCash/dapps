@@ -70,8 +70,8 @@ export default {
   props: ['tableData'],
   methods: {
     vote: async function (row, support) {
-      var id = row.id,
-          votingData = row.votingData;
+      var id = row.id
+      var votingData = row.votingData
       row.loading = true
       this.$eth.daoContract.vote(id, support).then(async (hash) => {
         return this.$eth.getReceipt(hash)
@@ -84,8 +84,8 @@ export default {
         }
         row.loading = false
         this.$eth.getVotingData(row.id).then((vData) => {
-          row.yea = +vData.yea / 10**18
-          row.nay = +vData.nay / 10**18
+          row.yea = +vData.yea / 10 ** 18
+          row.nay = +vData.nay / 10 ** 18
           row.votingData = vData
         })
       }).catch((error) => {
@@ -96,6 +96,7 @@ export default {
       })
     },
     block: async function (row) {
+      row.loading = true
       this.$eth.daoContract.blockingProposal(row.id).then((hash) => {
         console.log(hash)
         return this.$eth.getReceipt(hash)
@@ -106,9 +107,11 @@ export default {
         } else {
           alert('block tx failed')
         }
+        row.loading = false
       }).catch((error) => {
         if (!error.message.includes('User denied transaction signature')) {
           alert(error.message)
+          row.loading = false
         }
       })
     },
@@ -143,20 +146,20 @@ export default {
       }, 1000)
       this.updatingBlockData = setInterval(() => {
         this.updateBlockTime()
-      }, 10 * 60 * 1000 /*10 minutes */)
+      }, 10 * 60 * 1000 /* 10 minutes */)
       this.updateBlockTime()
       this.numProposals = -1
       this.updateTableData = setInterval(async () => {
         var numProposals = +(await this.$eth.daoContract.numProposals())
-        if (numProposals != this.numProposals && this.numProposals != -1) {
+        if (numProposals !== this.numProposals && this.numProposals !== -1) {
           this.needUpdate = true
           clearInterval(this.updateTableData)
         }
-        if (this.numProposals == -1) {
+        if (this.numProposals === -1) {
           this.numProposals = numProposals
         }
       }, 60 * 1000)
-    },
+    }
   },
   created () {
     this.startUpdatingTime()
@@ -165,7 +168,7 @@ export default {
       var loginChecker = setInterval(() => {
         if (this.$eth.yourAccount != null) {
           clearInterval(loginChecker)
-          if (owner == this.$eth.yourAccount) {
+          if (owner === this.$eth.yourAccount) {
             this.isOwner = true
           } else {
             this.isOwner = false
