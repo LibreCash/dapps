@@ -2,7 +2,7 @@
     <div>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">DAO Proposal {{ $route.params.id }}</h2>
+        <h2 class="subtitle">DAO (Draft) Proposal {{ $route.params.id }}</h2>
       </div>
       <br>
       <dao-proposal :tableData='proposalData'></dao-proposal>
@@ -37,25 +37,26 @@ export default {
         'description':5
       }
       const TypeProposal = {
-        0: 'CLEAN',
-        1: 'UNIVERSAL',
-        2: 'TRANSFER_OWNERSHIP',
-        3: 'SET_BUY_LIMITS',
-        4: 'SET_SELL_LIMITS',
-        5: 'CANCEL_BUY_ORDER',
-        6: 'CANCEL_SELL_ORDE',
-        7: 'ATTACH_TOKEN',
-        8: 'SET_BANK_ADDRESS',
-        9: 'RELEVANCE_PERIOD',
-        10: 'QUEUE_PERIOD',
-        11: 'SET_FEES',
-        12: 'ADD_ORACLE',
-        13: 'DISABLE_ORACLE',
-        14: 'ENABLE_ORACLE',
-        15: 'DELETE_ORACLE',
-        16: 'SET_SCHEDULER',
-        17: 'WITHDRAW_BALANCE'
+        0: 'Finished',
+        1: 'Custom',
+        2: 'Transfer Ownership',
+        3: 'Set Buy Limit',
+        4: 'Set Sell Limit',
+        5: 'Cancel Buy Order',
+        6: 'Cancel Sell Order',
+        7: 'New token',
+        8: 'New Bank',
+        9: 'New Rate Period',
+        10: 'New Queue Period',
+        11: 'Changer fees',
+        12: 'Add oracle',
+        13: 'Disable oracle',
+        14: 'Enable Oracle',
+        15: 'Delete Oracle',
+        16: 'Set schedule',
+        17: 'Withdraw balance'
       }
+      const zeroAddress = '0x0000000000000000000000000000000000000000'
     
       this.proposalData = []
       this.isLoading = true
@@ -67,7 +68,7 @@ export default {
             console.log("VOTE", vote)
           this.proposalData.push({
               type: TypeProposal[proposal[struct.type]],
-              recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
+              recipient: proposal[struct.recipient] === zeroAddress ? '-' : proposal[struct.recipient],
               amount: proposal[struct.amount],
               buffer: proposal[struct.buffer],
               bytecode: proposal[struct.bytecode],

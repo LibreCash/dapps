@@ -12,17 +12,17 @@
       :pagination-simple="isPaginationSimple"
       :mobile-cards="hasMobileCards">
       <template slot-scope="props">
-        <b-table-column field="report.date" label='Name' centered>
+        <b-table-column field="report.date" label='Currency' centered>
           <a :href="props.row.href" target="_blank" v-if="props.row.href">{{ props.row.name }}</a>
           <span v-else>{{ props.row.name }}</span>
         </b-table-column>
-        <b-table-column label='Balance' centered>
+        <b-table-column label='Amount' centered>
           {{ props.row.balance }}
         </b-table-column>
-        <b-table-column label='Balance USD' centered>
+        <b-table-column label='Amount (USD)' centered>
           {{ props.row.balanceUSD }}
         </b-table-column>
-        <b-table-column label='Change 24h, USD' centered>
+        <b-table-column label='Change 24h (USD)' centered>
           {{ props.row.change24h }}
         </b-table-column>
       </template>

@@ -91,9 +91,9 @@ class ETH {
   }
 
   promisifyContract (contract, name) {
-    return function() {
+    return function () {
       return new Promise((resolve, reject) => {
-        contract[name](...arguments,(err, result) => {
+        contract[name](...arguments, (err, result) => {
           err ? reject(err) : resolve(result)
         })
       })
@@ -110,7 +110,7 @@ class ETH {
 
   async getLatestBlockTime () {
     return new Promise((resolve, reject) => {
-      web3.eth.getBlock("latest", (error, dt) => {
+      web3.eth.getBlock('latest', (error, dt) => {
         if (error) reject(error)
         resolve(dt.timestamp)
       })
@@ -121,7 +121,7 @@ class ETH {
   async getReceipt (txHash) {
     var that = this
     return new Promise((resolve, reject) => {
-      var i = 1;
+      var i = 1
       var checkInterval = setInterval(function () {
         that._web3.eth.getTransactionReceipt(txHash, (err, receipt) => {
           if (err) {
