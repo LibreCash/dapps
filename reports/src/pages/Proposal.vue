@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import DaoProposal from '@/components/DAOProposal'
 import BRadioButton from 'buefy/src/components/radio/RadioButton'
 
 export default {
@@ -148,7 +147,6 @@ export default {
     }
   },
   components: {
-    DaoProposal,
     BRadioButton
   }
 }
