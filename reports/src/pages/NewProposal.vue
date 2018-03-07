@@ -113,124 +113,131 @@ export default {
           .setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes()),
           debatingPeriodInMinutes = Math.round((debatingEnd - now) / 1000 / 60);
 
-      switch(this.selectedType.key) {
-        //case 'CLEAN': break;
-        case 'UNIVERSAL':
-          txHash = await this.$eth.daoContract.proposalUniversal(
-            this.beneficiary, 
-            this.weiAmount,
-            this.description,
-            debatingPeriodInMinutes,
-            this.transactionBytecode)
-          break;
-        case 'TRANSFER_OWNERSHIP':
-          txHash = await this.$eth.daoContract.proposalTransferOwnership(
-            this.beneficiary, 
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'SET_BUY_LIMITS':
-          txHash = await this.$eth.daoContract.proposalSetBuyLimits(
-            this.weiAmount,
-            this.buffer,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'SET_SELL_LIMITS':
-          txHash = await this.$eth.daoContract.proposalSetSellLimits(
-            this.weiAmount,
-            this.buffer,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'CANCEL_BUY_ORDER':
-          txHash = await this.$eth.daoContract.proposalCancelBuyOrder(
-            this.weiAmount,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'CANCEL_SELL_ORDER':
-          txHash = await this.$eth.daoContract.proposalCancelSellOrder(
-            this.weiAmount,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'ATTACH_TOKEN':
-          txHash = await this.$eth.daoContract.proposalAttachToken(
-            this.beneficiary,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'SET_BANK_ADDRESS':
-          txHash = await this.$eth.daoContract.proposalBankAddress(
-            this.beneficiary,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'RELEVANCE_PERIOD':
-          txHash = await this.$eth.daoContract.proposalRelevancePeriod(
-            this.weiAmount,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'QUEUE_PERIOD':
-          txHash = await this.$eth.daoContract.proposalQueuePeriod(
-            this.weiAmount,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'SET_FEES':
-          txHash = await this.$eth.daoContract.proposalFees(
-            this.weiAmount,
-            this.buffer,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'ADD_ORACLE':
-          txHash = await this.$eth.daoContract.proposalAddOracle(
-            this.beneficiary,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'DISABLE_ORACLE':
-          txHash = await this.$eth.daoContract.proposalDisableOracle(
-            this.beneficiary,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'ENABLE_ORACLE':
-          txHash = await this.$eth.daoContract.proposalEnableOracle(
-            this.beneficiary,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'DELETE_ORACLE':
-          txHash = await this.$eth.daoContract.proposalDeleteOracle(
-            this.beneficiary,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'SET_SCHEDULER':
-          txHash = await this.$eth.daoContract.proposalScheduler(
-            this.beneficiary,
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-        case 'WITHDRAW_BALANCE':
-          txHash = await this.$eth.daoContract.proposalWithdrawBalance(
-            this.description,
-            debatingPeriodInMinutes)
-          break;
-      }
-
       this.button = {name: 'Pending...', disabled: true}
+
       try {
-        console.log(txHash)
-        await this.$eth.getReceipt(txHash)
-        this.$router.push('/dao')
+        switch(this.selectedType.key) {
+          //case 'CLEAN': break;
+          case 'UNIVERSAL':
+            txHash = await this.$eth.daoContract.proposalUniversal(
+              this.beneficiary, 
+              this.weiAmount,
+              this.description,
+              debatingPeriodInMinutes,
+              this.transactionBytecode)
+            break;
+          case 'TRANSFER_OWNERSHIP':
+            txHash = await this.$eth.daoContract.proposalTransferOwnership(
+              this.beneficiary, 
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_BUY_LIMITS':
+            txHash = await this.$eth.daoContract.proposalSetBuyLimits(
+              this.weiAmount,
+              this.buffer,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_SELL_LIMITS':
+            txHash = await this.$eth.daoContract.proposalSetSellLimits(
+              this.weiAmount,
+              this.buffer,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'CANCEL_BUY_ORDER':
+            txHash = await this.$eth.daoContract.proposalCancelBuyOrder(
+              this.weiAmount,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'CANCEL_SELL_ORDER':
+            txHash = await this.$eth.daoContract.proposalCancelSellOrder(
+              this.weiAmount,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'ATTACH_TOKEN':
+            txHash = await this.$eth.daoContract.proposalAttachToken(
+              this.beneficiary,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_BANK_ADDRESS':
+            txHash = await this.$eth.daoContract.proposalBankAddress(
+              this.beneficiary,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'RELEVANCE_PERIOD':
+            txHash = await this.$eth.daoContract.proposalRelevancePeriod(
+              this.weiAmount,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'QUEUE_PERIOD':
+            txHash = await this.$eth.daoContract.proposalQueuePeriod(
+              this.weiAmount,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_FEES':
+            txHash = await this.$eth.daoContract.proposalFees(
+              this.weiAmount,
+              this.buffer,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'ADD_ORACLE':
+            txHash = await this.$eth.daoContract.proposalAddOracle(
+              this.beneficiary,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'DISABLE_ORACLE':
+            txHash = await this.$eth.daoContract.proposalDisableOracle(
+              this.beneficiary,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'ENABLE_ORACLE':
+            txHash = await this.$eth.daoContract.proposalEnableOracle(
+              this.beneficiary,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'DELETE_ORACLE':
+            txHash = await this.$eth.daoContract.proposalDeleteOracle(
+              this.beneficiary,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_SCHEDULER':
+            txHash = await this.$eth.daoContract.proposalScheduler(
+              this.beneficiary,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'WITHDRAW_BALANCE':
+            txHash = await this.$eth.daoContract.proposalWithdrawBalance(
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+        }
+
+        let result = await this.$eth.getReceipt(txHash);
+        if (+result.status === 1) {
+          this.$router.push('/dao')
+        } else {
+          alert('tx failed')
+        }
       }
-      catch(e) {
-        console.log(e);
+      catch(error) {
+        console.log(error)
+        if (!error.message.includes('User denied transaction signature')) {
+          alert(error.message)
+        }
         this.button = {name: 'Create Proposal', disabled: true}
       }
     }

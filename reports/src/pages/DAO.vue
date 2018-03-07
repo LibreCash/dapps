@@ -11,7 +11,6 @@
         <br>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">New Proposal</router-link>
       </div>
-      
       <br>
       <dao-table :tableData='searchData'></dao-table>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
@@ -23,7 +22,6 @@
 
 <script>
 import DaoTable from '@/components/DaoTable'
-import BRadioButton from 'buefy/src/components/radio/RadioButton'
 // replace it to dao data
 export default {
   data () {
@@ -121,8 +119,7 @@ export default {
     })
   },
   components: {
-    DaoTable,
-    BRadioButton
+    DaoTable
   }
 }
 </script>

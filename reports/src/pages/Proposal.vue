@@ -21,6 +21,8 @@
             </b-table-column>
           </template>
         </b-table>
+        <button class="button is-success" v-on:click="yeaProposal()">Yea</button>
+        <button class="button is-danger" v-on:click="nayProposal()">Nay</button>
       </div>
       
     </section>
@@ -28,8 +30,6 @@
 </template>
 
 <script>
-import BRadioButton from 'buefy/src/components/radio/RadioButton'
-
 export default {
   data () {
     return {
@@ -70,8 +70,6 @@ export default {
           var 
             proposal = await this.$eth.getProposal(this.$route.params.id),
             vote = await this.$eth.getVotingData(this.$route.params.id)
-            console.log("PROP", proposal)
-            console.log("VOTE", vote)
 
           this.currentProposal = this.typeProposals[proposal[struct.type]]
 
@@ -92,12 +90,13 @@ export default {
         console.log(err)
       }
       this.isLoading = false
-      
-
     },
     async mayVote () {
       this.owner = await this.$eth.mayVote()
-    }
+    },
+
+    yeaProposal() {},
+    nayProposal() {}
   },
   created () {
     try {
@@ -105,9 +104,6 @@ export default {
     } catch (err) {
       console.log(err)
     }
-  },
-  components: {
-    BRadioButton
   }
 }
 </script>
