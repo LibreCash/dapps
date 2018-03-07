@@ -34,7 +34,7 @@
         <b-table-column label='Description' centered>
           {{ props.row.description }}
         </b-table-column>
-        <b-table-column label='Votes Data' centered>
+        <b-table-column label='Votes' centered>
           {{ props.row.yea }} / {{ props.row.nay }}
         </b-table-column>
          <b-table-column label='Deadline' centered>
