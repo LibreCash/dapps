@@ -153,6 +153,7 @@ export default {
         var numProposals = +(await this.$eth.daoContract.numProposals())
         if (numProposals !== this.numProposals && this.numProposals !== -1) {
           this.needUpdate = true
+          console.log('you need update')
           clearInterval(this.updateTableData)
         }
         if (this.numProposals === -1) {
