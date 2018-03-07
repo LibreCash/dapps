@@ -75,9 +75,9 @@ export default {
       }).then((result) => {
         if (+result.status === 1) {
           votingData.voted = true
-          alert("vote tx ok")
+          alert('vote tx ok')
         } else {
-          alert("vote tx failed")
+          alert('vote tx failed')
         }
         row.loading = false
         this.$eth.getVotingData(row.id).then((vData) => {
@@ -97,9 +97,9 @@ export default {
         return this.$eth.getReceipt(hash)
       }).then((result) => {
         if (+result.status === 1) {
-          alert("execute proposal ok")
+          alert('execute proposal ok')
         } else {
-          alert("execute proposal failed")
+          alert('execute proposal failed')
         }
         row.loading = false
       }).catch((err) => {
