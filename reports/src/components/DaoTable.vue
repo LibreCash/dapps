@@ -111,8 +111,8 @@ export default {
       }).catch((error) => {
         if (!error.message.includes('User denied transaction signature')) {
           alert(error.message)
-          row.loading = false
         }
+        row.loading = false
       })
     },
     execute: async function (row) {
