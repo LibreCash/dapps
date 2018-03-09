@@ -4,9 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import './plugins/buefy'
-import './plugins/eth'
-import './plugins/scroll'
 import './plugins/libre'
+import './plugins/scroll'
 
 Vue.config.productionTip = false
 

@@ -1,5 +1,6 @@
 /* eslint-disable no-trailing-spaces */
 import Vue from 'vue'
+import '../eth'
 
 class Libre {
   static install (vue, options) {

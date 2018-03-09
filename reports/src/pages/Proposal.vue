@@ -6,6 +6,10 @@
       </div>
       <br>
       <div class="table-padding">
+        <router-link :to="{ path: '/dao' }" class="button">
+          <b-icon icon="keyboard-return" size="is-small"></b-icon>&nbsp;&nbsp;&nbsp;&nbsp;Back
+        </router-link>
+        <span class="icon arrow-left"><i class="arrow-left"></i></span>
         <b-table :data="isEmpty ? [] : proposalData"
           :bordered="isBordered"
           :striped="isStriped"
@@ -21,8 +25,11 @@
             </b-table-column>
           </template>
         </b-table>
-        <button class="button is-success" v-on:click="yeaProposal()">Yea</button>
-        <button class="button is-danger" v-on:click="nayProposal()">Nay</button>
+        <div class="has-text-centered">
+          <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote">Yea</button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote">Nay</button>
+        </div>
+        
       </div>
       
     </section>
@@ -49,7 +56,8 @@ export default {
       currentPage: 1,
       perPage: 5,
       typeProposals: this.$libre.typeProposals,
-      currentProposal: ''
+      currentProposal: '',
+      disVote: false
     }
   },
   methods: {
@@ -85,18 +93,35 @@ export default {
           this.proposalData.push({name: 'Voting:', value: `${vote.yea / 10 ** 18}/${vote.nay / 10 ** 18}`})
           this.proposalData.push({name: 'Deadline:', value: new Date(vote.deadline * 1000).toLocaleString()})
           this.proposalData.push({name: 'Description:', value: proposal[struct.description]})
-          console.log(vote)
+
+          this.disVote = (new Date(vote.deadline * 1000) <= (new Date()) || vote.voted) ? true : false
       } catch (err) {
         console.log(err)
       }
       this.isLoading = false
     },
-    async mayVote () {
-      this.owner = await this.$eth.mayVote()
-    },
 
-    yeaProposal() {},
-    nayProposal() {}
+    async vote (support) {
+      try {
+        let txHash = await this.$eth.daoContract.vote(this.proposalId, support),
+          result = await this.$eth.getReceipt(txHash);
+
+        if (+result.status === 1) {
+          alert('vote tx ok')
+        } else {
+          alert('vote tx failed')
+        }
+
+        this.$eth.getVotingData(this.proposalId).then((vData) => {
+          this.loadProposal()
+        })
+      } catch(error) {
+        if (!error.message.includes('User denied transaction signature')) {
+          alert(error.message)
+        }
+        row.loading = false
+      }
+    }
   },
   created () {
     try {
