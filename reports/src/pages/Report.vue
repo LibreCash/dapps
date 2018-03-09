@@ -1,22 +1,24 @@
 <template>
     <div>
-    <section v-if="owner" class="">
-      <b-field>
-        <b-input
-          v-model="reportText"
-          type="input"
-          placeholder='Write Report'>
-        </b-input>
-      </b-field>
-      <a class="button is-info" v-on:click="newReport">Submit</a>
-    </section>
-    <section class="allMain">
-      <div class="h2-contain">           
-        <h2 class="subtitle">Reports History</h2>
-      </div>
-      <search-results :tableData='searchData'></search-results>
-      <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
-    </section>
+      <section class="allMain">
+        <div class="h2-contain">
+          <h2 class="subtitle">Reports History</h2>
+        </div>
+        <br>
+        <section v-if="owner" class="table-padding">
+          <b-field>
+            <b-input
+              v-model="reportText"
+              type="textarea"
+              placeholder='Write Report'>
+            </b-input>
+          </b-field>
+          <a class="button is-info" v-on:click="newReport">Submit</a>
+        </section>
+        <br>
+        <search-results :tableData='searchData'></search-results>
+        <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
+      </section>
     </div>
 </template>
 
