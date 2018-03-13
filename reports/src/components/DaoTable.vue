@@ -39,6 +39,9 @@
         </b-table-column>
          <b-table-column label='Deadline' centered>
           {{ props.row.deadline }}
+          <span v-if="props.row.deadlineUnix <= curBlockchainTime">
+            outdated
+          </span>
         </b-table-column>
         <b-table-column label='Actions' centered>
           <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
@@ -47,7 +50,6 @@
             <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
           </span>
           <span v-else-if="props.row.deadlineUnix <= curBlockchainTime">
-            outdated
             <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
           </span>
           <span v-else-if="props.row.votingData.voted">
