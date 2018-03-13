@@ -26,8 +26,8 @@
           </template>
         </b-table>
         <div class="has-text-centered">
-          <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote">Yea</button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote">Nay</button>
+          <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
         </div>
         
       </div>
