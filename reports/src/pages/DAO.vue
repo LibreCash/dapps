@@ -1,3 +1,4 @@
+
 <template>
     <div>
     <section class="allMain">
@@ -58,10 +59,10 @@ export default {
             vote = await this.$eth.getVotingData(i)
           if (+proposal[struct.type] !== 0 /* CLEAN */)
           {
-            if (++activeProposalShown > 10) this.isLoading = false
+            if (++activeProposalShown == 10) this.isLoading = false
             this.searchData.push({
                 id: i,
-                type: this.$libre.typeProposals[proposal[struct.type]].key,
+                type: this.$libre.typeProposals[proposal[struct.type]].text,
                 recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
                 amount: +proposal[struct.amount],
                 buffer: +proposal[struct.buffer],
