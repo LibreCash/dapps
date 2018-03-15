@@ -20,9 +20,6 @@
       <div class="table-padding">
         <h3 class="subtitle"><center>LibreBank Fund Assests:</center></h3>
         <status-coins :tableData='coinsData'></status-coins>
-        <br>
-        <h3 class="subtitle"><center>Contract status</center></h3>
-        <status-bank :tableData='exchangerData'></status-bank>
       </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
@@ -30,28 +27,23 @@
 
 <script>
 import StatusCoins from '@/components/StatusCoins'
-import StatusBank from '@/components/StatusBank'
 import Config from '@/config'
 export default {
   data () {
     return {
       coinsData: [],
-      exchangerData: [],
       statisticsData: [],
       allBalances: 0,
       allChange24h: 0,
       maxCoin: {name:'',change24h:0},
       minCoin: {name:'',change24h:0},
       isLoading: false,
-      isLoadingBalance: false,
-      isLoadingBank: false
     }
   },
   methods: {
     async getBalancesData () {
       this.coinsData = []
       this.isLoading = true
-      this.isLoadingBalance = true
 
       var coins = Config.balance.coins
 
@@ -121,47 +113,7 @@ export default {
       this.maxCoin = maxCoin;
       this.minCoin = minCoin;
 
-      this.isLoadingBalance = false
-
-      if (!this.isLoadingBank) {
-        this.isLoading = false
-      }
-    },
-
-    async getStatusBank () {
-      this.isLoadingBank = true
-
-      var
-        exchanger = this.$eth.bankContract,
-        status = Config.bank.status
-
-      this.exchangerData.push({
-        type: 'input',
-        name: 'LibreExchanger',
-        data: Config.bank.address
-      })
-
-      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]()
-        .catch(e => 'error')))
-
-      for (let i = 0; i < status.length; i++) {
-        this.exchangerData.push({
-          type: status[i].type,
-          name: status[i].name,
-          data: dataBank[i] !== 'error' ? status[i].process(dataBank[i]) : '-'
-        })
-      }
-
-      let totalSupply = await this.$eth.tokenContract.totalSupply().catch(e => 'error')
-      this.exchangerData.push({
-        name: 'All tokens',
-        data: totalSupply !== 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'
-      })
-
-      this.isLoadingBank = false
-
-      if (!this.isLoadingBalance)
-        this.isLoading = false
+      this.isLoading = false
     },
 
     drawChart() {
@@ -185,15 +137,12 @@ export default {
   created () {
     try {
       this.getBalancesData()
-      this.getStatusBank()
-
     } catch (err) {
       console.log(err)
     }
   },
   components: {
-    StatusCoins,
-    StatusBank
+    StatusCoins
   }
 }
 </script>

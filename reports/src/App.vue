@@ -18,9 +18,15 @@
               </router-link>
             </li>
             <li>
+              <router-link to="/fund">
+              <div class="Rectangle"></div>
+              <span>Fund Status</span>
+              </router-link>
+            </li>
+						<li>
               <router-link to="/status">
               <div class="Rectangle"></div>
-              <span>Status</span>
+              <span>Contract Status</span>
               </router-link>
             </li>
 						<li>
@@ -43,26 +49,6 @@ export default {
 }
 </script>
 <style>
-
-@font-face {
-	font-family: 'GothamProMedium';
-	src: url('/static/fonts/GothamProMedium.woff') format('woff');
-}
-
-@font-face {
-	font-family: 'GothamProRegular';
-	src: url('/static/fonts/GothamProRegular.woff') format('woff');
-}
-
-@font-face {
-	font-family: 'GothamProLight';
-	src: url('/static/fonts/GothamProLight.woff') format('woff');
-}
-
-@font-face {
-	font-family: 'GothamProBold';
-	src: url('/static/fonts/GothamProBold.woff') format('woff');
-}
 
 .eth-address {
   font-size: 1em;
