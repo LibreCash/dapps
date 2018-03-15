@@ -62,39 +62,54 @@ export default {
   },
   methods: {
     async loadProposal () {
-      const struct = {
-        'type':0,
-        'recipient':1,
-        'amount':2,
-        'buffer':3,
-        'bytecode':4,
-        'description':5
-      },
-      zeroAddress = '0x0000000000000000000000000000000000000000'
+      const 
+        struct = this.$libre.proposalStruct
+        zeroAddress = '0x0000000000000000000000000000000000000000'
     
       this.proposalData = []
       this.isLoading = true
+
       try {
-          var 
+          let 
             proposal = await this.$eth.getProposal(this.$route.params.id),
             vote = await this.$eth.getVotingData(this.$route.params.id)
 
           this.currentProposal = this.typeProposals[proposal[struct.type]]
-
+          
           this.proposalData.push({name: 'Type:', value: this.currentProposal.text})
-          if (this.currentProposal["benef"])
-            this.proposalData.push({name: this.currentProposal["benef"], value: proposal[struct.recipient] === zeroAddress ? '-' : proposal[struct.recipient]})
-          if (this.currentProposal["amount"])
-            this.proposalData.push({name: this.currentProposal["amount"], value: `${proposal[struct.amount]}`})
-          if (this.currentProposal["buf"])
-            this.proposalData.push({name: this.currentProposal["buf"], value: `${proposal[struct.buffer]}`})
-          if (this.currentProposal["code"])
-            this.proposalData.push({name: this.currentProposal["code"], value: proposal[struct.bytecode]})
-          this.proposalData.push({name: 'Voting:', value: `${vote.yea / 10 ** 18}/${vote.nay / 10 ** 18}`})
-          this.proposalData.push({name: 'Deadline:', value: new Date(vote.deadline * 1000).toLocaleString()})
-          this.proposalData.push({name: 'Description:', value: proposal[struct.description]})
 
-          this.disVote = (new Date(vote.deadline * 1000) <= (new Date()) || vote.voted) ? true : false
+          // Refactor it 
+          if (this.currentProposal["benef"])
+            this.proposalData.push({
+              name: this.currentProposal["benef"], 
+              value: proposal[struct.recipient] === zeroAddress ? '-' : proposal[struct.recipient]
+            })
+          
+          if (this.currentProposal["amount"])
+            this.proposalData.push({
+              name: this.currentProposal["amount"], 
+              value: `${proposal[struct.amount]}`
+            })
+          
+          if (this.currentProposal["buf"])
+            this.proposalData.push({
+              name: this.currentProposal["buf"], 
+              value: `${proposal[struct.buffer]}`
+            })
+
+          if (this.currentProposal["code"])
+            this.proposalData.push({
+              name: this.currentProposal["code"], 
+              value: proposal[struct.bytecode]
+            })
+          
+          this.proposalData.push(
+            {name: 'Voting:', value: `${vote.yea / 10 ** 18}/${vote.nay / 10 ** 18}`},
+            {name: 'Deadline:', value: new Date(vote.deadline * 1000).toLocaleString()},
+            {name: 'Description:', value: proposal[struct.description]}
+          )
+
+          this.disVote = (this.$eth.toTimestamp(vote.deadline) <= (Date.now()) || vote.voted) ? true : false
       } catch (err) {
         console.log(err)
       }
@@ -103,22 +118,18 @@ export default {
 
     async vote (support) {
       try {
-        let txHash = await this.$eth.daoContract.vote(this.proposalId, support),
-          result = await this.$eth.getReceipt(txHash);
+        let 
+          txHash = await this.$eth.daoContract.vote(this.proposalId, support),
+          result = this.$eth.isSucces(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
 
-        if (+result.status === 1) {
-          alert('vote tx ok')
-        } else {
-          alert('vote tx failed')
-        }
-
-        this.$eth.getVotingData(this.proposalId).then((vData) => {
-          this.loadProposal()
-        })
+        alert(result) // Replace it to notify
+        this.$eth.getVotingData(this.proposalId).then((vData) => this.loadProposal())
+        
       } catch(error) {
-        if (!error.message.includes('User denied transaction signature')) {
+        if(!this.$eth.hasRejected(error)) {
           alert(error.message)
         }
+        
         row.loading = false
       }
     }

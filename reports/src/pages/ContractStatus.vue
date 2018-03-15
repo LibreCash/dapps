@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import StatusCoins from '@/components/StatusCoins'
 import StatusBank from '@/components/StatusBank'
 import Config from '@/config'
 export default {

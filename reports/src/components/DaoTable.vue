@@ -71,70 +71,67 @@
 export default {
   props: ['tableData'],
   methods: {
-    vote: async function (row, support) {
-      var id = row.id
-      var votingData = row.votingData
+    async vote (row, support) {
+      let 
+        id = row.id,
+        votingData = row.votingData
+
       row.loading = true
-      this.$eth.daoContract.vote(id, support).then(async (hash) => {
-        return this.$eth.getReceipt(hash)
-      }).then((result) => {
-        if (+result.status === 1) {
-          votingData.voted = true
-          alert('vote tx ok')
-        } else {
-          alert('vote tx failed')
+      try {
+        let 
+          txHash = await this.$eth.daoContract.vote(id, support),
+          message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
+          alert(message)
+      }catch(e) {
+        if(!this.$eth.hasRejected(e)) alert(e.message)
+      }
+      
+      row.loading = false
+
+      try {
+        let voteData =  await this.$eth.getVotingData(row.id);
+        row = {
+          yea: +vData.yea / 10 ** 18,
+          nay: +vData.nay / 10 ** 18,
+          votingData: voteData // Check that we needed it
         }
-        row.loading = false
-        this.$eth.getVotingData(row.id).then((vData) => {
-          row.yea = +vData.yea / 10 ** 18
-          row.nay = +vData.nay / 10 ** 18
-          row.votingData = vData
-        })
-      }).catch((error) => {
-        if (!error.message.includes('User denied transaction signature')) {
-          alert(error.message)
-        }
-        row.loading = false
-      })
+      } catch(e) {
+        if(!this.$eth.hasRejected(e))
+          alert(e.message) 
+      }
+      row.loading = false
+    
     },
-    block: async function (row) {
+    async block (row) {
       row.loading = true
-      this.$eth.daoContract.blockingProposal(row.id).then((hash) => {
-        console.log(hash)
-        return this.$eth.getReceipt(hash)
-      }).then((result) => {
-        if (+result.status === 1) {
-          alert('block tx ok')
-          row.tempHide = true
-        } else {
-          alert('block tx failed')
-        }
-        row.loading = false
-      }).catch((error) => {
-        if (!error.message.includes('User denied transaction signature')) {
-          alert(error.message)
-        }
-        row.loading = false
-      })
+
+      try {
+      let 
+        txHash = await this.$eth.daoContract.blockingProposal(row.id)
+        message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
+        alert(message);
+      }catch(e) {
+        if(!this.$eth.hasRejected(e))
+          alert(e.message)
+      }
+      row.loading = false
+    }
     },
-    execute: async function (row) {
-      var id = row.id
+    async execute: async function (row) {
       row.loading = true
-      this.$eth.daoContract.executeProposal(id).then(async (hash) => {
-        return this.$eth.getReceipt(hash)
-      }).then((result) => {
-        if (+result.status === 1) {
-          alert('execute proposal ok')
-        } else {
-          alert('execute proposal failed')
-        }
-        row.loading = false
-      }).catch((error) => {
-        if (!error.message.includes('User denied transaction signature')) {
-          alert(error.message)
-        }
-        row.loading = false
-      })
+      let 
+        id = row.id;
+      
+      try {
+        txHash = await this.$eth.daoContract.executeProposal(id)
+        message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
+        alert(message)
+      } catch(e) {
+        if(!this.$eth.hasRejected(e))
+          alert(e.message);
+      }
+      row.loading = false
+      
     },
     updateBlockTime: function () {
       this.$eth.getLatestBlockTime().then((timestamp) => {

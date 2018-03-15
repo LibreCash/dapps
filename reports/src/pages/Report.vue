@@ -77,7 +77,7 @@ export default {
       this.isLoading = false
     },
     async canVote (number) {
-      return true;
+      return true
     }
   },
   created () {

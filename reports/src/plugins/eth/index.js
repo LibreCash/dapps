@@ -220,6 +220,20 @@ class ETH {
     return this._web3.utils.isAddress(addr)
   }
 
+  hasRejected (error) {
+    const METAMASK_REJECT_MESSAGE = 'User denied transaction signature'
+    return error.message.includes(METAMASK_REJECT_MESSAGE)
+  }
+
+  toTimestamp (solidityTimestamp) {
+    return solidityTimestamp * 1000
+  }
+
+  async isSuccess (hash) {
+    let tx = await this._web3.getReceipt(hash)
+    return tx.status === 1
+  }
+
   getBlockNumber () {
     return new Promise((resolve, reject) => {
       this._web3.eth.getBlockNumber((err, blockNumber) => {
