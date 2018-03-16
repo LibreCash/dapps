@@ -53,16 +53,6 @@ class Libre {
         benef: 'Bank Address:'
       },
       {
-        text: 'New Rate Period', 
-        key: 'RELEVANCE_PERIOD', 
-        amount: 'Period in seconds:'
-      },
-      {
-        text: 'New Queue Period', 
-        key: 'QUEUE_PERIOD', 
-        amount: 'Period in seconds:'
-      },
-      {
         text: 'Changer fees', 
         key: 'SET_FEES', 
         amount: 'Buy fee:', 
@@ -96,6 +86,30 @@ class Libre {
       {
         text: 'Withdraw balance', 
         key: 'WITHDRAW_BALANCE'
+      },
+      {
+        text: 'New oracle timeout',
+        key: 'SET_ORACLE_TIMEOUT',
+        amount: 'Period:'
+      },
+      {
+        text: 'Oracle actual time',
+        key: 'SET_ORACLE_ACTUAL',
+        amount: 'Period:'
+      },
+      {
+        text: 'New rate period',
+        key: 'SET_RATE_PERIOD',
+        amount: 'Period:'
+      },
+      {
+        text: 'Set lock',
+        key: 'SET_LOCK',
+        lock: 'Lock:'
+      },
+      {
+        text: 'Claim ownership',
+        key: 'CLAIM_OWNERSHIP'
       }
     ]
   }

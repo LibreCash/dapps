@@ -22,6 +22,12 @@
         <b-field horizontal :label="selectedType['amount']" v-if="selectedType['amount']" :type="isInteger(weiAmount) ? '' : 'is-danger'">
             <b-input v-model="weiAmount" placeholder="0"></b-input>
         </b-field>
+        <b-field horizontal :label="selectedType['lock']" v-if="selectedType['lock']">
+          <b-select v-model="lock">
+            <option>true</option>
+            <option>false</option>
+          </b-select>
+        </b-field>
         <b-field horizontal label="Description:">
             <b-input type="textarea" v-model="description"></b-input>
         </b-field>
@@ -59,6 +65,7 @@ export default {
       debatingTime: new Date(),
       transactionBytecode: '',
       buffer: '',
+      lock: false,
       button: {name: 'Create Proposal', disabled: true},
       typeProposals: this.$libre.typeProposals.slice(1),
       selectedType: ''
@@ -146,18 +153,6 @@ export default {
               this.description,
               debatingPeriodInMinutes)
             break;
-          case 'RELEVANCE_PERIOD':
-            txHash = await this.$eth.daoContract.proposalRelevancePeriod(
-              this.weiAmount,
-              this.description,
-              debatingPeriodInMinutes)
-            break;
-          case 'QUEUE_PERIOD':
-            txHash = await this.$eth.daoContract.proposalQueuePeriod(
-              this.weiAmount,
-              this.description,
-              debatingPeriodInMinutes)
-            break;
           case 'SET_FEES':
             txHash = await this.$eth.daoContract.proposalFees(
               this.weiAmount,
@@ -197,6 +192,35 @@ export default {
             break;
           case 'WITHDRAW_BALANCE':
             txHash = await this.$eth.daoContract.proposalWithdrawBalance(
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_ORACLE_TIMEOUT':
+            txHash = await this.$eth.daoContract.proposalOracleTimeout(
+              this.amount,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_ORACLE_ACTUAL':
+            txHash = await this.$eth.daoContract.proposalOracleActual(
+              this.amount,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_RATE_PERIOD':
+            txHash = await this.$eth.daoContract.proposalRatePeriod(
+              this.amount,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'SET_LOCK':
+            txHash = await this.$eth.daoContract.proposalLock(
+              this.lock === 'true' ? 1 : 0,
+              this.description,
+              debatingPeriodInMinutes)
+            break;
+          case 'CLAIM_OWNERSHIP':
+            txHash = await this.$eth.daoContract.proposalClaimOwnership(
               this.description,
               debatingPeriodInMinutes)
             break;
