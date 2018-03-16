@@ -40,11 +40,15 @@ export default {
       let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]()
         .catch(e => 'error')))
 
-      status.forEach((item,i)=>this.emissionStatus.push({
+      status.forEach((item,i)=>{
+        console.log(item.name)
+        console.log(status[i].process)
+        this.emissionStatus.push({
           type: item.type,
           name: item.name,
           data: dataBank[i] !== 'error' ? status[i].process(dataBank[i]) : '-'
-      }))
+        })
+      })
   
 
       let totalSupply = await this.$eth.tokenContract.totalSupply().catch(e => 'error')

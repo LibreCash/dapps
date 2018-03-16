@@ -91,8 +91,8 @@ export default {
       try {
         let voteData =  await this.$eth.getVotingData(row.id);
         row = {
-          yea: +vData.yea / 10 ** 18,
-          nay: +vData.nay / 10 ** 18,
+          yea: +voteData.yea / 10 ** 18,
+          nay: +voteData.nay / 10 ** 18,
           votingData: voteData // Check that we needed it
         }
       } catch(e) {
@@ -117,10 +117,12 @@ export default {
       row.loading = false
     }
     },
-    async execute: async function (row) {
+
+    async execute(row) {
       row.loading = true
+      
       let 
-        id = row.id;
+        id = row.id
       
       try {
         txHash = await this.$eth.daoContract.executeProposal(id)
@@ -133,12 +135,11 @@ export default {
       row.loading = false
       
     },
-    updateBlockTime: function () {
-      this.$eth.getLatestBlockTime().then((timestamp) => {
-        this.curBlockchainTime = +timestamp
-      })
+    async updateBlockTime() {
+      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
     },
-    startUpdatingTime: function () {
+
+    startUpdatingTime() {
       this.curBlockchainTime = 0
       this.updatingTicker = setInterval(() => {
         this.curBlockchainTime++
@@ -159,10 +160,9 @@ export default {
           this.numProposals = numProposals
         }
       }, 60 * 1000)
-    }
   },
   created () {
-    this.startUpdatingTime()
+    //this.startUpdatingTime()
     this.$eth.daoContract.owner().then((owner) => {
       this.contractOwner = owner
       var loginChecker = setInterval(() => {
@@ -178,9 +178,13 @@ export default {
     })
   },
   destroyed () {
-    clearInterval(this.updatingTicker)
-    clearInterval(this.updatingBlockData)
-    clearInterval(this.updateTableData)
+    let intrevals = [
+      this.updatingTicker,
+      this.updatingBlockData,
+      this.updateTableData
+    ]
+
+    intrevals.forEach((interval) => clearInterval(interval))
   },
   data () {
     return {

@@ -230,8 +230,10 @@ class ETH {
   }
 
   async isSuccess (hash) {
-    let tx = await this._web3.getReceipt(hash)
-    return tx.status === 1
+    console.log(`Check transaction success: ${hash}`)
+    let tx = await this.getReceipt(hash)
+    console.log(`Tx success ? ${tx.status === "0x1"}`)
+    return tx.status === "0x1"
   }
 
   getBlockNumber () {
