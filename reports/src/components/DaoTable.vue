@@ -83,7 +83,11 @@ export default {
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
           alert(message)
       }catch(e) {
-        if(!this.$eth.hasRejected(e)) alert(e.message)
+        if(!this.$eth.hasRejected(e)) 
+          if (e.message) {
+            alert(e.message)
+          } else alert(e)
+          
       }
       
       row.loading = false
@@ -97,7 +101,9 @@ export default {
         }
       } catch(e) {
         if(!this.$eth.hasRejected(e))
-          alert(e.message) 
+          if (e.message) {
+            alert(e.message)
+          } else alert(e)
       }
       row.loading = false
     
@@ -112,7 +118,9 @@ export default {
         alert(message);
       }catch(e) {
         if(!this.$eth.hasRejected(e))
-          alert(e.message)
+          if (e.message) {
+            alert(e.message)
+          } else alert(e)
       }
       row.loading = false
     },
@@ -124,12 +132,15 @@ export default {
         id = row.id
       
       try {
-        txHash = await this.$eth.daoContract.executeProposal(id)
+        let txHash = await this.$eth.daoContract.executeProposal(id)
         message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
         alert(message)
       } catch(e) {
         if(!this.$eth.hasRejected(e))
-          alert(e.message);
+          if (e.message)
+            alert(e.message);
+          else
+            alert(e);
       }
       row.loading = false
       
