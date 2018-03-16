@@ -66,27 +66,35 @@ module.exports = {
       },
       {
         name: 'Oracle timeout',
-        getter: 'oracleTimeout'
+        getter: 'oracleTimeout',
+        process: data => +data
       },
       {
         name: 'Oracle actual',
-        getter: 'oracleActual'
+        getter: 'oracleActual',
+        process: data => `${+data} sec`
       },
       {
         name: 'Rate period',
-        getter: 'ratePeriod'
+        getter: 'ratePeriod',
+        process: data => `${+data} sec`
       },
       {
+        type: 'input',
         name: 'Arbitrator',
-        getter: 'owner'
+        getter: 'owner',
+        process: data => data
       },
       {
+        type: 'input',
         name: 'Scheduler',
-        getter: 'scheduler'
+        getter: 'scheduler',
+        process: data => data
       },
       {
         name: 'Reserve percent',
-        getter: 'getReservePercent'
+        getter: 'getReservePercent',
+        process: data => `${+data} %`
       }
     ]
   },
