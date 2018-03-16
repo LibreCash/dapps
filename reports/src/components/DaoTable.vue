@@ -115,7 +115,6 @@ export default {
           alert(e.message)
       }
       row.loading = false
-    }
     },
 
     async execute(row) {
@@ -160,9 +159,10 @@ export default {
           this.numProposals = numProposals
         }
       }, 60 * 1000)
+    }
   },
   created () {
-    //this.startUpdatingTime()
+    this.startUpdatingTime()
     this.$eth.daoContract.owner().then((owner) => {
       this.contractOwner = owner
       var loginChecker = setInterval(() => {

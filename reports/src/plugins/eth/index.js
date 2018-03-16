@@ -223,7 +223,10 @@ class ETH {
   hasRejected (error) {
     const METAMASK_REJECT_MESSAGE = 'User denied transaction signature'
     console.log(`Transaction was rejected by user`)
-    return error.message.includes(METAMASK_REJECT_MESSAGE)
+    if (error.message)
+      return error.message.includes(METAMASK_REJECT_MESSAGE)
+
+    return false;
   }
 
   toTimestamp (solidityTimestamp) {
