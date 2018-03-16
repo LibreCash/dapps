@@ -2,7 +2,7 @@
     <div>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">DAO (Draft) Proposal {{ $route.params.id }}</h2>
+        <h2 class="subtitle">DAO Proposal #{{ $route.params.id }}</h2>
       </div>
       <br>
       <div class="table-padding">
@@ -64,7 +64,6 @@ export default {
     async loadProposal () {
       const 
         struct = this.$libre.proposalStruct
-        zeroAddress = '0x0000000000000000000000000000000000000000'
     
       this.proposalData = []
       this.isLoading = true
@@ -72,7 +71,8 @@ export default {
       try {
           let 
             proposal = await this.$eth.getProposal(this.$route.params.id),
-            vote = await this.$eth.getVotingData(this.$route.params.id)
+            vote = await this.$eth.getVotingData(this.$route.params.id),
+            zeroAddress = '0x0000000000000000000000000000000000000000'
 
           this.currentProposal = this.typeProposals[proposal[struct.type]]
           

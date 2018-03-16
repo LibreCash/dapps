@@ -67,7 +67,7 @@ module.exports = {
       {
         name: 'Oracle timeout',
         getter: 'oracleTimeout',
-        process: data => +data
+        process: data => `${+data} sec`
       },
       {
         name: 'Oracle actual',

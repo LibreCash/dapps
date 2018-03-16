@@ -41,8 +41,6 @@ export default {
         .catch(e => 'error')))
 
       status.forEach((item,i)=>{
-        console.log(item.name)
-        console.log(status[i].process)
         this.emissionStatus.push({
           type: item.type,
           name: item.name,
