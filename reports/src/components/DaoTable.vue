@@ -1,5 +1,5 @@
 <template>
-  <div id="DaoTable">
+  <div id="DaoTable" class="table-padding">
     <b-message type="is-warning" v-if="needUpdate">
       The table isn't actual. Please update the page
     </b-message>
@@ -83,11 +83,7 @@ export default {
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
           alert(message)
       }catch(e) {
-        if(!this.$eth.hasRejected(e)) 
-          if (e.message) {
-            alert(e.message)
-          } else alert(e)
-          
+        alert(this.$eth.getErrorMsg(e)) 
       }
       
       row.loading = false
@@ -100,10 +96,7 @@ export default {
           votingData: voteData // Check that we needed it
         }
       } catch(e) {
-        if(!this.$eth.hasRejected(e))
-          if (e.message) {
-            alert(e.message)
-          } else alert(e)
+        alert(this.$eth.getErrorMsg(e))
       }
       row.loading = false
     
@@ -117,10 +110,7 @@ export default {
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
         alert(message);
       }catch(e) {
-        if(!this.$eth.hasRejected(e))
-          if (e.message) {
-            alert(e.message)
-          } else alert(e)
+        alert(this.$eth.getErrorMsg(e))
       }
       row.loading = false
     },
@@ -136,11 +126,7 @@ export default {
         message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
         alert(message)
       } catch(e) {
-        if(!this.$eth.hasRejected(e))
-          if (e.message)
-            alert(e.message);
-          else
-            alert(e);
+        alert(this.$eth.getErrorMsg(e))
       }
       row.loading = false
       

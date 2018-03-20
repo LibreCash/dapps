@@ -11,25 +11,25 @@
             <img src="static/img/logo.png" width="200" height="180"/>
           </a>
           <ul class="MenuLeft">
-            <li>
+            <!--li>
               <router-link to="/">
                 <div class="Rectangle"></div>
                 <span>Reports</span>
               </router-link>
-            </li>
+            </li-->
             <li>
               <router-link to="/fund">
               <div class="Rectangle"></div>
               <span>Fund Status</span>
               </router-link>
             </li>
-						<li>
+            <li>
               <router-link to="/status">
               <div class="Rectangle"></div>
               <span>Contract Status</span>
               </router-link>
             </li>
-						<li>
+            <li>
               <router-link to="/dao">
               <div class="Rectangle"></div>
               <span>DAO</span>

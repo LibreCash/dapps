@@ -126,9 +126,7 @@ export default {
         this.$eth.getVotingData(this.proposalId).then((vData) => this.loadProposal())
         
       } catch(error) {
-        if(!this.$eth.hasRejected(error)) {
-          alert(error.message)
-        }
+        alert(this.$eth.getErrorMsg(e))
         
         row.loading = false
       }

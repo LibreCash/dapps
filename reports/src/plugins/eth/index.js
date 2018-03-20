@@ -16,12 +16,14 @@ class ETH {
     this._reportContract = null
     this._daoContract = null
     this.yourAccount = null
+    this.metamask = false
     this.loadWeb3()
   }
 
   loadWeb3 () {
     try {
       if (typeof web3 !== 'undefined') {
+        this.metamask = true;
         window.web3 = new Web3(window.web3.currentProvider)
         web3.version.getNetwork((error, result) => {
           if (error) alert(error)
@@ -220,13 +222,24 @@ class ETH {
     return this._web3.utils.isAddress(addr)
   }
 
-  hasRejected (error) {
-    const METAMASK_REJECT_MESSAGE = 'User denied transaction signature'
-    console.log(`Transaction was rejected by user`)
-    if (error.message)
-      return error.message.includes(METAMASK_REJECT_MESSAGE)
+  getErrorMsg (error) {
+    const LOCK_WALLET = 'Please, unlock you wallet!',
+          METAMASK_REJECT_MESSAGE = 'User denied transaction signature';
 
-    return false;
+    if (!this.metamask)
+      return 'Please, install MetaMask for use it!'
+
+    if (error.message) {
+      if (error.message.includes(METAMASK_REJECT_MESSAGE))
+        return 'Transaction was rejected by user'
+      if (error.message.includes('Unknown address'))
+        return LOCK_WALLET
+    } else {
+      if (error.includes('invalid address'))
+        return LOCK_WALLET
+    }
+
+    return 'Unknown Error!'
   }
 
   toTimestamp (solidityTimestamp) {

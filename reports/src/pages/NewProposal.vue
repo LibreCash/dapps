@@ -233,9 +233,7 @@ export default {
         }
       }
       catch(error) {
-        if (!this.$eth.hasRejected(error)) {
-          alert(error)
-        }
+        alert(this.$eth.getErrorMsg(e))
         this.button = {name: 'Create Proposal', disabled: true}
       }
     }
