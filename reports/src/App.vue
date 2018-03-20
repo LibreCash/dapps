@@ -267,7 +267,10 @@ input.address {
   min-height: 200px;
 }
 
- 
+.b-table > div.level{
+  justify-content: center;
+}
+
 #app {
   font-family: 'GothamProRegular', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
