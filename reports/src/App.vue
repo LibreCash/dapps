@@ -8,7 +8,7 @@
         </button>
         <div class="LeftNav" id="navMenu">
           <a href="#" class="logo">
-            <img src="static/img/logo.png" width="200" height="180"/>
+            <img src="static/img/logo.svg" width="200" height="180"/>
           </a>
           <ul class="MenuLeft">
             <!--li>
