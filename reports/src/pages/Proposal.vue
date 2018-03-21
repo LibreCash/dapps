@@ -7,9 +7,9 @@
       <br>
       <div class="table-padding">
         <router-link :to="{ path: '/dao' }" class="button">
-          <b-icon icon="keyboard-return" size="is-small"></b-icon>&nbsp;&nbsp;&nbsp;&nbsp;Back
+          <b-icon icon="keyboard-return" size="is-small"></b-icon>
+          <span>Back</span>
         </router-link>
-        <span class="icon arrow-left"><i class="arrow-left"></i></span>
         <b-table :data="isEmpty ? [] : proposalData"
           :bordered="isBordered"
           :striped="isStriped"
@@ -25,9 +25,13 @@
             </b-table-column>
           </template>
         </b-table>
-        <div class="has-text-centered">
-          <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>&nbsp;&nbsp;&nbsp;&nbsp;
-          <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
+        <div class="columns">
+          <div class="column">
+            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>
+          </div>
+          <div class="column">
+            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
+          </div>
         </div>
         
       </div>
@@ -141,3 +145,9 @@ export default {
   }
 }
 </script>
+
+<style>
+button.is-success {
+  float: right;
+}
+</style>

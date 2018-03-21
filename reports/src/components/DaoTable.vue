@@ -3,6 +3,8 @@
     <b-message type="is-warning" v-if="needUpdate">
       The table isn't actual. Please update the page
     </b-message>
+    <button class="button">Update table</button>
+    <button class="button">All</button>
     <b-table
       :data="isEmpty ? [] : tableData"
       :bordered="isBordered"
