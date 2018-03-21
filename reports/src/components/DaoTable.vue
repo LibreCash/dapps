@@ -84,7 +84,7 @@ export default {
         let 
           txHash = await this.$eth.daoContract.vote(id, support),
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
-          alert(message)
+        alert(message)
       }catch(e) {
         alert(this.$eth.getErrorMsg(e)) 
       }
@@ -92,12 +92,10 @@ export default {
       row.loading = false
 
       try {
-        let voteData =  await this.$eth.getVotingData(row.id);
-        row = {
-          yea: +voteData.yea / 10 ** 18,
-          nay: +voteData.nay / 10 ** 18,
-          votingData: voteData // Check that we needed it
-        }
+        let voteData = await this.$eth.getVotingData(row.id);
+        row.yea = +voteData.yea / 10 ** 18
+        row.nay = +voteData.nay / 10 ** 18
+        row.votingData = voteData
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
@@ -178,13 +176,13 @@ export default {
     })
   },
   destroyed () {
-    let intrevals = [
+    let intervals = [
       this.updatingTicker,
       this.updatingBlockData,
       this.updateTableData
     ]
 
-    intrevals.forEach((interval) => clearInterval(interval))
+    intervals.forEach((interval) => clearInterval(interval))
   },
   data () {
     return {
