@@ -105,6 +105,10 @@ class ETH {
     return Config.dao.address
   }
 
+  static loansAddress () {
+    return Config.loans.address
+  }
+
   promisifyContract (contract, name) {
     return function () {
       return new Promise((resolve, reject) => {

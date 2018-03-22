@@ -3,6 +3,7 @@ import Router from 'vue-router'
 //import Report from '@/pages/Report'
 import FundStatus from '@/pages/FundStatus'
 import DAO from '@/pages/DAO'
+import Loans from '@/pages/Loans'
 import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
 import ContractStatus from '@/pages/ContractStatus'
@@ -31,6 +32,11 @@ export default new Router({
       path: '/dao',
       name: 'LibreBank DAO',
       component: DAO
+    },
+    {
+      path: '/loans',
+      name: 'LibreBank Loans',
+      component: Loans
     },
     {
       path: '/dao/proposal/:id',
