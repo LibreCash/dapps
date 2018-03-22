@@ -64,7 +64,7 @@ class ETH {
 
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
       .at(ETH.reportAddress())
-
+      
       this._bankContract = this._web3.eth.contract(JSON.parse(Config.bank.abi))
       .at(Config.bank.address)
 

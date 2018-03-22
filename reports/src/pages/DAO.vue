@@ -23,7 +23,7 @@
 
 <script>
 import DaoTable from '@/components/DaoTable'
-// replace it to dao data
+
 export default {
   data () {
     return {
@@ -38,54 +38,54 @@ export default {
     }
   },
   methods: {
-    async loadProposals () {
-      const struct = {
-        'type':0,
-        'recipient':1,
-        'amount':2,
-        'buffer':3,
-        'bytecode':4,
-        'description':5
+
+    async addProposal (index) {
+      console.log(this.$libre.proposals[index]);
+      var 
+        proposal = this.$libre.proposals[index].proposal,
+        vote = {
+          yea: this.$libre.proposals[index].vote[this.$libre.voteStruct.yea],
+          nay: this.$libre.proposals[index].vote[this.$libre.voteStruct.nay],
+          voted: this.$libre.proposals[index].vote[this.$libre.voteStruct.voted],
+          deadline: this.$libre.proposals[index].vote[this.$libre.voteStruct.deadline]
+        }
+
+      if (+proposal[this.$libre.proposalStruct.type] !== 0 /* CLEAN */)
+      {
+        if (this.searchData.length == 10) this.isLoading = false
+        this.searchData.push({
+            id: index,
+            type: this.$libre.typeProposals[proposal[this.$libre.proposalStruct.type]].text,
+            recipient: proposal[this.$libre.proposalStruct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[this.$libre.proposalStruct.recipient],
+            amount: +proposal[this.$libre.proposalStruct.amount],
+            buffer: +proposal[this.$libre.proposalStruct.buffer],
+            bytecode: proposal[this.$libre.proposalStruct.bytecode],
+            votingData: vote,
+            yea: vote.yea / 10 ** 18,
+            nay: vote.nay / 10 ** 18,
+            deadlineUnix: vote.deadline,
+            deadline: new Date(vote.deadline * 1000).toLocaleString(),
+            description: proposal[this.$libre.proposalStruct.description],
+            loading: false,
+            updateTimer: null
+        })
       }
+    },
+
+    async loadProposals () {
 
       this.searchData = []
       this.isLoading = true
-      try {
-        let j = await this.$eth.proposalCounter()
-        let activeProposalShown = 0
-        for (let i = j - 1; i > 0; --i) {
-          var 
-            proposal = await this.$eth.getProposal(i),
-            vote = await this.$eth.getVotingData(i)
-          if (+proposal[struct.type] !== 0 /* CLEAN */)
-          {
-            if (++activeProposalShown == 10) this.isLoading = false
-            this.searchData.push({
-                id: i,
-                type: this.$libre.typeProposals[proposal[struct.type]].text,
-                recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
-                amount: +proposal[struct.amount],
-                buffer: +proposal[struct.buffer],
-                bytecode: proposal[struct.bytecode],
-                votingData: vote,
-                yea: vote.yea / 10 ** 18,
-                nay: vote.nay / 10 ** 18,
-                deadlineUnix: vote.deadline,
-                deadline: new Date(vote.deadline * 1000).toLocaleString(),
-                description: proposal[struct.description],
-                loading: false,
-                updateTimer: null
-            })
-          }
-        }
-      } catch (err) {
-        console.log(err)
-      }
+      
+      await this.$libre.updateProposals(this.addProposal);
+      if (this.searchData.length == 0)
+        this.$libre.proposals.reverse().forEach((proposal,i) => this.addProposal(i))
+
       this.searchData.forEach(element => {
         element.updateTimer = setInterval(async () => {
           // we can check type of proposal, but we won't
           // the changing of the type can be seen in another timer by detecting change of numProposals
-          var vote = await this.$eth.getVotingData(element.id)
+          var vote = await this.$libre.dao.getVotingData(element.id)
           element.yea = vote.yea / 10 ** 18
           element.nay = vote.nay / 10 ** 18
           element.votingData = vote
