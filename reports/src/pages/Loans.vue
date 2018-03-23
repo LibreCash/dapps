@@ -7,7 +7,7 @@
       </div>
       <br>
       <div class="table-padding">
-        <div>Loans conatract addresss: {{ loansAddress }}</div>
+        <div>Loans contract address: {{ loansAddress }}</div>
       </div>
       <br>
       <loans-table :tableData='searchData'></loans-table>
@@ -25,7 +25,7 @@ import config from '@/config'
 export default {
   data () {
     return {
-      loansAddress: this.$eth.loansAddress,
+      loansAddress: this.$eth.loansAddress(),
       reportText: '',
       owner: false,
       reportNumber: 0,
@@ -42,9 +42,11 @@ export default {
       this.searchData = [],
       this.isLoading = true
       try {
-        let j = await this.$eth.getLoansCount()
+        let loansCount = await this.$eth.getLoansCount()
+        let libreLoansCount = loansCount[0],
+            ethLoansCount = loansCount[1];
         let activeProposalShown = 0
-        for (let i = j - 1; i > 0; --i) {
+        for (let i = ethLoansCount - 1; i > 0; --i) {
           var 
             loan = await this.$eth.getLoanEth(i)
           {
@@ -52,11 +54,14 @@ export default {
             this.searchData.push({
                 id: i,
                 type:'eth',
-                timestamp:loan[struct.timestamp],
-                deadline:loan[struct.deadline],
-                amount:loan[struct.amount],
-                margin:loan[struct.margin],
-                status:loan[struct.status]
+                holder: loan[struct.holder],
+                recipient: loan[struct.recipient],
+                timestamp: loan[struct.timestamp],
+                period: loan[struct.period],
+                amount: loan[struct.amount],
+                margin: loan[struct.margin],
+                refund: loan[struct.refund],
+                status: loan[struct.status]
             })
           }
         }

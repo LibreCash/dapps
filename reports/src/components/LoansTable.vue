@@ -19,11 +19,17 @@
         <b-table-column label='Type' centered>
           {{ props.row.type }}
         </b-table-column>
+        <b-table-column label='Holder' centered>
+          {{ props.row.holder }}
+        </b-table-column>
+        <b-table-column label='Recipient' centered>
+          {{ props.row.recipient }}
+        </b-table-column>
         <b-table-column label='Date' centered>
           {{ props.row.timestamp }}
         </b-table-column>
         <b-table-column label='Loan Period' centered>
-          {{ props.row.p }}
+          {{ props.row.period }}
         </b-table-column>
         <b-table-column label='Amount' centered>
           {{ props.row.amount }}
@@ -35,7 +41,7 @@
           {{ props.row.refund }}
         </b-table-column>
         <b-table-column label='Status' centered>
-          {{ props.row.refund }}
+          {{ props.row.status }}
         </b-table-column>
       </template>
       </b-table>

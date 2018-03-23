@@ -112,7 +112,7 @@ class ETH {
     return Config.dao.address
   }
 
-  static loansAddress () {
+  loansAddress () {
     return Config.loans.address
   }
 
