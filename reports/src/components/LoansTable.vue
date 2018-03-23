@@ -22,8 +22,8 @@
         <b-table-column label='Date' centered>
           {{ props.row.timestamp }}
         </b-table-column>
-        <b-table-column label='Deadline' centered>
-          {{ props.row.deadline }}
+        <b-table-column label='Loan Period' centered>
+          {{ props.row.p }}
         </b-table-column>
         <b-table-column label='Amount' centered>
           {{ props.row.amount }}
@@ -31,8 +31,11 @@
         <b-table-column label='Margin' centered>
           {{ props.row.margin }}
         </b-table-column>
+        <b-table-column label='Refund' centered>
+          {{ props.row.refund }}
+        </b-table-column>
         <b-table-column label='Status' centered>
-          {{ props.row.status }}
+          {{ props.row.refund }}
         </b-table-column>
       </template>
       </b-table>
