@@ -62,7 +62,7 @@ class ETH {
           }, 1000)
         }
       })
-      // Rewrote it with map on array of contracts
+      // Rewrite it with map on array of contracts
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
       .at(ETH.reportAddress())
 
@@ -314,7 +314,7 @@ class ETH {
   }
 
   fromWei (amount) {
-    return this._web3.utils.fromWei(amount)
+    return this._web3.fromWei(amount)
   }
 }
 

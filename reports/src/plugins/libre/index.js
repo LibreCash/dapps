@@ -32,8 +32,8 @@ class Libre {
     }
 
     this.loansType = {
-      'libre': 0,
-      'eth': 1
+      'Libre': 0,
+      'ETH': 1
     }
 
     this.loansStatus = [

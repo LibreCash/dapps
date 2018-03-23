@@ -16,14 +16,17 @@
       :mobile-cards="hasMobileCards"
       :responsive="isResponsive">
       <template slot-scope="props" v-if="!props.row.tempHide">
-        <b-table-column label='Type' centered>
-          {{ props.row.type }}
+        <b-table-column label='Holder' centered v-if="props.row.holder == '-'">
+            not set
         </b-table-column>
-        <b-table-column label='Holder' centered>
-          {{ props.row.holder }}
+        <b-table-column label='Holder' centered v-else>
+          <a :href="'https://rinkeby.etherscan.io/address/'+props.row.holder">address</a>
         </b-table-column>
-        <b-table-column label='Recipient' centered>
-          {{ props.row.recipient }}
+        <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
+            not set
+        </b-table-column>
+        <b-table-column label='Recipient' centered v-else>
+          <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
         </b-table-column>
         <b-table-column label='Date' centered>
           {{ props.row.timestamp }}
@@ -32,7 +35,7 @@
           {{ props.row.period }}
         </b-table-column>
         <b-table-column label='Amount' centered>
-          {{ props.row.amount }}
+          {{ props.row.amount }} {{ props.row.type }}
         </b-table-column>
         <b-table-column label='Margin' centered>
           {{ props.row.margin }}
