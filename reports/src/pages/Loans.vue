@@ -8,6 +8,13 @@
       <br>
       <div class="table-padding">
         <div>Loans contract address: {{ loansAddress }}</div>
+        <div>Order type:
+          <select v-model="vtype">
+            <option value="ETH" selected>ETH</option>
+            <option value="Libre">Libre</option>
+          </select>
+          <button @click="loadLoans()">Load</button>
+        </div>
       </div>
       <br>
       <loans-table :tableData='searchData'></loans-table>
@@ -25,6 +32,7 @@ import config from '@/config'
 export default {
   data () {
     return {
+      vtype: 'ETH',
       loansAddress: this.$eth.loansAddress(),
       loansCount: [0, 0],
       reportText: '',
@@ -40,7 +48,9 @@ export default {
     async loadLoansCount () {
       this.loansCount = await this.$eth.getLoansCount()
     },
-    async loadLoans (_type) {
+    async loadLoans () {
+      let _type = this.$libre.loansType[this.vtype];
+      console.log(_type)
       const struct = this.$libre.loansStruct
 
       this.searchData = [],
@@ -78,7 +88,7 @@ export default {
   async created () {
     try {
       await this.loadLoansCount();
-      this.loadLoans(this.$libre.loansType.ETH)
+      this.loadLoans()
     } catch (err) {
       console.log(err)
     }
