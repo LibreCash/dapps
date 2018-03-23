@@ -26,6 +26,7 @@ export default {
   data () {
     return {
       loansAddress: this.$eth.loansAddress(),
+      loansCount: [0, 0],
       reportText: '',
       owner: false,
       reportNumber: 0,
@@ -36,24 +37,25 @@ export default {
     }
   },
   methods: {
-    async loadLoansEth () {
+    async loadLoansCount () {
+      this.loansCount = await this.$eth.getLoansCount()
+    },
+    async loadLoans (_type) {
       const struct = this.$libre.loansStruct
 
       this.searchData = [],
       this.isLoading = true
       try {
-        let loansCount = await this.$eth.getLoansCount()
-        let libreLoansCount = loansCount[0],
-            ethLoansCount = loansCount[1];
+        let localLoansCount = this.loansCount[_type];
         let activeProposalShown = 0
-        for (let i = ethLoansCount - 1; i > 0; --i) {
+        for (let i = localLoansCount - 1; i >= 0; --i) {
           var 
             loan = await this.$eth.getLoanEth(i)
           {
             if (++activeProposalShown == 10) this.isLoading = false
             this.searchData.push({
                 id: i,
-                type:'eth',
+                type: Object.keys(this.$libre.loansType)[_type],
                 holder: loan[struct.holder],
                 recipient: loan[struct.recipient],
                 timestamp: loan[struct.timestamp],
@@ -72,9 +74,10 @@ export default {
       this.isLoading = false
     }
   },
-  created () {
+  async created () {
     try {
-      this.loadLoansEth()
+      await this.loadLoansCount();
+      this.loadLoans(this.$libre.loansType.eth)
     } catch (err) {
       console.log(err)
     }
