@@ -49,7 +49,10 @@ export default {
       this.loansCount = await this.$eth.getLoansCount()
     },
     async loadLoans () {
-      let _type = this.$libre.loansType[this.vtype];
+      let
+        _type = this.$libre.loansType[this.vtype],
+        status = this.$libre.loansStatus;
+
       console.log(_type)
       const struct = this.$libre.loansStruct
 
@@ -66,15 +69,15 @@ export default {
             this.searchData.push({
                 id: i,
                 type: Object.keys(this.$libre.loansType)[_type],
-                holder: loan[struct.holder] === '0x0000000000000000000000000000000000000000' ? '-' : loan[struct.holder],
-                recipient: loan[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : loan[struct.recipient],
-                timestampUnix: loan[struct.timestamp],
+                holder: loan[struct.holder] === '0x0000000000000000000000000000000000000000' ? '-' : +loan[struct.holder],
+                recipient: loan[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : +loan[struct.recipient],
+                timestampUnix: +loan[struct.timestamp],
                 timestamp: new Date(loan[struct.timestamp] * 1000).toLocaleString(),
                 period: new Date(loan[struct.timestamp] * 1000 + loan[struct.period] * 1000).toLocaleString(),
                 amount: +this.$eth.fromWei(loan[struct.amount]),
-                margin: loan[struct.margin],
-                refund: loan[struct.refund],
-                status: loan[struct.status]
+                margin: +loan[struct.margin],
+                refund: +loan[struct.refund],
+                status: status[loan[struct.status]]
             })
           }
         }
