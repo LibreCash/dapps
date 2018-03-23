@@ -15,6 +15,7 @@ class ETH {
     this._web3 = null
     this._reportContract = null
     this._daoContract = null
+    this._loansContract = null
     this.yourAccount = null
     this.metamask = false
     this.loadWeb3()
@@ -61,12 +62,15 @@ class ETH {
           }, 1000)
         }
       })
-
+      // Rewrote it with map on array of contracts
       this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
       .at(ETH.reportAddress())
 
       this._bankContract = this._web3.eth.contract(JSON.parse(Config.bank.abi))
       .at(Config.bank.address)
+
+      this._loansContract = this._web3.eth.contract(JSON.parse(Config.loans.abi))
+      .at(Config.loans.address)
 
       // wrapper for MetaMask
       this.bankContract = new Proxy(this._bankContract, { get: (bank, name) => this.promisifyContract(bank, name) })
@@ -92,6 +96,9 @@ class ETH {
 
         this.libre = new Proxy(this._libre, { get: (libre, name) => this.promisifyContract(libre, name)})
       })
+
+      this.loansContract = new Proxy(this._loansContract, { get: (loans, name) => this.promisifyContract(loans, name) })
+
     } catch (err) {
       console.log(err)
     }
@@ -213,6 +220,30 @@ class ETH {
   async getReport (number) {
     return new Promise((resolve, reject) => {
       this._reportContract.reports(number, (err, report) => {
+        err ? reject(err) : resolve(report)
+      })
+    })
+  }
+
+  async getLoanEth (number) {
+    return new Promise((resolve, reject) => {
+      this._loansContract.getLoanEth(number, (err, report) => {
+        err ? reject(err) : resolve(report)
+      })
+    })
+  }
+
+  async getLoanLibre (number) {
+    return new Promise((resolve, reject) => {
+      this._loansContract.getLoanLibre(number, (err, report) => {
+        err ? reject(err) : resolve(report)
+      })
+    })
+  }
+
+  async getLoansCount () {
+    return new Promise((resolve, reject) => {
+      this._loansContract.loansCount((err, report) => {
         err ? reject(err) : resolve(report)
       })
     })

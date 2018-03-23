@@ -20,6 +20,20 @@ class Libre {
       'description': 5
     }
 
+    this.loansStruct = {
+      'timestamp': 0,
+      'deadline': 1,
+      'amount': 2,
+      'margin': 3,
+      'status': 4
+    }
+
+    this.loansStatus = [
+      'active',
+      'used',
+      'completed'
+    ]
+
     this.consts = {
       DECIMALS: 18,
       MIN_READY_ORACLES: 2,
