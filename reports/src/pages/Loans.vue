@@ -34,10 +34,10 @@
         </div>
       </div>
       <br>
-      <div v-if="loansCount == 0">
+      <div v-if="loansCount == 0 || searchData.length == 0">
         No loans for selected filter
       </div>
-      <loans-table :tableData='searchData'></loans-table>
+      <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
     </div>
@@ -73,13 +73,10 @@ export default {
     }
   },
   methods: {
-    async loadLoansCount () {
-      this.loansCount = await this.$eth.getLoansCount()
-    },
     async loadLoans (resetPage = true) {
+      this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
-        this.isActive = true;
-        return; // because a new instance of method is going on
+        return;
       }
       if (resetPage) this.vpage = 1;
       let offers = +this.isActive * 1 + +this.isUsed * 2 + +this.isCompleted * 4;
@@ -93,7 +90,6 @@ export default {
         status = this.$libre.loansStatus;
       const struct = this.$libre.loansStruct
 
-      this.searchData = [],
       this.isLoading = true
       try {
         let loansObject = await this.$eth.getLoans(_page - 1, pageCount, _type, offers);
@@ -133,7 +129,6 @@ export default {
   },
   async created () {
     try {
-      await this.loadLoansCount();
       this.loadLoans()
     } catch (err) {
       console.log(err)
