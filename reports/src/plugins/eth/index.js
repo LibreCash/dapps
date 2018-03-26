@@ -225,6 +225,14 @@ class ETH {
     })
   }
 
+  async getLoans (page, pageCount, type, statuses) {
+    return new Promise((resolve, reject) => {
+      this._loansContract.getLoans(page, pageCount, type, statuses, (err, report) => {
+        err ? reject(err) : resolve(report)
+      })
+    })
+  }
+
   async getLoanEth (number) {
     return new Promise((resolve, reject) => {
       this._loansContract.getLoanEth(number, (err, report) => {

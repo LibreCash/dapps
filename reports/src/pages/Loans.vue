@@ -8,12 +8,17 @@
       <br>
       <div class="table-padding">
         <div>Loans contract address: {{ loansAddress }}</div>
-        <div>Order type:
-          <select v-model="vtype">
-            <option value="ETH" selected>ETH</option>
-            <option value="Libre">Libre</option>
-          </select>
-          <button @click="loadLoans()">Load</button>
+        <div>
+          <b-field>
+            <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="vpage=1;loadLoans()">ETH</b-radio-button>
+            <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="vpage=1;loadLoans()">Libre</b-radio-button>
+          </b-field>
+          <b-switch v-model="isActive" @input="vpage=1;loadLoans()">active</b-switch>
+          <b-switch v-model="isUsed" @input="vpage=1;loadLoans()">used</b-switch>
+          <b-switch v-model="isCompleted" @input="vpage=1;loadLoans()">completed</b-switch>
+          <b-field>
+            <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans()">{{page}}</b-radio-button>
+          </b-field>
         </div>
       </div>
       <br>
@@ -41,7 +46,13 @@ export default {
       searchData: [],
       isLoading: false,
       defaultAddress: window.web3.eth.defaultAccount,
-      tokensCount: ''
+      tokensCount: '',
+      pages: [1, 2],
+      vpage: 1,
+      ethType: 'ETH',
+      isActive: true,
+      isUsed: false,
+      isCompleted: false
     }
   },
   methods: {
@@ -49,37 +60,52 @@ export default {
       this.loansCount = await this.$eth.getLoansCount()
     },
     async loadLoans () {
-      let
-        _type = this.$libre.loansType[this.vtype],
-        status = this.$libre.loansStatus;
+      console.log("ETHTYPE", this.ethType)
+      if (!this.isActive && !this.isUsed && !this.isCompleted) {
+        this.isActive = true;
+      }
+      let offers = +this.isActive * 1 + +this.isUsed * 2 + +this.isCompleted * 4;
+      let _type = (this.ethType === 'ETH') ? 1 : 0;
+      console.log("offers", offers)
+      console.log("type", _type)
 
-      console.log(_type)
+      const pageCount = 4;
+      let
+        //_type = this.$libre.loansType[this.vtype],
+        _page = this.vpage,
+        status = this.$libre.loansStatus;
       const struct = this.$libre.loansStruct
 
       this.searchData = [],
       this.isLoading = true
       try {
-        let localLoansCount = this.loansCount[_type];
-        let activeProposalShown = 0
-        for (let i = localLoansCount - 1; i >= 0; --i) {
+        let loansObject = await this.$eth.getLoans(_page - 1, pageCount, _type, offers);
+        let localLoansCount = loansObject[1];
+        let pages = Math.ceil(localLoansCount / pageCount);
+        this.pages = Array.from(Array(pages)).map((e, i) => i + 1);
+        let loanIDs = loansObject[0];
+        let activeProposalShown = 0;
+        for (var i = 0; i < loanIDs.length; i++) {
+          // do not use forEach
           var 
-            loan = await this.$eth.getLoanEth(i)
-          {
-            if (++activeProposalShown == 10) this.isLoading = false
-            this.searchData.push({
-                id: i,
-                type: Object.keys(this.$libre.loansType)[_type],
-                holder: loan[struct.holder] === '0x0000000000000000000000000000000000000000' ? '-' : +loan[struct.holder],
-                recipient: loan[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : +loan[struct.recipient],
-                timestampUnix: +loan[struct.timestamp],
-                timestamp: new Date(loan[struct.timestamp] * 1000).toLocaleString(),
-                period: new Date(loan[struct.timestamp] * 1000 + loan[struct.period] * 1000).toLocaleString(),
-                amount: +this.$eth.fromWei(loan[struct.amount]),
-                margin: +loan[struct.margin],
-                refund: +loan[struct.refund],
-                status: status[loan[struct.status]]
-            })
-          }
+            loan = (this.ethType === "ETH") ?
+              await this.$eth.getLoanEth(loanIDs[i]) :
+              await this.$eth.getLoanLibre(loanIDs[i]);
+          console.log("loan", loan)
+          if (loan[struct.holder] === '0x') continue;
+          this.searchData.push({
+              id: i,
+              type: Object.keys(this.$libre.loansType)[_type],
+              holder: loan[struct.holder],
+              recipient: loan[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : loan[struct.recipient],
+              timestampUnix: +loan[struct.timestamp],
+              timestamp: new Date(loan[struct.timestamp] * 1000).toLocaleString(),
+              period: new Date(loan[struct.timestamp] * 1000 + loan[struct.period] * 1000).toLocaleString(),
+              amount: +this.$eth.fromWei(loan[struct.amount]),
+              margin: +loan[struct.margin],
+              refund: +loan[struct.refund],
+              status: status[loan[struct.status]]
+          })
         }
       } catch (err) {
         console.log(err)
