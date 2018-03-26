@@ -10,14 +10,26 @@
         <div>Loans contract address: {{ loansAddress }}</div>
         <div>
           <b-field>
-            <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="vpage=1;loadLoans()">ETH</b-radio-button>
-            <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="vpage=1;loadLoans()">Libre</b-radio-button>
+            <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
+            <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
           </b-field>
-          <b-switch v-model="isActive" @input="vpage=1;loadLoans()">active</b-switch>
-          <b-switch v-model="isUsed" @input="vpage=1;loadLoans()">used</b-switch>
-          <b-switch v-model="isCompleted" @input="vpage=1;loadLoans()">completed</b-switch>
+          <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
+          <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
+          <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
           <b-field>
-            <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans()">{{page}}</b-radio-button>
+            <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans(false)">{{page}}</b-radio-button>
+          </b-field>
+          <b-field label="per page">
+            <b-select v-model="perPage" @input="loadLoans()">
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="300">300</option>
+            </b-select>
           </b-field>
         </div>
       </div>
@@ -56,22 +68,24 @@ export default {
       isActive: true,
       isUsed: false,
       isCompleted: false,
-      loansCount: 0
+      loansCount: 0,
+      perPage: 10
     }
   },
   methods: {
     async loadLoansCount () {
       this.loansCount = await this.$eth.getLoansCount()
     },
-    async loadLoans () {
+    async loadLoans (resetPage = true) {
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         this.isActive = true;
         return; // because a new instance of method is going on
       }
+      if (resetPage) this.vpage = 1;
       let offers = +this.isActive * 1 + +this.isUsed * 2 + +this.isCompleted * 4;
       let _type = (this.ethType === 'ETH') ? 1 : 0;
 
-      const pageCount = 4;
+      const pageCount = this.perPage;
       const maxUINT256 = 2**256 - 1;
       let
         //_type = this.$libre.loansType[this.vtype],
