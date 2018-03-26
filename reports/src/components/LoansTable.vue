@@ -9,10 +9,8 @@
       :striped="isStriped"
       :narrowed="isNarrowed"
       :loading="isLoading"
-      :paginated="isPaginated"
       :per-page="perPage"
       :current-page.sync="currentPage"
-      :pagination-simple="isPaginationSimple"
       :mobile-cards="hasMobileCards"
       :responsive="isResponsive">
       <template slot-scope="props" v-if="!props.row.tempHide">
@@ -67,8 +65,6 @@ export default {
       isNarrowed: false,
       isLoading: false,
       hasMobileCards: true,
-      isPaginated: true,
-      isPaginationSimple: false,
       isResponsive: true,
       currentPage: 1,
       perPage: 5,

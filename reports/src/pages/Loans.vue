@@ -22,6 +22,9 @@
         </div>
       </div>
       <br>
+      <div v-if="loansCount == 0">
+        No loans for selected filter
+      </div>
       <loans-table :tableData='searchData'></loans-table>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
@@ -52,7 +55,8 @@ export default {
       ethType: 'ETH',
       isActive: true,
       isUsed: false,
-      isCompleted: false
+      isCompleted: false,
+      loansCount: 0
     }
   },
   methods: {
@@ -60,16 +64,15 @@ export default {
       this.loansCount = await this.$eth.getLoansCount()
     },
     async loadLoans () {
-      console.log("ETHTYPE", this.ethType)
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         this.isActive = true;
+        return; // because a new instance of method is going on
       }
       let offers = +this.isActive * 1 + +this.isUsed * 2 + +this.isCompleted * 4;
       let _type = (this.ethType === 'ETH') ? 1 : 0;
-      console.log("offers", offers)
-      console.log("type", _type)
 
       const pageCount = 4;
+      const maxUINT256 = 2**256 - 1;
       let
         //_type = this.$libre.loansType[this.vtype],
         _page = this.vpage,
@@ -80,18 +83,18 @@ export default {
       this.isLoading = true
       try {
         let loansObject = await this.$eth.getLoans(_page - 1, pageCount, _type, offers);
-        let localLoansCount = loansObject[1];
-        let pages = Math.ceil(localLoansCount / pageCount);
+        this.loansCount = loansObject[1];
+        let pages = Math.ceil(this.loansCount / pageCount);
         this.pages = Array.from(Array(pages)).map((e, i) => i + 1);
         let loanIDs = loansObject[0];
         let activeProposalShown = 0;
         for (var i = 0; i < loanIDs.length; i++) {
-          // do not use forEach
+          // do not use forEach - we do not want async iterations
+          if (loanIDs[i] === maxUINT256) continue;
           var 
             loan = (this.ethType === "ETH") ?
               await this.$eth.getLoanEth(loanIDs[i]) :
               await this.$eth.getLoanLibre(loanIDs[i]);
-          console.log("loan", loan)
           if (loan[struct.holder] === '0x') continue;
           this.searchData.push({
               id: i,
