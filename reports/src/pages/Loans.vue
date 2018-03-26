@@ -105,18 +105,18 @@ export default {
             loan = (this.ethType === "ETH") ?
               await this.$eth.getLoanEth(loanIDs[i]) :
               await this.$eth.getLoanLibre(loanIDs[i]);
-          if (loan[struct.holder] === '0x') continue;
+          var loanData = loan[struct.data.outer];
           this.searchData.push({
               id: i,
               type: Object.keys(this.$libre.loansType)[_type],
               holder: loan[struct.holder],
               recipient: loan[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : loan[struct.recipient],
-              timestampUnix: +loan[struct.timestamp],
-              timestamp: new Date(loan[struct.timestamp] * 1000).toLocaleString(),
-              period: new Date(loan[struct.timestamp] * 1000 + loan[struct.period] * 1000).toLocaleString(),
-              amount: +this.$eth.fromWei(loan[struct.amount]),
-              margin: +loan[struct.margin],
-              refund: +loan[struct.refund],
+              timestampUnix: +loanData[struct.data.timestamp],
+              timestamp: new Date(loanData[struct.data.timestamp] * 1000).toLocaleString(),
+              period: new Date(loanData[struct.data.timestamp] * 1000 + loanData[struct.data.period] * 1000).toLocaleString(),
+              amount: +this.$eth.fromWei(loanData[struct.data.amount]),
+              margin: +loanData[struct.data.margin],
+              refund: +loanData[struct.data.refund],
               status: status[loan[struct.status]]
           })
         }

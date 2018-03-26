@@ -23,12 +23,16 @@ class Libre {
     this.loansStruct = {
       'holder': 0,
       'recipient': 1,
-      'timestamp': 2,
-      'period': 3,
-      'amount': 4,
-      'margin': 5,
-      'refund': 6,
-      'status': 7
+      'data': {
+        'outer': 2,
+        'timestamp': 0,
+        'period': 1,
+        'amount': 2,
+        'margin': 3,
+        'refund': 4,
+        'pledge': 5
+      },
+      'status': 3
     }
 
     this.loansType = {
