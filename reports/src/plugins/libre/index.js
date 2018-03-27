@@ -124,6 +124,7 @@ class Libre {
     this.web3 = window.web3;
     this.proposals = [];
 
+    this.report = this.getContract(JSON.parse(Config.report.abi),Config.report.address)
     this.bank = this.getContract(JSON.parse(Config.bank.abi), Config.bank.address)
     this.bank.tokenAddress().then(address => {
       Config.token.address = address;
@@ -131,7 +132,7 @@ class Libre {
     })
 
     this.dao = this.getContract(JSON.parse(Config.dao.abi),Config.dao.address)
-    this.dao.sharesTokenAddress().then(address => {
+    this.promiseLibre = this.dao.sharesTokenAddress().then(address => {
       this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
     })
   }
@@ -145,6 +146,23 @@ class Libre {
           })
         })
       }
+    })
+  }
+
+  async getVotingData (number) {
+    const voteStruct = {        
+      'yea': 0,        
+      'nay': 1,        
+      'voted': 2,        
+      'deadline': 3      
+    }
+    return this.daoContract.getVotingData(number, (err, report) => {
+      err ? reject(err) : resolve({
+        yea: report[voteStruct.yea],
+        nay: report[voteStruct.nay],
+        voted: report[voteStruct.voted],
+        deadline: report[voteStruct.deadline]
+      })
     })
   }
 

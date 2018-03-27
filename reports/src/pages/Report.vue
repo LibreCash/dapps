@@ -25,12 +25,13 @@
 
 
 <script>
+import Config from '@/config'
 import SearchResults from '@/components/SearchResults'
 import BRadioButton from 'buefy/src/components/radio/RadioButton'
 export default {
   data () {
     return {
-      reportAddress: this.$eth.reportAddress,
+      reportAddress: Config.report.address,
       reportText: '',
       owner: false,
       reportNumber: 0,
@@ -44,7 +45,7 @@ export default {
     },
     async newReport () {
       try {
-        await this.$eth.addNewReport(this.reportText)
+        await this.$libre.report.addNewReport(this.reportText)
       } catch (err) {
         console.log(err)
       }
@@ -53,9 +54,9 @@ export default {
       this.searchData = []
       this.isLoading = true
       try {
-        let j = await this.$eth.reportCounter()
+        let j = await this.$libre.report.counter()
         for (let i = j - 1; i > 0; --i) {
-          let report = await this.$eth.getReport(i)
+          let report = await this.$libre.report.reports(i)
           console.log(report)
           this.searchData.push({date: new Date(report[1] * 1000).toLocaleString(), report: report[0]})
         }
@@ -65,7 +66,7 @@ export default {
       this.isLoading = false
     },
     async loadReport () {
-      this.reportNumber = await this.$eth.reportCounter()
+      this.reportNumber = await this.$libre.report.counter()
     },
     async loadETH () {
       this.isLoading = true
@@ -80,7 +81,7 @@ export default {
       return true
     },
     async checkOwner () {
-      this.owner = await this.$eth.isOwner()
+      this.owner = await this.$libre.report.owner()
     }
   },
   created () {

@@ -22,14 +22,15 @@
 
 
 <script>
+import Config from '@/config'
 import DaoTable from '@/components/DaoTable'
 
 export default {
   data () {
     return {
-      daoAddress: this.$eth.daoAddress,
+      daoAddress: Config.dao.address,
       reportText: '',
-      owner: false,
+      //owner: false,
       reportNumber: 0,
       searchData: [],
       isLoading: false,
@@ -95,14 +96,10 @@ export default {
       this.isLoading = false
     },
 
-    async mayVote () {
-      this.owner = await this.$eth.mayVote()
-    },
-
     async getTokensCount () {
-      await this.$eth.promiseLibre;
+      await this.$libre.promiseLibre;
 
-      this.tokensCount = +await this.$eth.libre.balanceOf(this.defaultAddress) / 10 ** 18;
+      this.tokensCount = +await this.$libre.libre.balanceOf(this.defaultAddress) / 10 ** 18;
     }
   },
   created () {

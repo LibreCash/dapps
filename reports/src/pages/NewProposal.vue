@@ -53,11 +53,12 @@
 </template>
 
 <script>
+import Config from '@/config'
 export default {
   data () {
     return {
       proposalData: [],
-      daoAddress: this.$eth.daoAddress,
+      daoAddress: Config.dao.address,
       beneficiary: '',
       weiAmount: '',
       description: '',
@@ -128,7 +129,7 @@ export default {
         switch(this.selectedType.key) {
           //case 'CLEAN': break;
           case 'UNIVERSAL':
-            txHash = await this.$eth.daoContract.proposalUniversal(
+            txHash = await this.$libre.dao.proposalUniversal(
               this.beneficiary, 
               this.weiAmount,
               this.description,
@@ -136,91 +137,91 @@ export default {
               this.transactionBytecode)
             break;
           case 'TRANSFER_OWNERSHIP':
-            txHash = await this.$eth.daoContract.proposalTransferOwnership(
+            txHash = await this.$libre.dao.proposalTransferOwnership(
               this.beneficiary, 
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'ATTACH_TOKEN':
-            txHash = await this.$eth.daoContract.proposalAttachToken(
+            txHash = await this.$libre.dao.proposalAttachToken(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_BANK_ADDRESS':
-            txHash = await this.$eth.daoContract.proposalBankAddress(
+            txHash = await this.$libre.dao.proposalBankAddress(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_FEES':
-            txHash = await this.$eth.daoContract.proposalFees(
+            txHash = await this.$libre.dao.proposalFees(
               this.weiAmount,
               this.buffer,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'ADD_ORACLE':
-            txHash = await this.$eth.daoContract.proposalAddOracle(
+            txHash = await this.$libre.dao.proposalAddOracle(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'DISABLE_ORACLE':
-            txHash = await this.$eth.daoContract.proposalDisableOracle(
+            txHash = await this.$libre.dao.proposalDisableOracle(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'ENABLE_ORACLE':
-            txHash = await this.$eth.daoContract.proposalEnableOracle(
+            txHash = await this.$libre.dao.proposalEnableOracle(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'DELETE_ORACLE':
-            txHash = await this.$eth.daoContract.proposalDeleteOracle(
+            txHash = await this.$libre.dao.proposalDeleteOracle(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_SCHEDULER':
-            txHash = await this.$eth.daoContract.proposalScheduler(
+            txHash = await this.$libre.dao.proposalScheduler(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'WITHDRAW_BALANCE':
-            txHash = await this.$eth.daoContract.proposalWithdrawBalance(
+            txHash = await this.$libre.dao.proposalWithdrawBalance(
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_ORACLE_TIMEOUT':
-            txHash = await this.$eth.daoContract.proposalOracleTimeout(
+            txHash = await this.$libre.dao.proposalOracleTimeout(
               this.amount,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_ORACLE_ACTUAL':
-            txHash = await this.$eth.daoContract.proposalOracleActual(
+            txHash = await this.$libre.dao.proposalOracleActual(
               this.amount,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_RATE_PERIOD':
-            txHash = await this.$eth.daoContract.proposalRatePeriod(
+            txHash = await this.$libre.dao.proposalRatePeriod(
               this.amount,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_LOCK':
-            txHash = await this.$eth.daoContract.proposalLock(
+            txHash = await this.$libre.dao.proposalLock(
               this.lock === 'true' ? 1 : 0,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'CLAIM_OWNERSHIP':
-            txHash = await this.$eth.daoContract.proposalClaimOwnership(
+            txHash = await this.$libre.dao.proposalClaimOwnership(
               this.description,
               debatingPeriodInMinutes)
             break;

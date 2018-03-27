@@ -41,10 +41,11 @@
 </template>
 
 <script>
+import Config from '@/config'
 export default {
   data () {
     return {
-      daoAddress: this.$eth.daoAddress,
+      daoAddress: Config.dao.address,
       proposalId: this.$route.params.id,
       reportText: '',
       owner: false,
@@ -74,8 +75,8 @@ export default {
 
       try {
           let 
-            proposal = await this.$eth.getProposal(this.$route.params.id),
-            vote = await this.$eth.getVotingData(this.$route.params.id),
+            proposal = await this.$libre.getProposal(this.$route.params.id),
+            vote = await this.$libre.getVotingData(this.$route.params.id),
             zeroAddress = '0x0000000000000000000000000000000000000000'
 
           this.currentProposal = this.typeProposals[proposal[struct.type]]
@@ -123,11 +124,11 @@ export default {
     async vote (support) {
       try {
         let 
-          txHash = await this.$eth.daoContract.vote(this.proposalId, support),
+          txHash = await this.$libre.dao.vote(this.proposalId, support),
           result = this.$eth.isSucces(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
 
         alert(result) // Replace it to notify
-        this.$eth.getVotingData(this.proposalId).then((vData) => this.loadProposal())
+        this.$libre.getVotingData(this.proposalId).then((vData) => this.loadProposal())
         
       } catch(error) {
         alert(this.$eth.getErrorMsg(e))
