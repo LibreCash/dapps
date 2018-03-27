@@ -16,6 +16,7 @@
           <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
           <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
           <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
+          <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
           <b-field>
             <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans(false)">{{page}}</b-radio-button>
           </b-field>
@@ -54,7 +55,6 @@ export default {
     return {
       vtype: 'ETH',
       loansAddress: this.$eth.loansAddress(),
-      loansCount: [0, 0],
       reportText: '',
       owner: false,
       reportNumber: 0,
@@ -62,12 +62,13 @@ export default {
       isLoading: false,
       defaultAddress: window.web3.eth.defaultAccount,
       tokensCount: '',
-      pages: [1, 2],
+      pages: [1],
       vpage: 1,
       ethType: 'ETH',
       isActive: true,
       isUsed: false,
       isCompleted: false,
+      isMine: false,
       loansCount: 0,
       perPage: 10
     }
@@ -79,7 +80,7 @@ export default {
         return;
       }
       if (resetPage) this.vpage = 1;
-      let offers = +this.isActive * 1 + +this.isUsed * 2 + +this.isCompleted * 4;
+      let offers = +this.isActive * 1 + +this.isUsed * 2 + +this.isCompleted * 4 +this.isMine * 8;
       let _type = (this.ethType === 'ETH') ? 1 : 0;
 
       const pageCount = this.perPage;
@@ -92,7 +93,7 @@ export default {
 
       this.isLoading = true
       try {
-        let loansObject = await this.$eth.getLoans(_page - 1, pageCount, _type, offers);
+        let loansObject = await this.$eth.getLoans([_page - 1, pageCount], _type, offers);
         this.loansCount = loansObject[1];
         let pages = Math.ceil(this.loansCount / pageCount);
         this.pages = Array.from(Array(pages)).map((e, i) => i + 1);
@@ -100,7 +101,7 @@ export default {
         let activeProposalShown = 0;
         for (var i = 0; i < loanIDs.length; i++) {
           // do not use forEach - we do not want async iterations
-          if (loanIDs[i] === maxUINT256) continue;
+          if (+loanIDs[i] === maxUINT256) continue;
           var 
             loan = (this.ethType === "ETH") ?
               await this.$eth.getLoanEth(loanIDs[i]) :
