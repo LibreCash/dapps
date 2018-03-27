@@ -8,6 +8,7 @@
       <br>
       <div class="table-padding">
         <div>Loans contract address: {{ loansAddress }}</div>
+        <div>Address: {{ defaultAddress }}</div>
         <div>
           <b-field>
             <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
@@ -86,7 +87,6 @@ export default {
       const pageCount = this.perPage;
       const maxUINT256 = 2**256 - 1;
       let
-        //_type = this.$libre.loansType[this.vtype],
         _page = this.vpage,
         status = this.$libre.loansStatus;
       const struct = this.$libre.loansStruct
