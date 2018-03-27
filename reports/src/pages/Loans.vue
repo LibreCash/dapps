@@ -38,7 +38,7 @@
         </div>
       </div>
       <br>
-      <div v-if="loansCount == 0 || searchData.length == 0">
+      <div v-if="loansCount == 0 || searchData.length == 0" class="table-padding">
         No loans for selected filter
       </div>
       <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
