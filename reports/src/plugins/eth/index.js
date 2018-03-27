@@ -89,6 +89,7 @@ class ETH {
       .at(Config.dao.address)
 
       this.daoContract = new Proxy(this._daoContract, { get: (dao, name) => this.promisifyContract(dao, name) })
+      this.loansContract = new Proxy(this._loansContract, { get: (loans, name) => this.promisifyContract(loans, name) })
 
       this.promiseLibre = this.daoContract.sharesTokenAddress().then(address => {
         this._libre = this._web3.eth.contract(JSON.parse(Config.erc20.abi))
@@ -282,7 +283,9 @@ class ETH {
         return LOCK_WALLET
     }
 
-    return 'Unknown Error!'
+    if (error.message) return error.message;
+    if (error.msg) return error.msg;
+    return error;
   }
 
   toTimestamp (solidityTimestamp) {
@@ -323,6 +326,10 @@ class ETH {
 
   fromWei (amount) {
     return this._web3.fromWei(amount)
+  }
+
+  toWei (amount, units) {
+    return this._web3.toWei(amount, units)
   }
 }
 

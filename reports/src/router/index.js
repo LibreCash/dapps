@@ -7,6 +7,7 @@ import Loans from '@/pages/Loans'
 import Loan from '@/pages/Loan'
 import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
+import NewOffer from '@/pages/NewOffer'
 import ContractStatus from '@/pages/ContractStatus'
 
 Vue.use(Router)
@@ -48,6 +49,11 @@ export default new Router({
       path: '/dao/loan/:type/:id',
       name: 'Loan',
       component: Loan
+    },
+    {
+      path: '/dao/new_offer',
+      name: 'New offer',
+      component: NewOffer
     },
     {
       path: '/dao/new_proposal',

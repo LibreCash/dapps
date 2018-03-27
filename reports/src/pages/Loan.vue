@@ -39,13 +39,13 @@
               <strong>{{ props.row.period }}</strong>
             </b-table-column>
             <b-table-column label='Amount'>
-              <strong>{{ props.row.amount }}</strong>
+              <strong>{{ props.row.amount }} {{ props.row.type }}</strong>
             </b-table-column>
             <b-table-column label='Margin'>
               <strong>{{ props.row.margin }}</strong>
             </b-table-column>
             <b-table-column label='Refund'>
-              <strong>{{ props.row.refund }}</strong>
+              <strong>{{ props.row.refund }} {{ props.row.type }}</strong>
             </b-table-column>
             <b-table-column label='Status' centered>
               {{ props.row.status }}
@@ -110,7 +110,7 @@ export default {
               period: new Date(data[struct.data.timestamp] * 1000 + data[struct.data.period] * 1000).toLocaleString(),
               amount: +this.$eth.fromWei(data[struct.data.amount]),
               margin: +data[struct.data.margin],
-              refund: +data[struct.data.refund],
+              refund: +this.$eth.fromWei(data[struct.data.refund]),
               status: status[loan[struct.status]]
           })
       } catch (err) {

@@ -39,7 +39,7 @@
           {{ props.row.margin }}
         </b-table-column>
         <b-table-column label='Refund' centered>
-          {{ props.row.refund }}
+          {{ props.row.refund }} {{ props.row.type }}
         </b-table-column>
         <b-table-column label='Status' centered>
           {{ props.row.status }}

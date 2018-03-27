@@ -9,6 +9,7 @@
       <div class="table-padding">
         <div>Loans contract address: {{ loansAddress }}</div>
         <div>Address: {{ defaultAddress }}</div>
+        <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
         <div>
           <b-field>
             <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
@@ -18,6 +19,7 @@
           <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
           <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
           <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+          
           <b-field>
             <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans(false)">{{page}}</b-radio-button>
           </b-field>
@@ -108,7 +110,7 @@ export default {
               await this.$eth.getLoanLibre(loanIDs[i]);
           var loanData = loan[struct.data.outer];
           this.searchData.push({
-              id: i,
+              id: loanIDs[i],
               type: Object.keys(this.$libre.loansType)[_type],
               holder: loan[struct.holder],
               recipient: loan[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : loan[struct.recipient],
@@ -117,7 +119,7 @@ export default {
               period: new Date(loanData[struct.data.timestamp] * 1000 + loanData[struct.data.period] * 1000).toLocaleString(),
               amount: +this.$eth.fromWei(loanData[struct.data.amount]),
               margin: +loanData[struct.data.margin],
-              refund: +loanData[struct.data.refund],
+              refund: +this.$eth.fromWei(loanData[struct.data.refund]),
               status: status[loan[struct.status]]
           })
         }
