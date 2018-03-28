@@ -11,7 +11,7 @@
         <div>Tokens count: {{ tokensCount }} LBRS</div>
         <br>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
-        <br>
+        <br><br>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
           <b-radio-button v-model="filter" native-value="filterActive" type="is-success" checked @input="loadProposals()">Active</b-radio-button>
@@ -116,30 +116,25 @@ export default {
   methods: {
     async addProposal (index) {
       var 
-        proposal = this.$libre.proposals[index].proposal,
-        vote = {
-          yea: this.$libre.proposals[index].vote[this.$libre.voteStruct.yea],
-          nay: this.$libre.proposals[index].vote[this.$libre.voteStruct.nay],
-          voted: this.$libre.proposals[index].vote[this.$libre.voteStruct.voted],
-          deadline: this.$libre.proposals[index].vote[this.$libre.voteStruct.deadline]
-        }
+        proposal = this.$libre.proposals[index],
+        vote = proposal.vote;
 
       if (this[this.filter](proposal))
       {
         if (this.tableData.length == this.perPage) this.isLoading = false
         this.tableData.push({
             id: index,
-            type: this.$libre.typeProposals[proposal[this.$libre.proposalStruct.type]].text,
-            recipient: proposal[this.$libre.proposalStruct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[this.$libre.proposalStruct.recipient],
-            amount: +proposal[this.$libre.proposalStruct.amount],
-            buffer: +proposal[this.$libre.proposalStruct.buffer],
-            bytecode: proposal[this.$libre.proposalStruct.bytecode],
+            type: this.$libre.typeProposals[proposal.type].text,
+            recipient: this.$eth.isZeroAddress(proposal.recipient) ? '-' : proposal.recipient,
+            amount: proposal.amount,
+            buffer: proposal.buffer,
+            bytecode: proposal.bytecode,
             votingData: vote,
-            yea: vote.yea / 10 ** 18,
-            nay: vote.nay / 10 ** 18,
+            yea: vote.yea,
+            nay: vote.nay,
             deadlineUnix: vote.deadline,
             deadline: new Date(vote.deadline * 1000).toLocaleString(),
-            description: proposal[this.$libre.proposalStruct.description],
+            description: proposal.description,
             loading: false,
             updateTimer: null
         })
@@ -151,7 +146,7 @@ export default {
     },
 
     filterActive(proposal) {
-      return +proposal[this.$libre.proposalStruct.type] !== 0;
+      return proposal.type !== 0;
     },
 
     async loadProposals () {
@@ -161,16 +156,19 @@ export default {
       this.isLoading = true
 
       await this.$libre.updateProposals(this.addProposal);
-      if (this.tableData.length == 0)
-        this.$libre.proposals.reverse().forEach((proposal,i) => this.addProposal(i))
+      if (this.tableData.length == 0) {
+        for(let i = this.$libre.proposals.length-1; i >=0; i--)
+          this.addProposal(i)
+      }
 
       this.tableData.forEach(element => {
         element.updateTimer = setInterval(async () => {
           // we can check type of proposal, but we won't
           // the changing of the type can be seen in another timer by detecting change of numProposals
-          var vote = await this.$libre.dao.getVotingData(element.id)
-          element.yea = vote.yea / 10 ** 18
-          element.nay = vote.nay / 10 ** 18
+          
+          var vote = (await this.$libre.updateProposal(element.id)).vote;
+          element.yea = vote.yea
+          element.nay = vote.nay
           element.votingData = vote
         }, 60 * 1000 + Math.random() * 5000)
       });
@@ -194,7 +192,7 @@ export default {
     async getTokensCount () {
       await this.$libre.promiseLibre;
 
-      this.tokensCount = +await this.$libre.libre.balanceOf(this.defaultAddress) / 10 ** 18;
+      this.tokensCount = +await this.$libre.libre.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
     },
 
     async vote (row, support) {
@@ -215,10 +213,11 @@ export default {
       row.loading = false
 
       try {
-        let voteData =  await this.$libre.getVotingData(row.id);
+        
+        let voteData = (await this.$libre.updateProposal(row.id)).vote;
         row = {
-          yea: +voteData.yea / 10 ** 18,
-          nay: +voteData.nay / 10 ** 18,
+          yea: voteData.yea,
+          nay: voteData.nay,
           votingData: voteData // Check that we needed it
         }
       } catch(e) {
