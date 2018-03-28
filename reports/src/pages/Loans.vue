@@ -52,12 +52,12 @@
 <script>
 import LoansTable from '@/components/LoansTable'
 import libre from '@/plugins/libre'
-import config from '@/config'
+import Config from '@/config'
 export default {
   data () {
     return {
       vtype: 'ETH',
-      loansAddress: this.$eth.loansAddress(),
+      loansAddress: Config.loans.address,
       reportText: '',
       owner: false,
       reportNumber: 0,
@@ -95,8 +95,8 @@ export default {
 
       this.isLoading = true
       try {
-        this.loansCount = await this.$eth.getLoanCount(_type, offers);
-        let loanIDs = await this.$eth.getLoans([_page - 1, pageCount], _type, offers);
+        this.loansCount = await this.$libre.loans.getLoanCount(_type, offers);
+        let loanIDs = await this.$libre.loans.getLoans([_page - 1, pageCount], _type, offers);
         let pages = Math.ceil(this.loansCount / pageCount);
         this.pages = Array.from(Array(pages)).map((e, i) => i + 1);
         let activeProposalShown = 0;
@@ -105,8 +105,8 @@ export default {
           if (+loanIDs[i] === maxUINT256) continue;
           var 
             loan = (this.ethType === "ETH") ?
-              await this.$eth.getLoanEth(loanIDs[i]) :
-              await this.$eth.getLoanLibre(loanIDs[i]);
+              await this.$libre.loans.getLoanEth(loanIDs[i]) :
+              await this.$libre.loans.getLoanLibre(loanIDs[i]);
           var loanData = loan[struct.data.outer];
           this.searchData.push({
               id: loanIDs[i],

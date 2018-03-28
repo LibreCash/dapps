@@ -28,7 +28,7 @@ export default {
       this.isLoadingBank = true
 
       var
-        exchanger = this.$eth.bankContract,
+        exchanger = this.$libre.bank,
         status = Config.bank.status
 
       this.emissionStatus.push({
@@ -49,7 +49,7 @@ export default {
       })
   
 
-      let totalSupply = await this.$eth.tokenContract.totalSupply().catch(e => 'error')
+      let totalSupply = await this.$libre.token.totalSupply().catch(e => 'error')
       this.emissionStatus.push({
         name: 'All tokens',
         data: totalSupply !== 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'

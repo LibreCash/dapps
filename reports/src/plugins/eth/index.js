@@ -13,9 +13,6 @@ class ETH {
 
   constructor () {
     this._web3 = null
-    this._reportContract = null
-    this._daoContract = null
-    this._loansContract = null
     this.yourAccount = null
     this.metamask = false
     this.loadWeb3()
@@ -62,77 +59,9 @@ class ETH {
           }, 1000)
         }
       })
-      // Rewrite it with map on array of contracts
-      this._reportContract = this._web3.eth.contract(JSON.parse(Config.report.abi))
-      .at(ETH.reportAddress())
-
-      this._bankContract = this._web3.eth.contract(JSON.parse(Config.bank.abi))
-      .at(Config.bank.address)
-
-      this._loansContract = this._web3.eth.contract(JSON.parse(Config.loans.abi))
-      .at(Config.loans.address)
-
-      // wrapper for MetaMask
-      this.bankContract = new Proxy(this._bankContract, { get: (bank, name) => this.promisifyContract(bank, name) })
-
-      // token contract from Exchanger
-      this.bankContract.tokenAddress().then(address => {
-        Config.token.address = address
-        this._tokenContract = this._web3.eth.contract(JSON.parse(Config.token.abi))
-        .at(Config.token.address)
-
-        // token wrapper for MetaMask
-        this.tokenContract = new Proxy(this._tokenContract, { get: (token, name) => this.promisifyContract(token, name) })
-      })
-
-      this._daoContract = this._web3.eth.contract(JSON.parse(Config.dao.abi))
-      .at(Config.dao.address)
-
-      this.daoContract = new Proxy(this._daoContract, { get: (dao, name) => this.promisifyContract(dao, name) })
-      this.loansContract = new Proxy(this._loansContract, { get: (loans, name) => this.promisifyContract(loans, name) })
-
-      this.promiseLibre = this.daoContract.sharesTokenAddress().then(address => {
-        this._libre = this._web3.eth.contract(JSON.parse(Config.erc20.abi))
-        .at(address)
-
-        this.libre = new Proxy(this._libre, { get: (libre, name) => this.promisifyContract(libre, name)})
-      })
-
-      this.loansContract = new Proxy(this._loansContract, { get: (loans, name) => this.promisifyContract(loans, name) })
-
     } catch (err) {
       console.log(err)
     }
-  }
-
-  static reportAddress () {
-    return Config.report.address
-  }
-
-  static daoAddress () {
-    return Config.dao.address
-  }
-
-  loansAddress () {
-    return Config.loans.address
-  }
-
-  promisifyContract (contract, name) {
-    return function () {
-      return new Promise((resolve, reject) => {
-        contract[name](...arguments, (err, result) => {
-          err ? reject(err) : resolve(result)
-        })
-      })
-    }
-  }
-
-  async proposalCounter () {
-    return new Promise((resolve, reject) => {
-      this._daoContract.proposalsLength((err, counter) => {
-        err ? reject(err) : resolve(counter)
-      })
-    })
   }
 
   async getLatestBlockTime () {
@@ -165,96 +94,6 @@ class ETH {
           reject('timeout')
         }
       }, 3000)
-    })
-  }
-
-  async getProposal (number) {
-    return new Promise((resolve, reject) => {
-      this._daoContract.getProposal(number, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
-    })
-  }
-  async getVotingData (number) {
-    const voteStruct = {        
-      'yea': 0,        
-      'nay': 1,        
-      'voted': 2,        
-      'deadline': 3      
-    }
-    return new Promise((resolve, reject) => {
-      this._daoContract.getVotingData(number, (err, report) => {
-        err ? reject(err) : resolve({
-          yea: report[voteStruct.yea],
-          nay: report[voteStruct.nay],
-          voted: report[voteStruct.voted],
-          deadline: report[voteStruct.deadline]
-        })
-      })
-    })
-  }
-  async reportCounter () {
-    return new Promise((resolve, reject) => {
-      this._reportContract.counter((err, counter) => {
-        err ? reject(err) : resolve(counter)
-      })
-    })
-  }
-
-  async isOwner () {
-    return new Promise((resolve, reject) => {
-      this._reportContract.owner((err, owner) => {
-        err ? reject(err) : resolve(owner === this._web3.eth.accounts[0])
-      })
-    })
-  }
-
-  async addNewReport (report) {
-    console.log(this._reportContract, report, this._web3)
-    return new Promise((resolve, reject) => {
-      this._reportContract.addNewReport(report, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
-    })
-  }
-
-  async getReport (number) {
-    return new Promise((resolve, reject) => {
-      this._reportContract.reports(number, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
-    })
-  }
-
-  async getLoans (pagination, type, statuses) {
-    return new Promise((resolve, reject) => {
-      this._loansContract.getLoans(pagination, type, statuses, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
-    })
-  }
-
-  async getLoanEth (number) {
-    return new Promise((resolve, reject) => {
-      this._loansContract.getLoanEth(number, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
-    })
-  }
-
-  async getLoanLibre (number) {
-    return new Promise((resolve, reject) => {
-      this._loansContract.getLoanLibre(number, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
-    })
-  }
-
-  async getLoanCount (_type, _status) {
-    return new Promise((resolve, reject) => {
-      this._loansContract.getLoanCount(_type, _status, (err, report) => {
-        err ? reject(err) : resolve(report)
-      })
     })
   }
 

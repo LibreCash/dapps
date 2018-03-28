@@ -93,8 +93,8 @@ export default {
 
       try {
           let 
-            loan = this.$route.params.type == "ETH" ? await this.$eth.getLoanEth(this.$route.params.id):
-                                                      await this.$eth.getLoanLibre(this.$route.params.id),
+            loan = this.$route.params.type == "ETH" ? await this.$libre.loans.getLoanEth(this.$route.params.id):
+                                                      await this.$libre.loans.getLoanLibre(this.$route.params.id),
             zeroAddress = '0x0000000000000000000000000000000000000000';
 
           
