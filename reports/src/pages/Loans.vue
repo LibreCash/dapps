@@ -95,11 +95,10 @@ export default {
 
       this.isLoading = true
       try {
-        let loansObject = await this.$eth.getLoans([_page - 1, pageCount], _type, offers);
-        this.loansCount = loansObject[1];
+        this.loansCount = await this.$eth.getLoanCount(_type, offers);
+        let loanIDs = await this.$eth.getLoans([_page - 1, pageCount], _type, offers);
         let pages = Math.ceil(this.loansCount / pageCount);
         this.pages = Array.from(Array(pages)).map((e, i) => i + 1);
-        let loanIDs = loansObject[0];
         let activeProposalShown = 0;
         for (var i = 0; i < loanIDs.length; i++) {
           // do not use forEach - we do not want async iterations

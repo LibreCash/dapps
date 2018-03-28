@@ -250,9 +250,9 @@ class ETH {
     })
   }
 
-  async getLoansCount () {
+  async getLoanCount (_type, _status) {
     return new Promise((resolve, reject) => {
-      this._loansContract.loansCount((err, report) => {
+      this._loansContract.getLoanCount(_type, _status, (err, report) => {
         err ? reject(err) : resolve(report)
       })
     })
