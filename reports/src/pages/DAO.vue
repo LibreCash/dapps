@@ -10,7 +10,7 @@
         <div>Address: {{ defaultAddress }}</div>
         <div>Tokens count: {{ tokensCount }} LBRS</div>
         <br>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">New Proposal</router-link>
+        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
       </div>
       <br>
       <b-field class="table-padding">
@@ -82,7 +82,7 @@ export default {
 
       this.searchData = []
       this.isLoading = true
-      
+
       await this.$libre.updateProposals(this.addProposal);
       if (this.searchData.length == 0)
         this.$libre.proposals.reverse().forEach((proposal,i) => this.addProposal(i))

@@ -45,7 +45,7 @@
         </b-table-column>
         <b-table-column label='Actions' centered>
           <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
-          <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime) && !props.row.loading">
+          <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime) && !props.row.loading && (props.row.tokensCount > 0)">
             <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
             <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
           </span>
@@ -54,6 +54,9 @@
           </span>
           <span v-else-if="props.row.votingData.voted">
             voted
+          </span>
+          <span v-else-if="!(props.row.tokensCount > 0)" style="white-space: nowrap">
+            no tokens
           </span>
           <span v-else>
             loading
@@ -81,7 +84,7 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(id, support),
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
-          alert(message)
+        alert(message)
       }catch(e) {
         alert(this.$eth.getErrorMsg(e)) 
       }
@@ -175,13 +178,13 @@ export default {
     })
   },
   destroyed () {
-    let intrevals = [
+    let intervals = [
       this.updatingTicker,
       this.updatingBlockData,
       this.updateTableData
     ]
 
-    intrevals.forEach((interval) => clearInterval(interval))
+    intervals.forEach((interval) => clearInterval(interval))
   },
   data () {
     return {
