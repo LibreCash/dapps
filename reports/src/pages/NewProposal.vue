@@ -232,8 +232,8 @@ export default {
           alert('Creating proposal error')
         }
       }
-      catch(error) {
-        alert(this.$eth.getErrorMsg(e))
+      catch(err) {
+        alert(this.$eth.getErrorMsg(err))
         this.button = {name: 'Create Proposal', disabled: true}
       }
     }

@@ -10,7 +10,7 @@
         <div>Address: {{ defaultAddress }}</div>
         <div>Tokens count: {{ tokensCount }} LBRS</div>
         <br>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">New Proposal</router-link>
+        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
       </div>
       <br>
       <dao-table :tableData='searchData'></dao-table>
@@ -74,7 +74,8 @@ export default {
                 deadline: new Date(vote.deadline * 1000).toLocaleString(),
                 description: proposal[struct.description],
                 loading: false,
-                updateTimer: null
+                updateTimer: null,
+                tokensCount: this.tokensCount
             })
           }
         }
