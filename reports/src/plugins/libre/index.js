@@ -150,13 +150,13 @@ class Libre {
   }
 
   async getVotingData (number) {
-    const voteStruct = {        
-      'yea': 0,        
-      'nay': 1,        
-      'voted': 2,        
-      'deadline': 3      
+    const voteStruct = {
+      'yea': 0,
+      'nay': 1,
+      'voted': 2,
+      'deadline': 3
     }
-    return this.daoContract.getVotingData(number, (err, report) => {
+    return this.dao.getVotingData(number, (err, report) => {
       err ? reject(err) : resolve({
         yea: report[voteStruct.yea],
         nay: report[voteStruct.nay],
