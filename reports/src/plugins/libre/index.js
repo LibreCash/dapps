@@ -155,10 +155,13 @@ class Libre {
     this.bank = this.getContract(JSON.parse(Config.bank.abi), Config.bank.address)
     this.bank.tokenAddress().then(address => {
       Config.token.address = address;
-      this.token = this.getContract(JSON.parse(Config.token.abi),Config.token.address)
+      this.token = this.getContract(JSON.parse(Config.erc20.abi),Config.token.address)
     })
 
     this.dao = this.getContract(JSON.parse(Config.dao.abi),Config.dao.address)
+    this.promiseLibre = this.dao.sharesTokenAddress().then(address => {
+      this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
+    })
     this.promiseLibre = this.dao.sharesTokenAddress().then(address => {
       this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
     })

@@ -5,7 +5,33 @@
         <h2 class="subtitle">New Loan Offer</h2>
       </div>
       <br>
-      <div class="table-padding" >
+      <div class="table-padding">
+        <p>My address: {{ myAddress }}</p>
+        <p>Allowed: {{ allowed }} Libre</p>
+        <p>ETH Balance: {{ balanceETH }} ETH</p>
+        <p>Libre Balance: {{ balanceLibre }} Libre</p>
+      </div>
+      <div class="table-padding">
+        <b-collapse class="card" :open.sync="isOpen">
+          <div slot="trigger" slot-scope="props" class="card-header">
+            <p class="card-header-title">Change Allowance</p>
+            <a class="card-header-icon">
+              <b-icon :icon="isOpen ? 'menu-up' : 'menu-down'"></b-icon>
+            </a>
+          </div>
+          <div class="card-content">
+            <div class="content">
+              <b-field horizontal label="New Allowance, Libre" :type="isInteger(newAllowance) ? '' : 'is-danger'">
+                <b-input v-model="newAllowance" placeholder="0"></b-input>
+              </b-field>
+              <button class="button is-primary" v-on:click="updateAllowance()" v-model="buttonAllowance" :disabled="buttonAllowance.disabled">
+                {{ buttonAllowance.name }}
+              </button>
+            </div>
+          </div>
+        </b-collapse>
+      </div>
+      <div class="table-padding">
         <b-field horizontal label="Type" >
           <b-select placeholder="Select loan offer type" v-model="selectedType">
               <option v-for="(key, type) in typeLoans" v-bind:value="key">
@@ -14,14 +40,14 @@
           </b-select>
         </b-field>
         <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isInteger(amount) ? '' : 'is-danger'">
-            <b-input v-model="amount" placeholder="0"></b-input>
+          <b-input v-model="amount" placeholder="0"></b-input>
         </b-field>
         <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
-            <b-input v-model="margin" placeholder="0"></b-input>
+          <b-input v-model="margin" placeholder="0"></b-input>
         </b-field>
         <b-field horizontal label="Offer period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
-            <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
-            <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
+          <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
+          <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
         </b-field>
         <b-field horizontal>
           <p class="control">
@@ -38,6 +64,7 @@
 </template>
 
 <script>
+import Config from '@/config'
 export default {
   data () {
     return {
@@ -49,8 +76,15 @@ export default {
       debatingPeriod: new Date(),
       debatingTime: new Date(),
       button: {name: 'Create Offer', disabled: true},
+      buttonAllowance: {name: 'Update Allowance', disabled: true},
       typeLoans: this.$libre.loansType,
-      selectedType: 0
+      selectedType: 0,
+      allowed: 0,
+      balanceETH: 0,
+      balanceLibre: 0,
+      myAddress: '',
+      newAllowance: 0,
+      isOpen: false
     }
   },
   methods: {
@@ -84,6 +118,40 @@ export default {
       this.button.disabled = !valid
     },
 
+    validAllowanceData() {
+      let valid = true
+
+      if (!this.isInteger(this.newAllowance))
+        valid = false
+
+      this.buttonAllowance.disabled = !valid
+    },
+
+    async updateData() {
+      this.myAddress = window.web3.eth.defaultAccount;
+      this.allowed = +await this.$libre.token.allowance(this.myAddress, Config.loans.address) / 10**18;
+      try {
+        this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.myAddress));
+      } catch (err) {
+        this.balanceETH = err;
+      }
+      this.balanceLibre = +await this.$libre.token.balanceOf(window.web3.eth.defaultAccount) / 10 ** 18;
+    },
+
+    async updateAllowance() {
+      try {
+        var txHash = await this.$libre.token.approve(Config.loans.address, this.newAllowance * 10 ** 18);
+        if (await this.$eth.isSuccess(txHash)) {
+          alert("allowance set");
+          this.updateData();
+        } else {
+          alert('Creating offer error')
+        }
+      } catch (err) {
+        alert(this.$eth.getErrorMsg(err))
+      }
+    },
+
     async createLoan() {
       let
         txHash,
@@ -97,14 +165,14 @@ export default {
       try {
         switch(this.selectedType) {
           case 0 /* Libre */:
-            txHash = await this.$eth.loansContract.giveLibre(
+            txHash = await this.$libre.loans.giveLibre(
               debatingPeriodInMinutes,
               this.amount * 10 ** 18,
               this.margin
             )
             break;
           case 1 /* ETH */:
-            txHash = await this.$eth.loansContract.giveEth(
+            txHash = await this.$libre.loans.giveEth(
               debatingPeriodInMinutes,
               +this.$eth.toWei(this.amount, 'ether'),
               this.margin,
@@ -127,7 +195,7 @@ export default {
   },
   created () {
     try {
-
+      this.updateData()
     } catch (err) {
       console.log(err)
     }
@@ -137,6 +205,7 @@ export default {
     debatingPeriod: function() {this.validData()},
     debatingTime: function() {this.validData()},
     margin: function() {this.validData()},
+    newAllowance: function() {this.validAllowanceData()},
     selectedType: function() {
       this.recipient = this.amount = this.margin = '';
       this.debatingPeriod = this.debatingTime = new Date();

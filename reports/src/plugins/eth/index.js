@@ -146,6 +146,14 @@ class ETH {
     })
   }
 
+  getBalance (address) {
+    return new Promise((resolve, reject) => {
+      this._web3.eth.getBalance(address, (err, balance) => {
+        err ? reject(err) : resolve(balance)
+      })
+    })
+  }
+
   getConfirmations (txHash) {
     return new Promise((resolve, reject) => {
       this.getBlockNumber()
