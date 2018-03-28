@@ -13,6 +13,10 @@
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">New Proposal</router-link>
       </div>
       <br>
+      <b-field class="table-padding">
+        <b-radio-button v-model="filter" native-value="ALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
+        <b-radio-button v-model="filter" native-value="Active" type="is-success" checked @input="loadProposals()">Active</b-radio-button>
+      </b-field>
       <dao-table :tableData='searchData'></dao-table>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
@@ -35,7 +39,8 @@ export default {
       searchData: [],
       isLoading: false,
       defaultAddress: window.web3.eth.defaultAccount,
-      tokensCount: ''
+      tokensCount: '',
+      filter: "ALL"
     }
   },
   methods: {

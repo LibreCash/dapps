@@ -3,8 +3,6 @@
     <b-message type="is-warning" v-if="needUpdate">
       The table isn't actual. Please update the page
     </b-message>
-    <button class="button">Update table</button>
-    <button class="button">All</button>
     <b-table
       :data="isEmpty ? [] : tableData"
       :bordered="isBordered"
@@ -81,7 +79,7 @@ export default {
       row.loading = true
       try {
         let 
-          txHash = await this.$eth.daoContract.vote(id, support),
+          txHash = await this.$libre.dao.vote(id, support),
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
           alert(message)
       }catch(e) {
@@ -91,7 +89,7 @@ export default {
       row.loading = false
 
       try {
-        let voteData =  await this.$eth.getVotingData(row.id);
+        let voteData =  await this.$libre.getVotingData(row.id);
         row = {
           yea: +voteData.yea / 10 ** 18,
           nay: +voteData.nay / 10 ** 18,
@@ -108,7 +106,7 @@ export default {
 
       try {
       let 
-        txHash = await this.$eth.daoContract.blockingProposal(row.id)
+        txHash = await this.$libre.dao.blockingProposal(row.id)
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
         alert(message);
       }catch(e) {
@@ -124,7 +122,7 @@ export default {
         id = row.id
       
       try {
-        let txHash = await this.$eth.daoContract.executeProposal(id)
+        let txHash = await this.$libre.dao.executeProposal(id)
         message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
         alert(message)
       } catch(e) {
@@ -148,7 +146,7 @@ export default {
       this.updateBlockTime()
       this.numProposals = -1
       this.updateTableData = setInterval(async () => {
-        var numProposals = +(await this.$eth.daoContract.numProposals())
+        var numProposals = +(await this.$libre.dao.numProposals())
         if (numProposals !== this.numProposals && this.numProposals !== -1) {
           this.needUpdate = true
           console.log('you need update')
@@ -162,7 +160,7 @@ export default {
   },
   created () {
     this.startUpdatingTime()
-    this.$eth.daoContract.owner().then((owner) => {
+    this.$libre.dao.owner().then((owner) => {
       this.contractOwner = owner
       var loginChecker = setInterval(() => {
         if (this.$eth.yourAccount != null) {
