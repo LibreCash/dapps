@@ -7,9 +7,9 @@
       <br>
       <div class="table-padding">
         <router-link :to="{ path: '/dao' }" class="button">
-          <b-icon icon="keyboard-return" size="is-small"></b-icon>&nbsp;&nbsp;&nbsp;&nbsp;Back
+          <b-icon icon="keyboard-return" size="is-small"></b-icon>
+          <span>Back</span>
         </router-link>
-        <span class="icon arrow-left"><i class="arrow-left"></i></span>
         <b-table :data="isEmpty ? [] : proposalData"
           :bordered="isBordered"
           :striped="isStriped"
@@ -25,9 +25,13 @@
             </b-table-column>
           </template>
         </b-table>
-        <div class="has-text-centered">
-          <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>&nbsp;&nbsp;&nbsp;&nbsp;
-          <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
+        <div class="columns">
+          <div class="column">
+            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>
+          </div>
+          <div class="column">
+            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
+          </div>
         </div>
         
       </div>
@@ -37,10 +41,11 @@
 </template>
 
 <script>
+import Config from '@/config'
 export default {
   data () {
     return {
-      daoAddress: this.$eth.daoAddress,
+      daoAddress: Config.dao.address,
       proposalId: this.$route.params.id,
       reportText: '',
       owner: false,
@@ -70,11 +75,10 @@ export default {
 
       try {
           let 
-            proposal = await this.$eth.getProposal(this.$route.params.id),
-            vote = await this.$eth.getVotingData(this.$route.params.id),
-            zeroAddress = '0x0000000000000000000000000000000000000000'
+            proposal = await this.$libre.updateProposal(this.$route.params.id),
+            vote = proposal.vote;
 
-          this.currentProposal = this.typeProposals[proposal[struct.type]]
+          this.currentProposal = this.typeProposals[proposal.type]
           
           this.proposalData.push({name: 'Type:', value: this.currentProposal.text})
 
@@ -82,31 +86,31 @@ export default {
           if (this.currentProposal["benef"])
             this.proposalData.push({
               name: this.currentProposal["benef"], 
-              value: proposal[struct.recipient] === zeroAddress ? '-' : proposal[struct.recipient]
+              value: this.$eth.isZeroAddress(proposal.recipient) ? '-' : proposal.recipient
             })
           
           if (this.currentProposal["amount"])
             this.proposalData.push({
               name: this.currentProposal["amount"], 
-              value: `${proposal[struct.amount]}`
+              value: `${proposal.amount}`
             })
           
           if (this.currentProposal["buf"])
             this.proposalData.push({
               name: this.currentProposal["buf"], 
-              value: `${proposal[struct.buffer]}`
+              value: `${proposal.buffer}`
             })
 
           if (this.currentProposal["code"])
             this.proposalData.push({
               name: this.currentProposal["code"], 
-              value: proposal[struct.bytecode]
+              value: proposal.bytecode
             })
           
           this.proposalData.push(
-            {name: 'Voting:', value: `${vote.yea / 10 ** 18}/${vote.nay / 10 ** 18}`},
+            {name: 'Voting:', value: `${vote.yea}/${vote.nay}`},
             {name: 'Deadline:', value: new Date(vote.deadline * 1000).toLocaleString()},
-            {name: 'Description:', value: proposal[struct.description]}
+            {name: 'Description:', value: proposal.description}
           )
 
           this.disVote = (this.$eth.toTimestamp(vote.deadline) <= (Date.now()) || vote.voted) ? true : false
@@ -119,11 +123,12 @@ export default {
     async vote (support) {
       try {
         let 
-          txHash = await this.$eth.daoContract.vote(this.proposalId, support),
+          txHash = await this.$libre.dao.vote(this.proposalId, support),
           result = this.$eth.isSucces(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
 
         alert(result) // Replace it to notify
-        this.$eth.getVotingData(this.proposalId).then((vData) => this.loadProposal())
+        await this.$libre.updateProposal(this.proposalId)
+        this.loadProposal()
         
       } catch(error) {
         alert(this.$eth.getErrorMsg(e))
@@ -141,3 +146,9 @@ export default {
   }
 }
 </script>
+
+<style>
+button.is-success {
+  float: right;
+}
+</style>

@@ -11,10 +11,79 @@
         <div>Tokens count: {{ tokensCount }} LBRS</div>
         <br>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
+        <br><br>
+        <b-field>
+          <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
+          <b-radio-button v-model="filter" native-value="filterActive" type="is-success" checked @input="loadProposals()">Active</b-radio-button>
+        </b-field>
+        <b-message type="is-warning" v-if="needUpdate">
+          The table isn't actual. Please update the page
+        </b-message>
+        <b-table
+          :data="tableData"
+          :bordered="false"
+          :striped="true"
+          :narrowed="false"
+          :loading="isLoading"
+          :paginated="true"
+          :per-page="perPage"
+          :current-page.sync="currentPage"
+          :pagination-simple="false"
+          :mobile-cards="true"
+          :responsive="true">
+          <template slot-scope="props" v-if="!props.row.tempHide">
+            <b-table-column field="report.type" label='Type' centered>
+              {{ props.row.loading ? 'loading...' : props.row.type }}
+            </b-table-column>
+            <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
+                not set
+            </b-table-column>
+            <b-table-column label='Recipient' centered v-else>
+              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
+            </b-table-column>
+            <b-table-column field="report.amount" label='Amount' centered>
+              {{ props.row.amount }}
+            </b-table-column>
+            <b-table-column field="report.buffer" label='Buffer' centered>
+              {{ props.row.buffer }}
+            </b-table-column>
+            <b-table-column label='Description' centered>
+              {{ props.row.description }}
+            </b-table-column>
+            <b-table-column label='Votes' centered>
+              {{ props.row.yea }} / {{ props.row.nay }}
+            </b-table-column>
+             <b-table-column label='Deadline' centered>
+              {{ props.row.deadline }}
+              <span v-if="props.row.deadlineUnix <= curBlockchainTime">
+                outdated
+              </span>
+            </b-table-column>
+            <b-table-column label='Actions' centered>
+              <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+              <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime) && !props.row.loading && (props.row.tokensCount > 0)">
+                <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
+                <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+              </span>
+              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime">
+                <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+              </span>
+              <span v-else-if="props.row.votingData.voted">
+                voted
+              </span>
+              <span v-else-if="!(props.row.tokensCount > 0)" style="white-space: nowrap">
+                no tokens
+              </span>
+              <span v-else>
+                loading
+              </span>
+              <span v-if="isOwner">
+                <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+              </span>
+            </b-table-column>
+          </template>
+        </b-table>
       </div>
-      <br>
-      <dao-table :tableData='searchData'></dao-table>
-      <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
     </div>
 </template>
@@ -22,88 +91,210 @@
 
 
 <script>
-import DaoTable from '@/components/DaoTable'
-// replace it to dao data
+import Config from '@/config'
+
 export default {
   data () {
     return {
-      daoAddress: this.$eth.daoAddress,
+      daoAddress: Config.dao.address,
       reportText: '',
-      owner: false,
+      //owner: false,
       reportNumber: 0,
-      searchData: [],
+      tableData: [],
       isLoading: false,
       defaultAddress: window.web3.eth.defaultAccount,
-      tokensCount: ''
+      tokensCount: '',
+      filter: "filterALL",
+      currentPage: 1,
+      perPage: 5,
+      curBlockchainTime: 0,
+      needUpdate: false,
+      isOwner: false,
+      contractOwner: null
     }
   },
   methods: {
+    async addProposal (index) {
+      var 
+        proposal = this.$libre.proposals[index],
+        vote = proposal.vote;
+
+      if (this[this.filter](proposal))
+      {
+        if (this.tableData.length == this.perPage) this.isLoading = false
+        this.tableData.push({
+            id: index,
+            type: this.$libre.typeProposals[proposal.type].text,
+            recipient: this.$eth.isZeroAddress(proposal.recipient) ? '-' : proposal.recipient,
+            amount: proposal.amount,
+            buffer: proposal.buffer,
+            bytecode: proposal.bytecode,
+            votingData: vote,
+            yea: vote.yea,
+            nay: vote.nay,
+            deadlineUnix: vote.deadline,
+            deadline: new Date(vote.deadline * 1000).toLocaleString(),
+            description: proposal.description,
+            loading: false,
+            updateTimer: null
+        })
+      }
+    },
+
+    filterALL(proposal) {
+      return true;
+    },
+
+    filterActive(proposal) {
+      return proposal.type !== 0;
+    },
+
     async loadProposals () {
-      const struct = {
-        'type':0,
-        'recipient':1,
-        'amount':2,
-        'buffer':3,
-        'bytecode':4,
-        'description':5
+
+      this.clearTimers();
+      this.tableData = []
+      this.isLoading = true
+
+      await this.$libre.updateProposals(this.addProposal);
+      if (this.tableData.length == 0) {
+        for(let i = this.$libre.proposals.length-1; i >=0; i--)
+          this.addProposal(i)
       }
 
-      this.searchData = []
-      this.isLoading = true
-      try {
-        let j = await this.$eth.proposalCounter()
-        let activeProposalShown = 0
-        for (let i = j - 1; i > 0; --i) {
-          var 
-            proposal = await this.$eth.getProposal(i),
-            vote = await this.$eth.getVotingData(i)
-          if (+proposal[struct.type] !== 0 /* CLEAN */)
-          {
-            if (++activeProposalShown == 10) this.isLoading = false
-            this.searchData.push({
-                id: i,
-                type: this.$libre.typeProposals[proposal[struct.type]].text,
-                recipient: proposal[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : proposal[struct.recipient],
-                amount: +proposal[struct.amount],
-                buffer: +proposal[struct.buffer],
-                bytecode: proposal[struct.bytecode],
-                votingData: vote,
-                yea: vote.yea / 10 ** 18,
-                nay: vote.nay / 10 ** 18,
-                deadlineUnix: vote.deadline,
-                deadline: new Date(vote.deadline * 1000).toLocaleString(),
-                description: proposal[struct.description],
-                loading: false,
-                updateTimer: null,
-                tokensCount: this.tokensCount
-            })
-          }
-        }
-      } catch (err) {
-        console.log(err)
-      }
-      this.searchData.forEach(element => {
+      this.tableData.forEach(element => {
         element.updateTimer = setInterval(async () => {
           // we can check type of proposal, but we won't
           // the changing of the type can be seen in another timer by detecting change of numProposals
-          var vote = await this.$eth.getVotingData(element.id)
-          element.yea = vote.yea / 10 ** 18
-          element.nay = vote.nay / 10 ** 18
+          
+          var vote = (await this.$libre.updateProposal(element.id)).vote;
+          element.yea = vote.yea
+          element.nay = vote.nay
           element.votingData = vote
         }, 60 * 1000 + Math.random() * 5000)
       });
 
       this.isLoading = false
-    },
 
-    async mayVote () {
-      this.owner = await this.$eth.mayVote()
+      this.startUpdatingTime()
+      this.contractOwner = await this.$libre.dao.owner()
+      var loginChecker = setInterval(() => {
+        if (this.$eth.yourAccount != null) {
+          clearInterval(loginChecker)
+          if (this.contractOwner === this.$eth.yourAccount) {
+            this.isOwner = true
+          } else {
+            this.isOwner = false
+          }
+        }
+      }, 1000)
     },
 
     async getTokensCount () {
-      await this.$eth.promiseLibre;
+      await this.$libre.promiseLibre;
 
-      this.tokensCount = +await this.$eth.libre.balanceOf(this.defaultAddress) / 10 ** 18;
+      this.tokensCount = +await this.$libre.libre.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
+    },
+
+    async vote (row, support) {
+      let 
+        id = row.id,
+        votingData = row.votingData
+
+      row.loading = true
+      try {
+        let 
+          txHash = await this.$libre.dao.vote(id, support),
+          message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
+        alert(message)
+      }catch(e) {
+        alert(this.$eth.getErrorMsg(e)) 
+      }
+      
+      row.loading = false
+
+      try {
+        
+        let voteData = (await this.$libre.updateProposal(row.id)).vote;
+        row = {
+          yea: voteData.yea,
+          nay: voteData.nay,
+          votingData: voteData // Check that we needed it
+        }
+      } catch(e) {
+        alert(this.$eth.getErrorMsg(e))
+      }
+      row.loading = false
+    
+    },
+    async block (row) {
+      row.loading = true
+
+      try {
+      let 
+        txHash = await this.$libre.dao.blockingProposal(row.id)
+        message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
+        alert(message);
+      }catch(e) {
+        alert(this.$eth.getErrorMsg(e))
+      }
+      row.loading = false
+    },
+
+    async execute(row) {
+      row.loading = true
+      
+      let 
+        id = row.id
+      
+      try {
+        let txHash = await this.$libre.dao.executeProposal(id)
+        message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
+        alert(message)
+      } catch(e) {
+        alert(this.$eth.getErrorMsg(e))
+      }
+      row.loading = false
+      
+    },
+    async updateBlockTime() {
+      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
+    },
+
+    startUpdatingTime() {
+      this.curBlockchainTime = 0
+      this.updatingTicker = setInterval(() => {
+        this.curBlockchainTime++
+      }, 1000)
+      this.updatingBlockData = setInterval(() => {
+        this.updateBlockTime()
+      }, 10 * 60 * 1000 /* 10 minutes */)
+      this.updateBlockTime()
+      this.numProposals = -1
+      this.updateTableData = setInterval(async () => {
+        var numProposals = +(await this.$libre.dao.numProposals())
+        if (numProposals !== this.numProposals && this.numProposals !== -1) {
+          this.needUpdate = true
+          console.log('you need update')
+          clearInterval(this.updateTableData)
+        }
+        if (this.numProposals === -1) {
+          this.numProposals = numProposals
+        }
+      }, 60 * 1000)
+    },
+
+    clearTimers() {
+      this.tableData.forEach(element => {
+        clearInterval(element.updateTimer)
+      })
+
+      let intervals = [
+        this.updatingTicker,
+        this.updatingBlockData,
+        this.updateTableData
+      ]
+
+      intervals.forEach((interval) => clearInterval(interval))
     }
   },
   created () {
@@ -115,12 +306,7 @@ export default {
     }
   },
   destroyed () {
-    this.searchData.forEach(element => {
-      clearInterval(element.updateTimer)
-    })
-  },
-  components: {
-    DaoTable
+    this.clearTimers();
   }
 }
 </script>

@@ -1,6 +1,7 @@
 /* eslint-disable no-trailing-spaces */
 import Vue from 'vue'
-import '../eth'
+import Web3 from 'web3'
+import Config from '@/config'
 
 class Libre {
   static install (vue, options) {
@@ -11,6 +12,14 @@ class Libre {
   }
 
   constructor () {
+    this.consts = {
+      DECIMALS: 18,
+      MIN_READY_ORACLES: 2,
+      MIN_ORACLES_ENABLED: 2,
+      REVERSE_PERCENT: 100,
+      RATE_MULTIPLIER: 1000
+    }
+
     this.proposalStruct = {
       'type': 0,
       'recipient': 1,
@@ -20,12 +29,11 @@ class Libre {
       'description': 5
     }
 
-    this.consts = {
-      DECIMALS: 18,
-      MIN_READY_ORACLES: 2,
-      MIN_ORACLES_ENABLED: 2,
-      REVERSE_PERCENT: 100,
-      RATE_MULTIPLIER: 1000
+    this.voteStruct = {
+      'yea': 0,
+      'nay': 1,
+      'voted': 2,
+      'deadline': 3
     }
 
     this.typeProposals = [
@@ -112,6 +120,79 @@ class Libre {
         key: 'CLAIM_OWNERSHIP'
       }
     ]
+
+    this.web3 = window.web3;
+    this.proposals = [];
+
+    this.report = this.getContract(JSON.parse(Config.report.abi),Config.report.address)
+    this.bank = this.getContract(JSON.parse(Config.bank.abi), Config.bank.address)
+    this.bank.tokenAddress().then(address => {
+      Config.token.address = address;
+      this.token = this.getContract(JSON.parse(Config.token.abi),Config.token.address)
+    })
+
+    this.dao = this.getContract(JSON.parse(Config.dao.abi),Config.dao.address)
+    this.promiseLibre = this.dao.sharesTokenAddress().then(address => {
+      this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
+    })
+  }
+
+  getContract(abi, address) {
+    return new Proxy(this.web3.eth.contract(abi).at(address), { 
+      get: (_contract, name) => function () {
+        return new Promise((resolve, reject) => {
+          _contract[name](...arguments, (err, result) => {
+            err ? reject(err) : resolve(result)
+          })
+        })
+      }
+    })
+  }
+
+  getProposalObject(contractArray) {
+    return {
+      type: +contractArray[this.proposalStruct.type],
+      recipient: contractArray[this.proposalStruct.recipient],
+      amount: +contractArray[this.proposalStruct.amount],
+      buffer: +contractArray[this.proposalStruct.buffer],
+      bytecode: contractArray[this.proposalStruct.bytecode],
+      description: contractArray[this.proposalStruct.description]
+    }
+  }
+
+  getVotingObject(contractArray) {
+    return {
+      yea: +contractArray[this.voteStruct.yea] / 10 ** this.consts.DECIMALS,
+      nay: +contractArray[this.voteStruct.nay] / 10 ** this.consts.DECIMALS,
+      voted: contractArray[this.voteStruct.voted],
+      deadline: +contractArray[this.voteStruct.deadline]
+    }
+  }
+
+  async updateProposal(index) {
+    let proposal = this.getProposalObject(await this.dao.getProposal(index));
+    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
+
+    this.proposals[index] = proposal
+    return this.proposals[index]
+  }
+
+  async updateProposals(callEach) {
+    try {
+      let length = await this.dao.proposalsLength()
+
+      if (length <= this.proposals.length)
+        return
+
+      for (let i = length - 1; i >= 0; --i) {
+        await this.updateProposal(i);
+        if (callEach)
+          callEach(i)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+    console.log("proposals", this.proposals);
   }
 }
 
