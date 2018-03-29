@@ -178,6 +178,10 @@ class ETH {
   toWei (amount, units) {
     return this._web3.toWei(amount, units)
   }
+
+  isZeroAddress(address) {
+    return address === '0x0000000000000000000000000000000000000000'
+  }
 }
 
 Vue.use(ETH, {})
