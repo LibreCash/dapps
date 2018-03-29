@@ -32,30 +32,40 @@
         </b-collapse>
       </div>
       <div class="table-padding">
-        <b-field horizontal label="Type" >
-          <b-select placeholder="Select loan offer type" v-model="selectedType">
-              <option v-for="(key, type) in typeLoans" v-bind:value="key">
-                {{ type }}
-              </option>
-          </b-select>
-        </b-field>
-        <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isInteger(amount) ? '' : 'is-danger'">
-          <b-input v-model="amount" placeholder="0"></b-input>
-        </b-field>
-        <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
-          <b-input v-model="margin" placeholder="0"></b-input>
-        </b-field>
-        <b-field horizontal label="Offer period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
-          <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
-          <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
-        </b-field>
-        <b-field horizontal>
-          <p class="control">
-            <button class="button is-primary" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
-              {{ button.name }}
-            </button>
-          </p>
-        </b-field>
+        <b-collapse class="card" :open.sync="isOfferOpen">
+          <div slot="trigger" slot-scope="props" class="card-header">
+            <p class="card-header-title">New Offer</p>
+            <a class="card-header-icon">
+              <b-icon :icon="isOpen ? 'menu-up' : 'menu-down'"></b-icon>
+            </a>
+          </div>
+          <div class="card-content">
+          <b-field horizontal label="Type" >
+              <b-select placeholder="Select loan offer type" v-model="selectedType">
+                  <option v-for="(key, type) in typeLoans" v-bind:value="key">
+                    {{ type }}
+                  </option>
+              </b-select>
+            </b-field>
+            <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isInteger(amount) ? '' : 'is-danger'">
+              <b-input v-model="amount" placeholder="0"></b-input>
+            </b-field>
+            <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
+              <b-input v-model="margin" placeholder="0"></b-input>
+            </b-field>
+            <b-field horizontal label="Offer period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
+              <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
+              <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
+            </b-field>
+            <b-field horizontal>
+              <p class="control">
+                <button class="button is-primary" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
+                  {{ button.name }}
+                </button>
+              </p>
+            </b-field>
+          </div>
+        </b-collapse>
       </div>
       <br>
     </section>
@@ -84,7 +94,8 @@ export default {
       balanceLibre: 0,
       myAddress: '',
       newAllowance: 0,
-      isOpen: false
+      isOpen: false,
+      isOfferOpen: true
     }
   },
   methods: {
