@@ -58,7 +58,7 @@ export default {
   data () {
     return {
       proposalData: [],
-      daoAddress: Config.dao.address,
+      daoAddress: '',
       beneficiary: '',
       weiAmount: '',
       description: '',
@@ -239,8 +239,11 @@ export default {
       }
     }
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.loadAccounts();
+      await this.$libre.init();
+      this.daoAddress = Config.dao.address;
       this.selectedType = this.typeProposals[0]
     } catch (err) {
       console.log(err)

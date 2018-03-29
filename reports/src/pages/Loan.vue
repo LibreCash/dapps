@@ -119,8 +119,10 @@ export default {
       this.isLoading = false
     }
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.loadAccounts();
+      await this.$libre.init();
       this.loadLoan()
     } catch (err) {
       console.log(err)

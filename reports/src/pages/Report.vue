@@ -31,7 +31,7 @@ import BRadioButton from 'buefy/src/components/radio/RadioButton'
 export default {
   data () {
     return {
-      reportAddress: Config.report.address,
+      reportAddress: '',
       reportText: '',
       owner: false,
       reportNumber: 0,
@@ -84,12 +84,15 @@ export default {
       this.owner = await this.$libre.report.owner()
     }
   },
-  created () {
+  async created () {
     try {
-      this.loadETH()
-      this.loadReport()
-      this.search()
-      this.checkOwner()
+      await this.$eth.loadAccounts();
+      await this.$libre.init();
+      this.reportAddress = Config.report.address;
+      this.loadETH();
+      this.loadReport();
+      this.search();
+      this.checkOwner();
     } catch (err) {
       console.log(err)
     }

@@ -60,8 +60,10 @@ export default {
 
     
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.loadAccounts();
+      await this.$libre.init();
       this.getStatusBank()
     } catch (err) {
       console.log(err)

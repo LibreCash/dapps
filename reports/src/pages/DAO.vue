@@ -32,13 +32,13 @@ import DaoTable from '@/components/DaoTable'
 export default {
   data () {
     return {
-      daoAddress: Config.dao.address,
+      daoAddress: '',
       reportText: '',
       //owner: false,
       reportNumber: 0,
       searchData: [],
       isLoading: false,
-      defaultAddress: window.web3.eth.defaultAccount,
+      defaultAddress: '',
       tokensCount: '',
       filter: "ALL"
     }
@@ -79,6 +79,8 @@ export default {
     },
 
     async loadProposals () {
+      this.daoAddress = Config.dao.address;
+      this.defaultAddress = window.web3.eth.defaultAccount;
 
       this.searchData = []
       this.isLoading = true
@@ -102,13 +104,13 @@ export default {
     },
 
     async getTokensCount () {
-      await this.$libre.promiseLibre;
-
       this.tokensCount = +await this.$libre.libre.balanceOf(this.defaultAddress) / 10 ** 18;
     }
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.loadAccounts();
+      await this.$libre.init();
       this.loadProposals()
       this.getTokensCount()
     } catch (err) {

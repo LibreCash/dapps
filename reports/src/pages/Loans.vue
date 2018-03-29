@@ -57,13 +57,13 @@ export default {
   data () {
     return {
       vtype: 'ETH',
-      loansAddress: Config.loans.address,
+      loansAddress: '',
       reportText: '',
       owner: false,
       reportNumber: 0,
       searchData: [],
       isLoading: false,
-      defaultAddress: window.web3.eth.defaultAccount,
+      defaultAddress: '',
       tokensCount: '',
       pages: [1],
       vpage: 1,
@@ -78,6 +78,8 @@ export default {
   },
   methods: {
     async loadLoans (resetPage = true) {
+      this.defaultAddress = window.web3.eth.defaultAccount;
+      this.loansAddress = Config.loans.address;
       this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         return;
@@ -131,6 +133,8 @@ export default {
   },
   async created () {
     try {
+      await this.$eth.loadAccounts();
+      await this.$libre.init();
       this.loadLoans()
     } catch (err) {
       console.log(err)

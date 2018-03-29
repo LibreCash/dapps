@@ -45,7 +45,7 @@ import Config from '@/config'
 export default {
   data () {
     return {
-      daoAddress: Config.dao.address,
+      daoAddress: '',
       proposalId: this.$route.params.id,
       reportText: '',
       owner: false,
@@ -75,7 +75,7 @@ export default {
 
       try {
           let 
-            proposal = await this.$libre.getProposal(this.$route.params.id),
+            proposal = await this.$libre.dao.getProposal(this.$route.params.id),
             vote = await this.$libre.getVotingData(this.$route.params.id),
             zeroAddress = '0x0000000000000000000000000000000000000000'
 
@@ -137,8 +137,11 @@ export default {
       }
     }
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.loadAccounts();
+      await this.$libre.init();
+      this.daoAddress = Config.dao.address;
       this.loadProposal()
     } catch (err) {
       console.log(err)

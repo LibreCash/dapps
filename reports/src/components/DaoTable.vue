@@ -158,8 +158,9 @@ export default {
       }, 60 * 1000)
     }
   },
-  created () {
+  async created () {
     this.startUpdatingTime()
+    await this.$libre.init();
     this.$libre.dao.owner().then((owner) => {
       this.contractOwner = owner
       var loginChecker = setInterval(() => {

@@ -147,24 +147,21 @@ class Libre {
         key: 'CLAIM_OWNERSHIP'
       }
     ]
+  }
 
+  async init() {
     this.web3 = window.web3;
     this.proposals = [];
 
     this.report = this.getContract(JSON.parse(Config.report.abi),Config.report.address)
     this.bank = this.getContract(JSON.parse(Config.bank.abi), Config.bank.address)
-    this.bank.tokenAddress().then(address => {
-      Config.token.address = address;
-      this.token = this.getContract(JSON.parse(Config.erc20.abi),Config.token.address)
-    })
+    var address = await this.bank.tokenAddress();
+    Config.token.address = address;
+    this.token = this.getContract(JSON.parse(Config.erc20.abi),Config.token.address)
 
     this.dao = this.getContract(JSON.parse(Config.dao.abi),Config.dao.address)
-    this.promiseLibre = this.dao.sharesTokenAddress().then(address => {
-      this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
-    })
-    this.promiseLibre = this.dao.sharesTokenAddress().then(address => {
-      this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
-    })
+    address = await this.dao.sharesTokenAddress();
+    this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
 
     this.loans = this.getContract(JSON.parse(Config.loans.abi),Config.loans.address)
   }
@@ -182,12 +179,14 @@ class Libre {
   }
 
   async getVotingData (number) {
-    return await this.dao.getVotingData(number).then((err, report) => {
-      err ? reject(err) : resolve({
-        yea: report[this.voteStruct.yea],
-        nay: report[this.voteStruct.nay],
-        voted: report[this.voteStruct.voted],
-        deadline: report[this.voteStruct.deadline]
+    return new Promise((resolve, reject) => {
+      this.dao.getVotingData(number).then((report) => {
+        resolve({
+          yea: report[this.voteStruct.yea],
+          nay: report[this.voteStruct.nay],
+          voted: report[this.voteStruct.voted],
+          deadline: report[this.voteStruct.deadline]
+        })
       })
     })
   }

@@ -47,8 +47,11 @@
                   </option>
               </b-select>
             </b-field>
-            <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isInteger(amount) ? '' : 'is-danger'">
+            <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
               <b-input v-model="amount" placeholder="0"></b-input>
+              <p class="control">
+                <button class="button is-primary" @click="allAvailable()" v-if="selectedType == 0">All available</button>
+              </p>
             </b-field>
             <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
               <b-input v-model="margin" placeholder="0"></b-input>
@@ -79,7 +82,7 @@ export default {
   data () {
     return {
       proposalData: [],
-      daoAddress: this.$eth.daoAddress,
+      daoAddress: '',
       recipient: '',
       amount: '',
       margin: '',
@@ -103,6 +106,13 @@ export default {
       return +number >= 0
     },
 
+    isValidAmount(number) {
+      return this.isInteger(number) && number > 0 && (
+        (this.selectedType == 0 /* Libre */ && number <= this.balanceLibre && number <= this.allowed) ||
+        (this.selectedType == 1 /* ETH */ && number < this.balanceETH) /* '<' not '<=' cause tx fee */
+      )
+    },
+
     isDebatingPeriod() {
       if (this.debatingEnd) 
         return false
@@ -119,7 +129,7 @@ export default {
     validData() {
       let valid = true
 
-      if (!this.isInteger(this.amount))
+      if (!this.isValidAmount(this.amount))
         valid = false
       else if (!this.isInteger(this.margin))
         valid = false
@@ -136,6 +146,14 @@ export default {
         valid = false
 
       this.buttonAllowance.disabled = !valid
+    },
+
+    async allAvailable() {
+      if (this.selectedType == 1 /* ETH */) {
+        this.amount = this.balanceETH;
+      } else {
+        this.amount = Math.min(this.balanceLibre, this.allowed);
+      }
     },
 
     async updateData() {
@@ -168,7 +186,7 @@ export default {
         txHash,
         now = new Date(),
         debatingEnd = (new Date(this.debatingPeriod))
-          .setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes()),
+          .setHours(this.debatingTime.getHours(), this.debatingTime.getMinutes()),
         debatingPeriodInMinutes = Math.round((debatingEnd - now) / 1000 / 60);
 
       this.button = {name: 'Pending...', disabled: true}
@@ -204,8 +222,11 @@ export default {
       }
     }
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.loadAccounts();
+      await this.$libre.init();
+      this.daoAddress = this.$eth.daoAddress;
       this.updateData()
     } catch (err) {
       console.log(err)
@@ -218,8 +239,7 @@ export default {
     margin: function() {this.validData()},
     newAllowance: function() {this.validAllowanceData()},
     selectedType: function() {
-      this.recipient = this.amount = this.margin = '';
-      this.debatingPeriod = this.debatingTime = new Date();
+      this.amount = this.margin = '';
     }
   }
 }
