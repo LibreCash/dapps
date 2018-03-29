@@ -152,15 +152,13 @@ export default {
       this.daoAddress = Config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
 
+      await this.updateBlockTime();
+
       this.clearTimers();
       this.tableData = []
       this.isLoading = true
 
       await this.$libre.updateProposals(this.addProposal);
-      if (this.tableData.length == 0) {
-        for(let i = this.$libre.proposals.length-1; i >=0; i--)
-          this.addProposal(i)
-      }
 
       this.tableData.forEach(element => {
         element.updateTimer = setInterval(async () => {
@@ -205,7 +203,7 @@ export default {
       try {
         let 
           txHash = await this.$libre.dao.vote(id, support),
-          message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
+        message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
         alert(message)
       }catch(e) {
         alert(this.$eth.getErrorMsg(e)) 

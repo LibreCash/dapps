@@ -19,22 +19,6 @@
           <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
           <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
           <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
-          
-          <b-field>
-            <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans(false)">{{page}}</b-radio-button>
-          </b-field>
-          <b-field label="per page">
-            <b-select v-model="perPage" @input="loadLoans()">
-              <option value="3">3</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-              <option value="300">300</option>
-            </b-select>
-          </b-field>
         </div>
       </div>
       <br>
@@ -42,6 +26,23 @@
         No loans for selected filter
       </div>
       <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
+      <div class="table-padding">
+        <b-field>
+          <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans(false)">{{page}}</b-radio-button>
+        </b-field>
+        <b-field label="per page">
+          <b-select v-model="perPage" @input="loadLoans()">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="300">300</option>
+          </b-select>
+        </b-field>
+      </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
     </div>
