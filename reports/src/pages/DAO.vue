@@ -60,7 +60,7 @@
             </b-table-column>
             <b-table-column label='Actions' centered>
               <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
-              <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime) && !props.row.loading && (props.row.tokensCount > 0)">
+              <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime) && !props.row.loading && (tokensCount > 0)">
                 <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
                 <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
               </span>
@@ -70,7 +70,7 @@
               <span v-else-if="props.row.votingData.voted">
                 voted
               </span>
-              <span v-else-if="!(props.row.tokensCount > 0)" style="white-space: nowrap">
+              <span v-else-if="!(tokensCount > 0)" style="white-space: nowrap">
                 no tokens
               </span>
               <span v-else>
