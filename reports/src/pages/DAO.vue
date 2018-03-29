@@ -205,7 +205,7 @@ export default {
       try {
         let 
           txHash = await this.$libre.dao.vote(id, support),
-          message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
+        message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
         alert(message)
       }catch(e) {
         alert(this.$eth.getErrorMsg(e)) 

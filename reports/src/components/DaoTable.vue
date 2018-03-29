@@ -105,8 +105,8 @@ export default {
       row.loading = true
 
       try {
-      let 
-        txHash = await this.$libre.dao.blockingProposal(row.id)
+        let 
+          txHash = await this.$libre.dao.blockingProposal(row.id)
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
         alert(message);
       }catch(e) {
@@ -176,13 +176,13 @@ export default {
     })
   },
   destroyed () {
-    let intrevals = [
+    let intervals = [
       this.updatingTicker,
       this.updatingBlockData,
       this.updateTableData
     ]
 
-    intrevals.forEach((interval) => clearInterval(interval))
+    intervals.forEach((interval) => clearInterval(interval))
   },
   data () {
     return {
