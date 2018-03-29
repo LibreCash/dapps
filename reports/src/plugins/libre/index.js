@@ -147,11 +147,12 @@ class Libre {
         key: 'CLAIM_OWNERSHIP'
       }
     ]
+
+    this.proposals = [];
   }
 
   async init() {
     this.web3 = window.web3;
-    this.proposals = [];
 
     this.report = this.getContract(JSON.parse(Config.report.abi),Config.report.address)
     this.bank = this.getContract(JSON.parse(Config.bank.abi), Config.bank.address)
@@ -176,6 +177,20 @@ class Libre {
         })
       }
     })
+  }
+
+  getLoanObject(contractArray) {
+    return {
+      holder: contractArray[this.loansStruct.holder],
+      recipient: contractArray[this.loansStruct.recipient],
+      timestamp: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.timestamp],
+      period: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.period],
+      amount: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.amount],
+      margin: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.margin],
+      refund: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.refund],
+      pledge: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.pledge],
+      status: this.loansStatus[contractArray[this.loansStruct.status]]
+    }
   }
 
   getProposalObject(contractArray) {

@@ -27,6 +27,21 @@
             </b-table-column>
           </template>
         </b-table>
+        <br><br>
+        <div class="columns">
+          <div class="column">
+            <button class="button is-success" v-on:click="loanAction('takeLoan')" :disabled="!takeEnable">Take</button>
+          </div>
+          <div class="column">
+            <button class="button is-danger" v-on:click="loanAction('return')" :disabled="!returnEnable">Return</button>
+          </div>
+          <div class="column">
+            <button class="button is-success" v-on:click="loanAction('claim')" :disabled="!claimEnable">Claim</button>
+          </div>
+          <div class="column">
+            <button class="button is-danger" v-on:click="loanAction('cancel')" :disabled="!cancelEnable">Cancel</button>
+          </div>
+        </div>
       </div>
       
     </section>
@@ -38,6 +53,7 @@ export default {
   data () {
     return {
       loanId: this.$route.params.id,
+      loanType: this.$route.params.type,
       owner: false,
       loanData: [],
       isEmpty: false,
@@ -50,38 +66,83 @@ export default {
       isPaginationSimple: false,
       currentPage: 1,
       perPage: 5,
+      takeEnable: false,
+      returnEnable: false,
+      claimEnable: false,
+      cancelEnable: false
     }
   },
   methods: {
     async loadLoan () {
-      const 
-        struct = this.$libre.loansStruct,
-        status = this.$libre.loansStatus;
-    
       this.loanData = []
       this.isLoading = true
 
       try {
           let 
-            loan = this.$route.params.type == "ETH" ? await this.$libre.loans.getLoanEth(this.$route.params.id): await this.$libre.loans.getLoanLibre(this.$route.params.id);
+            loan = this.$libre.getLoanObject(this.loanType == "ETH" ? await this.$libre.loans.getLoanEth(this.loanId): await this.$libre.loans.getLoanLibre(this.loanId));
 
-          
-          let data = loan[struct.data.outer];
+          if (loan.status == 'active') {
+            this.takeEnable = true;
+            this.claimEnable = this.returnEnable = false;
+
+            if (loan.holder === this.$eth.yourAccount)
+              this.cancelEnable = true;
+          }
+
 
           this.loanData.push({name: 'Type', data: this.$route.params.type})
           this.loanData.push({name: 'ID', data: this.$route.params.id})
-          this.loanData.push({name: 'Holder', data: loan[struct.holder], type: 'input'})
-          this.loanData.push({name: 'Recipient', data: this.$eth.isZeroAddress(loan[struct.recipient]) ? '-' : loan[struct.recipient], type: this.$eth.isZeroAddress(loan[struct.recipient])? '':'input'})
-          this.loanData.push({name: 'Timestamp', data: new Date(data[struct.data.timestamp] * 1000).toLocaleString()})
-          this.loanData.push({name: 'period', data: new Date(data[struct.data.timestamp] * 1000 + data[struct.data.period] * 1000).toLocaleString()})
-          this.loanData.push({name: 'amount', data: +this.$eth.fromWei(data[struct.data.amount])})
-          this.loanData.push({name: 'margin', data: +data[struct.data.margin]})
-          this.loanData.push({name: 'refund', data: +this.$eth.fromWei(data[struct.data.refund])})
-          this.loanData.push({name: 'status', data: status[loan[struct.status]]})
+          this.loanData.push({name: 'Holder', data: loan.holder, type: 'input'})
+
+          if (loan.status != 'active') {
+            this.loanData.push({name: 'Recipient', data: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient, type: this.$eth.isZeroAddress(loan.recipient)? '':'input'})
+            this.loanData.push({name: 'Take', data: new Date(loan.timestamp * 1000).toLocaleString()})
+            this.loanData.push({name: 'Return', data: new Date((loan.timestamp + loan.period) * 1000).toLocaleString()})
+          } else {
+            this.loanData.push({name: 'Period', data: this.periodToString(loan.period)})
+          }
+
+          this.loanData.push({name: 'Amount', data: this.$eth.fromWei(loan.amount)})
+          this.loanData.push({name: 'Margin', data: loan.margin})
+          this.loanData.push({name: 'Refund', data: this.$eth.fromWei(loan.refund)})
+          this.loanData.push({name: 'Status', data: loan.status})
       } catch (err) {
         console.log(err)
       }
       this.isLoading = false
+    },
+
+    periodToString(seconds) {
+      var years = Math.floor(seconds / (60 * 60 * 24 * 365));
+      seconds -= years * 60 * 60 * 24 * 365;
+
+      var months = Math.floor(seconds / (60 * 60 * 24 * 30));
+      seconds -= months * 60 * 60 * 24 * 30;
+
+      var days = Math.floor(seconds / (60 * 60 * 24));
+      seconds -= days * 60 * 60 * 24;
+
+      var hours   = Math.floor(seconds / (60 * 60));
+      seconds -= hours * 60 * 60;
+
+      var minutes = Math.floor(seconds / 60);
+      seconds -= minutes * 60;
+
+      if (hours   < 10) {hours   = "0"+hours;}
+      if (minutes < 10) {minutes = "0"+minutes;}
+      if (seconds < 10) {seconds = "0"+seconds;}
+      return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`;
+    },
+
+    async loanAction(action) {
+      try {
+        let 
+            txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId)),
+            message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
+        alert(message)
+      }catch(e) {
+        alert(this.$eth.getErrorMsg(e)) 
+      }
     }
   },
   async created () {
