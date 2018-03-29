@@ -181,15 +181,32 @@ class Libre {
     })
   }
 
-  async getVotingData (number) {
-    return await this.dao.getVotingData(number).then((err, report) => {
-      err ? reject(err) : resolve({
-        yea: report[this.voteStruct.yea],
-        nay: report[this.voteStruct.nay],
-        voted: report[this.voteStruct.voted],
-        deadline: report[this.voteStruct.deadline]
-      })
-    })
+  getProposalObject(contractArray) {
+    return {
+      type: +contractArray[this.proposalStruct.type],
+      recipient: contractArray[this.proposalStruct.recipient],
+      amount: +contractArray[this.proposalStruct.amount],
+      buffer: +contractArray[this.proposalStruct.buffer],
+      bytecode: contractArray[this.proposalStruct.bytecode],
+      description: contractArray[this.proposalStruct.description]
+    }
+  }
+
+  getVotingObject(contractArray) {
+    return {
+      yea: +contractArray[this.voteStruct.yea] / 10 ** this.consts.DECIMALS,
+      nay: +contractArray[this.voteStruct.nay] / 10 ** this.consts.DECIMALS,
+      voted: contractArray[this.voteStruct.voted],
+      deadline: +contractArray[this.voteStruct.deadline]
+    }
+  }
+
+  async updateProposal(index) {
+    let proposal = this.getProposalObject(await this.dao.getProposal(index));
+    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
+
+    this.proposals[index] = proposal
+    return this.proposals[index]
   }
 
   async updateProposals(callEach) {
@@ -200,12 +217,7 @@ class Libre {
         return
 
       for (let i = length - 1; i >= 0; --i) {
-        var 
-          proposal = (this.proposals[i] == undefined) ? 
-                      (await this.dao.getProposal(i)) : (this.proposals[i].proposal),
-          vote = await this.dao.getVotingData(i);
-
-        this.proposals[i] = {proposal, vote}
+        await this.updateProposal(i);
         if (callEach)
           callEach(i)
       }
