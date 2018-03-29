@@ -7,7 +7,8 @@
       <br>
       <div class="table-padding">
         <button @click="$router.go(-1)" :to="{ path: '/loans' }" class="button">
-          <b-icon icon="keyboard-return" size="is-small"></b-icon>&nbsp;&nbsp;&nbsp;&nbsp;Back
+          <b-icon icon="keyboard-return" size="is-small"></b-icon>
+          <span>Back</span>
         </button>
         <span class="icon arrow-left"><i class="arrow-left"></i></span>
         <b-table :data="isEmpty ? [] : loanData"
@@ -17,46 +18,15 @@
           :loading="isLoading"
           :mobile-cards="hasMobileCards">
           <template slot-scope="props">
-            <b-table-column label='Type'>
-              <strong>{{ props.row.type }}</strong>
+            <b-table-column>
+              <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column label='ID'>
-              <strong>{{ props.row.id }}</strong>
-            </b-table-column>
-            <b-table-column label='Holder'>
-              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.holder">address</a>
-            </b-table-column>
-            <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
-              not set
-            </b-table-column>
-            <b-table-column label='Recipient' centered v-else>
-              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
-            </b-table-column>
-            <b-table-column label='Timestamp'>
-              <strong>{{ props.row.timestamp }}</strong>
-            </b-table-column>
-            <b-table-column label='Period'>
-              <strong>{{ props.row.period }}</strong>
-            </b-table-column>
-            <b-table-column label='Amount'>
-              <strong>{{ props.row.amount }} {{ props.row.type }}</strong>
-            </b-table-column>
-            <b-table-column label='Margin'>
-              <strong>{{ props.row.margin }}</strong>
-            </b-table-column>
-            <b-table-column label='Refund'>
-              <strong>{{ props.row.refund }} {{ props.row.type }}</strong>
-            </b-table-column>
-            <b-table-column label='Status' centered>
-              {{ props.row.status }}
+            <b-table-column centered>
+              <input class="address" v-if="props.row.type == 'input'" type="text" :value="props.row.data" disabled="disabled" size="25">
+              <span v-else>{{ props.row.data }}</span>
             </b-table-column>
           </template>
         </b-table>
-        <div class="has-text-centered">
-<!--          <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>&nbsp;&nbsp;&nbsp;&nbsp;
-          <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
--->        </div>
-        
       </div>
       
     </section>
@@ -76,7 +46,7 @@ export default {
       isNarrowed: false,
       isLoading: false,
       hasMobileCards: true,
-      isPaginated: true,
+      isPaginated: false,
       isPaginationSimple: false,
       currentPage: 1,
       perPage: 5,
@@ -93,26 +63,21 @@ export default {
 
       try {
           let 
-            loan = this.$route.params.type == "ETH" ? await this.$libre.loans.getLoanEth(this.$route.params.id):
-                                                      await this.$libre.loans.getLoanLibre(this.$route.params.id),
-            zeroAddress = '0x0000000000000000000000000000000000000000';
+            loan = this.$route.params.type == "ETH" ? await this.$libre.loans.getLoanEth(this.$route.params.id): await this.$libre.loans.getLoanLibre(this.$route.params.id);
 
           
           let data = loan[struct.data.outer];
 
-          this.loanData.push({
-              type: this.$route.params.type,
-              id: this.$route.params.id,
-              holder: loan[struct.holder],
-              recipient: loan[struct.recipient] === zeroAddress ? '-' : loan[struct.recipient],
-              timestampUnix: +data[struct.data.timestamp],
-              timestamp: new Date(data[struct.data.timestamp] * 1000).toLocaleString(),
-              period: new Date(data[struct.data.timestamp] * 1000 + data[struct.data.period] * 1000).toLocaleString(),
-              amount: +this.$eth.fromWei(data[struct.data.amount]),
-              margin: +data[struct.data.margin],
-              refund: +this.$eth.fromWei(data[struct.data.refund]),
-              status: status[loan[struct.status]]
-          })
+          this.loanData.push({name: 'Type', data: this.$route.params.type})
+          this.loanData.push({name: 'ID', data: this.$route.params.id})
+          this.loanData.push({name: 'Holder', data: loan[struct.holder], type: 'input'})
+          this.loanData.push({name: 'Recipient', data: this.$eth.isZeroAddress(loan[struct.recipient]) ? '-' : loan[struct.recipient], type: this.$eth.isZeroAddress(loan[struct.recipient])? '':'input'})
+          this.loanData.push({name: 'Timestamp', data: new Date(data[struct.data.timestamp] * 1000).toLocaleString()})
+          this.loanData.push({name: 'period', data: new Date(data[struct.data.timestamp] * 1000 + data[struct.data.period] * 1000).toLocaleString()})
+          this.loanData.push({name: 'amount', data: +this.$eth.fromWei(data[struct.data.amount])})
+          this.loanData.push({name: 'margin', data: +data[struct.data.margin]})
+          this.loanData.push({name: 'refund', data: +this.$eth.fromWei(data[struct.data.refund])})
+          this.loanData.push({name: 'status', data: status[loan[struct.status]]})
       } catch (err) {
         console.log(err)
       }
