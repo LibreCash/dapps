@@ -236,7 +236,7 @@ class Libre {
     } catch (err) {
       console.log(err)
     }
-    console.log("proposals", this.proposals);
+    //console.log("proposals", this.proposals);
   }
 }
 
