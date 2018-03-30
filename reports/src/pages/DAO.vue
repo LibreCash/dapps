@@ -61,12 +61,19 @@
               </span>
             </b-table-column>
             <b-table-column label='Actions' centered>
+              <!-- details button -->
               <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
-              <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime) && !props.row.loading && (tokensCount > 0)">
+              <!-- vote buttons -->
+              <span v-if="!props.row.votingData.voted &&
+                          (props.row.deadlineUnix > curBlockchainTime) &&
+                          !props.row.loading &&
+                          (tokensCount > 0) &&
+                          (props.row.type !== $libre.typeProposals[0].text)">
                 <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
                 <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
               </span>
-              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime">
+              <!-- execute button -->
+              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime && !(props.row.type !== $libre.typeProposals[0].text)">
                 <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
               </span>
               <span v-else-if="props.row.votingData.voted">
@@ -75,10 +82,11 @@
               <span v-else-if="!(tokensCount > 0)" style="white-space: nowrap">
                 no tokens
               </span>
-              <span v-else>
+              <span v-else-if="props.row.loading">
                 loading
               </span>
-              <span v-if="isOwner">
+              <!-- block button -->
+              <span v-if="isOwner && (props.row.type !== $libre.typeProposals[0].text)">
                 <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
               </span>
             </b-table-column>
@@ -103,7 +111,7 @@ export default {
       isLoading: false,
       defaultAddress: '',
       tokensCount: '',
-      filter: "filterActive",
+      filter: "filterALL",
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
@@ -232,6 +240,8 @@ export default {
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
+      let proposalStatus = (await this.$libre.updateProposal(row.id)).type;
+      row.type = this.$libre.typeProposals[proposalStatus].text // it is "Finished" but we shall recheck
       row.loading = false
     },
 
