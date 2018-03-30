@@ -41,6 +41,10 @@
           <div class="column">
             <button class="button is-danger" v-on:click="loanAction('cancel')" :disabled="!cancelEnable">Cancel</button>
           </div>
+          <button class="button is-primary" v-on:click="isComponentModalActive = true" :disabled="!cancelEnable">Allowance</button>
+          <b-modal :active.sync="isComponentModalActive" has-modal-card>
+            <allowance-modal v-bind="approve"></allowance-modal>
+          </b-modal>
         </div>
       </div>
       
@@ -49,11 +53,14 @@
 </template>
 
 <script>
+import Config from '@/config'
+import AllowanceModal from '@/components/AllowanceModal'
 export default {
   data () {
     return {
       loanId: this.$route.params.id,
       loanType: this.$route.params.type,
+      loan: {},
       owner: false,
       loanData: [],
       isEmpty: false,
@@ -69,7 +76,12 @@ export default {
       takeEnable: false,
       returnEnable: false,
       claimEnable: false,
-      cancelEnable: false
+      cancelEnable: false,
+      isComponentModalActive: false,
+      approve: {
+        address: Config.loans.address,
+        amount: ''
+      }
     }
   },
   methods: {
@@ -79,7 +91,8 @@ export default {
 
       try {
           let 
-            loan = this.$libre.getLoanObject(this.loanType == "ETH" ? await this.$libre.loans.getLoanEth(this.loanId): await this.$libre.loans.getLoanLibre(this.loanId));
+            loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`]());
+            this.loan = loan;
 
           if (loan.status == 'active') {
             this.takeEnable = true;
@@ -136,9 +149,14 @@ export default {
 
     async loanAction(action) {
       try {
+        let value = 0;
+        if (action === 'takeLoan')
+          value = this.loanType == 'ETH' ? this.loan.amount : this.loan.pledge
+
+        console.log("pledge",this.loan.pledge);
         let 
-            txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId)),
-            message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
+            txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId,{value: value})),
+            message = (await this.$eth.isSuccess(txHash)) ? `${action} tx ok` : `${action} tx failed`
         alert(message)
       }catch(e) {
         alert(this.$eth.getErrorMsg(e)) 
@@ -153,6 +171,9 @@ export default {
     } catch (err) {
       console.log(err)
     }
+  },
+  components: {
+    AllowanceModal
   }
 }
 </script>
