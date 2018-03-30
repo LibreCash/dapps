@@ -15,7 +15,7 @@
         <br><br>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
-          <b-radio-button v-model="filter" native-value="filterActive" type="is-success" checked @input="loadProposals()">Active</b-radio-button>
+          <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
         </b-field>
         <b-message type="is-warning" v-if="needUpdate">
           The table isn't actual. Please update the page
@@ -103,7 +103,7 @@ export default {
       isLoading: false,
       defaultAddress: '',
       tokensCount: '',
-      filter: "filterALL",
+      filter: "filterActive",
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
@@ -156,6 +156,10 @@ export default {
       this.isLoading = true
 
       await this.$libre.updateProposals(this.addProposal);
+      if (this.tableData.length == 0) {
+        for(let i = this.$libre.proposals.length-1; i >=0; i--)
+          this.addProposal(i)
+      }
 
       this.tableData.forEach(element => {
         element.updateTimer = setInterval(async () => {
@@ -200,22 +204,17 @@ export default {
       try {
         let 
           txHash = await this.$libre.dao.vote(id, support),
-        message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
+          message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
         alert(message)
       }catch(e) {
         alert(this.$eth.getErrorMsg(e)) 
       }
-      
-      row.loading = false
 
       try {
-        
         let voteData = (await this.$libre.updateProposal(row.id)).vote;
-        row = {
-          yea: voteData.yea,
-          nay: voteData.nay,
-          votingData: voteData // Check that we needed it
-        }
+        row.yea = voteData.yea;
+        row.nay = voteData.nay;
+        row.votingData = voteData;
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
@@ -227,10 +226,10 @@ export default {
 
       try {
       let 
-        txHash = await this.$libre.dao.blockingProposal(row.id)
+        txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
         alert(message);
-      }catch(e) {
+      } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
       row.loading = false
@@ -243,15 +242,18 @@ export default {
         id = row.id
       
       try {
-        let txHash = await this.$libre.dao.executeProposal(id)
-        message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
+        let txHash = await this.$libre.dao.executeProposal(id),
+            message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
         alert(message)
+        let proposalStatus = (await this.$libre.updateProposal(row.id)).type;
+        row.type = this.$libre.typeProposals[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
+
       row.loading = false
-      
     },
+
     async updateBlockTime() {
       this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
     },

@@ -130,8 +130,8 @@ export default {
         await this.$libre.updateProposal(this.proposalId)
         this.loadProposal()
         
-      } catch(error) {
-        alert(this.$eth.getErrorMsg(e))
+      } catch(err) {
+        alert(this.$eth.getErrorMsg(err))
         
         row.loading = false
       }
