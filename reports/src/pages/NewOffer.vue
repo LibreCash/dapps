@@ -15,26 +15,6 @@
         </b-modal>
         <button class="button is-primary" v-on:click="isOpen = true">Allowance</button>
       </div>
-      <!--div class="table-padding">
-        <b-collapse class="card" :open.sync="isOpen">
-          <div slot="trigger" slot-scope="props" class="card-header">
-            <p class="card-header-title">Change Allowance</p>
-            <a class="card-header-icon">
-              <b-icon :icon="isOpen ? 'menu-up' : 'menu-down'"></b-icon>
-            </a>
-          </div>
-          <div class="card-content">
-            <div class="content">
-              <b-field horizontal label="New Allowance, Libre" :type="isInteger(newAllowance) ? '' : 'is-danger'">
-                <b-input v-model="newAllowance" placeholder="0"></b-input>
-              </b-field>
-              <button class="button is-primary" v-on:click="updateAllowance()" v-model="buttonAllowance" :disabled="buttonAllowance.disabled">
-                {{ buttonAllowance.name }}
-              </button>
-            </div>
-          </div>
-        </b-collapse>
-      </div-->
       <div class="table-padding">
         <b-collapse class="card" :open.sync="isOfferOpen">
           <div slot="trigger" slot-scope="props" class="card-header">
@@ -175,20 +155,6 @@ export default {
         this.balanceETH = err;
       }
       this.balanceLibre = +await this.$libre.token.balanceOf(window.web3.eth.defaultAccount) / 10 ** 18;
-    },
-
-    async updateAllowance() {
-      try {
-        var txHash = await this.$libre.token.approve(Config.loans.address, this.newAllowance * 10 ** 18);
-        if (await this.$eth.isSuccess(txHash)) {
-          alert("allowance set");
-          this.updateData();
-        } else {
-          alert('Creating offer error')
-        }
-      } catch (err) {
-        alert(this.$eth.getErrorMsg(err))
-      }
     },
 
     async createLoan() {
