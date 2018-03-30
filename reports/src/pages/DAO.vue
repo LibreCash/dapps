@@ -62,19 +62,29 @@
             </b-table-column>
             <b-table-column label='Actions' centered>
               <!-- details button -->
-              <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+              <b-tooltip label="Details" type="is-dark" position="is-bottom">
+                <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+              </b-tooltip>
               <!-- vote buttons -->
               <span v-if="!props.row.votingData.voted &&
                           (props.row.deadlineUnix > curBlockchainTime) &&
                           !props.row.loading &&
                           (tokensCount > 0) &&
                           (props.row.type !== $libre.typeProposals[0].text)">
-                <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
-                <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+                <b-tooltip label="Yea" type="is-dark" position="is-bottom">
+                  <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
+                </b-tooltip>
+                <b-tooltip label="Nay" type="is-dark" position="is-bottom">
+                  <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+                </b-tooltip>
               </span>
               <!-- execute button -->
-              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime && !(props.row.type !== $libre.typeProposals[0].text)">
-                <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
+                              !(props.row.type !== $libre.typeProposals[0].text) &&
+                              !props.row.loading">
+                <b-tooltip label="Execute" type="is-dark" position="is-bottom">
+                  <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+                </b-tooltip>
               </span>
               <span v-else-if="props.row.votingData.voted">
                 voted
@@ -86,8 +96,12 @@
                 loading
               </span>
               <!-- block button -->
-              <span v-if="isOwner && (props.row.type !== $libre.typeProposals[0].text)">
-                <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+              <span v-if="isOwner &&
+                          (props.row.type !== $libre.typeProposals[0].text) &&
+                          !props.row.loading">
+                <b-tooltip label="Block as owner" type="is-dark" position="is-bottom">
+                  <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+                </b-tooltip>
               </span>
             </b-table-column>
           </template>
@@ -237,11 +251,11 @@ export default {
         txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
         alert(message);
+        let proposalStatus = (await this.$libre.updateProposal(row.id)).type;
+        row.type = this.$libre.typeProposals[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
-      let proposalStatus = (await this.$libre.updateProposal(row.id)).type;
-      row.type = this.$libre.typeProposals[proposalStatus].text // it is "Finished" but we shall recheck
       row.loading = false
     },
 
