@@ -1,5 +1,5 @@
 <template>
-    <div>
+  <div>
     <section class="allMain">
       <div class="h2-contain">
         <h2 class="subtitle">DAO Proposal</h2>
@@ -108,7 +108,7 @@
         </b-table>
       </div>
     </section>
-    </div>
+  </div>
 </template>
 
 
