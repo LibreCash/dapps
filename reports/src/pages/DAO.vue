@@ -205,13 +205,9 @@ export default {
       }catch(e) {
         alert(this.$eth.getErrorMsg(e)) 
       }
-      
-      row.loading = false
 
       try {
-        
         let voteData = (await this.$libre.updateProposal(row.id)).vote;
-        console.log("VOTEDATA", voteData)
         row.yea = voteData.yea;
         row.nay = voteData.nay;
         row.votingData = voteData;
@@ -229,7 +225,7 @@ export default {
         txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
         alert(message);
-      }catch(e) {
+      } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
       row.loading = false
@@ -245,12 +241,15 @@ export default {
         let txHash = await this.$libre.dao.executeProposal(id),
             message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
         alert(message)
+        let proposalStatus = (await this.$libre.updateProposal(row.id)).type;
+        row.type = this.$libre.typeProposals[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
+
       row.loading = false
-      
     },
+
     async updateBlockTime() {
       this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
     },
