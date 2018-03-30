@@ -161,8 +161,8 @@ class Libre {
     this.token = this.getContract(JSON.parse(Config.erc20.abi),Config.token.address)
 
     this.dao = this.getContract(JSON.parse(Config.dao.abi),Config.dao.address)
-    address = await this.dao.sharesTokenAddress();
-    this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
+    this.libertyAddress = address = await this.dao.sharesTokenAddress();
+    this.liberty = this.getContract(JSON.parse(Config.erc20.abi), this.libertyAddress)
 
     this.loans = this.getContract(JSON.parse(Config.loans.abi),Config.loans.address)
   }
