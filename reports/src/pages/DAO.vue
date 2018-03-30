@@ -211,11 +211,10 @@ export default {
       try {
         
         let voteData = (await this.$libre.updateProposal(row.id)).vote;
-        row = {
-          yea: voteData.yea,
-          nay: voteData.nay,
-          votingData: voteData // Check that we needed it
-        }
+        console.log("VOTEDATA", voteData)
+        row.yea = voteData.yea;
+        row.nay = voteData.nay;
+        row.votingData = voteData;
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
