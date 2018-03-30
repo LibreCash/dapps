@@ -78,7 +78,7 @@ class Libre {
         benef: 'New Owner:'
       },
       {
-        text: 'New token', 
+        text: 'New Token', 
         key: 'ATTACH_TOKEN', 
         benef: 'Token Address:'
       },
@@ -88,7 +88,7 @@ class Libre {
         benef: 'Bank Address:'
       },
       {
-        text: 'Changer fees', 
+        text: 'Change Fees', 
         key: 'SET_FEES', 
         amount: 'Buy fee:', 
         buf: 'Sell fee:'
@@ -114,36 +114,36 @@ class Libre {
         benef: 'Oracle Address:'
       },
       {
-        text: 'Set schedule', 
+        text: 'Set Scheduler', 
         key: 'SET_SCHEDULER', 
         benef: 'Scheduler Address:'
       },
       {
-        text: 'Withdraw balance', 
+        text: 'Withdraw Balance', 
         key: 'WITHDRAW_BALANCE'
       },
       {
-        text: 'New oracle timeout',
+        text: 'New Oracle Timeout',
         key: 'SET_ORACLE_TIMEOUT',
         amount: 'Period:'
       },
       {
-        text: 'Oracle actual time',
+        text: 'New Oracle Actual Time',
         key: 'SET_ORACLE_ACTUAL',
         amount: 'Period:'
       },
       {
-        text: 'New rate period',
+        text: 'New Rate Period',
         key: 'SET_RATE_PERIOD',
         amount: 'Period:'
       },
       {
-        text: 'Set lock',
+        text: 'Set Lock',
         key: 'SET_LOCK',
         lock: 'Lock:'
       },
       {
-        text: 'Claim ownership',
+        text: 'Claim Ownership',
         key: 'CLAIM_OWNERSHIP'
       }
     ]
