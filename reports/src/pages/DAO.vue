@@ -7,6 +7,8 @@
       <br>
       <div class="table-padding">
         <div>Address: {{ defaultAddress }}</div>
+        <div>DAO Contract Address: {{ daoAddress }}</div>
+        <div>Liberty Token Address: {{ libertyAddress }}</div>
         <div>Tokens count: {{ tokensCount }} LBRS</div>
         <br>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
@@ -96,9 +98,7 @@ export default {
   data () {
     return {
       daoAddress: '',
-      reportText: '',
-      //owner: false,
-      reportNumber: 0,
+      libertyAddress: '',
       tableData: [],
       isLoading: false,
       defaultAddress: '',
@@ -149,9 +149,6 @@ export default {
     },
 
     async loadProposals () {
-      this.daoAddress = Config.dao.address;
-      this.defaultAddress = window.web3.eth.defaultAccount;
-
       await this.updateBlockTime();
 
       this.clearTimers();
@@ -191,7 +188,7 @@ export default {
     async getTokensCount () {
       await this.$libre.promiseLibre;
 
-      this.tokensCount = +await this.$libre.libre.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
+      this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
     },
 
     async vote (row, support) {
@@ -300,6 +297,9 @@ export default {
     try {
       await this.$eth.loadAccounts();
       await this.$libre.init();
+      this.daoAddress = Config.dao.address;
+      this.defaultAddress = window.web3.eth.defaultAccount;
+      this.libertyAddress = this.$libre.libertyAddress;
       this.loadProposals()
       this.getTokensCount()
     } catch (err) {
