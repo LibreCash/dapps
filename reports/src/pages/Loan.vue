@@ -41,6 +41,10 @@
           <div class="column">
             <button class="button is-danger" v-on:click="loanAction('cancel')" :disabled="!cancelEnable">Cancel</button>
           </div>
+          <button class="button is-primary" v-on:click="isComponentModalActive = true" :disabled="!cancelEnable">Allowance</button>
+          <b-modal :active.sync="isComponentModalActive" has-modal-card>
+            <allowance-modal v-bind="approve"></allowance-modal>
+          </b-modal>
         </div>
       </div>
       
@@ -49,6 +53,8 @@
 </template>
 
 <script>
+import Config from '@/config'
+import AllowanceModal from '@/components/AllowanceModal'
 export default {
   data () {
     return {
@@ -70,7 +76,12 @@ export default {
       takeEnable: false,
       returnEnable: false,
       claimEnable: false,
-      cancelEnable: false
+      cancelEnable: false,
+      isComponentModalActive: false,
+      approve: {
+        address: Config.loans.address,
+        amount: ''
+      }
     }
   },
   methods: {
@@ -160,6 +171,9 @@ export default {
     } catch (err) {
       console.log(err)
     }
+  },
+  components: {
+    AllowanceModal
   }
 }
 </script>

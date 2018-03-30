@@ -10,8 +10,12 @@
         <p>Allowed: {{ allowed }} Libre</p>
         <p>ETH Balance: {{ balanceETH }} ETH</p>
         <p>Libre Balance: {{ balanceLibre }} Libre</p>
+        <b-modal :active.sync="isOpen" has-modal-card>
+          <allowance-modal v-bind="approve"></allowance-modal>
+        </b-modal>
+        <button class="button is-primary" v-on:click="isOpen = true">Allowance</button>
       </div>
-      <div class="table-padding">
+      <!--div class="table-padding">
         <b-collapse class="card" :open.sync="isOpen">
           <div slot="trigger" slot-scope="props" class="card-header">
             <p class="card-header-title">Change Allowance</p>
@@ -30,7 +34,7 @@
             </div>
           </div>
         </b-collapse>
-      </div>
+      </div-->
       <div class="table-padding">
         <b-collapse class="card" :open.sync="isOfferOpen">
           <div slot="trigger" slot-scope="props" class="card-header">
@@ -78,6 +82,7 @@
 
 <script>
 import Config from '@/config'
+import AllowanceModal from '@/components/AllowanceModal'
 export default {
   data () {
     return {
@@ -98,7 +103,12 @@ export default {
       myAddress: '',
       newAllowance: 0,
       isOpen: false,
-      isOfferOpen: true
+      isOfferOpen: true,
+      approve: {
+        address: Config.loans.address,
+        amount: '',
+        callback: this.updateData
+      }
     }
   },
   methods: {
@@ -241,6 +251,9 @@ export default {
     selectedType: function() {
       this.amount = this.margin = '';
     }
+  },
+  components: {
+    AllowanceModal
   }
 }
 </script>
