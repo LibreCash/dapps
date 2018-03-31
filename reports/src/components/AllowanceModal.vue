@@ -6,7 +6,7 @@
         </header>
         <section class="modal-card-body">
             <b-field label="Allowance:">
-                <b-input :value="amount" type="number" :placeholder="amount" required></b-input>
+                <b-input :value="amount" type="number" :placeholder="0" required></b-input>
             </b-field>
             <b-message :title="msg.title" :type="msg.type" :active.sync="msg.isActive">
               {{ msg.text }}
