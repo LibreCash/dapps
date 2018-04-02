@@ -1,5 +1,5 @@
 <template>
-  <div id="LoansTable" class="table-padding">
+  <div id="LoansTable">
     <b-message type="is-warning" v-if="needUpdate">
       The table isn't actual. Please update the page
     </b-message>

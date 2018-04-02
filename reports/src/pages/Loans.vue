@@ -7,8 +7,8 @@
       </div>
       <br>
       <div class="table-padding">
+        <address-block>one</address-block>
         <div>Loans contract address: {{ loansAddress }}</div>
-        <div>Address: {{ defaultAddress }}</div>
         <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
         <div>
           <b-field>
@@ -20,13 +20,11 @@
           <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
           <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
         </div>
-      </div>
-      <br>
-      <div v-if="loansCount == 0 || searchData.length == 0" class="table-padding">
-        No loans for selected filter
-      </div>
-      <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
-      <div class="table-padding">
+        <br>
+        <div v-if="loansCount == 0 || searchData.length == 0">
+          No loans for selected filter
+        </div>
+        <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
         <b-field>
           <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans(false)">{{page}}</b-radio-button>
         </b-field>
@@ -52,7 +50,7 @@
 
 <script>
 import LoansTable from '@/components/LoansTable'
-import libre from '@/plugins/libre'
+import AddressBlock from '@/components/AddressBlock'
 import Config from '@/config'
 export default {
   data () {
@@ -107,22 +105,22 @@ export default {
           // do not use forEach - we do not want async iterations
           if (+loanIDs[i] === maxUINT256) continue;
           var 
-            loan = (this.ethType === "ETH") ?
+            loan = this.$libre.getLoanObject((this.ethType === "ETH") ?
               await this.$libre.loans.getLoanEth(loanIDs[i]) :
-              await this.$libre.loans.getLoanLibre(loanIDs[i]);
+              await this.$libre.loans.getLoanLibre(loanIDs[i]));
           var loanData = loan[struct.data.outer];
           this.searchData.push({
               id: loanIDs[i],
               type: Object.keys(this.$libre.loansType)[_type],
-              holder: loan[struct.holder],
-              recipient: loan[struct.recipient] === '0x0000000000000000000000000000000000000000' ? '-' : loan[struct.recipient],
-              timestampUnix: +loanData[struct.data.timestamp],
-              timestamp: new Date(loanData[struct.data.timestamp] * 1000).toLocaleString(),
-              period: new Date(loanData[struct.data.timestamp] * 1000 + loanData[struct.data.period] * 1000).toLocaleString(),
-              amount: +this.$eth.fromWei(loanData[struct.data.amount]),
-              margin: +loanData[struct.data.margin],
-              refund: +this.$eth.fromWei(loanData[struct.data.refund]),
-              status: status[loan[struct.status]]
+              holder: loan.holder,
+              recipient: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient,
+              timestampUnix: loan.timestamp,
+              timestamp: new Date(loan.timestamp * 1000).toLocaleString(),
+              period: new Date((loan.timestamp + loan.period) * 1000).toLocaleString(),
+              amount: this.$eth.fromWei(loan.amount),
+              margin: loan.margin,
+              refund: this.$eth.fromWei(loan.refund),
+              status: loan.status
           })
         }
       } catch (err) {
@@ -142,7 +140,8 @@ export default {
     }
   },
   components: {
-    LoansTable
+    LoansTable,
+    AddressBlock
   }
 }
 </script>
