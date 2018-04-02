@@ -2,7 +2,7 @@
     <div>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">{{ $route.params.type }} Loan #{{ $route.params.id }}</h2>
+        <h2 class="subtitle">{{ loanType }} Loan #{{ loanId }}</h2>
       </div>
       <br>
       <div class="table-padding">
@@ -11,12 +11,12 @@
           <span>Back</span>
         </button>
         <span class="icon arrow-left"><i class="arrow-left"></i></span>
-        <b-table :data="isEmpty ? [] : loanData"
-          :bordered="isBordered"
-          :striped="isStriped"
-          :narrowed="isNarrowed"
+        <b-table :data="loanData"
+          :bordered="false"
+          :striped="true"
+          :narrowed="false"
           :loading="isLoading"
-          :mobile-cards="hasMobileCards">
+          :mobile-cards="true">
           <template slot-scope="props">
             <b-table-column>
               <strong>{{ props.row.name }}</strong>
@@ -27,19 +27,21 @@
             </b-table-column>
           </template>
         </b-table>
-        <br><br>
+        <br>
+        <b-field><b-message :type="msg.type" style="white-space: pre-wrap;">{{ msg.text }}</b-message></b-field>
+        <br>
         <div class="columns">
-          <div class="column">
-            <button class="button is-success" v-on:click="loanAction('takeLoan')" :disabled="!takeEnable">Take</button>
+          <div class="column" v-if="takeEnable">
+            <button class="button is-success" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
-          <div class="column">
-            <button class="button is-danger" v-on:click="loanAction('return')" :disabled="!returnEnable">Return</button>
+          <div class="column" v-if="returnEnable">
+            <button class="button is-danger" v-on:click="loanAction('return')">Return</button>
           </div>
-          <div class="column">
-            <button class="button is-success" v-on:click="loanAction('claim')" :disabled="!claimEnable">Claim</button>
+          <div class="column" v-if="claimEnable">
+            <button class="button is-success" v-on:click="loanAction('claim')">Claim</button>
           </div>
-          <div class="column">
-            <button class="button is-danger" v-on:click="loanAction('cancel')" :disabled="!cancelEnable">Cancel</button>
+          <div class="column" v-if="cancelEnable">
+            <button class="button is-danger" v-on:click="loanAction('cancel')">Cancel</button>
           </div>
           <div class="column">
             <button class="button is-primary" v-on:click="isAllowanceActive = true">Allowance</button>
@@ -67,21 +69,11 @@ import UpdateRates from '@/components/UpdateRates'
 export default {
   data () {
     return {
-      loanId: this.$route.params.id,
+      loanId: +this.$route.params.id,
       loanType: this.$route.params.type,
       loan: {},
-      owner: false,
       loanData: [],
-      isEmpty: false,
-      isBordered: false,
-      isStriped: true,
-      isNarrowed: false,
       isLoading: false,
-      hasMobileCards: true,
-      isPaginated: false,
-      isPaginationSimple: false,
-      currentPage: 1,
-      perPage: 5,
       takeEnable: false,
       returnEnable: false,
       claimEnable: false,
@@ -91,10 +83,19 @@ export default {
         address: Config.loans.address,
         amount: ''
       },
-      isUpdateRatesActive: false
+      isUpdateRatesActive: false,
+      msg: {
+        type: 'is-danger',
+        text: 'Please enter correct information'
+      }
     }
   },
   methods: {
+    setMessage(type, message) {
+      this.msg.type = `is-${type}`;
+      this.msg.text = message;
+    },
+
     async loadLoan () {
       this.loanData = []
       this.isLoading = true
@@ -122,7 +123,7 @@ export default {
 
 
           this.loanData.push({name: 'Type', data: this.$route.params.type})
-          this.loanData.push({name: 'ID', data: this.$route.params.id})
+          this.loanData.push({name: 'ID', data: +this.$route.params.id})
           this.loanData.push({name: 'Holder', data: loan.holder, type: 'input'})
 
           if (loan.status != 'active') {

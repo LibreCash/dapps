@@ -169,7 +169,7 @@ export default {
         now = new Date(),
         debatingEnd = (new Date(this.debatingPeriod))
           .setHours(this.debatingTime.getHours(), this.debatingTime.getMinutes()),
-        debatingPeriodInMinutes = Math.round((debatingEnd - now) / 1000 / 60);
+        debatingPeriodInSeconds = Math.round((debatingEnd - now) / 1000);
 
       if (this.margin == '')
         this.margin = 0
@@ -187,7 +187,7 @@ export default {
             else
               this.setMessage('info',`Please confirm the sending of the transaction:\nCreate Offer Transaction - wait confirm...`)
               txHash = await this.$libre.loans.giveLibre(
-                debatingPeriodInMinutes,
+                debatingPeriodInSeconds,
                 this.$libre.fromToken(+this.amount),
                 this.$libre.fromToken(+this.margin)
               )
@@ -196,7 +196,7 @@ export default {
           case this.$libre.loansType.ETH:
             this.setMessage('info',`Please confirm the sending of the transaction:\nCreate Offer Transaction - wait confirm...`)
             txHash = await this.$libre.loans.giveEth(
-              debatingPeriodInMinutes,
+              debatingPeriodInSeconds,
               +this.$eth.toWei(this.amount, 'ether'),
               +this.$eth.toWei(this.margin, 'ether'),
               { value: +this.$eth.toWei(this.amount, 'ether') }
