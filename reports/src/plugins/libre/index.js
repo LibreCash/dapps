@@ -205,6 +205,14 @@ class Libre {
     }
   }
 
+  toToken(contractNumber) {
+    return +contractNumber / 10 ** this.consts.DECIMALS;
+  }
+
+  fromToken(amount) {
+    return +amount * 10 ** this.consts.DECIMALS;
+  }
+
   getVotingObject(contractArray) {
     return {
       yea: +contractArray[this.voteStruct.yea] / 10 ** this.consts.DECIMALS,

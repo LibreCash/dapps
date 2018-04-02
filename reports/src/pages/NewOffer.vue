@@ -1,5 +1,5 @@
 <template>
-    <div>
+  <div>
     <section class="allMain">
       <div class="h2-contain">
         <h2 class="subtitle">New Loan Offer</h2>
@@ -10,9 +10,6 @@
         <p>Allowed: {{ allowed }} Libre</p>
         <p>ETH Balance: {{ balanceETH }} ETH</p>
         <p>Libre Balance: {{ balanceLibre }} Libre</p>
-        <b-modal :active.sync="isOpen" has-modal-card>
-          <allowance-modal v-bind="approve"></allowance-modal>
-        </b-modal>
         <b-field horizontal label="Type" >
           <b-select placeholder="Select loan offer type" v-model="selectedType">
               <option v-for="(key, type) in typeLoans" v-bind:value="key">
@@ -21,19 +18,20 @@
           </b-select>
         </b-field>
         <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
-          <b-input v-model="amount" placeholder="0"></b-input>
+          <b-input v-model="amount" placeholder="0" type="number"></b-input>
           <p class="control">
                 <button class="button is-primary" @click="allAvailable()" 
 v-if="selectedType == 0">All available</button>
               </p>
         </b-field>
         <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
-          <b-input v-model="margin" placeholder="0"></b-input>
+          <b-input v-model="margin" placeholder="0" type="number"></b-input>
         </b-field>
         <b-field horizontal label="Offer period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
           <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
           <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
         </b-field>
+        <b-field><b-message :type="msg.type" style="white-space: pre-wrap;">{{ msg.text }}</b-message></b-field>
         <b-field horizontal>
           <p class="control">
             <button class="button is-primary" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
@@ -43,18 +41,16 @@ v-if="selectedType == 0">All available</button>
         </b-field>
       </div>
     </section>
-    </div>
-
+    <br>
+  </div>
 </template>
 
 <script>
 import Config from '@/config'
-import AllowanceModal from '@/components/AllowanceModal'
 import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
     return {
-      proposalData: [],
       daoAddress: '',
       recipient: '',
       amount: '',
@@ -69,24 +65,28 @@ export default {
       balanceETH: 0,
       balanceLibre: 0,
       myAddress: '',
-      newAllowance: 0,
       isOpen: false,
       isOfferOpen: true,
-      approve: {
-        address: Config.loans.address,
-        callback: this.updateData
+      msg: {
+        type: 'is-danger',
+        text: 'Please enter correct information'
       }
     }
   },
   methods: {
+    setMessage(type, message) {
+      this.msg.type = `is-${type}`;
+      this.msg.text = message;
+    },
+
     isInteger(number) {
       return +number >= 0
     },
 
     isValidAmount(number) {
       return this.isInteger(number) && number > 0 && (
-        (this.selectedType == 0 /* Libre */ && number <= this.balanceLibre ) ||
-        (this.selectedType == 1 /* ETH */ && number < this.balanceETH) /* '<' not '<=' cause tx fee */
+        (this.selectedType == this.$libre.loansType.Libre && number <= this.balanceLibre ) ||
+        (this.selectedType == this.$libre.loansType.ETH && number < this.balanceETH) /* '<' not '<=' cause tx fee */
       )
     },
 
@@ -114,15 +114,13 @@ export default {
         valid = false
 
       this.button.disabled = !valid
-    },
 
-    validAllowanceData() {
-      let valid = true
-
-      if (!this.isInteger(this.newAllowance))
-        valid = false
-
-      this.buttonAllowance.disabled = !valid
+      if (this.button.disabled)
+        this.setMessage('danger','Please enter correct information')
+      else if (this.selectedType == this.$libre.loansType.Libre && this.allowed < this.amount) {
+        this.setMessage('warning',`When creating the offer, you will need to make two transactions:\n1. Authorize the transfer of ${this.amount} tokens\n2. Create Offer Transaction`)
+      } else
+        this.setMessage('info','You can create an offer!')
     },
 
     async allAvailable() {
@@ -135,26 +133,34 @@ export default {
 
     async updateData() {
       this.myAddress = window.web3.eth.defaultAccount;
-      this.allowed = +await this.$libre.token.allowance(this.myAddress, Config.loans.address) / 10**18;
+      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, Config.loans.address));
       try {
         this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.myAddress));
       } catch (err) {
         this.balanceETH = err;
       }
-      this.balanceLibre = +await this.$libre.token.balanceOf(window.web3.eth.defaultAccount) / 10 ** 18;
+      this.balanceLibre = this.$libre.toToken(await this.$libre.token.balanceOf(window.web3.eth.defaultAccount));
     },
 
     async approveToken() {
-      this.approve.defaultAmount = this.amount;
-      this.isOpen = true;
-      this.approve.callback = this.allowedCallBack
-    },
-
-    async allowedCallBack() {
-      console.log("Hello allowedCallBack")
-      await this.updateData()
-      console.log("finished updateData")
-      this.createLoan()
+      try {
+        this.setMessage('info',`Please confirm the sending of the transaction:\n1. Authorize the transfer of ${this.amount} tokens - wait confirm...\n2. Create Offer Transaction`)
+        let txHash = await this.$libre.token.approve(Config.loans.address, this.$libre.fromToken(this.amount));
+        this.setMessage('info',`Please wait, there is a sending to the network:\n1. Authorize the transfer of ${this.amount} tokens - send to the network...\n2. Create Offer Transaction`)
+        if (await this.$eth.isSuccess(txHash)) {
+          this.setMessage('success',`The transaction was sent successfully:\n1. Authorize the transfer of ${this.amount} tokens - successfully...\n2. Create Offer Transaction`)
+          await this.updateData()
+          this.createLoan()
+        } else {
+          this.$snackbar.open(`Authorize the transfer of ${this.amount} tokens - error`);
+          this.setMessage('danger',`The transaction ended with an error:\n1. Authorize the transfer of ${this.amount} tokens - error...\n2. Create Offer Transaction`)
+        }
+      } catch(err) {
+        console.log(err)
+        this.$snackbar.open();
+        this.setMessage('danger',`The transaction ended with an error:\n1. Authorize the transfer of ${this.amount} tokens - ${this.$eth.getErrorMsg(err)}...\n2. Create Offer Transaction`)
+      }
+      
     },
 
     async createLoan() {
@@ -164,6 +170,9 @@ export default {
         debatingEnd = (new Date(this.debatingPeriod))
           .setHours(this.debatingTime.getHours(), this.debatingTime.getMinutes()),
         debatingPeriodInMinutes = Math.round((debatingEnd - now) / 1000 / 60);
+
+      if (this.margin == '')
+        this.margin = 0
 
       this.button = {name: 'Pending...', disabled: true}
 
@@ -176,19 +185,23 @@ export default {
               return
             }
             else
+              this.setMessage('info',`Please confirm the sending of the transaction:\nCreate Offer Transaction - wait confirm...`)
               txHash = await this.$libre.loans.giveLibre(
                 debatingPeriodInMinutes,
-                this.amount * 10 ** this.$libre.consts.DECIMALS,
-                this.margin * 10 ** this.$libre.consts.DECIMALS
+                this.$libre.fromToken(+this.amount),
+                this.$libre.fromToken(+this.margin)
               )
+              this.setMessage('info',`Please wait, there is a sending to the network:\nCreate Offer Transaction - send to the network...`)
             break;
           case this.$libre.loansType.ETH:
+            this.setMessage('info',`Please confirm the sending of the transaction:\nCreate Offer Transaction - wait confirm...`)
             txHash = await this.$libre.loans.giveEth(
               debatingPeriodInMinutes,
               +this.$eth.toWei(this.amount, 'ether'),
               +this.$eth.toWei(this.margin, 'ether'),
               { value: +this.$eth.toWei(this.amount, 'ether') }
             )
+            this.setMessage('info',`Please wait, there is a sending to the network:\nCreate Offer Transaction - send to the network...`)
             break;
         }
 
@@ -196,10 +209,12 @@ export default {
           this.$router.push('/loans')
         } else {
           this.$snackbar.open('Creating offer error');
+          this.setMessage('danger',`The transaction ended with an error:\nCreate Offer Transaction`)
         }
       }
       catch(err) {
         this.$snackbar.open(this.$eth.getErrorMsg(err));
+        this.setMessage('danger',`The transaction ended with an error: Create Offer Transaction \n${this.$eth.getErrorMsg(err)}`)
       }
       this.button = {name: 'Create Offer', disabled: false}
     }
@@ -219,13 +234,11 @@ export default {
     debatingPeriod: function() {this.validData()},
     debatingTime: function() {this.validData()},
     margin: function() {this.validData()},
-    newAllowance: function() {this.validAllowanceData()},
     selectedType: function() {
       this.amount = this.margin = '';
     }
   },
   components: {
-    AllowanceModal,
     AddressBlock
   }
 }
