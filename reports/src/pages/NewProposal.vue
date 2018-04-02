@@ -129,7 +129,7 @@ export default {
         switch(this.selectedType.key) {
           //case 'CLEAN': break;
           case 'UNIVERSAL':
-            txHash = await this.$libre.dao.proposalUniversal(
+            txHash = await this.$libre.dao.prUniversal(
               this.beneficiary, 
               this.weiAmount,
               this.description,
@@ -137,91 +137,91 @@ export default {
               this.transactionBytecode)
             break;
           case 'TRANSFER_OWNERSHIP':
-            txHash = await this.$libre.dao.proposalTransferOwnership(
+            txHash = await this.$libre.dao.prTransferOwnership(
               this.beneficiary, 
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'ATTACH_TOKEN':
-            txHash = await this.$libre.dao.proposalAttachToken(
+            txHash = await this.$libre.dao.prAttachToken(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_BANK_ADDRESS':
-            txHash = await this.$libre.dao.proposalBankAddress(
+            txHash = await this.$libre.dao.prBankAddress(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_FEES':
-            txHash = await this.$libre.dao.proposalFees(
+            txHash = await this.$libre.dao.prFees(
               this.weiAmount,
               this.buffer,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'ADD_ORACLE':
-            txHash = await this.$libre.dao.proposalAddOracle(
+            txHash = await this.$libre.dao.prAddOracle(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'DISABLE_ORACLE':
-            txHash = await this.$libre.dao.proposalDisableOracle(
+            txHash = await this.$libre.dao.prDisableOracle(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'ENABLE_ORACLE':
-            txHash = await this.$libre.dao.proposalEnableOracle(
+            txHash = await this.$libre.dao.prEnableOracle(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'DELETE_ORACLE':
-            txHash = await this.$libre.dao.proposalDeleteOracle(
+            txHash = await this.$libre.dao.prDeleteOracle(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_SCHEDULER':
-            txHash = await this.$libre.dao.proposalScheduler(
+            txHash = await this.$libre.dao.prScheduler(
               this.beneficiary,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'WITHDRAW_BALANCE':
-            txHash = await this.$libre.dao.proposalWithdrawBalance(
+            txHash = await this.$libre.dao.prWithdrawBalance(
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_ORACLE_TIMEOUT':
-            txHash = await this.$libre.dao.proposalOracleTimeout(
+            txHash = await this.$libre.dao.prOracleTimeout(
               this.amount,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_ORACLE_ACTUAL':
-            txHash = await this.$libre.dao.proposalOracleActual(
+            txHash = await this.$libre.dao.prOracleActual(
               this.amount,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_RATE_PERIOD':
-            txHash = await this.$libre.dao.proposalRatePeriod(
+            txHash = await this.$libre.dao.prRatePeriod(
               this.amount,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_LOCK':
-            txHash = await this.$libre.dao.proposalLock(
+            txHash = await this.$libre.dao.prPause(
               this.lock === 'true' ? 1 : 0,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'CLAIM_OWNERSHIP':
-            txHash = await this.$libre.dao.proposalClaimOwnership(
+            txHash = await this.$libre.dao.prClaimOwnership(
               this.description,
               debatingPeriodInMinutes)
             break;

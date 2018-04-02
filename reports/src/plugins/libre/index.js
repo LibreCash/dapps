@@ -224,7 +224,7 @@ class Libre {
 
   async updateProposals(callEach) {
     try {
-      let length = await this.dao.proposalsLength()
+      let length = await this.dao.prsLength()
 
       if (length <= this.proposals.length)
         return
