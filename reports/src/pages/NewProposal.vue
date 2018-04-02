@@ -19,8 +19,8 @@
         <b-field horizontal :label="selectedType['buf']" v-if="selectedType['buf']" :type="isInteger(buffer) ? '' : 'is-danger'">
             <b-input v-model="buffer" placeholder="0"></b-input>
         </b-field>
-        <b-field horizontal :label="selectedType['amount']" v-if="selectedType['amount']" :type="isInteger(weiAmount) ? '' : 'is-danger'">
-            <b-input v-model="weiAmount" placeholder="0"></b-input>
+        <b-field horizontal :label="selectedType['amount']" v-if="selectedType['amount']" :type="isInteger(amount) ? '' : 'is-danger'">
+            <b-input v-model="amount" placeholder="0"></b-input>
         </b-field>
         <b-field horizontal :label="selectedType['lock']" v-if="selectedType['lock']">
           <b-select v-model="lock">
@@ -60,7 +60,7 @@ export default {
       proposalData: [],
       daoAddress: '',
       beneficiary: '',
-      weiAmount: '',
+      amount: '',
       description: '',
       debatingPeriod: new Date(),
       debatingTime: new Date(),
@@ -103,7 +103,7 @@ export default {
       // Refactor it. 
       if (this.selectedType['benef'] && !this.isAddress(this.beneficiary))
         valid = false
-      else if (this.selectedType['amount'] && !this.isInteger(this.weiAmount))
+      else if (this.selectedType['amount'] && !this.isInteger(this.amount))
         valid = false
       else if (this.selectedType['buf'] && !this.isInteger(this.buffer))
         valid = false
@@ -131,7 +131,7 @@ export default {
           case 'UNIVERSAL':
             txHash = await this.$libre.dao.prUniversal(
               this.beneficiary, 
-              this.weiAmount,
+              this.amount,
               this.description,
               debatingPeriodInMinutes,
               this.transactionBytecode)
@@ -156,7 +156,7 @@ export default {
             break;
           case 'SET_FEES':
             txHash = await this.$libre.dao.prFees(
-              this.weiAmount,
+              this.amount,
               this.buffer,
               this.description,
               debatingPeriodInMinutes)
@@ -251,13 +251,13 @@ export default {
   },
   watch: {
     beneficiary: function() {this.validData()},
-    weiAmount: function() {this.validData()},
+    amount: function() {this.validData()},
     debatingPeriod: function() {this.validData()},
     debatingTime: function() {this.validData()},
     transactionBytecode: function() {this.validData()},
     buffer: function() {this.validData()},
     selectedType: function() {
-      this.beneficiary = this.weiAmount = this.transactionBytecode = this.buffer = '';
+      this.beneficiary = this.amount = this.transactionBytecode = this.buffer = '';
       this.debatingPeriod = this.debatingTime = new Date();
     }
   }

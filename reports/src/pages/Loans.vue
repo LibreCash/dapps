@@ -146,10 +146,6 @@ export default {
       this.updateBlockTime()
     },
     clearTimers() {
-      this.tableData.forEach(element => {
-        clearInterval(element.updateTimer)
-      })
-
       let intervals = [
         this.updatingTicker,
         this.updatingBlockData,
