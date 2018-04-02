@@ -27,7 +27,7 @@
         </div>
         <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
         <b-pagination
-            @change="loadLoans(false)"
+            @change="loadLoans"
             :total="loansCount"
             :current.sync="vpage"
             :simple="isSimple"
@@ -85,24 +85,25 @@ export default {
     }
   },
   methods: {
-    async loadLoans (resetPage = true) {
-      console.log("res", resetPage)
+    async loadLoans (e) {
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.loansAddress = Config.loans.address;
       this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         return;
       }
-      if (resetPage) this.vpage = 1;
-      console.log(this.vpage)
+      let
+        _page = 1,
+        status = this.$libre.loansStatus;
+      if (e) {
+        // it was pagination event
+        _page = e;
+      }
       let offers = +this.isActive * 1 + +this.isUsed * 2 + +this.isCompleted * 4 +this.isMine * 8;
       let _type = (this.ethType === 'ETH') ? 1 : 0;
 
       const pageCount = this.perPage;
       const maxUINT256 = 2**256 - 1;
-      let
-        _page = this.vpage,
-        status = this.$libre.loansStatus;
       const struct = this.$libre.loansStruct
 
       this.isLoading = true
