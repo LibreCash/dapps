@@ -9,6 +9,7 @@
       <div class="table-padding">
         <div>Loans contract address: {{ loansAddress }}</div>
         <div>Address: {{ defaultAddress }}</div>
+        <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
         <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
         <div>
           <b-field>
@@ -74,7 +75,8 @@ export default {
       isCompleted: false,
       isMine: false,
       loansCount: 0,
-      perPage: 10
+      perPage: 10,
+      curBlockchainTime: 0
     }
   },
   methods: {
@@ -130,16 +132,47 @@ export default {
       }
 
       this.isLoading = false
+    },
+    async updateBlockTime() {
+      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
+    },
+
+    startUpdatingTime() {
+      this.curBlockchainTime = 0
+      this.updatingTicker = setInterval(() => {
+        this.curBlockchainTime++
+      }, 1000)
+      this.updatingBlockData = setInterval(() => {
+        this.updateBlockTime()
+      }, 10 * 60 * 1000 /* 10 minutes */)
+      this.updateBlockTime()
+    },
+    clearTimers() {
+      this.tableData.forEach(element => {
+        clearInterval(element.updateTimer)
+      })
+
+      let intervals = [
+        this.updatingTicker,
+        this.updatingBlockData,
+        this.updateTableData
+      ]
+
+      intervals.forEach((interval) => clearInterval(interval))
     }
   },
   async created () {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
+      this.startUpdatingTime();
       this.loadLoans()
     } catch (err) {
       console.log(err)
     }
+  },
+  destroyed () {
+    this.clearTimers();
   },
   components: {
     LoansTable

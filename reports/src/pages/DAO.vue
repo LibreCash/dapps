@@ -10,6 +10,7 @@
         <div>DAO Contract Address: {{ daoAddress }}</div>
         <div>Liberty Token Address: {{ libertyAddress }}</div>
         <div>Tokens count: {{ tokensCount }} LBRS</div>
+        <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
         <br>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
         <br><br>
