@@ -86,7 +86,6 @@ export default {
       isOfferOpen: true,
       approve: {
         address: Config.loans.address,
-        amount: '',
         callback: this.updateData
       }
     }

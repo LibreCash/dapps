@@ -101,7 +101,7 @@ export default {
 
       try {
           let 
-            loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`]());
+            loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId));
             this.loan = loan;
 
           if (loan.status == 'active') {
@@ -110,6 +110,14 @@ export default {
 
             if (loan.holder === this.$eth.yourAccount)
               this.cancelEnable = true;
+          } else if (loan.status == 'used') {
+            this.takeEnable = this.cancelEnable = false;
+            
+            if (loan.holder === this.$eth.yourAccount)
+              this.claimEnable = true;
+
+            if (loan.recipient === this.$eth.yourAccount)
+              this.returnEnable = true;
           }
 
 
@@ -165,14 +173,20 @@ export default {
           let allowance = +await this.$libre.token.allowance(this.myAddress, Config.loans.address)
         }
 
-        console.log("pledge",this.loan.pledge);
         let 
             txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId,{value: value})),
             message = (await this.$eth.isSuccess(txHash)) ? `${action} tx ok` : `${action} tx failed`
-        alert(message)
+        //alert(message)
+        this.message(message);
       }catch(e) {
-        alert(this.$eth.getErrorMsg(e)) 
+        //alert(this.$eth.getErrorMsg(e))
+        this.message(this.$eth.getErrorMsg(e));
       }
+    },
+
+    message(msg) {
+      //this.$snackbar.open(msg);
+      this.$toast.open({message: msg, queue: true});
     }
   },
   async created () {

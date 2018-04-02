@@ -5,15 +5,15 @@
             <p class="modal-card-title">Allowance</p>
         </header>
         <section class="modal-card-body">
-            <b-field label="Allowance:">
-                <b-input :value="amount" type="number" :placeholder="0" required></b-input>
-            </b-field>
-            <b-message :title="msg.title" :type="msg.type" :active.sync="msg.isActive">
+            <b-notification :title="msg.title" :type="msg.type" :closable="false">
               {{ msg.text }}
-            </b-message>
+            </b-notification>
+            <b-field horizontal label="Approve:">
+                <b-input :value="amount" v-model="amount" type="number" :placeholder="0" required></b-input>
+            </b-field>
         </section>
         <footer class="modal-card-foot">
-            <button class="button" type="button" @click="$parent.close()">Close</button>
+            <button class="button" type="button" @click="close()">Close</button>
             <button class="button is-primary" @click="updateAllowance()">Allowance</button>
         </footer>
     </div>
@@ -23,14 +23,13 @@
 <script>
 import Config from '@/config'
 export default {
-  props: ['amount', 'address','callback'],
+  props: ['defaultAmount', 'address','callback'],
   data() {
     return {
+      amount: this.defaultAmount,
       msg: {
-        isActive: false,
         type: '',
-        text: '',
-        title: 'Warning'
+        text: 'Please set approve in field!'
       }
     }
   },
@@ -41,36 +40,33 @@ export default {
 
         this.msg = {
           type: 'is-info',
-          text: 'Please wait...',
-          isActive: true,
-          title: 'Waiting...'
+          text: 'Please wait...'
         }
         if (await this.$eth.isSuccess(txHash)) {
           this.msg = {
             type: 'is-success',
-            text: 'Allowance set',
-            isActive: true,
-            title: 'Success'
+            text: 'Allowance set'
           }
+          setTimeout(this.close, 3000);
 
           if (this.callback)
             this.callback();
         } else {
           this.msg = {
             type: 'is-warning',
-            text: 'Creating offer error',
-            isActive: true,
-            title: 'Warning'
+            text: 'Creating offer error'
           }
         }
       } catch (err) {
         this.msg = {
           type: 'is-danger',
-          text: this.$eth.getErrorMsg(err),
-          isActive: true,
-          title: 'Error'
+          text: this.$eth.getErrorMsg(err)
         }
-    }
+      }
+    },
+
+    close() {
+      this.$parent.close()
     }
   },
 }

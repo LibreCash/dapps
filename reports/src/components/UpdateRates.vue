@@ -32,13 +32,17 @@ export default {
         let price = await this.$libre.bank.requestPrice(),
             txHash = await this.$libre.bank.requestRates({value: price});
         this.text = 'send Request Rates...'
+        this.message(this.text)
         if (await this.$eth.isSuccess(txHash)) {
           this.text = "Request Rates tx is ok"
+          this.message(this.text)
         } else {
           this.text = "Error when call requiest rates..."
+          this.message(this.text)
         }
       } catch (err) {
         this.text = this.$eth.getErrorMsg(err)
+        this.message(this.text)
       }
     },
 
@@ -47,15 +51,24 @@ export default {
         let txHash = await this.$libre.bank.calcRates();
 
         this.text = 'send Calc Rates...'
+        this.message(this.text)
         if (await this.$eth.isSuccess(txHash)) {
           this.text = "Calc Rates tx is ok"
+          this.message(this.text)
         } else {
           this.text = "Error when call calc rates..."
+          this.message(this.text)
         }
       } catch (err) {
         this.text = this.$eth.getErrorMsg(err)
+        this.message(this.text)
       }
     },
+
+    message(msg) {
+      this.$snackbar.open(msg);
+      //this.$toast.open({message: msg, queue: true});
+    }
   }
 }
 </script>
