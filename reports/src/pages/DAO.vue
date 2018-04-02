@@ -81,7 +81,7 @@
               </span>
               <!-- execute button -->
               <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
-                              !(props.row.type !== $libre.typeProposals[0].text) &&
+                              (props.row.type !== $libre.typeProposals[0].text) &&
                               !props.row.loading">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
                   <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
