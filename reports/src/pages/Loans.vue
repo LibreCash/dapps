@@ -120,7 +120,7 @@ export default {
               timestamp: new Date(loan.timestamp * 1000).toLocaleString(),
               period: new Date((loan.timestamp + loan.period) * 1000).toLocaleString(),
               amount: this.$eth.fromWei(loan.amount),
-              margin: loan.margin,
+              margin: this.$eth.fromWei(loan.margin),
               refund: this.$eth.fromWei(loan.refund),
               status: loan.status
           })

@@ -36,7 +36,7 @@
           {{ props.row.amount }} {{ props.row.type }}
         </b-table-column>
         <b-table-column label='Margin' centered>
-          {{ props.row.margin }}
+          {{ props.row.margin }} {{ props.row.type }}
         </b-table-column>
         <b-table-column label='Refund' centered>
           {{ props.row.refund }} {{ props.row.type }}
