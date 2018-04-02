@@ -6,55 +6,42 @@
       </div>
       <br>
       <div class="table-padding">
-        <p>My address: {{ myAddress }}</p>
+        <address-block></address-block>
         <p>Allowed: {{ allowed }} Libre</p>
         <p>ETH Balance: {{ balanceETH }} ETH</p>
         <p>Libre Balance: {{ balanceLibre }} Libre</p>
         <b-modal :active.sync="isOpen" has-modal-card>
           <allowance-modal v-bind="approve"></allowance-modal>
         </b-modal>
-        <button class="button is-primary" v-on:click="isOpen = true">Allowance</button>
-      </div>
-      <div class="table-padding">
-        <b-collapse class="card" :open.sync="isOfferOpen">
-          <div slot="trigger" slot-scope="props" class="card-header">
-            <p class="card-header-title">New Offer</p>
-            <a class="card-header-icon">
-              <b-icon :icon="isOpen ? 'menu-up' : 'menu-down'"></b-icon>
-            </a>
-          </div>
-          <div class="card-content">
-          <b-field horizontal label="Type" >
-              <b-select placeholder="Select loan offer type" v-model="selectedType">
-                  <option v-for="(key, type) in typeLoans" v-bind:value="key">
-                    {{ type }}
-                  </option>
-              </b-select>
-            </b-field>
-            <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
-              <b-input v-model="amount" placeholder="0"></b-input>
-              <p class="control">
-                <button class="button is-primary" @click="allAvailable()" v-if="selectedType == 0">All available</button>
+        <b-field horizontal label="Type" >
+          <b-select placeholder="Select loan offer type" v-model="selectedType">
+              <option v-for="(key, type) in typeLoans" v-bind:value="key">
+                {{ type }}
+              </option>
+          </b-select>
+        </b-field>
+        <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
+          <b-input v-model="amount" placeholder="0"></b-input>
+          <p class="control">
+                <button class="button is-primary" @click="allAvailable()" 
+v-if="selectedType == 0">All available</button>
               </p>
-            </b-field>
-            <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
-              <b-input v-model="margin" placeholder="0"></b-input>
-            </b-field>
-            <b-field horizontal label="Offer period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
-              <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
-              <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
-            </b-field>
-            <b-field horizontal>
-              <p class="control">
-                <button class="button is-primary" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
-                  {{ button.name }}
-                </button>
-              </p>
-            </b-field>
-          </div>
-        </b-collapse>
+        </b-field>
+        <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
+          <b-input v-model="margin" placeholder="0"></b-input>
+        </b-field>
+        <b-field horizontal label="Offer period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
+          <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
+          <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
+        </b-field>
+        <b-field horizontal>
+          <p class="control">
+            <button class="button is-primary" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
+              {{ button.name }}
+            </button>
+          </p>
+        </b-field>
       </div>
-      <br>
     </section>
     </div>
 
@@ -63,6 +50,7 @@
 <script>
 import Config from '@/config'
 import AllowanceModal from '@/components/AllowanceModal'
+import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
     return {
@@ -97,7 +85,7 @@ export default {
 
     isValidAmount(number) {
       return this.isInteger(number) && number > 0 && (
-        (this.selectedType == 0 /* Libre */ && number <= this.balanceLibre && number <= this.allowed) ||
+        (this.selectedType == 0 /* Libre */ && number <= this.balanceLibre ) ||
         (this.selectedType == 1 /* ETH */ && number < this.balanceETH) /* '<' not '<=' cause tx fee */
       )
     },
@@ -141,7 +129,7 @@ export default {
       if (this.selectedType == 1 /* ETH */) {
         this.amount = this.balanceETH;
       } else {
-        this.amount = Math.min(this.balanceLibre, this.allowed);
+        this.amount = this.balanceLibre;
       }
     },
 
@@ -156,6 +144,19 @@ export default {
       this.balanceLibre = +await this.$libre.token.balanceOf(window.web3.eth.defaultAccount) / 10 ** 18;
     },
 
+    async approveToken() {
+      this.approve.defaultAmount = this.amount;
+      this.isOpen = true;
+      this.approve.callback = this.allowedCallBack
+    },
+
+    async allowedCallBack() {
+      console.log("Hello allowedCallBack")
+      await this.updateData()
+      console.log("finished updateData")
+      this.createLoan()
+    },
+
     async createLoan() {
       let
         txHash,
@@ -168,18 +169,24 @@ export default {
 
       try {
         switch(this.selectedType) {
-          case 0 /* Libre */:
-            txHash = await this.$libre.loans.giveLibre(
-              debatingPeriodInMinutes,
-              this.amount * 10 ** 18,
-              this.margin
-            )
+          case this.$libre.loansType.Libre:
+            console.log("createLoan",this.allowed, this.amount)
+            if (this.allowed < this.amount) {
+              await this.approveToken()
+              return
+            }
+            else
+              txHash = await this.$libre.loans.giveLibre(
+                debatingPeriodInMinutes,
+                this.amount * 10 ** this.$libre.consts.DECIMALS,
+                this.margin * 10 ** this.$libre.consts.DECIMALS
+              )
             break;
-          case 1 /* ETH */:
+          case this.$libre.loansType.ETH:
             txHash = await this.$libre.loans.giveEth(
               debatingPeriodInMinutes,
               +this.$eth.toWei(this.amount, 'ether'),
-              this.margin,
+              +this.$eth.toWei(this.margin, 'ether'),
               { value: +this.$eth.toWei(this.amount, 'ether') }
             )
             break;
@@ -188,13 +195,13 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/loans')
         } else {
-          alert('Creating offer error')
+          this.$snackbar.open('Creating offer error');
         }
       }
       catch(err) {
-        alert(this.$eth.getErrorMsg(err))
-        this.button = {name: 'Create Offer', disabled: true}
+        this.$snackbar.open(this.$eth.getErrorMsg(err));
       }
+      this.button = {name: 'Create Offer', disabled: false}
     }
   },
   async created () {
@@ -218,7 +225,8 @@ export default {
     }
   },
   components: {
-    AllowanceModal
+    AllowanceModal,
+    AddressBlock
   }
 }
 </script>
