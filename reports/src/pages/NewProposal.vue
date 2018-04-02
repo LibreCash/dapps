@@ -241,8 +241,8 @@ export default {
   },
   async created () {
     try {
-      await this.$eth.loadAccounts();
-      await this.$libre.init();
+      await this.$eth.accountPromise;
+      await this.$libre.initPromise;
       this.daoAddress = Config.dao.address;
       this.selectedType = this.typeProposals[0]
     } catch (err) {

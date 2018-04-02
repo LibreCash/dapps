@@ -199,8 +199,8 @@ export default {
   },
   async created () {
     try {
-      await this.$eth.loadAccounts();
-      await this.$libre.init();
+      await this.$eth.accountPromise;
+      await this.$libre.initPromise;
       this.daoAddress = this.$eth.daoAddress;
       this.updateData()
     } catch (err) {

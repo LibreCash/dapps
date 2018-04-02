@@ -149,6 +149,7 @@ class Libre {
     ]
 
     this.proposals = [];
+    this.initPromise = this.init();
   }
 
   async init() {

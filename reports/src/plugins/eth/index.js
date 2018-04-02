@@ -42,6 +42,8 @@ class ETH {
         window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
         console.log('No web3? You should consider trying MetaMask!')
       }
+
+      this.accountPromise = this.loadAccounts();
     } catch (err) {
       console.log(err)
     }
