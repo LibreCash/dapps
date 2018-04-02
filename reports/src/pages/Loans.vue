@@ -26,9 +26,15 @@
           No loans for selected filter
         </div>
         <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
-        <b-field>
-          <b-radio-button v-model="vpage" v-for="page in pages" :native-value="page" type="is-success" @input="loadLoans(false)">{{page}}</b-radio-button>
-        </b-field>
+        <b-pagination
+            @change="loadLoans(false)"
+            :total="loansCount"
+            :current.sync="vpage"
+            :simple="isSimple"
+            :order="paginationOrder"
+            :rounded="isRounded"
+            :per-page="perPage">
+        </b-pagination>
         <b-field label="per page">
           <b-select v-model="perPage" @input="loadLoans()">
             <option value="3">3</option>
@@ -59,10 +65,11 @@ export default {
       vtype: 'ETH',
       loansAddress: '',
       reportText: '',
-      owner: false,
-      reportNumber: 0,
       searchData: [],
       isLoading: false,
+      isSimple: false,
+      isRounded: true,
+      paginationOrder: 'is-centered',
       defaultAddress: '',
       tokensCount: '',
       pages: [1],
@@ -79,6 +86,7 @@ export default {
   },
   methods: {
     async loadLoans (resetPage = true) {
+      console.log("res", resetPage)
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.loansAddress = Config.loans.address;
       this.searchData = [];
@@ -86,6 +94,7 @@ export default {
         return;
       }
       if (resetPage) this.vpage = 1;
+      console.log(this.vpage)
       let offers = +this.isActive * 1 + +this.isUsed * 2 + +this.isCompleted * 4 +this.isMine * 8;
       let _type = (this.ethType === 'ETH') ? 1 : 0;
 
@@ -98,7 +107,7 @@ export default {
 
       this.isLoading = true
       try {
-        this.loansCount = await this.$libre.loans.getLoanCount(_type, offers);
+        this.loansCount = +await this.$libre.loans.getLoanCount(_type, offers);
         let loanIDs = await this.$libre.loans.getLoans([_page - 1, pageCount], _type, offers);
         let pages = Math.ceil(this.loansCount / pageCount);
         this.pages = Array.from(Array(pages)).map((e, i) => i + 1);
