@@ -125,17 +125,17 @@ class Libre {
       {
         text: 'New Oracle Timeout',
         key: 'SET_ORACLE_TIMEOUT',
-        amount: 'Period:'
+        amount: 'Period, minutes:'
       },
       {
         text: 'New Oracle Actual Time',
         key: 'SET_ORACLE_ACTUAL',
-        amount: 'Period:'
+        amount: 'Period, minutes:'
       },
       {
         text: 'New Rate Period',
         key: 'SET_RATE_PERIOD',
-        amount: 'Period:'
+        amount: 'Period, minutes:'
       },
       {
         text: 'Set Lock',
