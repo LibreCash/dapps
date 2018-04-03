@@ -148,6 +148,14 @@ class Libre {
       }
     ]
 
+    this.bankState = [
+      'LOCKED',
+      'PROCESSING_ORDERS',
+      'WAIT_ORACLES',
+      'CALC_RATES',
+      'REQUEST_RATES'
+    ]
+
     this.proposals = [];
     this.initPromise = this.init();
   }
