@@ -198,19 +198,19 @@ export default {
             break;
           case 'SET_ORACLE_TIMEOUT':
             txHash = await this.$libre.dao.prOracleTimeout(
-              this.amount,
+              this.amount * 60,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_ORACLE_ACTUAL':
             txHash = await this.$libre.dao.prOracleActual(
-              this.amount,
+              this.amount * 60,
               this.description,
               debatingPeriodInMinutes)
             break;
           case 'SET_RATE_PERIOD':
             txHash = await this.$libre.dao.prRatePeriod(
-              this.amount,
+              this.amount * 60,
               this.description,
               debatingPeriodInMinutes)
             break;
