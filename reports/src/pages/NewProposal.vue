@@ -156,8 +156,8 @@ export default {
             break;
           case 'SET_FEES':
             txHash = await this.$libre.dao.prFees(
-              this.amount,
-              this.buffer,
+              this.amount * 100,
+              this.buffer * 100,
               this.description,
               debatingPeriodInMinutes)
             break;

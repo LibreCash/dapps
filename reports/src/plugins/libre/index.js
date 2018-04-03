@@ -90,8 +90,8 @@ class Libre {
       {
         text: 'Change Fees', 
         key: 'SET_FEES', 
-        amount: 'Buy fee:', 
-        buf: 'Sell fee:'
+        amount: 'Buy fee, %:', 
+        buf: 'Sell fee, %:'
       },
       {
         text: 'Add Oracle', 
