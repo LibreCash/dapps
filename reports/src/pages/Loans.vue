@@ -159,7 +159,6 @@ export default {
       let intervals = [
         this.updatingTicker,
         this.updatingBlockData,
-        this.updateTableData
       ]
 
       intervals.forEach((interval) => clearInterval(interval))
