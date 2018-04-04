@@ -174,6 +174,7 @@ class Libre {
     this.liberty = this.getContract(JSON.parse(Config.erc20.abi), this.libertyAddress)
 
     this.loans = this.getContract(JSON.parse(Config.loans.abi),Config.loans.address)
+    this.deposit = this.getContract(JSON.parse(Config.deposit.abi),Config.deposit.address)
   }
 
   getContract(abi, address) {
