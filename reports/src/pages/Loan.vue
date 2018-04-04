@@ -231,9 +231,8 @@ export default {
     },
 
     async approveLibre(amount) {
-      console.log(amount)
       let allowance = +await this.$libre.token.allowance(this.myAddress, Config.loans.address)
-      if (allowance < this.loan.pledge) {
+      if (allowance < amount) {
         this.setMessage('warning',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - wait confirm...`)
         let txHash = await this.$libre.token.approve(Config.loans.address, amount);
         this.setMessage('warning',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - send to the network...`)

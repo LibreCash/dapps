@@ -156,25 +156,32 @@ class Libre {
       'REQUEST_RATES'
     ]
 
+    this.depositPlanStruct = {
+      period: 0,
+      percent: 1,
+      minAmount: 2
+    }
+
     this.proposals = [];
+    this.plans = [];
     this.initPromise = this.init();
   }
 
   async init() {
     this.web3 = window.web3;
 
-    this.report = this.getContract(JSON.parse(Config.report.abi),Config.report.address)
-    this.bank = this.getContract(JSON.parse(Config.bank.abi), Config.bank.address)
+    this.report = this.getContract(Config.report.abi,Config.report.address)
+    this.bank = this.getContract(Config.bank.abi, Config.bank.address)
     var address = await this.bank.tokenAddress();
     Config.token.address = address;
-    this.token = this.getContract(JSON.parse(Config.erc20.abi),Config.token.address)
+    this.token = this.getContract(Config.erc20.abi,Config.token.address)
 
-    this.dao = this.getContract(JSON.parse(Config.dao.abi),Config.dao.address)
+    this.dao = this.getContract(Config.dao.abi,Config.dao.address)
     this.libertyAddress = address = await this.dao.sharesTokenAddress();
-    this.liberty = this.getContract(JSON.parse(Config.erc20.abi), this.libertyAddress)
+    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
 
-    this.loans = this.getContract(JSON.parse(Config.loans.abi),Config.loans.address)
-    this.deposit = this.getContract(JSON.parse(Config.deposit.abi),Config.deposit.address)
+    this.loans = this.getContract(Config.loans.abi,Config.loans.address)
+    this.deposit = this.getContract(Config.deposit.abi,Config.deposit.address)
   }
 
   getContract(abi, address) {
@@ -254,7 +261,26 @@ class Libre {
     } catch (err) {
       console.log(err)
     }
-    //console.log("proposals", this.proposals);
+  }
+
+  async loadPlans() {
+    if (this.plans.length > 0)
+      return
+
+    for(let i =0; true; i++) {
+      let arr = await this.deposit.plans(i),
+      plan = {
+        id: i,
+        period: +arr[this.depositPlanStruct.period],
+        percent: +arr[this.depositPlanStruct.percent],
+        minAmount: +arr[this.depositPlanStruct.minAmount]
+      }
+
+      if (plan.period == 0 && plan.percent == 0 && plan.minAmount == 0)
+        break;
+
+      this.plans.push(plan)
+    }
   }
 }
 
