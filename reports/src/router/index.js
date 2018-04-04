@@ -10,6 +10,7 @@ import NewProposal from '@/pages/NewProposal'
 import NewOffer from '@/pages/NewOffer'
 import ContractStatus from '@/pages/ContractStatus'
 import Deposit from '@/pages/Deposit'
+import NewDeposit from '@/pages/NewDeposit'
 
 Vue.use(Router)
 
@@ -65,6 +66,11 @@ export default new Router({
       path: '/deposit',
       name: 'Deposit',
       component: Deposit
+    },
+    {
+      path: '/deposit/new_deposit',
+      name: 'New Deposit',
+      component: NewDeposit
     }
   ],
   mode: 'hash'
