@@ -13,6 +13,8 @@ export default {
     await this.$eth.accountPromise;
     await this.$libre.initPromise;
     this.defaultAddress = window.web3.eth.defaultAccount;
+    if (this.defaultAddress == undefined)
+      this.defaultAddress = "Unknown"
   }
 }
 </script>
