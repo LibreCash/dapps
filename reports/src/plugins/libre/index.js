@@ -162,6 +162,13 @@ class Libre {
       minAmount: 2
     }
 
+    this.depositData = {
+      timestamp: 0,
+      deadline: 1,
+      amount: 2,
+      margin: 3
+    };
+
     this.proposals = [];
     this.plans = [];
     this.initPromise = this.init();
@@ -235,6 +242,15 @@ class Libre {
       nay: +contractArray[this.voteStruct.nay] / 10 ** this.consts.DECIMALS,
       voted: contractArray[this.voteStruct.voted],
       deadline: +contractArray[this.voteStruct.deadline]
+    }
+  }
+
+  getDepositObject(contractArray) {
+    return {
+      timestamp: +contractArray[this.depositData.timestamp],
+      deadline: +contractArray[this.depositData.deadline],
+      amount: +contractArray[this.depositData.amount],
+      margin: +contractArray[this.depositData.margin]
     }
   }
 
