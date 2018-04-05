@@ -7,21 +7,33 @@
       <br>
       <div class="table-padding">
         <div v-if="owner">
-          <b-field horizontal label="Period, sec">
-            <b-input v-model="newPlan.period"></b-input>
-          </b-field>
-          <b-field horizontal label="Percent, %">
-            <b-input v-model="newPlan.percent"></b-input>
-          </b-field>
-          <b-field horizontal label="Min amount, Libre">
-            <b-input v-model="newPlan.minAmount"></b-input>
-          </b-field>
-          <b-field horizontal label="Description">
-            <b-input v-model="newPlan.description"></b-input>
-          </b-field>
-          <b-field horizontal>
-            <button class="button is-primary" @click="createPlan()">Create Plan</button>
-          </b-field>
+          <b-collapse class="card" :open="false">
+            <div slot="trigger" slot-scope="props" class="card-header">
+              <p class="card-header-title">Create Plan</p>
+              <a class="card-header-icon">
+                <b-icon :icon="props.open ? 'menu-down' : 'menu-up'"></b-icon>
+              </a>
+            </div>
+            <div class="card-content">
+              <div class="content">
+                <b-field horizontal label="Period, sec">
+                  <b-input v-model="newPlan.period"></b-input>
+                </b-field>
+                <b-field horizontal label="Percent, %">
+                  <b-input v-model="newPlan.percent"></b-input>
+                </b-field>
+                <b-field horizontal label="Min amount, Libre">
+                  <b-input v-model="newPlan.minAmount"></b-input>
+                </b-field>
+                <b-field horizontal label="Description">
+                  <b-input v-model="newPlan.description"></b-input>
+                </b-field>
+                <b-field horizontal>
+                  <button class="button is-primary" @click="createPlan()">Create Plan</button>
+                </b-field>
+              </div>
+            </div>
+          </b-collapse>
           <br>
         </div>
         <h3 class="subtitle has-text-centered">Plans</h3>
@@ -51,18 +63,18 @@
           </template>
         </b-table>
         <br>
-        <div v-if="planSelected">
+        <div>
           <b-field>
-          <b-message :type="msg.type" style="white-space: pre-wrap;">{{ msg.text }}</b-message>
-        </b-field>
-        <b-field>
-          <b-input placeholder="0,00" v-model="amount"></b-input>
-          <p class="control">
-            <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}" @click="newDeposit(planSelected.id)" :disabled="amount < planSelected.minAmount">New Deposit</button>
-          </p>
-        </b-field>
+            <b-message :type="msg.type" style="white-space: pre-wrap;">{{ msg.text }}</b-message>
+          </b-field>
+          <b-field v-if="planSelected">
+            <b-input placeholder="0,00" v-model="amount"></b-input>
+            <p class="control">
+              <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}" @click="newDeposit(planSelected.id)" :disabled="amount < planSelected.minAmount">New Deposit</button>
+            </p>
+          </b-field>
         </div>
-        
+        <hr>
         <br>
         <h3 class="subtitle has-text-centered" v-if="myDepositData.length > 0">My Deposits</h3>
         <b-table :data="myDepositData"
@@ -128,7 +140,7 @@ export default {
       amount: '',
       msg: {
         type: 'is-info',
-        text: 'Please select plan!'
+        text: 'To create a deposit, select a plan!'
       }
     }
   },
@@ -172,19 +184,18 @@ export default {
     },
 
     async newDeposit(id) {
-      console.log(id)
-
       this.newDepositLoading = true;
       try {
         if (!(await this.approveLibre(this.$libre.fromToken(this.amount))))
           return
 
         this.setMessage('warning',`Create New Deposit - wait confirm...`)
-        let txHash = await this.$libre.deposit.createDeposit(this.amount,id);
+        let txHash = await this.$libre.deposit.createDeposit(this.$libre.fromToken(this.amount),id);
         this.setMessage('warning',`Create New Deposit - send to the network...`)
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success',`Create New Deposit - successfully...`)
           this.$snackbar.open('New Deposit created!');
+          this.updateMyDeposit()
         } else {
           this.setMessage('danger',`Create New Deposit - fail transaction...`)
           this.$snackbar.open('Transaction fail!');
@@ -205,6 +216,7 @@ export default {
         let txHash = await this.$libre.deposit.claimDeposit(selectObject.id);
         if (await this.$eth.isSuccess(txHash)) {
           this.$snackbar.open('Deposit returned!');
+          this.updateMyDeposit()
         } else {
           this.$snackbar.open('Transaction fail!');
         }
@@ -230,7 +242,10 @@ export default {
       this.isloadingPlans = false
     },
 
-    async pushMyDeposit() {
+    async updateMyDeposit() {
+      this.myDepositData = []
+      this.isloadingDeposit = true;
+
       let count = +await this.$libre.deposit.myDepositCount();
       for(let i=0; i < count;i++) {
         let deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(window.web3.eth.defaultAccount,i));
@@ -250,6 +265,7 @@ export default {
       
       this.isloadingDeposit = false
     },
+
     async checkOwner() {
       this.owner = window.web3.eth.defaultAccount == await this.$libre.deposit.owner();
     }
@@ -261,7 +277,7 @@ export default {
       await this.$libre.initPromise;
       this.checkOwner();
       this.pushPlans();
-      this.pushMyDeposit();
+      this.updateMyDeposit();
     } catch (err) {
       console.log(err)
     }
