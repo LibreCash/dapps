@@ -6,7 +6,24 @@
       </div>
       <br>
       <div class="table-padding">
-        <button class="button is-primary" @click="createPlan()" v-if="owner">Create Plan</button>
+        <div v-if="owner">
+          <b-field horizontal label="Period">
+            <b-input v-model="newPlan.period"></b-input>
+          </b-field>
+          <b-field horizontal label="Percent">
+            <b-input v-model="newPlan.percent"></b-input>
+          </b-field>
+          <b-field horizontal label="Min amount">
+            <b-input v-model="newPlan.minAmount"></b-input>
+          </b-field>
+          <b-field horizontal label="Description">
+            <b-input v-model="newPlan.description"></b-input>
+          </b-field>
+          <b-field horizontal>
+            <button class="button is-primary" @click="createPlan()">Create Plan</button>
+          </b-field>
+          <br>
+        </div>
         <router-link :to="{ path: '/deposit/new_deposit' }" class="button is-primary">New Deposit</router-link><br><br>
         <h3 class="subtitle has-text-centered">Plans</h3>
         <b-table :data="plansData"
@@ -72,19 +89,25 @@ export default {
   data () {
     return {
       isLoading: false,
-      owner: true,
+      owner: false,
       plansData: [],
       isloadingPlans: true,
       myDepositData: [],
       isloadingDeposit: true,
       selected: null,
-      isClaimLoading: false
+      isClaimLoading: false,
+      newPlan: {
+        period: '',
+        percent: '',
+        minAmount: '',
+        description: ''
+      }
     }
   },
   methods: {
     async createPlan() {
       try {
-        let txHash = await this.$libre.deposit.createPlan(1,2,3);
+        let txHash = await this.$libre.deposit.createPlan(this.newPlan.period,this.newPlan.percent,this.newPlan.minAmount,this.newPlan.description);
         if (await this.$eth.isSuccess(txHash)) {
           this.$snackbar.open('New Plan created!');
         } else {
