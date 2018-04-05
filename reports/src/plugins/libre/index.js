@@ -159,7 +159,8 @@ class Libre {
     this.depositPlanStruct = {
       period: 0,
       percent: 1,
-      minAmount: 2
+      minAmount: 2,
+      description: 3
     }
 
     this.depositData = {
@@ -290,7 +291,8 @@ class Libre {
         id: i,
         period: +arr[this.depositPlanStruct.period],
         percent: +arr[this.depositPlanStruct.percent],
-        minAmount: +arr[this.depositPlanStruct.minAmount]
+        minAmount: +arr[this.depositPlanStruct.minAmount],
+        description: +arr[this.depositPlanStruct.description]
       }
 
       this.plans.push(plan)
