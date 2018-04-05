@@ -31,14 +31,18 @@
           </template>
         </b-table>
         <br>
-        <h3 class="subtitle has-text-centered">My Deposits</h3>
+        <h3 class="subtitle has-text-centered" v-if="myDepositData.length > 0">My Deposits</h3>
         <b-table :data="myDepositData"
           :bordered="false"
           :striped="true"
           :narrowed="false"
           :loading="isloadingDeposit"
-          :mobile-cards="true">
+          :mobile-cards="true"
+          :selected.sync="selected">
           <template slot-scope="props">
+            <b-table-column label='ID' centered>
+              {{ props.row.id }}
+            </b-table-column>
             <b-table-column label='Time start' centered>
               {{ props.row.timestamp }}
             </b-table-column>
@@ -53,12 +57,15 @@
             </b-table-column>
           </template>
         </b-table>
+        <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}" @click="claimDeposit(selected)"
+            :disabled="!selected" v-if="myDepositData.length > 0">
+            <span>Claim Deposit</span>
+        </button>
       </div>
+      <br><br>
     </section>
   </div>
 </template>
-
-
 
 <script>
 export default {
@@ -69,13 +76,15 @@ export default {
       plansData: [],
       isloadingPlans: true,
       myDepositData: [],
-      isloadingDeposit: true
+      isloadingDeposit: true,
+      selected: null,
+      isClaimLoading: false
     }
   },
   methods: {
     async createPlan() {
       try {
-        let txHash = await this.$libre.deposit.createPlan(1,1,1);
+        let txHash = await this.$libre.deposit.createPlan(1,2,3);
         if (await this.$eth.isSuccess(txHash)) {
           this.$snackbar.open('New Plan created!');
         } else {
@@ -88,6 +97,24 @@ export default {
       }
     },
 
+    async claimDeposit(selectObject) {
+      this.selected = null
+      this.isClaimLoading = true
+      try {
+        let txHash = await this.$libre.deposit.claimDeposit(selectObject.id);
+        if (await this.$eth.isSuccess(txHash)) {
+          this.$snackbar.open('Deposit returned!');
+        } else {
+          this.$snackbar.open('Transaction fail!');
+        }
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
+      }
+      this.isClaimLoading = false
+    },
+
     async pushPlans() {
       await this.$libre.loadPlans();
       this.$libre.plans.forEach((plan) => this.plansData.push(plan))
@@ -95,16 +122,23 @@ export default {
     },
 
     async pushMyDeposit() {
-      for(let i=0; true;i++) {
-        let deposit = this.$libre.getDepositObject(await this.$libre.deposit.myDeposit(i));
+      let count = +await this.$libre.deposit.myDepositCount();
+      for(let i=0; i < count;i++) {
+        let deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(window.web3.eth.defaultAccount,i));
 
-        if (deposit.amount == 0)
-          break
-
-        this.myDepositData.push(deposit)
+        this.myDepositData.push({
+          id: i,
+          timestamp: new Date(deposit.timestamp * 1000).toLocaleString(),
+          deadline: new Date(deposit.deadline * 1000).toLocaleString(),
+          amount: this.$libre.toToken(deposit.amount),
+          margin: this.$libre.toToken(deposit.margin)
+        })
       }
       
       this.isloadingDeposit = false
+    },
+    async checkOwner() {
+      this.owner = window.web3.eth.defaultAccount == await this.$libre.deposit.owner();
     }
   },
 
@@ -112,7 +146,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.owner = window.web3.eth.defaultAccount == await this.$libre.deposit.owner();
+      this.checkOwner();
       this.pushPlans();
       this.pushMyDeposit();
     } catch (err) {

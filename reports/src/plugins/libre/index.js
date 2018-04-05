@@ -283,7 +283,8 @@ class Libre {
     if (this.plans.length > 0)
       return
 
-    for(let i =0; true; i++) {
+    let count = +await this.deposit.plansCount();
+    for(let i =0; i < count; i++) {
       let arr = await this.deposit.plans(i),
       plan = {
         id: i,
@@ -291,9 +292,6 @@ class Libre {
         percent: +arr[this.depositPlanStruct.percent],
         minAmount: +arr[this.depositPlanStruct.minAmount]
       }
-
-      if (plan.period == 0 && plan.percent == 0 && plan.minAmount == 0)
-        break;
 
       this.plans.push(plan)
     }
