@@ -10,16 +10,22 @@
         <address-block>one</address-block>
         <div>Loans contract address: {{ loansAddress }}</div>
         <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
-        <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
-        <div>
-          <b-field>
-            <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
-            <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
-          </b-field>
-          <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
-          <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
-          <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
-          <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+        <div class="columns" style="padding-top: 2rem">
+          <div class="column is-narrow">
+            <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
+          </div>
+          <div class="column is-narrow">
+            <b-field>
+              <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
+              <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
+            </b-field>
+          </div>
+          <div class="column">
+            <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
+            <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
+            <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
+            <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+          </div>
         </div>
         <br>
         <div v-if="loansCount == 0 || searchData.length == 0">
@@ -75,28 +81,35 @@
             </b-table-column>
           </template>
         </b-table>
-
-        <b-pagination
-            @change="loadLoans"
-            :total="loansCount"
-            :current.sync="vpage"
-            :simple="isSimple"
-            :order="paginationOrder"
-            :rounded="isRounded"
-            :per-page="perPage">
-        </b-pagination>
-        <b-field label="per page">
-          <b-select v-model="perPage" @input="loadLoans()">
-            <option value="3">3</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="300">300</option>
-          </b-select>
-        </b-field>
+        <div class="columns">
+          <div class="column is-narrow">
+            <b-tooltip label="Items on page">
+              <b-field>
+                <b-select v-model="perPage" @input="loadLoans()">
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="300">300</option>
+                </b-select>
+              </b-field>
+            </b-tooltip>
+          </div>
+          <div class="column">
+            <b-pagination
+                @change="loadLoans"
+                :total="loansCount"
+                :current.sync="vpage"
+                :simple="isSimple"
+                :order="paginationOrder"
+                :rounded="isRounded"
+                :per-page="perPage">
+            </b-pagination>
+          </div>
+        </div>
       </div>
     </section>
   </div>
