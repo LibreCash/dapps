@@ -1,6 +1,6 @@
 
 <template>
-    <div>
+  <div>
     <section class="allMain">
       <div class="h2-contain">
         <h2 class="subtitle">Loans</h2>
@@ -25,7 +25,57 @@
         <div v-if="loansCount == 0 || searchData.length == 0">
           No loans for selected filter
         </div>
-        <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
+        <b-message type="is-warning" v-if="needUpdate">
+          The table isn't actual. Please update the page
+        </b-message>
+        <b-table
+          v-if="searchData.length > 0"
+          :data="isEmpty ? [] : searchData"
+          :bordered="isBordered"
+          :striped="isStriped"
+          :narrowed="isNarrowed"
+          :loading="tableLoading"
+          :per-page="perPage"
+          :current-page.sync="currentPage"
+          :mobile-cards="hasMobileCards"
+          :responsive="isResponsive">
+          <template slot-scope="props" v-if="!props.row.tempHide">
+            <b-table-column label='Holder' centered v-if="props.row.holder == '-'">
+                not set
+            </b-table-column>
+            <b-table-column label='Holder' centered v-else>
+              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.holder">address</a>
+            </b-table-column>
+            <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
+                not set
+            </b-table-column>
+            <b-table-column label='Recipient' centered v-else>
+              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
+            </b-table-column>
+            <b-table-column label='Date' centered>
+              {{ props.row.timestamp }}
+            </b-table-column>
+            <b-table-column label='Loan Period' centered>
+              {{ props.row.period }}
+            </b-table-column>
+            <b-table-column label='Amount' centered>
+              {{ props.row.amount }} {{ props.row.type }}
+            </b-table-column>
+            <b-table-column label='Margin' centered>
+              {{ props.row.margin }} {{ props.row.type }}
+            </b-table-column>
+            <b-table-column label='Refund' centered>
+              {{ props.row.refund }} {{ props.row.type }}
+            </b-table-column>
+            <b-table-column label='Status' centered>
+              {{ props.row.status }}
+            </b-table-column>
+            <b-table-column label='Actions' centered>
+              <router-link :to="{name: 'Loan', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+            </b-table-column>
+          </template>
+        </b-table>
+
         <b-pagination
             @change="loadLoans"
             :total="loansCount"
@@ -48,30 +98,33 @@
           </b-select>
         </b-field>
       </div>
-      <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
-    </div>
+  </div>
 </template>
 
-
-
 <script>
-import LoansTable from '@/components/LoansTable'
 import AddressBlock from '@/components/AddressBlock'
 import Config from '@/config'
 export default {
   data () {
     return {
-      vtype: 'ETH',
+      isEmpty: false,
+      isBordered: false,
+      isStriped: true,
+      isNarrowed: false,
+      tableLoading: false,
+      hasMobileCards: true,
+      isResponsive: true,
+      currentPage: 1,
+      perPage: 5,
+      curBlockchainTime: 0,
+      needUpdate: false,
       loansAddress: '',
-      reportText: '',
       searchData: [],
-      isLoading: false,
       isSimple: false,
       isRounded: true,
       paginationOrder: 'is-centered',
       defaultAddress: '',
-      tokensCount: '',
       pages: [1],
       vpage: 1,
       ethType: 'ETH',
@@ -106,7 +159,7 @@ export default {
       const maxUINT256 = 2**256 - 1;
       const struct = this.$libre.loansStruct
 
-      this.isLoading = true
+      this.tableLoading = true
       try {
         this.loansCount = +await this.$libre.loans.getLoanCount(_type, offers);
         let loanIDs = await this.$libre.loans.getLoans([_page - 1, pageCount], _type, offers);
@@ -139,7 +192,7 @@ export default {
         console.log(err)
       }
 
-      this.isLoading = false
+      this.tableLoading = false
     },
     async updateBlockTime() {
       this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
@@ -178,7 +231,6 @@ export default {
     this.clearTimers();
   },
   components: {
-    LoansTable,
     AddressBlock
   }
 }
