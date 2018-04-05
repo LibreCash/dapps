@@ -167,7 +167,8 @@ class Libre {
       timestamp: 0,
       deadline: 1,
       amount: 2,
-      margin: 3
+      margin: 3,
+      plan: 4
     };
 
     this.proposals = [];
@@ -251,7 +252,8 @@ class Libre {
       timestamp: +contractArray[this.depositData.timestamp],
       deadline: +contractArray[this.depositData.deadline],
       amount: +contractArray[this.depositData.amount],
-      margin: +contractArray[this.depositData.margin]
+      margin: +contractArray[this.depositData.margin],
+      plan: contractArray[this.depositData.plan]
     }
   }
 
@@ -292,7 +294,7 @@ class Libre {
         period: +arr[this.depositPlanStruct.period],
         percent: +arr[this.depositPlanStruct.percent],
         minAmount: +arr[this.depositPlanStruct.minAmount],
-        description: +arr[this.depositPlanStruct.description]
+        description: arr[this.depositPlanStruct.description]
       }
 
       this.plans.push(plan)
