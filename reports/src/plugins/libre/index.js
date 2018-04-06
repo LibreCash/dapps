@@ -64,7 +64,14 @@ class Libre {
     }
 
     this.typeProposals = [
-      {text: 'Finished', key: 'CLEAN'},
+      {
+        text: 'Finished',
+        key: 'CLEAN',
+        benef: 'Beneficiary:', 
+        amount: 'Amount:',
+        buf: 'Buffer:',
+        code: 'Bytecode:'
+      },
       {
         text: 'Custom', 
         key: 'UNIVERSAL', 
