@@ -35,7 +35,13 @@
           :responsive="true">
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column field="report.type" label='Type' centered>
-              {{ props.row.loading ? 'loading...' : props.row.type }}
+              <p>{{ props.row.loading ? 'loading...' : props.row.type }}</p>
+              <p v-if="props.row.status == 'FINISHED'" class="tag is-success is-rounded">
+                Finished
+              </p>
+              <p v-if="props.row.status == 'BLOCKED'" class="tag is-danger is-rounded">
+                Blocked
+              </p>
             </b-table-column>
             <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
                 not set
@@ -57,7 +63,7 @@
             </b-table-column>
              <b-table-column label='Deadline' centered>
               {{ props.row.deadline }}
-              <span v-if="props.row.deadlineUnix <= curBlockchainTime">
+              <span v-if="props.row.deadlineUnix <= curBlockchainTime" class="tag is-warning is-rounded">
                 outdated
               </span>
             </b-table-column>
@@ -71,7 +77,7 @@
                           (props.row.deadlineUnix > curBlockchainTime) &&
                           !props.row.loading &&
                           (tokensCount > 0) &&
-                          (props.row.type !== $libre.typeProposals[0].text)">
+                          (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip label="Yea" type="is-dark" position="is-bottom">
                   <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
                 </b-tooltip>
@@ -81,16 +87,16 @@
               </span>
               <!-- execute button -->
               <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
-                              (props.row.type !== $libre.typeProposals[0].text) &&
+                              (props.row.status === $libre.proposalStatuses[0].text) &&
                               !props.row.loading">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
                   <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
                 </b-tooltip>
               </span>
-              <span v-else-if="props.row.votingData.voted">
+              <span v-else-if="props.row.votingData.voted" class="tag is-success is-rounded">
                 voted
               </span>
-              <span v-else-if="!(tokensCount > 0)" style="white-space: nowrap">
+              <span v-else-if="!(tokensCount > 0)" style="white-space: nowrap" class="tag is-warning is-rounded">
                 no tokens
               </span>
               <span v-else-if="props.row.loading">
@@ -98,7 +104,7 @@
               </span>
               <!-- block button -->
               <span v-if="isOwner &&
-                          (props.row.type !== $libre.typeProposals[0].text) &&
+                          (props.row.status === $libre.proposalStatuses[0].text) &&
                           !props.row.loading">
                 <b-tooltip label="Block as owner" type="is-dark" position="is-bottom">
                   <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
@@ -158,7 +164,8 @@ export default {
             deadline: new Date(vote.deadline * 1000).toLocaleString(),
             description: proposal.description,
             loading: false,
-            updateTimer: null
+            updateTimer: null,
+            status: this.$libre.proposalStatuses[+proposal.status].text
         })
       }
     },
@@ -252,8 +259,8 @@ export default {
         txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
         alert(message);
-        let proposalStatus = (await this.$libre.updateProposal(row.id)).type;
-        row.type = this.$libre.typeProposals[proposalStatus].text // it is "Finished" but we shall recheck
+        let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
+        row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
@@ -270,8 +277,8 @@ export default {
         let txHash = await this.$libre.dao.executeProposal(id),
             message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
         alert(message)
-        let proposalStatus = (await this.$libre.updateProposal(row.id)).type;
-        row.type = this.$libre.typeProposals[proposalStatus].text // it is "Finished" but we shall recheck
+        let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
+        row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }

@@ -256,8 +256,8 @@ export default {
 
           this.loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId));
 
-          if (this.loanType == 'Libre')
-           value = this.loan.pledge
+          if (this.loanType == 'Libre' && action == 'takeLoan')
+            value = this.loan.pledge
         }
 
         if ((action == 'takeLoan' && this.loanType == 'ETH') || 

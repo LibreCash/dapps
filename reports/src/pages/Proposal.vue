@@ -123,8 +123,10 @@ export default {
     async vote (support) {
       try {
         let 
-          txHash = await this.$libre.dao.vote(this.proposalId, support),
-          result = this.$eth.isSucces(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
+          txHash = await this.$libre.dao.vote(this.proposalId, support);
+        this.isLoading = true;
+        let
+          result = await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
 
         alert(result) // Replace it to notify
         await this.$libre.updateProposal(this.proposalId)
@@ -133,7 +135,7 @@ export default {
       } catch(err) {
         alert(this.$eth.getErrorMsg(err))
         
-        row.loading = false
+        this.isLoading = false
       }
     }
   },

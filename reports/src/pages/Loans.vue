@@ -1,5 +1,5 @@
 <template>
-    <div>
+  <div>
     <section class="allMain">
       <div class="h2-contain">
         <h2 class="subtitle">Loans</h2>
@@ -9,68 +9,134 @@
         <address-block>one</address-block>
         <div>Loans contract address: {{ loansAddress }}</div>
         <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
-        <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
-        <div>
-          <b-field>
-            <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
-            <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
-          </b-field>
-          <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
-          <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
-          <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
-          <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+        <div class="columns" style="padding-top: 2rem">
+          <div class="column is-narrow">
+            <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
+          </div>
+          <div class="column is-narrow">
+            <b-field>
+              <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
+              <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
+            </b-field>
+          </div>
+          <div class="column">
+            <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
+            <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
+            <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
+            <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+          </div>
         </div>
         <br>
         <div v-if="loansCount == 0 || searchData.length == 0">
           No loans for selected filter
         </div>
-        <loans-table v-if="searchData.length > 0" :tableData='searchData'></loans-table>
-        <b-pagination
-            @change="loadLoans"
-            :total="loansCount"
-            :current.sync="vpage"
-            :simple="isSimple"
-            :order="paginationOrder"
-            :rounded="isRounded"
-            :per-page="perPage">
-        </b-pagination>
-        <b-field label="per page">
-          <b-select v-model="perPage" @input="loadLoans()">
-            <option value="3">3</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="300">300</option>
-          </b-select>
-        </b-field>
+        <b-message type="is-warning" v-if="needUpdate">
+          The table isn't actual. Please update the page
+        </b-message>
+        <b-table
+          v-if="searchData.length > 0"
+          :data="isEmpty ? [] : searchData"
+          :bordered="isBordered"
+          :striped="isStriped"
+          :narrowed="isNarrowed"
+          :loading="tableLoading"
+          :per-page="perPage"
+          :current-page.sync="currentPage"
+          :mobile-cards="hasMobileCards"
+          :responsive="isResponsive">
+          <template slot-scope="props" v-if="!props.row.tempHide">
+            <b-table-column label='Holder' centered v-if="props.row.holder == '-'">
+                not set
+            </b-table-column>
+            <b-table-column label='Holder' centered v-else>
+              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.holder">address</a>
+            </b-table-column>
+            <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
+                not set
+            </b-table-column>
+            <b-table-column label='Recipient' centered v-else>
+              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
+            </b-table-column>
+            <b-table-column label='Date' centered>
+              {{ props.row.timestamp }}
+            </b-table-column>
+            <b-table-column label='Loan Period' centered>
+              {{ props.row.period }}
+            </b-table-column>
+            <b-table-column label='Amount' centered>
+              {{ props.row.amount }} {{ props.row.type }}
+            </b-table-column>
+            <b-table-column label='Margin' centered>
+              {{ props.row.margin }} {{ props.row.type }}
+            </b-table-column>
+            <b-table-column label='Refund' centered>
+              {{ props.row.refund }} {{ props.row.type }}
+            </b-table-column>
+            <b-table-column label='Status' centered>
+              {{ props.row.status }}
+            </b-table-column>
+            <b-table-column label='Actions' centered>
+              <router-link :to="{name: 'Loan', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+            </b-table-column>
+          </template>
+        </b-table>
+        <div class="columns">
+          <div class="column is-narrow">
+            <b-tooltip label="Items on page">
+              <b-field>
+                <b-select v-model="perPage" @input="loadLoans()">
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="300">300</option>
+                </b-select>
+              </b-field>
+            </b-tooltip>
+          </div>
+          <div class="column">
+            <b-pagination
+                @change="loadLoans"
+                :total="loansCount"
+                :current.sync="vpage"
+                :simple="isSimple"
+                :order="paginationOrder"
+                :rounded="isRounded"
+                :per-page="perPage">
+            </b-pagination>
+          </div>
+        </div>
       </div>
-      <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
-    </div>
+  </div>
 </template>
 
-
-
 <script>
-import LoansTable from '@/components/LoansTable'
 import AddressBlock from '@/components/AddressBlock'
 import Config from '@/config'
 export default {
   data () {
     return {
-      vtype: 'ETH',
+      isEmpty: false,
+      isBordered: false,
+      isStriped: true,
+      isNarrowed: false,
+      tableLoading: false,
+      hasMobileCards: true,
+      isResponsive: true,
+      currentPage: 1,
+      perPage: 5,
+      curBlockchainTime: 0,
+      needUpdate: false,
       loansAddress: '',
-      reportText: '',
       searchData: [],
-      isLoading: false,
       isSimple: false,
       isRounded: true,
       paginationOrder: 'is-centered',
       defaultAddress: '',
-      tokensCount: '',
       pages: [1],
       vpage: 1,
       ethType: 'ETH',
@@ -105,7 +171,7 @@ export default {
       const maxUINT256 = 2**256 - 1;
       const struct = this.$libre.loansStruct
 
-      this.isLoading = true
+      this.tableLoading = true
       try {
         this.loansCount = +await this.$libre.loans.getLoanCount(_type, offers);
         let loanIDs = await this.$libre.loans.getLoans([_page - 1, pageCount], _type, offers);
@@ -138,7 +204,7 @@ export default {
         console.log(err)
       }
 
-      this.isLoading = false
+      this.tableLoading = false
     },
     async updateBlockTime() {
       this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
@@ -158,7 +224,6 @@ export default {
       let intervals = [
         this.updatingTicker,
         this.updatingBlockData,
-        this.updateTableData
       ]
 
       intervals.forEach((interval) => clearInterval(interval))
@@ -178,7 +243,6 @@ export default {
     this.clearTimers();
   },
   components: {
-    LoansTable,
     AddressBlock
   }
 }
