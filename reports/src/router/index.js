@@ -9,6 +9,7 @@ import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
 import NewOffer from '@/pages/NewOffer'
 import ContractStatus from '@/pages/ContractStatus'
+import Deposit from '@/pages/Deposit'
 
 Vue.use(Router)
 
@@ -59,6 +60,11 @@ export default new Router({
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal
+    },
+    {
+      path: '/deposit',
+      name: 'Deposit',
+      component: Deposit
     }
   ],
   mode: 'hash'

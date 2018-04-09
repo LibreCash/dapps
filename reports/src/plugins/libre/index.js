@@ -168,24 +168,41 @@ class Libre {
       'REQUEST_RATES'
     ]
 
+    this.depositPlanStruct = {
+      period: 0,
+      percent: 1,
+      minAmount: 2,
+      description: 3
+    }
+
+    this.depositData = {
+      timestamp: 0,
+      deadline: 1,
+      amount: 2,
+      margin: 3,
+      plan: 4
+    };
+
     this.proposals = [];
+    this.plans = [];
     this.initPromise = this.init();
   }
 
   async init() {
     this.web3 = window.web3;
 
-    this.report = this.getContract(JSON.parse(Config.report.abi),Config.report.address)
-    this.bank = this.getContract(JSON.parse(Config.bank.abi), Config.bank.address)
+    this.report = this.getContract(Config.report.abi,Config.report.address)
+    this.bank = this.getContract(Config.bank.abi, Config.bank.address)
     var address = await this.bank.tokenAddress();
     Config.token.address = address;
-    this.token = this.getContract(JSON.parse(Config.erc20.abi),Config.token.address)
+    this.token = this.getContract(Config.erc20.abi,Config.token.address)
 
-    this.dao = this.getContract(JSON.parse(Config.dao.abi),Config.dao.address)
+    this.dao = this.getContract(Config.dao.abi,Config.dao.address)
     this.libertyAddress = address = await this.dao.sharesTokenAddress();
-    this.liberty = this.getContract(JSON.parse(Config.erc20.abi), this.libertyAddress)
+    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
 
-    this.loans = this.getContract(JSON.parse(Config.loans.abi),Config.loans.address)
+    this.loans = this.getContract(Config.loans.abi,Config.loans.address)
+    this.deposit = this.getContract(Config.deposit.abi,Config.deposit.address)
   }
 
   getContract(abi, address) {
@@ -243,6 +260,16 @@ class Libre {
     }
   }
 
+  getDepositObject(contractArray) {
+    return {
+      timestamp: +contractArray[this.depositData.timestamp],
+      deadline: +contractArray[this.depositData.deadline],
+      amount: +contractArray[this.depositData.amount],
+      margin: +contractArray[this.depositData.margin],
+      plan: contractArray[this.depositData.plan]
+    }
+  }
+
   async updateProposal(index) {
     let proposal = this.getProposalObject(await this.dao.getProposal(index));
      proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
@@ -266,7 +293,25 @@ class Libre {
     } catch (err) {
       console.log(err)
     }
-    //console.log("proposals", this.proposals);
+  }
+
+  async loadPlans() {
+    if (this.plans.length > 0)
+      return
+
+    let count = +await this.deposit.plansCount();
+    for(let i =0; i < count; i++) {
+      let arr = await this.deposit.plans(i),
+      plan = {
+        id: i,
+        period: +arr[this.depositPlanStruct.period],
+        percent: +arr[this.depositPlanStruct.percent],
+        minAmount: +arr[this.depositPlanStruct.minAmount],
+        description: arr[this.depositPlanStruct.description]
+      }
+
+      this.plans.push(plan)
+    }
   }
 }
 

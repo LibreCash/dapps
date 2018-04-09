@@ -41,6 +41,12 @@
               <span>Loans</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/deposit">
+              <div class="Rectangle"></div>
+              <span>Deposit</span>
+              </router-link>
+            </li>
           </ul>
           <ul class="conditions"></ul>
         </div>
