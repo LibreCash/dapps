@@ -53,7 +53,8 @@ class Libre {
       'amount': 2,
       'buffer': 3,
       'bytecode': 4,
-      'description': 5
+      'description': 5,
+      'status': 6
     }
 
     this.voteStruct = {
@@ -64,7 +65,6 @@ class Libre {
     }
 
     this.typeProposals = [
-      {text: 'Finished', key: 'CLEAN'},
       {
         text: 'Custom', 
         key: 'UNIVERSAL', 
@@ -148,6 +148,18 @@ class Libre {
       }
     ]
 
+    this.proposalStatuses = [
+      {
+        text: 'ACTIVE'
+      },
+      {
+        text: 'FINISHED'
+      },
+      {
+        text: 'BLOCKED'
+      }
+    ]
+
     this.bankState = [
       'LOCKED',
       'PROCESSING_ORDERS',
@@ -209,7 +221,8 @@ class Libre {
       amount: +contractArray[this.proposalStruct.amount],
       buffer: +contractArray[this.proposalStruct.buffer],
       bytecode: contractArray[this.proposalStruct.bytecode],
-      description: contractArray[this.proposalStruct.description]
+      description: contractArray[this.proposalStruct.description],
+      status: contractArray[this.proposalStruct.status]
     }
   }
 
@@ -232,7 +245,7 @@ class Libre {
 
   async updateProposal(index) {
     let proposal = this.getProposalObject(await this.dao.getProposal(index));
-    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
+     proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
 
     this.proposals[index] = proposal
     return this.proposals[index]
