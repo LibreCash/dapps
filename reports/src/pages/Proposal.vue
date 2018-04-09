@@ -80,7 +80,15 @@ export default {
 
           this.currentProposal = this.typeProposals[proposal.type]
           
-          this.proposalData.push({name: 'Type:', value: this.currentProposal.text})
+          this.proposalData.push({
+            name: 'Type:',
+            value: this.currentProposal.text
+          })
+
+          this.proposalData.push({
+            name: 'Status:',
+            value: this.$libre.proposalStatuses[+proposal.status].text
+          })
 
           // Refactor it 
           if (this.currentProposal["benef"])
