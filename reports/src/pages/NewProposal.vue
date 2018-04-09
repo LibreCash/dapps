@@ -68,7 +68,7 @@ export default {
       buffer: '',
       lock: false,
       button: {name: 'Create Proposal', disabled: true},
-      typeProposals: this.$libre.typeProposals.slice(1),
+      typeProposals: this.$libre.typeProposals,
       selectedType: ''
     }
   },
