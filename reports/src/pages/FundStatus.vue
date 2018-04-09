@@ -134,8 +134,10 @@ export default {
       chart.draw(data, options);
     }
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.accountPromise;
+      await this.$libre.initPromise;
       this.getBalancesData()
     } catch (err) {
       console.log(err)

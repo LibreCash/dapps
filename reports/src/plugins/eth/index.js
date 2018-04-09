@@ -4,8 +4,8 @@ import Web3 from 'web3'
 import Config from '@/config'
 
 class ETH {
-  static install (vue, options) {
-    const eth = new ETH()
+  static async install (vue, options) {
+    const eth = new ETH();
     Object.defineProperty(Vue.prototype, '$eth', {
       get () { return eth }
     })
@@ -18,7 +18,7 @@ class ETH {
     this.loadWeb3()
   }
 
-  loadWeb3 () {
+  async loadWeb3 () {
     try {
       if (typeof web3 !== 'undefined') {
         this.metamask = true;
@@ -42,26 +42,22 @@ class ETH {
         window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
         console.log('No web3? You should consider trying MetaMask!')
       }
-      this._web3 = window.web3
-      this._web3.eth.getAccounts((err, accounts) => {
-        this._web3.eth.defaultAccount = accounts[0]
-        this.yourAccount = accounts[0]
-        // if not logged in
-        if (this.yourAccount == null) {
-          this.loginTimer = setInterval(() => {
-            this._web3.eth.getAccounts((err, accounts) => {
-              if (accounts.length !== 0) {
-                this._web3.eth.defaultAccount = accounts[0]
-                this.yourAccount = accounts[0]
-                clearInterval(this.loginTimer)
-              }
-            })
-          }, 1000)
-        }
-      })
+
+      this.accountPromise = this.loadAccounts();
     } catch (err) {
       console.log(err)
     }
+  }
+
+  async loadAccounts() {
+    return new Promise((resolve, reject) => {
+      this._web3 = window.web3
+      this._web3.eth.getAccounts((err, accounts) => {
+        this._web3.eth.defaultAccount = accounts[0];
+        this.yourAccount = accounts[0];
+        resolve();
+      })
+    })
   }
 
   async getLatestBlockTime () {
@@ -122,7 +118,9 @@ class ETH {
         return LOCK_WALLET
     }
 
-    return 'Unknown Error!'
+    if (error.message) return error.message;
+    if (error.msg) return error.msg;
+    return error;
   }
 
   toTimestamp (solidityTimestamp) {
@@ -140,6 +138,14 @@ class ETH {
     return new Promise((resolve, reject) => {
       this._web3.eth.getBlockNumber((err, blockNumber) => {
         err ? reject(err) : resolve(blockNumber)
+      })
+    })
+  }
+
+  getBalance (address) {
+    return new Promise((resolve, reject) => {
+      this._web3.eth.getBalance(address, (err, balance) => {
+        err ? reject(err) : resolve(balance)
       })
     })
   }
@@ -162,7 +168,11 @@ class ETH {
   }
 
   fromWei (amount) {
-    return this._web3.utils.fromWei(amount)
+    return this._web3.fromWei(amount)
+  }
+
+  toWei (amount, units) {
+    return this._web3.toWei(amount, units)
   }
 
   isZeroAddress(address) {

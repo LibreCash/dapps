@@ -35,6 +35,12 @@
               <span>DAO</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/loans">
+              <div class="Rectangle"></div>
+              <span>Loans</span>
+              </router-link>
+            </li>
           </ul>
           <ul class="conditions"></ul>
         </div>

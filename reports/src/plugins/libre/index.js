@@ -12,6 +12,33 @@ class Libre {
   }
 
   constructor () {
+
+    this.loansStruct = {
+      'holder': 0,
+      'recipient': 1,
+      'data': {
+        'outer': 2,
+        'timestamp': 0,
+        'period': 1,
+        'amount': 2,
+        'margin': 3,
+        'refund': 4,
+        'pledge': 5
+      },
+      'status': 3
+    }
+
+    this.loansType = {
+      'Libre': 0,
+      'ETH': 1
+    }
+
+    this.loansStatus = [
+      'active',
+      'used',
+      'completed'
+    ]
+
     this.consts = {
       DECIMALS: 18,
       MIN_READY_ORACLES: 2,
@@ -26,7 +53,8 @@ class Libre {
       'amount': 2,
       'buffer': 3,
       'bytecode': 4,
-      'description': 5
+      'description': 5,
+      'status': 6
     }
 
     this.voteStruct = {
@@ -37,7 +65,6 @@ class Libre {
     }
 
     this.typeProposals = [
-      {text: 'Finished', key: 'CLEAN'},
       {
         text: 'Custom', 
         key: 'UNIVERSAL', 
@@ -51,7 +78,7 @@ class Libre {
         benef: 'New Owner:'
       },
       {
-        text: 'New token', 
+        text: 'New Token', 
         key: 'ATTACH_TOKEN', 
         benef: 'Token Address:'
       },
@@ -61,10 +88,10 @@ class Libre {
         benef: 'Bank Address:'
       },
       {
-        text: 'Changer fees', 
+        text: 'Change Fees', 
         key: 'SET_FEES', 
-        amount: 'Buy fee:', 
-        buf: 'Sell fee:'
+        amount: 'Buy fee, %:', 
+        buf: 'Sell fee, %:'
       },
       {
         text: 'Add Oracle', 
@@ -87,54 +114,78 @@ class Libre {
         benef: 'Oracle Address:'
       },
       {
-        text: 'Set schedule', 
+        text: 'Set Scheduler', 
         key: 'SET_SCHEDULER', 
         benef: 'Scheduler Address:'
       },
       {
-        text: 'Withdraw balance', 
+        text: 'Withdraw Balance', 
         key: 'WITHDRAW_BALANCE'
       },
       {
-        text: 'New oracle timeout',
+        text: 'New Oracle Timeout',
         key: 'SET_ORACLE_TIMEOUT',
-        amount: 'Period:'
+        amount: 'Period, minutes:'
       },
       {
-        text: 'Oracle actual time',
+        text: 'New Oracle Actual Time',
         key: 'SET_ORACLE_ACTUAL',
-        amount: 'Period:'
+        amount: 'Period, minutes:'
       },
       {
-        text: 'New rate period',
+        text: 'New Rate Period',
         key: 'SET_RATE_PERIOD',
-        amount: 'Period:'
+        amount: 'Period, minutes:'
       },
       {
-        text: 'Set lock',
+        text: 'Set Lock',
         key: 'SET_LOCK',
         lock: 'Lock:'
       },
       {
-        text: 'Claim ownership',
+        text: 'Claim Ownership',
         key: 'CLAIM_OWNERSHIP'
       }
     ]
 
-    this.web3 = window.web3;
+    this.proposalStatuses = [
+      {
+        text: 'ACTIVE'
+      },
+      {
+        text: 'FINISHED'
+      },
+      {
+        text: 'BLOCKED'
+      }
+    ]
+
+    this.bankState = [
+      'LOCKED',
+      'PROCESSING_ORDERS',
+      'WAIT_ORACLES',
+      'CALC_RATES',
+      'REQUEST_RATES'
+    ]
+
     this.proposals = [];
+    this.initPromise = this.init();
+  }
+
+  async init() {
+    this.web3 = window.web3;
 
     this.report = this.getContract(JSON.parse(Config.report.abi),Config.report.address)
     this.bank = this.getContract(JSON.parse(Config.bank.abi), Config.bank.address)
-    this.bank.tokenAddress().then(address => {
-      Config.token.address = address;
-      this.token = this.getContract(JSON.parse(Config.token.abi),Config.token.address)
-    })
+    var address = await this.bank.tokenAddress();
+    Config.token.address = address;
+    this.token = this.getContract(JSON.parse(Config.erc20.abi),Config.token.address)
 
     this.dao = this.getContract(JSON.parse(Config.dao.abi),Config.dao.address)
-    this.promiseLibre = this.dao.sharesTokenAddress().then(address => {
-      this.libre = this.getContract(JSON.parse(Config.erc20.abi),address)
-    })
+    this.libertyAddress = address = await this.dao.sharesTokenAddress();
+    this.liberty = this.getContract(JSON.parse(Config.erc20.abi), this.libertyAddress)
+
+    this.loans = this.getContract(JSON.parse(Config.loans.abi),Config.loans.address)
   }
 
   getContract(abi, address) {
@@ -149,6 +200,20 @@ class Libre {
     })
   }
 
+  getLoanObject(contractArray) {
+    return {
+      holder: contractArray[this.loansStruct.holder],
+      recipient: contractArray[this.loansStruct.recipient],
+      timestamp: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.timestamp],
+      period: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.period],
+      amount: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.amount],
+      margin: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.margin],
+      refund: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.refund],
+      pledge: +contractArray[this.loansStruct.data.outer][this.loansStruct.data.pledge],
+      status: this.loansStatus[contractArray[this.loansStruct.status]]
+    }
+  }
+
   getProposalObject(contractArray) {
     return {
       type: +contractArray[this.proposalStruct.type],
@@ -156,8 +221,17 @@ class Libre {
       amount: +contractArray[this.proposalStruct.amount],
       buffer: +contractArray[this.proposalStruct.buffer],
       bytecode: contractArray[this.proposalStruct.bytecode],
-      description: contractArray[this.proposalStruct.description]
+      description: contractArray[this.proposalStruct.description],
+      status: contractArray[this.proposalStruct.status]
     }
+  }
+
+  toToken(contractNumber) {
+    return +contractNumber / 10 ** this.consts.DECIMALS;
+  }
+
+  fromToken(amount) {
+    return +amount * 10 ** this.consts.DECIMALS;
   }
 
   getVotingObject(contractArray) {
@@ -171,7 +245,7 @@ class Libre {
 
   async updateProposal(index) {
     let proposal = this.getProposalObject(await this.dao.getProposal(index));
-    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
+     proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
 
     this.proposals[index] = proposal
     return this.proposals[index]
@@ -179,7 +253,7 @@ class Libre {
 
   async updateProposals(callEach) {
     try {
-      let length = await this.dao.proposalsLength()
+      let length = await this.dao.prsLength()
 
       if (length <= this.proposals.length)
         return
@@ -192,7 +266,7 @@ class Libre {
     } catch (err) {
       console.log(err)
     }
-    console.log("proposals", this.proposals);
+    //console.log("proposals", this.proposals);
   }
 }
 

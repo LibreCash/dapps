@@ -45,7 +45,7 @@ import Config from '@/config'
 export default {
   data () {
     return {
-      daoAddress: Config.dao.address,
+      daoAddress: '',
       proposalId: this.$route.params.id,
       reportText: '',
       owner: false,
@@ -123,22 +123,27 @@ export default {
     async vote (support) {
       try {
         let 
-          txHash = await this.$libre.dao.vote(this.proposalId, support),
-          result = this.$eth.isSucces(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
+          txHash = await this.$libre.dao.vote(this.proposalId, support);
+        this.isLoading = true;
+        let
+          result = await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
 
         alert(result) // Replace it to notify
         await this.$libre.updateProposal(this.proposalId)
         this.loadProposal()
         
-      } catch(error) {
-        alert(this.$eth.getErrorMsg(e))
+      } catch(err) {
+        alert(this.$eth.getErrorMsg(err))
         
-        row.loading = false
+        this.isLoading = false
       }
     }
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.accountPromise;
+      await this.$libre.initPromise;
+      this.daoAddress = Config.dao.address;
       this.loadProposal()
     } catch (err) {
       console.log(err)

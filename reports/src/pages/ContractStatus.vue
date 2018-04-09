@@ -60,8 +60,10 @@ export default {
 
     
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.accountPromise;
+      await this.$libre.initPromise;
       this.getStatusBank()
     } catch (err) {
       console.log(err)

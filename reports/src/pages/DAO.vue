@@ -1,6 +1,5 @@
-
 <template>
-    <div>
+  <div>
     <section class="allMain">
       <div class="h2-contain">
         <h2 class="subtitle">DAO Proposal</h2>
@@ -8,13 +7,16 @@
       <br>
       <div class="table-padding">
         <div>Address: {{ defaultAddress }}</div>
+        <div>DAO Contract Address: {{ daoAddress }}</div>
+        <div>Liberty Token Address: {{ libertyAddress }}</div>
         <div>Tokens count: {{ tokensCount }} LBRS</div>
+        <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
         <br>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
         <br><br>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
-          <b-radio-button v-model="filter" native-value="filterActive" type="is-success" checked @input="loadProposals()">Active</b-radio-button>
+          <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
         </b-field>
         <b-message type="is-warning" v-if="needUpdate">
           The table isn't actual. Please update the page
@@ -33,7 +35,13 @@
           :responsive="true">
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column field="report.type" label='Type' centered>
-              {{ props.row.loading ? 'loading...' : props.row.type }}
+              <p>{{ props.row.loading ? 'loading...' : props.row.type }}</p>
+              <p v-if="props.row.status == 'FINISHED'" class="tag is-success is-rounded">
+                Finished
+              </p>
+              <p v-if="props.row.status == 'BLOCKED'" class="tag is-danger is-rounded">
+                Blocked
+              </p>
             </b-table-column>
             <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
                 not set
@@ -55,37 +63,59 @@
             </b-table-column>
              <b-table-column label='Deadline' centered>
               {{ props.row.deadline }}
-              <span v-if="props.row.deadlineUnix <= curBlockchainTime">
+              <span v-if="props.row.deadlineUnix <= curBlockchainTime" class="tag is-warning is-rounded">
                 outdated
               </span>
             </b-table-column>
             <b-table-column label='Actions' centered>
-              <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
-              <span v-if="!props.row.votingData.voted && (props.row.deadlineUnix > curBlockchainTime) && !props.row.loading && (props.row.tokensCount > 0)">
-                <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
-                <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+              <!-- details button -->
+              <b-tooltip label="Details" type="is-dark" position="is-bottom">
+                <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+              </b-tooltip>
+              <!-- vote buttons -->
+              <span v-if="!props.row.votingData.voted &&
+                          (props.row.deadlineUnix > curBlockchainTime) &&
+                          !props.row.loading &&
+                          (tokensCount > 0) &&
+                          (props.row.status === $libre.proposalStatuses[0].text)">
+                <b-tooltip label="Yea" type="is-dark" position="is-bottom">
+                  <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
+                </b-tooltip>
+                <b-tooltip label="Nay" type="is-dark" position="is-bottom">
+                  <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+                </b-tooltip>
               </span>
-              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime">
-                <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+              <!-- execute button -->
+              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
+                              (props.row.status === $libre.proposalStatuses[0].text) &&
+                              !props.row.loading">
+                <b-tooltip label="Execute" type="is-dark" position="is-bottom">
+                  <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+                </b-tooltip>
               </span>
-              <span v-else-if="props.row.votingData.voted">
+              <span v-else-if="props.row.votingData.voted" class="tag is-success is-rounded">
                 voted
               </span>
-              <span v-else-if="!(props.row.tokensCount > 0)" style="white-space: nowrap">
+              <span v-else-if="!(tokensCount > 0)" style="white-space: nowrap" class="tag is-warning is-rounded">
                 no tokens
               </span>
-              <span v-else>
+              <span v-else-if="props.row.loading">
                 loading
               </span>
-              <span v-if="isOwner">
-                <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+              <!-- block button -->
+              <span v-if="isOwner &&
+                          (props.row.status === $libre.proposalStatuses[0].text) &&
+                          !props.row.loading">
+                <b-tooltip label="Block as owner" type="is-dark" position="is-bottom">
+                  <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+                </b-tooltip>
               </span>
             </b-table-column>
           </template>
         </b-table>
       </div>
     </section>
-    </div>
+  </div>
 </template>
 
 
@@ -96,13 +126,11 @@ import Config from '@/config'
 export default {
   data () {
     return {
-      daoAddress: Config.dao.address,
-      reportText: '',
-      //owner: false,
-      reportNumber: 0,
+      daoAddress: '',
+      libertyAddress: '',
       tableData: [],
       isLoading: false,
-      defaultAddress: window.web3.eth.defaultAccount,
+      defaultAddress: '',
       tokensCount: '',
       filter: "filterALL",
       currentPage: 1,
@@ -136,7 +164,8 @@ export default {
             deadline: new Date(vote.deadline * 1000).toLocaleString(),
             description: proposal.description,
             loading: false,
-            updateTimer: null
+            updateTimer: null,
+            status: this.$libre.proposalStatuses[+proposal.status].text
         })
       }
     },
@@ -150,6 +179,7 @@ export default {
     },
 
     async loadProposals () {
+      await this.updateBlockTime();
 
       this.clearTimers();
       this.tableData = []
@@ -192,7 +222,7 @@ export default {
     async getTokensCount () {
       await this.$libre.promiseLibre;
 
-      this.tokensCount = +await this.$libre.libre.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
+      this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
     },
 
     async vote (row, support) {
@@ -209,17 +239,12 @@ export default {
       }catch(e) {
         alert(this.$eth.getErrorMsg(e)) 
       }
-      
-      row.loading = false
 
       try {
-        
         let voteData = (await this.$libre.updateProposal(row.id)).vote;
-        row = {
-          yea: voteData.yea,
-          nay: voteData.nay,
-          votingData: voteData // Check that we needed it
-        }
+        row.yea = voteData.yea;
+        row.nay = voteData.nay;
+        row.votingData = voteData;
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
@@ -231,10 +256,12 @@ export default {
 
       try {
       let 
-        txHash = await this.$libre.dao.blockingProposal(row.id)
+        txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
         alert(message);
-      }catch(e) {
+        let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
+        row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
+      } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
       row.loading = false
@@ -247,15 +274,18 @@ export default {
         id = row.id
       
       try {
-        let txHash = await this.$libre.dao.executeProposal(id)
-        message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
+        let txHash = await this.$libre.dao.executeProposal(id),
+            message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
         alert(message)
+        let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
+        row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(e) {
         alert(this.$eth.getErrorMsg(e))
       }
+
       row.loading = false
-      
     },
+
     async updateBlockTime() {
       this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
     },
@@ -297,8 +327,13 @@ export default {
       intervals.forEach((interval) => clearInterval(interval))
     }
   },
-  created () {
+  async created () {
     try {
+      await this.$eth.accountPromise;
+      await this.$libre.initPromise;
+      this.daoAddress = Config.dao.address;
+      this.defaultAddress = window.web3.eth.defaultAccount;
+      this.libertyAddress = this.$libre.libertyAddress;
       this.loadProposals()
       this.getTokensCount()
     } catch (err) {
