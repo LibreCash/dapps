@@ -175,7 +175,7 @@ export default {
     },
 
     filterActive(proposal) {
-      return proposal.type !== 0;
+      return proposal.status == 0;
     },
 
     async loadProposals () {
