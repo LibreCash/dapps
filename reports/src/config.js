@@ -143,7 +143,7 @@ module.exports = {
         name: 'LTC',
         address: 'MD3fb4MXTCDPxYPD5J1c3e5fCQJ3FVpfS6',
         request: address => `https://chain.so/api/v2/get_address_balance/ltc/${address}`,
-        process: data => data.data.confirmed_balance,
+        process: data => (data.data.confirmed_balance > 0) ? data.data.confirmed_balance : 0,
         href: address => `https://live.blockcypher.com/ltc/address/${address}`
       },
       {

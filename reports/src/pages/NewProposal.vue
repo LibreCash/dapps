@@ -6,6 +6,10 @@
       </div>
       <br>
       <div class="table-padding" >
+        <button @click="$router.go(-1)" :to="{ path: '/loans' }" class="button">
+          <b-icon icon="keyboard-return" size="is-small"></b-icon>
+          <span>Back</span>
+        </button><br><br>
         <b-field horizontal label="Type" >
           <b-select placeholder="Select a type proposal" v-model="selectedType">
               <option v-for="type in typeProposals" v-bind:value="type">

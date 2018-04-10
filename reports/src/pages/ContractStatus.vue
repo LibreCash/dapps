@@ -51,7 +51,7 @@ export default {
 
       let totalSupply = await this.$libre.token.totalSupply().catch(e => 'error')
       this.emissionStatus.push({
-        name: 'All tokens',
+        name: 'Total Supply',
         data: totalSupply !== 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'
       })
 
