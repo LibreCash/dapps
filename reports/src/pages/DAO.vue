@@ -7,6 +7,7 @@
       <br>
       <div class="table-padding">
         <div>Address: {{ defaultAddress }}</div>
+        <div v-if="tokensCount == 0">You have no tokens to vote</div>
         <div>DAO Contract Address: {{ daoAddress }}</div>
         <div>Liberty Token Address: {{ libertyAddress }}</div>
         <div>Tokens count: {{ tokensCount }} LBRS</div>
@@ -88,6 +89,7 @@
               <!-- execute button -->
               <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
                               (props.row.status === $libre.proposalStatuses[0].text) &&
+                              (tokensCount > 0) &&
                               !props.row.loading">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
                   <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
@@ -95,9 +97,6 @@
               </span>
               <span v-else-if="props.row.votingData.voted" class="tag is-success is-rounded">
                 voted
-              </span>
-              <span v-else-if="!(tokensCount > 0)" style="white-space: nowrap" class="tag is-warning is-rounded">
-                no tokens
               </span>
               <span v-else-if="props.row.loading">
                 loading
