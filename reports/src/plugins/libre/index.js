@@ -150,13 +150,16 @@ class Libre {
 
     this.proposalStatuses = [
       {
-        text: 'ACTIVE'
+        text: 'ACTIVE',
+        number: 0
       },
       {
-        text: 'FINISHED'
+        text: 'FINISHED',
+        number: 1
       },
       {
-        text: 'BLOCKED'
+        text: 'BLOCKED',
+        number: 2
       }
     ]
 
