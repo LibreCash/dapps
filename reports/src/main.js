@@ -6,6 +6,7 @@ import router from './router'
 import './plugins/buefy'
 import './plugins/eth'
 import './plugins/libre'
+import './plugins/i18n'
 import './plugins/scroll'
 
 Vue.config.productionTip = false

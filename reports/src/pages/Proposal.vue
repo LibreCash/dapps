@@ -56,6 +56,9 @@
 
 <script>
 import Config from '@/config'
+//import Vue from 'vue'
+//import VueI18n from 'vue-i18n'
+//Vue.use(VueI18n)
 export default {
   data () {
     return {
@@ -238,6 +241,8 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
+console.log("T", this.$t)
+console.log("T", this.$t("test"))
       this.daoAddress = Config.dao.address;
       await this.loadProposal();
       this.startUpdatingTime();
