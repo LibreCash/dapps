@@ -6,7 +6,6 @@
       </div>
       <br>
       <div class="table-padding">
-        <div>Max amount: {{ needAmount }} Libre</div><br>
         <div v-if="owner">
           <b-collapse class="card" :open="false">
             <div slot="trigger" slot-scope="props" class="card-header">
@@ -17,8 +16,11 @@
             </div>
             <div class="card-content">
               <div class="content">
+                <div>Address Deposit contract: {{ deposit }}</div><br>
                 <b-field horizontal label="Period, sec">
-                  <b-input v-model="newPlan.period"></b-input>
+                  <b-field :message="$libre.periodToString(newPlan.period)">
+                    <b-input v-model="newPlan.period"></b-input>
+                  </b-field> 
                 </b-field>
                 <b-field horizontal label="Percent, %">
                   <b-input v-model="newPlan.percent"></b-input>
@@ -37,6 +39,7 @@
           </b-collapse>
           <br>
         </div>
+        <div>Max amount: {{ needAmount }} Libre</div><br>
         <h3 class="subtitle has-text-centered">Plans</h3>
         <b-table :data="plansData"
           :bordered="false"
@@ -122,6 +125,7 @@ import Config from '@/config'
 export default {
   data () {
     return {
+      deposit: Config.deposit.address,
       isLoading: false,
       owner: false,
       plansData: [],
