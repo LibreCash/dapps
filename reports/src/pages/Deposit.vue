@@ -6,6 +6,7 @@
       </div>
       <br>
       <div class="table-padding">
+        <div>Max amount: {{ needAmount }} Libre</div><br>
         <div v-if="owner">
           <b-collapse class="card" :open="false">
             <div slot="trigger" slot-scope="props" class="card-header">
@@ -138,6 +139,7 @@ export default {
       },
       newDepositLoading: false,
       amount: '',
+      needAmount: '',
       msg: {
         type: 'is-info',
         text: 'To create a deposit, select a plan!'
@@ -243,6 +245,7 @@ export default {
     },
 
     async updateMyDeposit() {
+      this.needAmount = this.$libre.toToken(await this.$libre.deposit.needAmount());
       this.myDepositData = []
       this.isloadingDeposit = true;
 
@@ -281,6 +284,8 @@ export default {
     async calcProfit(amount, id) {
       if (amount < this.planSelected.minAmount)
         this.setMessage("warning","Amount less than min amount selected plan!")
+      else if (amount > this.needAmount)
+        this.setMessage("warning","Amount bigger then max amount!")
       else
         this.setMessage("info",`Income: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`)
     }
