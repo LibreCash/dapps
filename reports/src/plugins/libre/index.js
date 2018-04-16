@@ -251,6 +251,28 @@ class Libre {
     return +amount * 10 ** this.consts.DECIMALS;
   }
 
+  periodToString(seconds) {
+    var years = Math.floor(seconds / (60 * 60 * 24 * 365));
+    seconds -= years * 60 * 60 * 24 * 365;
+
+    var months = Math.floor(seconds / (60 * 60 * 24 * 30));
+    seconds -= months * 60 * 60 * 24 * 30;
+
+    var days = Math.floor(seconds / (60 * 60 * 24));
+    seconds -= days * 60 * 60 * 24;
+
+    var hours   = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60;
+
+    var minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`;
+  }
+
   getVotingObject(contractArray) {
     return {
       yea: +contractArray[this.voteStruct.yea] / 10 ** this.consts.DECIMALS,
