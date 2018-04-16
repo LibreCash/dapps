@@ -229,6 +229,12 @@ export default {
               this.description,
               debatingPeriod)
             break;
+          case 'CHANGE_ARBITRATOR':
+            txHash = await this.$libre.dao.prChangeArbitrator(
+              this.beneficiary,
+              this.description,
+              debatingPeriod)
+            break;
         }
 
         if (await this.$eth.isSuccess(txHash)) {

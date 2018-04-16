@@ -145,6 +145,11 @@ class Libre {
       {
         text: 'Claim Ownership',
         key: 'CLAIM_OWNERSHIP'
+      },
+      {
+        text: 'Change Arbitrator',
+        key: 'CHANGE_ARBITRATOR',
+        benef: 'New Arbitrator Address:'
       }
     ]
 
