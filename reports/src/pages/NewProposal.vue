@@ -141,8 +141,6 @@ export default {
         } else if (this.selectedType.key == 'SET_LOCK')
           amount = this.lock === 'true' ? 1 : 0;
 
-        console.log(indexTP,this.beneficiary,amount,buffer,this.description,debatingPeriod,this.transactionBytecode)
-
         txHash = await this.$libre.dao.newProposal(
           indexTP,
           this.beneficiary,
