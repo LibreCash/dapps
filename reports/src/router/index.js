@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import FundStatus from '@/pages/FundStatus'
 import DAO from '@/pages/DAO'
 import Loans from '@/pages/Loans'
+import Bounty from '@/pages/Bounty'
 import Loan from '@/pages/Loan'
 import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
@@ -40,6 +41,11 @@ export default new Router({
       path: '/loans',
       name: 'LibreBank Loans',
       component: Loans
+    },
+    {
+      path: '/bounty',
+      name: 'Bounty Program',
+      component: Bounty
     },
     {
       path: '/dao/proposal/:id',

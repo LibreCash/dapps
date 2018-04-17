@@ -47,6 +47,12 @@
               <span>Deposit</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/bounty">
+              <div class="Rectangle"></div>
+              <span>Bounty</span>
+              </router-link>
+            </li>
           </ul>
           <ul class="conditions"></ul>
         </div>
