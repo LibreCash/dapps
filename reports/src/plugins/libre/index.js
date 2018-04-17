@@ -208,8 +208,6 @@ class Libre {
 
     this.loans = this.getContract(Config.loans.abi,Config.loans.address)
     this.deposit = this.getContract(Config.deposit.abi,Config.deposit.address)
-
-    this.tests = this.web3.eth.contract(Config.dao.abi).at(Config.dao.address)
   }
 
   getContract(abi, address) {

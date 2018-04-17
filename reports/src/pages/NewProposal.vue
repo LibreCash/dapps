@@ -133,13 +133,20 @@ export default {
       this.button = {name: 'Pending...', disabled: true}
 
       try {
-        if (this.selectedType.key == 'SET_FEES') {
-          amount *= 100;
-          buffer *= 100;
-        } else if (['SET_ORACLE_TIMEOUT','SET_ORACLE_ACTUAL','SET_RATE_PERIOD'].includes(this.selectedType.key)) {
-          amount *= 60;
-        } else if (this.selectedType.key == 'SET_LOCK')
-          amount = this.lock === 'true' ? 1 : 0;
+        switch(this.selectedType.key) {
+          case 'SET_FEES':
+            amount *= 100;
+            buffer *= 100;
+            break;
+          case 'SET_ORACLE_TIMEOUT':
+          case 'SET_ORACLE_ACTUAL':
+          case 'SET_RATE_PERIOD':
+            amount *= 60;
+            break;
+          case 'SET_LOCK':
+            amount = this.lock === 'true' ? 1 : 0;
+            break;
+        }
 
         txHash = await this.$libre.dao.newProposal(
           indexTP,
