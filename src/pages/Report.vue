@@ -81,7 +81,7 @@ export default {
       return true
     },
     async checkOwner () {
-      this.owner = await this.$libre.report.owner()
+      this.owner = this.$eth.yourAccount == await this.$libre.report.owner()
     }
   },
   async created () {
