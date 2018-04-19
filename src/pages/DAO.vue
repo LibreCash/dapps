@@ -6,7 +6,7 @@
       </div>
       <br>
       <div class="table-padding">
-        <div>Address: {{ defaultAddress }}</div>
+        <address-block/>
         <div>DAO Contract Address: {{ daoAddress }}</div>
         <div>Liberty Token Address: {{ libertyAddress }}</div>
         <div>Tokens count: {{ tokensCount }} LBRS</div>
@@ -122,6 +122,7 @@
 
 <script>
 import Config from '@/config'
+import AddressBlock from '@/components/AddressBlock'
 
 export default {
   data () {
@@ -235,9 +236,11 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(id, support),
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
-        alert(message)
-      }catch(e) {
-        alert(this.$eth.getErrorMsg(e)) 
+        this.$snackbar.open(message)
+      }catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
 
       try {
@@ -245,8 +248,10 @@ export default {
         row.yea = voteData.yea;
         row.nay = voteData.nay;
         row.votingData = voteData;
-      } catch(e) {
-        alert(this.$eth.getErrorMsg(e))
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
       row.loading = false
     
@@ -258,11 +263,13 @@ export default {
       let 
         txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
-        alert(message);
+        this.$snackbar.open(message);
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
-      } catch(e) {
-        alert(this.$eth.getErrorMsg(e))
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
       row.loading = false
     },
@@ -276,11 +283,13 @@ export default {
       try {
         let txHash = await this.$libre.dao.executeProposal(id),
             message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
-        alert(message)
+        this.$snackbar.open(message)
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
-      } catch(e) {
-        alert(this.$eth.getErrorMsg(e))
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
 
       row.loading = false
@@ -342,6 +351,9 @@ export default {
   },
   destroyed () {
     this.clearTimers();
+  },
+  components: {
+    AddressBlock
   }
 }
 </script>

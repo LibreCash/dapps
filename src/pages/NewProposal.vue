@@ -46,8 +46,8 @@
         </b-field>
         <b-field horizontal>
             <p class="control">
-                <button class="button is-primary" v-on:click="createProposal()" v-model="button" :disabled="button.disabled">
-                  {{ button.name }}
+                <button v-bind:class="{'button is-primary':true, 'is-loading':button.isLoading}" v-on:click="createProposal()" :disabled="button.disabled">
+                  Create Proposal
                 </button>
             </p>
         </b-field>
@@ -73,10 +73,13 @@ export default {
       transactionBytecode: '',
       buffer: '',
       lock: false,
-      button: {name: 'Create Proposal', disabled: true},
       typeProposals: this.$libre.typeProposals,
       selectedType: '',
-      bytecodeMessage: ''
+      bytecodeMessage: '',
+      button: {
+        isLoading: false,
+        disabled: true
+      }
     }
   },
   methods: {
@@ -133,7 +136,7 @@ export default {
         amount = this.amount,
         buffer = this.buffer;
 
-      this.button = {name: 'Pending...', disabled: true}
+      this.button.isLoading = true
 
       try {
         switch(this.selectedType.key) {
@@ -163,13 +166,16 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/dao')
         } else {
-          alert('Creating proposal error')
+          this.$snackbar.open('Creating proposal error');
         }
       }
       catch(err) {
-        alert(this.$eth.getErrorMsg(err))
-        this.button = {name: 'Create Proposal', disabled: true}
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
+
+      this.button.isLoading = false
     }
   },
   async created () {

@@ -253,12 +253,12 @@ class Libre {
     }
   }
 
-  toToken(contractNumber) {
-    return +contractNumber / 10 ** this.consts.DECIMALS;
+  toToken(contractNumber, decimals = this.consts.DECIMALS) {
+    return +contractNumber / 10 ** decimals;
   }
 
-  fromToken(amount) {
-    return +amount * 10 ** this.consts.DECIMALS;
+  fromToken(amount, decimals = this.consts.DECIMALS) {
+    return +amount * 10 ** decimals;
   }
 
   periodToString(seconds) {

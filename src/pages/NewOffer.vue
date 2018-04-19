@@ -20,8 +20,7 @@
         <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
           <b-input v-model="amount" placeholder="0"></b-input>
           <p class="control">
-                <button class="button is-primary" @click="allAvailable()" 
-v-if="selectedType == 0">All available</button>
+                <button class="button is-primary" @click="allAvailable()">All available</button>
               </p>
         </b-field>
         <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
