@@ -146,12 +146,6 @@ export default {
           case 'SET_LOCK':
             amount = this.lock === 'true' ? 1 : 0;
             break;
-          case 'CHANGE_ARBITRATOR':
-            txHash = await this.$libre.dao.prChangeArbitrator(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
         }
 
         txHash = await this.$libre.dao.newProposal(
