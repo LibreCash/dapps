@@ -39,10 +39,10 @@
           <div class="column">
             <div class="columns">
               <div class="column" v-if="executeEnable">
-                <button class="button is-medium is-info"><i class="mdi mdi-console"></i></button>
+                <button v-bind:class="{'button is-medium is-info':true, 'is-loading':isExecute}" @click="executeProposal()"><i class="mdi mdi-console"></i></button>
               </div>
               <div class="column" v-if="contractOwner">
-                <button class="button is-medium is-danger"><i class="mdi mdi-block-helper"></i></button>
+                <button v-bind:class="{'button is-medium is-danger':true, 'is-loading':isBlock}" @click="blocking()"><i class="mdi mdi-block-helper"></i></button>
               </div>
             </div>
           </div>
@@ -79,7 +79,9 @@ export default {
       disVote: false,
       contractOwner: false,
       deadline: '',
-      executeEnable: false
+      executeEnable: false,
+      isExecute: false,
+      isBlock: false
     }
   },
   methods: {
@@ -181,6 +183,8 @@ export default {
     },
 
     async executeProposal() {
+      this.isExecute = true;
+
       try {
         let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
 
@@ -195,6 +199,27 @@ export default {
         this.$snackbar.open(msg);
       }
       
+      this.isExecute = false
+    },
+
+    async blocking() {
+      this.isBlock = true
+
+      try {
+        let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
+
+        if (await this.$eth.isSuccess(txHash)) {
+          this.$snackbar.open('Proposal blocked!');
+        } else {
+          this.$snackbar.open('Proposal not blocked!');
+        }
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
+      }
+
+      this.isBlock = false
     }
   },
   async created () {
