@@ -1,8 +1,8 @@
 {
-  "name": "lotto_tablo",
+  "name": "LibreDapps",
   "version": "1.0.0",
-  "description": "Info page for gogo loto users",
-  "author": "Alexey Zhunin <zhunin.a.u@gmail.com>",
+  "description": "LibreBank DAPPs",
+  "author": "decodemybrain, scientistic, Evercodex",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
