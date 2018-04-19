@@ -62,10 +62,10 @@
               {{ props.row.yea }} / {{ props.row.nay }}
             </b-table-column>
              <b-table-column label='Deadline' centered>
-              {{ props.row.deadline }}
-              <span v-if="props.row.deadlineUnix <= curBlockchainTime" class="tag is-warning is-rounded">
+              <p>{{ props.row.deadline }}</p>
+              <p v-if="props.row.deadlineUnix <= curBlockchainTime" class="tag is-warning is-rounded">
                 outdated
-              </span>
+              </p>
             </b-table-column>
             <b-table-column label='Actions' centered>
               <!-- details button -->
@@ -92,12 +92,6 @@
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
                   <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
                 </b-tooltip>
-              </span>
-              <span v-else-if="props.row.votingData.voted" class="tag is-success is-rounded">
-                voted
-              </span>
-              <span v-else-if="!(tokensCount > 0)" style="white-space: nowrap" class="tag is-warning is-rounded">
-                no tokens
               </span>
               <span v-else-if="props.row.loading">
                 loading
