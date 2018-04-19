@@ -214,7 +214,19 @@
         </section>
         <footer class="modal-card-foot">
             <button class="button" type="button" @click="newTargetsShown = false">Close</button>
-            <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}">Create targets</button>
+            <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}"
+              :disabled="!(
+                isValidFee(buyFee) &&
+                isValidFee(sellFee) &&
+                (
+                  newTargetsType == 'bank' ||
+                  (
+                    newTargetsType == 'exchanger' &&
+                    isInteger(targetDeadline) &&
+                    isAddress(targetWithdraw)
+                  )
+                )
+              )">Create targets</button>
         </footer>
     </b-modal>
   </div>
@@ -271,6 +283,15 @@ export default {
     }
   },
   methods: {
+    isAddress (address) {
+      return web3.isAddress(address)
+    },
+    isInteger (number) {
+      return +number >= 0
+    },
+    isValidFee (number) {
+      return this.isInteger(number) && +number <= 70;
+    },
     targetsBankModal () {
       this.buyFee = 2.5;
       this.sellFee = 2.5;
