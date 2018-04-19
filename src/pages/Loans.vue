@@ -6,7 +6,7 @@
       </div>
       <br>
       <div class="table-padding">
-        <address-block>one</address-block>
+        <address-block/>
         <div>Loans contract address: {{ loansAddress }}</div>
         <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
         <div class="columns" style="padding-top: 2rem">

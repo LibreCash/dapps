@@ -256,8 +256,8 @@ export default {
           this.$snackbar.open(`${action} transaction - fail`)
           this.setMessage('danger',`${action} transaction - fail transaction...`)
         }
-      }catch(e) {
-        let msg = this.$eth.getErrorMsg(e)
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
         this.$snackbar.open(msg);
       }

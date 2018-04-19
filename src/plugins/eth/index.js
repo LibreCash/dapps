@@ -25,7 +25,7 @@ class ETH {
         this.metamask = true;
         window.web3 = new Web3(window.web3.currentProvider)
         web3.version.getNetwork((error, result) => {
-          if (error) alert(error)
+          if (error) Vue.prototype.$snackbar.open(error)
           else {
             let network = {
               '1': 'Main',
@@ -35,7 +35,7 @@ class ETH {
               '42': 'Kovan'
             }[result]
             if (network !== 'Rinkeby') {
-              alert('Please use Rinkeby network!!')
+              Vue.prototype.$snackbar.open('Please use Rinkeby network!!')
             }
           }
         })
@@ -57,6 +57,12 @@ class ETH {
       this._web3.eth.getAccounts((err, accounts) => {
         this._web3.eth.defaultAccount = accounts[0];
         this.yourAccount = accounts[0];
+
+        var account = this.yourAccount;
+        setInterval(function() {
+          if (web3.eth.accounts[0] !== account)
+            location.reload();
+        }, 1000);
         resolve();
       })
     })
