@@ -211,7 +211,12 @@ class Libre {
   }
 
   getContract(abi, address) {
-    return new Proxy(this.web3.eth.contract(abi).at(address), { 
+    if (!this.decodes)
+      this.decodes = {}
+
+    this.decodes[address] = this.web3.eth.contract(abi).at(address)
+
+    return new Proxy(this.decodes[address], { 
       get: (_contract, name) => function () {
         return new Promise((resolve, reject) => {
           _contract[name](...arguments, (err, result) => {
@@ -339,6 +344,33 @@ class Libre {
 
       this.plans.push(plan)
     }
+  }
+
+  bytecodeToString(address, bytecode) {
+    let result = ""
+
+    try {
+      let contract = this.decodes[address];
+
+      if (!contract)
+        return ""
+
+      let hashMethod = bytecode.substring(0,10);
+      let params = bytecode.substring(10);
+
+      let abiMethod = contract.abi.find(elem => {
+        return elem.type == 'function' && contract[elem.name].getData().substring(0,10) === hashMethod
+      })
+
+      let typeParams = abiMethod.inputs.map(param => param.type)
+      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params);
+
+      result = `${abiMethod.name}(${valueParams})`
+    } catch(err) {
+      console.log(err);
+    }
+    
+    return result;
   }
 }
 

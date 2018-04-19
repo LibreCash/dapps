@@ -128,11 +128,14 @@ export default {
               value: `${proposal.buffer}`
             })
 
-          if (this.currentProposal["code"])
+          if (this.currentProposal["code"]) {
+            let byteString = this.$libre.bytecodeToString(proposal.recipient, proposal.bytecode);
             this.proposalData.push({
               name: this.currentProposal["code"], 
-              value: proposal.bytecode
+              value: byteString.length == 0 ? proposal.bytecode : byteString
             })
+          }
+            
           
           this.deadline = vote.deadline;
 
