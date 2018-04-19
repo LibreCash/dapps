@@ -6,8 +6,22 @@
       </div>
       <br>
       <div class="table-padding">
-        <address-block>one</address-block>
-        <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+        <div class="columns">
+          <div class="column">
+            <div class="card">
+              <div class="card-content">
+                <address-block>one</address-block>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="card">
+              <div class="card-content">
+                Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}
+              </div>
+            </div>
+          </div>          
+        </div>
         <div class="columns">
           <div class="column is-6">
             <div class="card">
