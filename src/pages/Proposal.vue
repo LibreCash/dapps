@@ -169,7 +169,7 @@ export default {
     },
 
     async checkOwner() {
-      this.contractOwner = this.$libre.yourAccount === await this.$libre.dao.owner()
+      this.contractOwner = this.$eth.yourAccount === await this.$libre.dao.owner()
     },
 
     async startTimers() {
