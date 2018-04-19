@@ -11,12 +11,12 @@
             <img src="static/img/logo.svg" width="200" height="180"/>
           </a>
           <ul class="MenuLeft">
-            <!--li>
+            <li>
               <router-link to="/">
                 <div class="Rectangle"></div>
                 <span>Reports</span>
               </router-link>
-            </li-->
+            </li>
             <li>
               <router-link to="/fund">
               <div class="Rectangle"></div>
