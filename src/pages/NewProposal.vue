@@ -39,8 +39,10 @@
             <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
             <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
         </b-field>
-        <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
-            <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
+        <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" >
+            <b-field :message="bytecodeMessage" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
+                <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
+            </b-field>
         </b-field>
         <b-field horizontal>
             <p class="control">
@@ -73,7 +75,8 @@ export default {
       lock: false,
       button: {name: 'Create Proposal', disabled: true},
       typeProposals: this.$libre.typeProposals,
-      selectedType: ''
+      selectedType: '',
+      bytecodeMessage: ''
     }
   },
   methods: {
@@ -146,12 +149,6 @@ export default {
           case 'SET_LOCK':
             amount = this.lock === 'true' ? 1 : 0;
             break;
-          case 'CHANGE_ARBITRATOR':
-            txHash = await this.$libre.dao.prChangeArbitrator(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
         }
 
         txHash = await this.$libre.dao.newProposal(
@@ -190,7 +187,10 @@ export default {
     amount: function() {this.validData()},
     debatingPeriod: function() {this.validData()},
     debatingTime: function() {this.validData()},
-    transactionBytecode: function() {this.validData()},
+    transactionBytecode: function() {
+      this.bytecodeMessage = this.$libre.bytecodeToString(this.beneficiary,this.transactionBytecode)
+      this.validData()
+    },
     buffer: function() {this.validData()},
     selectedType: function() {
       this.beneficiary = this.amount = this.transactionBytecode = this.buffer = '';

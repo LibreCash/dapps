@@ -1,6 +1,7 @@
 /* eslint-disable no-trailing-spaces */
 import Vue from 'vue'
 import Web3 from 'web3'
+import SolidityCoder from 'web3/lib/solidity/coder'
 import Config from '@/config'
 
 class ETH {
@@ -42,6 +43,7 @@ class ETH {
         window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
         console.log('No web3? You should consider trying MetaMask!')
       }
+      web3.SolidityCoder = SolidityCoder;
 
       this.accountPromise = this.loadAccounts();
     } catch (err) {
