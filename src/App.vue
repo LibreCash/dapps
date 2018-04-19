@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <div class="main" id="Mainblock">
-        <button class="button navbar-burger" data-target="Mainblock">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-        </button>
+        <div class="navbar-burger burger" @click="toggleMenu" :class="{'is-active': navIsActive}" data-target="Mainblock">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
         <div class="LeftNav" id="navMenu">
           <a href="#" class="logo">
             <img src="static/img/logo.svg" width="200" height="180"/>
@@ -57,8 +57,18 @@
 
 <script>
 export default {
-  name: 'app'
-}
+    name: 'navbar',
+    data () {
+      return {
+        navIsActive: false
+      }
+    },
+    methods: {
+      toggleMenu: function () {
+        this.navIsActive = !this.navIsActive
+      }
+    }
+  }
 </script>
 <style>
 
