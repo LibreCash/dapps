@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-//import Report from '@/pages/Report'
+import Report from '@/pages/Report'
 import FundStatus from '@/pages/FundStatus'
 import DAO from '@/pages/DAO'
 import Loans from '@/pages/Loans'
@@ -15,20 +15,20 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    /*{
+    {
       path: '/',
       name: 'Report',
       component: Report
-    },*/
+    },
     {
       path: '/',
       alias: '/status',
-      name: 'LibreBank Emission Contract',
+      name: 'Emission Contract Status',
       component: ContractStatus
     },
     {
       path: '/fund',
-      name: 'LibreBank Status',
+      name: 'Fund Status',
       component: FundStatus
     },
     {
@@ -43,12 +43,12 @@ export default new Router({
     },
     {
       path: '/dao/proposal/:id',
-      name: 'DAO Proposal',
+      name: 'DAO Proposal Info',
       component: Proposal
     },
     {
       path: '/dao/loan/:type/:id',
-      name: 'Loan',
+      name: 'Loan Offer',
       component: Loan
     },
     {
