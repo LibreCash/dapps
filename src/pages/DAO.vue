@@ -78,7 +78,7 @@
             <b-table-column label='Actions' centered>
               <!-- details button -->
               <b-tooltip label="Details" type="is-dark" position="is-bottom">
-                <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+                <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
               </b-tooltip>
               <!-- vote buttons -->
               <span v-if="!props.row.votingData.voted &&
