@@ -65,6 +65,7 @@
                 <a v-if="bank.claimed" class="card-footer-item" v-on:click="testEraseBankClaim()">Unclaim</a>
                 <a v-if="bank.payment > 0" class="card-footer-item" v-on:click="withdraw('bank')">Withdraw</a>
                 <a class="card-footer-item" v-on:click="targetsBankModal()">New targets</a>
+                <a class="card-footer-item" v-on:click="tabsBounty = 0; termsShown = true">Bounty terms</a>
               </footer>
             </div>
           </div>
@@ -110,6 +111,7 @@
                 <a v-if="exchanger.claimed" class="card-footer-item" v-on:click="testEraseExchangerClaim()">Unclaim</a>
                 <a v-if="exchanger.payment > 0" class="card-footer-item" v-on:click="withdraw('exchanger')">Withdraw</a>
                 <a class="card-footer-item" v-on:click="targetsExchangerModal()">New targets</a>
+                <a class="card-footer-item" v-on:click="tabsBounty = 1; termsShown = true">Bounty terms</a>
               </footer>
             </div>
           </div>
@@ -193,6 +195,42 @@
           <button class="button" type="button" @click="abiShown = false">Close</button>
       </footer>
     </b-modal>
+    <!-- bounty terms modal -->
+    <b-modal :active.sync="termsShown">
+      <header class="modal-card-head">
+          <p class="modal-card-title">Bounty terms</p>
+      </header>
+      <section class="modal-card-body">
+        <b-tabs type="is-boxed" v-model="tabsBounty">
+            <b-tab-item label="Bank Bounty" icon="bank">
+              <b-message title="Rate = 0" :closable="false" type="is-info">
+                  You get reward if buyRate or sellRate is 0
+              </b-message>
+              <b-message title="Buy Rate is over Sell Rate" :closable="false" type="is-info">
+                  You get reward if buyRate > sellRate
+              </b-message>
+              <b-message title="Huge number of tokens" :closable="false" type="is-info">
+                  You get reward if you own 2<sup>255</sup> LIBRE or more (the half of maximum allowed by smart-contract types)
+              </b-message>
+              <b-message title="More tokens than issued" :closable="false" type="is-info">
+                  You get reward if you own more LIBRE than the bank ever issued
+              </b-message>
+            </b-tab-item>
+            <b-tab-item label="Exchanger Bounty" icon="cash-multiple">
+              <b-message title="Rate = 0" :closable="false" type="is-info">
+                  You get reward if buyRate or sellRate is 0
+              </b-message>
+              <b-message title="Buy Rate is over Sell Rate" :closable="false" type="is-info">
+                  You get reward if buyRate > sellRate
+              </b-message>
+
+            </b-tab-item>
+        </b-tabs>
+      </section>
+      <footer class="modal-card-foot">
+          <button class="button" type="button" @click="termsShown = false">Close</button>
+      </footer>
+    </b-modal>
     <!-- new targets modal -->
     <b-modal :active.sync="newTargetsShown">
         <header class="modal-card-head">
@@ -242,6 +280,8 @@ export default {
       abiShown: false,
       abiTitle: '',
       abiData: '',
+      termsShown: false,
+      tabsBounty: 0,
       newTargetsShown: false,
       newTargetsType: 'bank',
       sellFee: 0,
