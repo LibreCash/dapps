@@ -6,6 +6,7 @@
       </div>
       <br>
       <div class="table-padding">
+        <address-block/>
         <div v-if="owner">
           <b-collapse class="card" :open="false">
             <div slot="trigger" slot-scope="props" class="card-header">
@@ -122,6 +123,7 @@
 
 <script>
 import Config from '@/config'
+import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
     return {
@@ -309,6 +311,9 @@ export default {
   watch: {
     amount: function(newVal) {this.calcProfit(newVal, this.planSelected.id)},
     planSelected: function(newVal) {this.calcProfit(this.amount, newVal.id)}
+  },
+  components: {
+    AddressBlock
   }
 }
 </script>

@@ -7,7 +7,7 @@
       <br>
       <div class="table-padding">
         <address-block/>
-        <div>Loans contract address: {{ loansAddress }}</div>
+        <div>Loans contract address: <a :href="`https://etherscan.io/address/${loansAddress}`">{{ loansAddress }}</a></div>
         <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
         <div class="columns" style="padding-top: 2rem">
           <div class="column is-narrow">

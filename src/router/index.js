@@ -21,8 +21,7 @@ export default new Router({
       component: Report
     },
     {
-      path: '/',
-      alias: '/status',
+      path: '/status',
       name: 'Emission Contract Status',
       component: ContractStatus
     },
