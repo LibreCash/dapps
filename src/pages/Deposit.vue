@@ -6,7 +6,12 @@
       </div>
       <br>
       <div class="table-padding">
-        <address-block/>
+        <div class="card">
+            <div class="card-content">
+                <address-block/>
+                <div>Max amount: {{ needAmount }} Libre</div>
+            </div>
+        </div>
         <div v-if="owner">
           <b-collapse class="card" :open="false">
             <div slot="trigger" slot-scope="props" class="card-header">
@@ -40,7 +45,7 @@
           </b-collapse>
           <br>
         </div>
-        <div>Max amount: {{ needAmount }} Libre</div><br>
+        <br>
         <h3 class="subtitle has-text-centered">Plans</h3>
         <b-table :data="plansData"
           :bordered="false"

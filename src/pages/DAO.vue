@@ -6,14 +6,19 @@
       </div>
       <br>
       <div class="table-padding">
-        <address-block/>
-        <div>DAO Contract Address: 
-            <a :href="`https://etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
+        <div class="card">
+            <div class="card-content">
+                <address-block/>
+                <div>DAO Contract Address: 
+                    <a :href="`https://etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
+                </div>
+                <div>Liberty Token Address: 
+                    <a :href="`https://etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
+                </div>
+                <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+            </div>
+            
         </div>
-        <div>Liberty Token Address: 
-            <a :href="`https://etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
-        </div>
-        <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
         <br>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
         <br><br>
