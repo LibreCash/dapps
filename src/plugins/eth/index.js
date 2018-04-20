@@ -1,6 +1,7 @@
 /* eslint-disable no-trailing-spaces */
 import Vue from 'vue'
 import Web3 from 'web3'
+import SolidityCoder from 'web3/lib/solidity/coder'
 import Config from '@/config'
 
 class ETH {
@@ -24,7 +25,7 @@ class ETH {
         this.metamask = true;
         window.web3 = new Web3(window.web3.currentProvider)
         web3.version.getNetwork((error, result) => {
-          if (error) alert(error)
+          if (error) Vue.prototype.$snackbar.open(error)
           else {
             let network = {
               '1': 'Main',
@@ -34,7 +35,7 @@ class ETH {
               '42': 'Kovan'
             }[result]
             if (network !== 'Rinkeby') {
-              alert('Please use Rinkeby network!!')
+              Vue.prototype.$snackbar.open('Please use Rinkeby network!!')
             }
           }
         })
@@ -42,6 +43,7 @@ class ETH {
         window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
         console.log('No web3? You should consider trying MetaMask!')
       }
+      web3.SolidityCoder = SolidityCoder;
 
       this.accountPromise = this.loadAccounts();
     } catch (err) {
@@ -55,6 +57,12 @@ class ETH {
       this._web3.eth.getAccounts((err, accounts) => {
         this._web3.eth.defaultAccount = accounts[0];
         this.yourAccount = accounts[0];
+
+        var account = this.yourAccount;
+        setInterval(function() {
+          if (web3.eth.accounts[0] !== account)
+            location.reload();
+        }, 1000);
         resolve();
       })
     })

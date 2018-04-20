@@ -27,13 +27,27 @@
         </b-table>
         <div class="columns">
           <div class="column">
-            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>
+            <div class="columns">
+              <div class="column">
+                <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>
+              </div>
+              <div class="column">
+                <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
+              </div>
+            </div>
           </div>
           <div class="column">
-            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
+            <div class="columns">
+              <div class="column" v-if="executeEnable">
+                <button v-bind:class="{'button is-medium is-info':true, 'is-loading':isExecute}" @click="executeProposal()"><i class="mdi mdi-console"></i></button>
+              </div>
+              <div class="column" v-if="contractOwner">
+                <button v-bind:class="{'button is-medium is-danger':true, 'is-loading':isBlock}" @click="blocking()"><i class="mdi mdi-block-helper"></i></button>
+              </div>
+            </div>
           </div>
         </div>
-        
+
       </div>
       
     </section>
@@ -62,7 +76,12 @@ export default {
       perPage: 5,
       typeProposals: this.$libre.typeProposals,
       currentProposal: '',
-      disVote: false
+      disVote: false,
+      contractOwner: false,
+      deadline: '',
+      executeEnable: false,
+      isExecute: false,
+      isBlock: false
     }
   },
   methods: {
@@ -109,12 +128,17 @@ export default {
               value: `${proposal.buffer}`
             })
 
-          if (this.currentProposal["code"])
+          if (this.currentProposal["code"]) {
+            let byteString = this.$libre.bytecodeToString(proposal.recipient, proposal.bytecode);
             this.proposalData.push({
               name: this.currentProposal["code"], 
-              value: proposal.bytecode
+              value: byteString.length == 0 ? proposal.bytecode : byteString
             })
+          }
+            
           
+          this.deadline = vote.deadline;
+
           this.proposalData.push(
             {name: 'Voting:', value: `${vote.yea}/${vote.nay}`},
             {name: 'Deadline:', value: new Date(vote.deadline * 1000).toLocaleString()},
@@ -129,22 +153,75 @@ export default {
     },
 
     async vote (support) {
+      this.isLoading = true;
+
       try {
         let 
           txHash = await this.$libre.dao.vote(this.proposalId, support);
-        this.isLoading = true;
-        let
-          result = await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
 
-        alert(result) // Replace it to notify
+        this.$snackbar.open(await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction')
         await this.$libre.updateProposal(this.proposalId)
         this.loadProposal()
         
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err))
-        
-        this.isLoading = false
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
+    },
+
+    async checkOwner() {
+      this.contractOwner = this.$eth.yourAccount === await this.$libre.dao.owner()
+    },
+
+    async startTimers() {
+      this.executeEnable = this.deadline <= +await this.$eth.getLatestBlockTime();
+
+      this.updatingTicker = setInterval(async () => {
+        this.executeEnable = (this.deadline <= +(await this.$eth.getLatestBlockTime()));
+        if (this.executeEnable)
+          clearInterval(this.updatingTicker)
+      }, 1000)
+    },
+
+    async executeProposal() {
+      this.isExecute = true;
+
+      try {
+        let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
+
+        if (await this.$eth.isSuccess(txHash)) {
+          this.$snackbar.open('Proposal execute!');
+        } else {
+          this.$snackbar.open('Proposal not execute!');
+        }
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
+      }
+      
+      this.isExecute = false
+    },
+
+    async blocking() {
+      this.isBlock = true
+
+      try {
+        let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
+
+        if (await this.$eth.isSuccess(txHash)) {
+          this.$snackbar.open('Proposal blocked!');
+        } else {
+          this.$snackbar.open('Proposal not blocked!');
+        }
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
+      }
+
+      this.isBlock = false
     }
   },
   async created () {
@@ -152,10 +229,15 @@ export default {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
       this.daoAddress = Config.dao.address;
-      this.loadProposal()
+      this.checkOwner();
+      this.loadProposal();
+      this.startTimers();
     } catch (err) {
       console.log(err)
     }
+  },
+  destroyed () {
+    clearInterval(this.updatingTicker)
   }
 }
 </script>

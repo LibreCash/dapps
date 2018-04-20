@@ -7,6 +7,7 @@
       :narrowed="isNarrowed"
       :loading="isLoading"
       :paginated="isPaginated"
+      :hoverable="isHoverable"
       :per-page="perPage"
       :current-page.sync="currentPage"
       :pagination-simple="isPaginationSimple"
@@ -36,9 +37,10 @@ export default {
   data () {
     return {
       isEmpty: false,
-      isBordered: false,
+      isBordered: true,
       isStriped: true,
-      isNarrowed: false,
+      isNarrowed: true,
+      isHoverable: true,
       isLoading: false,
       hasMobileCards: true,
       isPaginated: false,

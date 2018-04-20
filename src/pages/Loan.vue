@@ -136,7 +136,7 @@ export default {
             this.loanData.push({name: 'Take', data: new Date(loan.timestamp * 1000).toLocaleString()})
             this.loanData.push({name: 'Return', data: new Date((loan.timestamp + loan.period) * 1000).toLocaleString()})
           } else {
-            this.loanData.push({name: 'Period', data: this.periodToString(loan.period)})
+            this.loanData.push({name: 'Period', data: this.$libre.periodToString(loan.period)})
           }
 
           this.loanData.push({name: 'Amount', data: this.$eth.fromWei(loan.amount)})
@@ -147,28 +147,6 @@ export default {
         console.log(err)
       }
       this.isLoading = false
-    },
-
-    periodToString(seconds) {
-      var years = Math.floor(seconds / (60 * 60 * 24 * 365));
-      seconds -= years * 60 * 60 * 24 * 365;
-
-      var months = Math.floor(seconds / (60 * 60 * 24 * 30));
-      seconds -= months * 60 * 60 * 24 * 30;
-
-      var days = Math.floor(seconds / (60 * 60 * 24));
-      seconds -= days * 60 * 60 * 24;
-
-      var hours   = Math.floor(seconds / (60 * 60));
-      seconds -= hours * 60 * 60;
-
-      var minutes = Math.floor(seconds / 60);
-      seconds -= minutes * 60;
-
-      if (hours   < 10) {hours   = "0"+hours;}
-      if (minutes < 10) {minutes = "0"+minutes;}
-      if (seconds < 10) {seconds = "0"+seconds;}
-      return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`;
     },
 
     waitOracles() {
@@ -278,8 +256,8 @@ export default {
           this.$snackbar.open(`${action} transaction - fail`)
           this.setMessage('danger',`${action} transaction - fail transaction...`)
         }
-      }catch(e) {
-        let msg = this.$eth.getErrorMsg(e)
+      } catch(err) {
+        let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
         this.$snackbar.open(msg);
       }

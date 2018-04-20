@@ -215,7 +215,12 @@ class Libre {
   }
 
   getContract(abi, address) {
-    return new Proxy(this.web3.eth.contract(abi).at(address), { 
+    if (!this.decodes)
+      this.decodes = {}
+
+    this.decodes[address] = this.web3.eth.contract(abi).at(address)
+
+    return new Proxy(this.decodes[address], { 
       get: (_contract, name) => function () {
         return new Promise((resolve, reject) => {
           _contract[name](...arguments, (err, result) => {
@@ -252,12 +257,34 @@ class Libre {
     }
   }
 
-  toToken(contractNumber) {
-    return +contractNumber / 10 ** this.consts.DECIMALS;
+  toToken(contractNumber, decimals = this.consts.DECIMALS) {
+    return +contractNumber / 10 ** decimals;
   }
 
-  fromToken(amount) {
-    return +amount * 10 ** this.consts.DECIMALS;
+  fromToken(amount, decimals = this.consts.DECIMALS) {
+    return +amount * 10 ** decimals;
+  }
+
+  periodToString(seconds) {
+    var years = Math.floor(seconds / (60 * 60 * 24 * 365));
+    seconds -= years * 60 * 60 * 24 * 365;
+
+    var months = Math.floor(seconds / (60 * 60 * 24 * 30));
+    seconds -= months * 60 * 60 * 24 * 30;
+
+    var days = Math.floor(seconds / (60 * 60 * 24));
+    seconds -= days * 60 * 60 * 24;
+
+    var hours   = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60;
+
+    var minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`;
   }
 
   getVotingObject(contractArray) {
@@ -321,6 +348,33 @@ class Libre {
 
       this.plans.push(plan)
     }
+  }
+
+  bytecodeToString(address, bytecode) {
+    let result = ""
+
+    try {
+      let contract = this.decodes[address];
+
+      if (!contract)
+        return ""
+
+      let hashMethod = bytecode.substring(0,10);
+      let params = bytecode.substring(10);
+
+      let abiMethod = contract.abi.find(elem => {
+        return elem.type == 'function' && contract[elem.name].getData().substring(0,10) === hashMethod
+      })
+
+      let typeParams = abiMethod.inputs.map(param => param.type)
+      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params);
+
+      result = `${abiMethod.name}(${valueParams})`
+    } catch(err) {
+      console.log(err);
+    }
+    
+    return result;
   }
 }
 

@@ -6,10 +6,31 @@
       </div>
       <br>
       <div class="table-padding">
-        <address-block></address-block>
-        <p>Allowed: {{ allowed }} Libre</p>
-        <p>ETH Balance: {{ balanceETH }} ETH</p>
-        <p>Libre Balance: {{ balanceLibre }} Libre</p>
+        <div class="level">
+          <div class="level-left">          
+          <div class="message is-dark">
+          <div class="message-header">
+            <p>Your information</p>
+          </div>
+          <div class="message-body">
+            <address-block></address-block>
+            <p>Balances:</p>
+            <p>Allowed: {{ allowed }} Libre</p>
+            <p>ETH: {{ balanceETH }} ETH</p>
+            <p>Libre: {{ balanceLibre }} Libre</p>
+          </div>
+        </div>
+        </div>
+        </div>
+
+
+        <div class="columns">
+        <div class="column is-three-fifths is-offset-one-fifth">
+        <div class="message">
+        <div class="message-header">
+            <p>Loans Creation</p>
+        </div>
+        <div class="message-body">
         <b-field horizontal label="Type" >
           <b-select placeholder="Select loan offer type" v-model="selectedType">
               <option v-for="(key, type) in typeLoans" v-bind:value="key">
@@ -20,8 +41,7 @@
         <b-field horizontal :label="'Amount, ' + Object.keys(typeLoans)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
           <b-input v-model="amount" placeholder="0"></b-input>
           <p class="control">
-                <button class="button is-primary" @click="allAvailable()" 
-v-if="selectedType == 0">All available</button>
+                <button class="button is-primary" @click="allAvailable()">All available</button>
               </p>
         </b-field>
         <b-field horizontal label="Margin" :type="isInteger(margin) ? '' : 'is-danger'">
@@ -32,13 +52,17 @@ v-if="selectedType == 0">All available</button>
           <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
         </b-field>
         <b-field><b-message :type="msg.type" style="white-space: pre-wrap;">{{ msg.text }}</b-message></b-field>
-        <b-field horizontal>
-          <p class="control">
-            <button v-bind:class="{ button: true, 'is-primary': true, 'is-loading':isLoadingButton }" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
+        <div class="level">
+          <div class="level-item">
+            <button v-bind:class="{ button: true, 'is-primary': true, 'is-loading':isLoadingButton, 'is-large':true }" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
               {{ button.name }}
             </button>
-          </p>
-        </b-field>
+          </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
       </div>
     </section>
     <br>
