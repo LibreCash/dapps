@@ -10,12 +10,12 @@
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
           <span>Back</span>
         </router-link>
-        <b-table :data="isEmpty ? [] : proposalData"
-          :bordered="isBordered"
-          :striped="isStriped"
-          :narrowed="isNarrowed"
+        <b-table :data="proposalData"
+          :bordered="false"
+          :striped="true"
+          :narrowed="false"
           :loading="isLoading"
-          :mobile-cards="hasMobileCards">
+          :mobile-cards="true">
           <template slot-scope="props">
             <b-table-column label='Name'>
               <strong>{{ props.row.name }}</strong>
@@ -41,7 +41,7 @@
               <div class="column" v-if="executeEnable">
                 <button v-bind:class="{'button is-medium is-info':true, 'is-loading':isExecute}" @click="executeProposal()"><i class="mdi mdi-console"></i></button>
               </div>
-              <div class="column" v-if="contractOwner">
+              <div class="column" v-if="contractOwner && $libre.proposals[proposalId] == $libre.proposalStatus.ACTIVE">
                 <button v-bind:class="{'button is-medium is-danger':true, 'is-loading':isBlock}" @click="blocking()"><i class="mdi mdi-block-helper"></i></button>
               </div>
             </div>
@@ -64,16 +64,9 @@ export default {
       reportText: '',
       owner: false,
       proposalData: [],
-      isEmpty: false,
-      isBordered: false,
-      isStriped: true,
-      isNarrowed: false,
       isLoading: false,
-      hasMobileCards: true,
       isPaginated: true,
       isPaginationSimple: false,
-      currentPage: 1,
-      perPage: 5,
       typeProposals: this.$libre.typeProposals,
       currentProposal: '',
       disVote: false,
@@ -146,6 +139,7 @@ export default {
           )
 
           this.disVote = (this.$eth.toTimestamp(vote.deadline) <= (Date.now()) || vote.voted) ? true : false
+          this.startTimers();
       } catch (err) {
         console.log(err)
       }
@@ -175,11 +169,14 @@ export default {
     },
 
     async startTimers() {
-      this.executeEnable = this.deadline <= +await this.$eth.getLatestBlockTime();
+      if (this.$libre.proposals[this.proposalId].status != this.$libre.proposalStatus.ACTIVE)
+        return
+
+      this.executeEnable = (this.deadline <= +await this.$eth.getLatestBlockTime());
 
       this.updatingTicker = setInterval(async () => {
         this.executeEnable = (this.deadline <= +(await this.$eth.getLatestBlockTime()));
-        if (this.executeEnable)
+        if (this.executeEnable || this.$libre.proposals[this.proposalId].status != this.$libre.proposalStatus.ACTIVE)
           clearInterval(this.updatingTicker)
       }, 1000)
     },
@@ -231,7 +228,6 @@ export default {
       this.daoAddress = Config.dao.address;
       this.checkOwner();
       this.loadProposal();
-      this.startTimers();
     } catch (err) {
       console.log(err)
     }

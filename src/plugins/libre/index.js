@@ -57,6 +57,12 @@ class Libre {
       'status': 6
     }
 
+    this.proposalStatus = {
+      ACTIVE:0,
+      FINISHED:1,
+      BLOCKED:2
+    }
+
     this.voteStruct = {
       'yea': 0,
       'nay': 1,
@@ -249,7 +255,7 @@ class Libre {
       buffer: +contractArray[this.proposalStruct.buffer],
       bytecode: contractArray[this.proposalStruct.bytecode],
       description: contractArray[this.proposalStruct.description],
-      status: contractArray[this.proposalStruct.status]
+      status: +contractArray[this.proposalStruct.status]
     }
   }
 
