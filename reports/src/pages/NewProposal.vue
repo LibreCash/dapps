@@ -6,6 +6,9 @@
       </div>
       <br>
       <div class="table-padding" >
+        <div>Token count: {{ tokensCount }} LBRS</div>
+        <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+        <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
         <button @click="$router.go(-1)" :to="{ path: '/loans' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
           <span>Back</span>
@@ -44,9 +47,12 @@
         </b-field>
         <b-field horizontal>
             <p class="control">
-                <button class="button is-primary" v-on:click="createProposal()" v-model="button" :disabled="button.disabled">
+                <button class="button is-primary" v-on:click="createProposal()"
+                    :disabled="button.disabled || tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">
                   {{ button.name }}
                 </button>
+                <b-tag v-if="tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">not enough tokens to create proposal</b-tag>
+                <b-tag v-if="!validPeriod">too short debating period (min {{ $libre.proposalParams.minTime / 60 / 60 }} hours)</b-tag>
             </p>
         </b-field>
       </div>
@@ -66,6 +72,8 @@ export default {
       beneficiary: '',
       amount: '',
       description: '',
+      defaultAddress: '',
+      tokensCount: '',
       debatingPeriod: new Date(),
       debatingTime: new Date(),
       transactionBytecode: '',
@@ -73,10 +81,16 @@ export default {
       lock: false,
       button: {name: 'Create Proposal', disabled: true},
       typeProposals: this.$libre.typeProposals,
-      selectedType: ''
+      selectedType: '',
+      validPeriod: true
     }
   },
   methods: {
+    async getTokensCount () {
+      await this.$libre.promiseLibre;
+      this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
+    },
+
     isAddress (address) {
       return web3.isAddress(address)
     },
@@ -90,16 +104,12 @@ export default {
     },
 
     isDebatingPeriod() {
-      if (this.debatingEnd) 
-        return false
-
       let 
         now = Date.now(),
         debatingEnd = new Date(this.debatingPeriod)
       // Refactor it  
-      debatingEnd.setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes())
-
-      return (debatingEnd - now) > 0
+      debatingEnd.setHours(this.debatingTime.getHours(), this.debatingTime.getMinutes())
+      return (debatingEnd - now) > this.$libre.proposalParams.minTime * 1000 + 10 * 1000 /* milliseconds */;
     },
 
     validData() {
@@ -241,17 +251,32 @@ export default {
         alert(this.$eth.getErrorMsg(err))
         this.button = {name: 'Create Proposal', disabled: true}
       }
+    },
+    startValidDataTimer () {
+      this.validDataTimer = setInterval(() => {
+        this.validPeriod = this.isDebatingPeriod();
+        this.validData();
+      }, 2000)
+    },
+    endValidDataTimer () {
+      clearInterval(this.validDataTimer);
     }
   },
   async created () {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
+      this.defaultAddress = window.web3.eth.defaultAccount;
       this.daoAddress = Config.dao.address;
-      this.selectedType = this.typeProposals[0]
+      this.selectedType = this.typeProposals[0];
+      this.getTokensCount();
+      this.startValidDataTimer();
     } catch (err) {
       console.log(err)
     }
+  },
+  async destroyed () {
+    this.endValidDataTimer();
   },
   watch: {
     beneficiary: function() {this.validData()},

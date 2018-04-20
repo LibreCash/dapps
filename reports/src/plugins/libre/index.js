@@ -39,6 +39,12 @@ class Libre {
       'completed'
     ]
 
+    this.proposalParams = {
+      minBalance: 2000 * 10 ** 18,
+      quorum: 10000 * 10 ** 18,
+      minTime: 6 * 60 * 60
+    }
+
     this.consts = {
       DECIMALS: 18,
       MIN_READY_ORACLES: 2,

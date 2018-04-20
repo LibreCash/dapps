@@ -6,6 +6,12 @@
       </div>
       <br>
       <div class="table-padding">
+        <div>Token count: {{ tokensCount }} LBRS</div>
+        <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+        <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
+        <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
+        <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+
         <router-link :to="{ path: '/dao' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
           <span>Back</span>
@@ -28,12 +34,12 @@
         <div class="columns is-centered">
           <div class="column is-narrow">
             <b-tooltip label="Vote Yea" type="is-dark" position="is-bottom">
-              <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="disVote"><i class="mdi mdi-check"></i></button>
+              <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="mdi mdi-check"></i></button>
             </b-tooltip>
           </div>
           <div class="column is-narrow">
             <b-tooltip label="Vote Nay" type="is-dark" position="is-bottom">
-              <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="disVote"><i class="mdi mdi-close"></i></button>
+              <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="mdi mdi-close"></i></button>
             </b-tooltip>
           </div>
           <div class="column is-narrow">
@@ -79,12 +85,45 @@ export default {
       perPage: 5,
       typeProposals: this.$libre.typeProposals,
       currentProposal: '',
-      disVote: false,
+      enableVote: true,
       enableExecute: true,
-      enableBlock: true
+      enableBlock: true,
+      tokensCount: '',
+      curBlockchainTime: 0
     }
   },
   methods: {
+    async updateBlockTime() {
+      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
+    },
+
+    startUpdatingTime() {
+      this.curBlockchainTime = 0
+      this.updatingTicker = setInterval(() => {
+        this.curBlockchainTime++
+      }, 1000)
+      this.updatingBlockData = setInterval(() => {
+        this.updateBlockTime()
+      }, 10 * 60 * 1000 /* 10 minutes */)
+      this.updateBlockTime()
+    },
+
+    clearTimers() {
+      this.tableData.forEach(element => {
+        clearInterval(element.updateTimer)
+      })
+      let intervals = [
+        this.updatingTicker,
+        this.updatingBlockData,
+      ]
+      intervals.forEach((interval) => clearInterval(interval))
+    },
+
+    async getTokensCount () {
+      await this.$libre.promiseLibre;
+      this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
+    },
+
     async loadProposal () {
       const 
         struct = this.$libre.proposalStruct
@@ -142,12 +181,17 @@ export default {
           )
           this.updateBlockTime();
 
-          this.disVote = (this.$eth.toTimestamp(vote.deadline) <= this.getNow() || vote.voted);
           this.isActive = +proposal.status === this.$libre.proposalStatuses[0].number;
+          this.enableVote = this.$eth.toTimestamp(vote.deadline) > this.getNow() &&
+                          !vote.voted ||
+                          this.tokensCount >= this.$libre.proposalParams.minBalance &&
+                          this.isActive;
           this.contractOwner = await this.$libre.dao.owner();
           this.isOwner = this.contractOwner === this.$eth.yourAccount;
           this.enableExecute = this.$eth.toTimestamp(vote.deadline) > this.getNow() &&
-                            this.isActive;
+                              this.isActive &&
+                              (vote.yea > vote.nay) &&
+                              (vote.yea + vote.nay >= this.$libre.proposalParams.quorum / 10 ** 18)
           this.enableBlock = this.isOwner && this.isActive;
       } catch (err) {
         console.log(err)
@@ -209,23 +253,9 @@ export default {
         this.isLoading = false
       }
     },
-    
-    async updateBlockTime() {
-      this.proposalData.find(item => item.data === "now").rawValue += (+(await this.$eth.getLatestBlockTime()));
-    },
 
     getNow() {
       return this.proposalData.find(item => item.data === "now").rawValue;
-    },
-
-    startUpdatingTime() {
-      this.updatingTicker = setInterval(() => {
-        this.proposalData.find(item => item.data === "now").rawValue++;
-        this.proposalData.find(item => item.data === "now").value = new Date(this.getNow() * 1000).toLocaleString();
-      }, 1000)
-      this.updatingBlockData = setInterval(() => {
-        this.updateBlockTime()
-      }, 10 * 60 * 1000 /* 10 minutes */)
     },
 
     clearTimers() {
@@ -241,10 +271,11 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-console.log("T", this.$t)
-console.log("T", this.$t("test"))
       this.daoAddress = Config.dao.address;
-      await this.loadProposal();
+      this.defaultAddress = window.web3.eth.defaultAccount;
+      this.loadProposal();
+      this.getTokensCount();
+
       this.startUpdatingTime();
     } catch (err) {
       console.log(err)
