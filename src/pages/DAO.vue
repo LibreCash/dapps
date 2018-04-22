@@ -24,7 +24,7 @@
             
         </div>
         <br>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > $libre.proposalParams.minBalance / 10 ** 18">New Proposal</router-link>
+        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
         <br><br>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
@@ -88,7 +88,7 @@
               <span v-if="!props.row.votingData.voted &&
                           (props.row.deadlineUnix > curBlockchainTime) &&
                           !props.row.loading &&
-                          (tokensCount > 0) &&
+                          (tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip label="Yea" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
@@ -100,7 +100,9 @@
               <!-- execute button -->
               <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
                               (props.row.status === $libre.proposalStatuses[0].text) &&
-                              !props.row.loading">
+                              !props.row.loading &&
+                              (props.row.yea > props.row.nay) &&
+                              (props.row.yea + props.row.nay >= $libre.proposalParams.quorum / Math.pow(10, 18))">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
                 </b-tooltip>

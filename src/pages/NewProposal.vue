@@ -49,7 +49,9 @@
         </b-field>
         <b-field horizontal>
             <p class="control">
-                <button class="button is-primary" v-on:click="createProposal()" :disabled="button.disabled || tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">
+                <button class="button is-primary" v-on:click="createProposal()"
+                    :disabled="button.disabled || tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)"
+                    :class="{'is-loading': button.isLoading}">
                   Create Proposal
                 </button>
                 <b-tag v-if="tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">not enough tokens to create proposal</b-tag>
@@ -70,6 +72,7 @@ export default {
     return {
       proposalData: [],
       daoAddress: '',
+      defaultAddress: '',
       tokensCount: '',
       beneficiary: '',
       amount: '',
@@ -184,20 +187,32 @@ export default {
       }
 
       this.button.isLoading = false
+    },
+    startValidDataTimer () {
+      this.validDataTimer = setInterval(() => {
+        this.validPeriod = this.isDebatingPeriod();
+        this.validData();
+      }, 2000)
+    },
+    endValidDataTimer () {
+       clearInterval(this.validDataTimer);
     }
   },
   async created () {
     try {
-
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
       this.daoAddress = Config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.getTokensCount();
+      this.startValidDataTimer();
       this.selectedType = this.typeProposals[0];
     } catch (err) {
       console.log(err)
     }
+  },
+  async destroyed () {
+    this.endValidDataTimer();
   },
   watch: {
     beneficiary: function() {this.validData()},
