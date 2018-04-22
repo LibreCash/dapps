@@ -6,11 +6,10 @@ import router from './router'
 import './plugins/buefy'
 import './plugins/eth'
 import './plugins/libre'
-import './plugins/scroll'
+
 
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,

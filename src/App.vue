@@ -160,6 +160,9 @@ export default {
   display: block;
   text-align: center;
 }
+.logo h3 {
+	color:white;
+}
 .MenuLeft {
   margin-top: 75px;
 }
