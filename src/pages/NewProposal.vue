@@ -70,6 +70,7 @@ export default {
     return {
       proposalData: [],
       daoAddress: '',
+      tokensCount: '',
       beneficiary: '',
       amount: '',
       description: '',
@@ -192,7 +193,8 @@ export default {
       await this.$libre.initPromise;
       this.daoAddress = Config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.selectedType = this.typeProposals[0]
+      this.getTokensCount();
+      this.selectedType = this.typeProposals[0];
     } catch (err) {
       console.log(err)
     }
