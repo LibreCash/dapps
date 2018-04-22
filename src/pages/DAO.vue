@@ -82,7 +82,7 @@
             <b-table-column label='Actions' centered>
               <!-- details button -->
               <b-tooltip label="Details" type="is-dark" position="is-bottom">
-                <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+                <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button" class="button"><i class="mdi mdi-account-card-details"></i></router-link>
               </b-tooltip>
               <!-- vote buttons -->
               <span v-if="!props.row.votingData.voted &&
@@ -91,7 +91,7 @@
                           (tokensCount > 0) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip label="Yea" type="is-dark" position="is-bottom">
-                  <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
+                  <button class="button" v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Nay" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
@@ -102,7 +102,7 @@
                               (props.row.status === $libre.proposalStatuses[0].text) &&
                               !props.row.loading">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
-                  <button  class="button" v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+                  <button class="button" v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
                 </b-tooltip>
               </span>
               <span v-else-if="props.row.loading">
