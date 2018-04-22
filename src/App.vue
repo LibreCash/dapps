@@ -108,6 +108,7 @@ export default {
     position: fixed;
 	font-family: 'Lato', sans-serif;
 	padding-top: 60px;
+	overflow-y: auto;
 }
 .allMain {
 	margin-left: 340px;
@@ -224,6 +225,7 @@ export default {
 		height: 0px;
 		overflow: hidden;
 		padding:0;
+		overflow-y: auto;
 	}
 	.MenuLeft {
 		margin-top: 25px;
