@@ -38,6 +38,12 @@ class Libre {
       'used',
       'completed'
     ]
+    
+    this.proposalParams = {
+      minBalance: 2000 * 10 ** 18,
+      quorum: 10000 * 10 ** 18,
+      minTime: 6 * 60 * 60
+    }
 
     this.consts = {
       DECIMALS: 18,
@@ -161,13 +167,16 @@ class Libre {
 
     this.proposalStatuses = [
       {
-        text: 'ACTIVE'
+        text: 'ACTIVE',
+        number: 0
       },
       {
-        text: 'FINISHED'
+        text: 'FINISHED',
+        number: 1
       },
       {
-        text: 'BLOCKED'
+        text: 'BLOCKED',
+        number: 2
       }
     ]
 

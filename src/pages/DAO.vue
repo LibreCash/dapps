@@ -9,18 +9,22 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div>DAO Contract Address: 
+                <div>DAO Contract: 
                     <a :href="`https://etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
                 </div>
-                <div>Liberty Token Address: 
+                <div>Liberty Token: 
                     <a :href="`https://etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
                 </div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+                <div>Token count: {{ tokensCount }} LBRS</div>
+                <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+                <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
+                <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             </div>
             
         </div>
         <br>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
+        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > $libre.proposalParams.minBalance / 10 ** 18">New Proposal</router-link>
         <br><br>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
@@ -90,7 +94,7 @@
                   <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Nay" type="is-dark" position="is-bottom">
-                  <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+                  <button class="button" v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
                 </b-tooltip>
               </span>
               <!-- execute button -->
@@ -98,7 +102,7 @@
                               (props.row.status === $libre.proposalStatuses[0].text) &&
                               !props.row.loading">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
-                  <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+                  <button  class="button" v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
                 </b-tooltip>
               </span>
               <span v-else-if="props.row.loading">
@@ -109,7 +113,7 @@
                           (props.row.status === $libre.proposalStatuses[0].text) &&
                           !props.row.loading">
                 <b-tooltip label="Block as owner" type="is-dark" position="is-bottom">
-                  <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+                  <button class="button" v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
                 </b-tooltip>
               </span>
             </b-table-column>
@@ -224,7 +228,6 @@ export default {
 
     async getTokensCount () {
       await this.$libre.promiseLibre;
-
       this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
     },
 
