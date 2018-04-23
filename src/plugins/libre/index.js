@@ -215,7 +215,7 @@ class Libre {
     this.bank = this.getContract(Config.bank.abi, Config.bank.address)
     var address = await this.bank.tokenAddress();
     Config.token.address = address;
-    this.token = this.getContract(Config.erc20.abi, Config.token.address)
+    this.token = this.getContract(Config.token.abi, Config.token.address)
 
     //this.dao = this.getContract(Config.dao.abi, Config.dao.address)
     //this.libertyAddress = address = await this.dao.sharesTokenAddress();
