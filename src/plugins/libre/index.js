@@ -32,7 +32,7 @@ class Libre {
       'Libre': 0,
       'ETH': 1
     }
-
+    
     this.loansStatus = [
       'active',
       'used',
