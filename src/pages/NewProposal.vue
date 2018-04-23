@@ -25,6 +25,9 @@
               </option>
           </b-select>
         </b-field>
+        <b-field horizontal v-if="selectedType['info']" label="Information">
+          {{ selectedType['info'] }}
+        </b-field>
         <b-field horizontal :label="selectedType['benef']" v-if="selectedType['benef']" :type="isAddress(beneficiary) ? '' : 'is-danger'">
             <b-input v-model="beneficiary" placeholder="0x0000000000000000000000000000000000000000"></b-input>
         </b-field>

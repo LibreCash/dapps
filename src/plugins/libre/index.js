@@ -97,7 +97,8 @@ class Libre {
       {
         text: 'New Bank',
         key: 'SET_BANK_ADDRESS',
-        benef: 'Bank Address:'
+        benef: 'Bank Address:',
+        info: `Before offering to change bank address please make sure to attach the current token to the new bank`
       },
       {
         text: 'Change Fees',
