@@ -6,7 +6,7 @@
       </div>
       <br>
       <div class="table-padding">
-        <button @click="$router.go(-1)" :to="{ path: '/loans' }" class="button">
+        <button :to="{ path: '/loans' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
           <span>Back</span>
         </button>
