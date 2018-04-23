@@ -6,24 +6,41 @@
       </div>
       <br>
       <div class="table-padding">
-        <address-block>one</address-block>
-        <div>Loans contract address: {{ loansAddress }}</div>
-        <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+        <div class="card">
+            <div class="card-content">
+                <address-block/>
+                <div>Loans contract address: <a :href="`https://etherscan.io/address/${loansAddress}`">{{ loansAddress }}</a></div>
+                <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+            </div>
+        </div>
+        
         <div class="columns" style="padding-top: 2rem">
           <div class="column is-narrow">
             <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
           </div>
           <div class="column is-narrow">
-            <b-field>
-              <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
-              <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
-            </b-field>
+            <div class="card">
+                <div class="card-content">
+                    <center><span>Type loans:</span></center>
+                    <b-field>
+                      <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
+                      <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
+                    </b-field>
+                </div>
+            </div>
+            
           </div>
           <div class="column">
-            <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
-            <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
-            <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
-            <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+            <div class="card">
+                <div class="card-content">
+                    <div><center>State loans:</center></div>
+                    <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
+                    <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
+                    <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
+                    <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+                </div>
+            </div>
+            
           </div>
         </div>
         <br>
@@ -76,7 +93,7 @@
               {{ props.row.status }}
             </b-table-column>
             <b-table-column label='Actions' centered>
-              <router-link :to="{name: 'Loan', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+              <router-link :to="{name: 'Loan Offer', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
             </b-table-column>
           </template>
         </b-table>

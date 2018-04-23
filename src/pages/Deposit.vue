@@ -6,6 +6,12 @@
       </div>
       <br>
       <div class="table-padding">
+        <div class="card">
+            <div class="card-content">
+                <address-block/>
+                <div>Max amount: {{ needAmount }} Libre</div>
+            </div>
+        </div>
         <div v-if="owner">
           <b-collapse class="card" :open="false">
             <div slot="trigger" slot-scope="props" class="card-header">
@@ -16,8 +22,11 @@
             </div>
             <div class="card-content">
               <div class="content">
+                <div>Address Deposit contract: {{ deposit }}</div><br>
                 <b-field horizontal label="Period, sec">
-                  <b-input v-model="newPlan.period"></b-input>
+                  <b-field :message="$libre.periodToString(newPlan.period)">
+                    <b-input v-model="newPlan.period"></b-input>
+                  </b-field> 
                 </b-field>
                 <b-field horizontal label="Percent, %">
                   <b-input v-model="newPlan.percent"></b-input>
@@ -36,6 +45,7 @@
           </b-collapse>
           <br>
         </div>
+        <br>
         <h3 class="subtitle has-text-centered">Plans</h3>
         <b-table :data="plansData"
           :bordered="false"
@@ -54,7 +64,7 @@
             <b-table-column label='Percent, %'>
               <strong>{{ props.row.percent }}</strong>
             </b-table-column>
-            <b-table-column label='Period, sec' centered>
+            <b-table-column label='Period' centered>
               {{ props.row.period }}
             </b-table-column>
             <b-table-column label='Min Amount, Libre' centered>
@@ -65,7 +75,7 @@
         <br>
         <div>
           <b-field>
-            <b-message :type="msg.type" style="white-space: pre-wrap;">{{ msg.text }}</b-message>
+            <b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
           </b-field>
           <b-field v-if="planSelected">
             <b-input placeholder="0,00" v-model="amount"></b-input>
@@ -118,9 +128,11 @@
 
 <script>
 import Config from '@/config'
+import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
     return {
+      deposit: Config.deposit.address,
       isLoading: false,
       owner: false,
       plansData: [],
@@ -138,6 +150,7 @@ export default {
       },
       newDepositLoading: false,
       amount: '',
+      needAmount: '',
       msg: {
         type: 'is-info',
         text: 'To create a deposit, select a plan!'
@@ -235,7 +248,7 @@ export default {
           id: plan.id,
           description: plan.description,
           percent: plan.percent / this.$libre.consts.REVERSE_PERCENT,
-          period: plan.period,
+          period: this.$libre.periodToString(plan.period),
           minAmount: this.$libre.toToken(plan.minAmount)
         })
       })
@@ -243,6 +256,7 @@ export default {
     },
 
     async updateMyDeposit() {
+      this.needAmount = this.$libre.toToken(await this.$libre.deposit.needAmount());
       this.myDepositData = []
       this.isloadingDeposit = true;
 
@@ -253,10 +267,18 @@ export default {
         if (deposit.timestamp == 0) 
           continue
 
+        let deadline = new Date(deposit.deadline * 1000),
+            now = new Date();
+
+        if (now < deadline)
+          deadline = `${deadline.toLocaleString()} (${this.$libre.periodToString(Math.floor((deadline - now)/1000))})`
+        else
+          deadline = `${dealine.toLocaleString()} (outdated)`
+
         this.myDepositData.push({
           id: i,
           timestamp: new Date(deposit.timestamp * 1000).toLocaleString(),
-          deadline: new Date(deposit.deadline * 1000).toLocaleString(),
+          deadline: deadline,
           amount: this.$libre.toToken(deposit.amount),
           margin: this.$libre.toToken(deposit.margin),
           plan: deposit.plan
@@ -268,6 +290,15 @@ export default {
 
     async checkOwner() {
       this.owner = window.web3.eth.defaultAccount == await this.$libre.deposit.owner();
+    },
+
+    async calcProfit(amount, id) {
+      if (amount < this.planSelected.minAmount)
+        this.setMessage("warning","Amount less than min amount selected plan!")
+      else if (amount > this.needAmount)
+        this.setMessage("warning","Amount bigger then max amount!")
+      else
+        this.setMessage("info",`Income: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`)
     }
   },
 
@@ -281,6 +312,13 @@ export default {
     } catch (err) {
       console.log(err)
     }
+  },
+  watch: {
+    amount: function(newVal) {this.calcProfit(newVal, this.planSelected.id)},
+    planSelected: function(newVal) {this.calcProfit(this.amount, newVal.id)}
+  },
+  components: {
+    AddressBlock
   }
 }
 </script>

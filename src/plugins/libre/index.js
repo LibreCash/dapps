@@ -4,14 +4,14 @@ import Web3 from 'web3'
 import Config from '@/config'
 
 class Libre {
-  static install (vue, options) {
+  static install(vue, options) {
     const libre = new Libre()
     Object.defineProperty(Vue.prototype, '$libre', {
-      get () { return libre }
+      get() { return libre }
     })
   }
 
-  constructor () {
+  constructor() {
 
     this.loansStruct = {
       'holder': 0,
@@ -63,6 +63,12 @@ class Libre {
       'status': 6
     }
 
+    this.proposalStatus = {
+      ACTIVE: 0,
+      FINISHED: 1,
+      BLOCKED: 2
+    }
+
     this.voteStruct = {
       'yea': 0,
       'nay': 1,
@@ -72,60 +78,60 @@ class Libre {
 
     this.typeProposals = [
       {
-        text: 'Custom', 
-        key: 'UNIVERSAL', 
-        benef: 'Beneficiary:', 
+        text: 'Custom',
+        key: 'UNIVERSAL',
+        benef: 'Beneficiary:',
         amount: 'Amount Wei:',
         code: 'Bytecode:'
       },
       {
-        text: 'Transfer Ownership', 
-        key: 'TRANSFER_OWNERSHIP', 
+        text: 'Transfer Ownership',
+        key: 'TRANSFER_OWNERSHIP',
         benef: 'New Owner:'
       },
       {
-        text: 'New Token', 
-        key: 'ATTACH_TOKEN', 
+        text: 'New Token',
+        key: 'ATTACH_TOKEN',
         benef: 'Token Address:'
       },
       {
-        text: 'New Bank', 
-        key: 'SET_BANK_ADDRESS', 
+        text: 'New Bank',
+        key: 'SET_BANK_ADDRESS',
         benef: 'Bank Address:'
       },
       {
-        text: 'Change Fees', 
-        key: 'SET_FEES', 
-        amount: 'Buy fee, %:', 
+        text: 'Change Fees',
+        key: 'SET_FEES',
+        amount: 'Buy fee, %:',
         buf: 'Sell fee, %:'
       },
       {
-        text: 'Add Oracle', 
-        key: 'ADD_ORACLE', 
+        text: 'Add Oracle',
+        key: 'ADD_ORACLE',
         benef: 'Oracle Address:'
       },
       {
-        text: 'Disable Oracle', 
-        key: 'DISABLE_ORACLE', 
+        text: 'Disable Oracle',
+        key: 'DISABLE_ORACLE',
         benef: 'Oracle Address:'
       },
       {
-        text: 'Enable Oracle', 
-        key: 'ENABLE_ORACLE', 
+        text: 'Enable Oracle',
+        key: 'ENABLE_ORACLE',
         benef: 'Oracle Address:'
       },
       {
-        text: 'Delete Oracle', 
-        key: 'DELETE_ORACLE', 
+        text: 'Delete Oracle',
+        key: 'DELETE_ORACLE',
         benef: 'Oracle Address:'
       },
       {
-        text: 'Set Scheduler', 
-        key: 'SET_SCHEDULER', 
+        text: 'Set Scheduler',
+        key: 'SET_SCHEDULER',
         benef: 'Scheduler Address:'
       },
       {
-        text: 'Withdraw Balance', 
+        text: 'Withdraw Balance',
         key: 'WITHDRAW_BALANCE'
       },
       {
@@ -151,6 +157,11 @@ class Libre {
       {
         text: 'Claim Ownership',
         key: 'CLAIM_OWNERSHIP'
+      },
+      {
+        text: 'Change Arbitrator',
+        key: 'CHANGE_ARBITRATOR',
+        benef: 'New Arbitrator Address:'
       }
     ]
 
@@ -200,22 +211,27 @@ class Libre {
   async init() {
     this.web3 = window.web3;
 
-    this.report = this.getContract(Config.report.abi,Config.report.address)
+    this.report = this.getContract(Config.report.abi, Config.report.address)
     this.bank = this.getContract(Config.bank.abi, Config.bank.address)
     var address = await this.bank.tokenAddress();
     Config.token.address = address;
-    this.token = this.getContract(Config.erc20.abi,Config.token.address)
+    this.token = this.getContract(Config.erc20.abi, Config.token.address)
 
-    this.dao = this.getContract(Config.dao.abi,Config.dao.address)
+    this.dao = this.getContract(Config.dao.abi, Config.dao.address)
     this.libertyAddress = address = await this.dao.sharesTokenAddress();
     this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
 
-    this.loans = this.getContract(Config.loans.abi,Config.loans.address)
-    this.deposit = this.getContract(Config.deposit.abi,Config.deposit.address)
+    this.loans = this.getContract(Config.loans.abi, Config.loans.address)
+    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address)
   }
 
   getContract(abi, address) {
-    return new Proxy(this.web3.eth.contract(abi).at(address), { 
+    if (!this.decodes)
+      this.decodes = {}
+
+    this.decodes[address] = this.web3.eth.contract(abi).at(address)
+
+    return new Proxy(this.decodes[address], {
       get: (_contract, name) => function () {
         return new Promise((resolve, reject) => {
           _contract[name](...arguments, (err, result) => {
@@ -248,16 +264,38 @@ class Libre {
       buffer: +contractArray[this.proposalStruct.buffer],
       bytecode: contractArray[this.proposalStruct.bytecode],
       description: contractArray[this.proposalStruct.description],
-      status: contractArray[this.proposalStruct.status]
+      status: +contractArray[this.proposalStruct.status]
     }
   }
 
-  toToken(contractNumber) {
-    return +contractNumber / 10 ** this.consts.DECIMALS;
+  toToken(contractNumber, decimals = this.consts.DECIMALS) {
+    return +contractNumber / 10 ** decimals;
   }
 
-  fromToken(amount) {
-    return +amount * 10 ** this.consts.DECIMALS;
+  fromToken(amount, decimals = this.consts.DECIMALS) {
+    return +amount * 10 ** decimals;
+  }
+
+  periodToString(seconds) {
+    var years = Math.floor(seconds / (60 * 60 * 24 * 365));
+    seconds -= years * 60 * 60 * 24 * 365;
+
+    var months = Math.floor(seconds / (60 * 60 * 24 * 30));
+    seconds -= months * 60 * 60 * 24 * 30;
+
+    var days = Math.floor(seconds / (60 * 60 * 24));
+    seconds -= days * 60 * 60 * 24;
+
+    var hours = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60;
+
+    var minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    if (hours < 10) { hours = "0" + hours; }
+    if (minutes < 10) { minutes = "0" + minutes; }
+    if (seconds < 10) { seconds = "0" + seconds; }
+    return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`;
   }
 
   getVotingObject(contractArray) {
@@ -281,7 +319,7 @@ class Libre {
 
   async updateProposal(index) {
     let proposal = this.getProposalObject(await this.dao.getProposal(index));
-     proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
+    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
 
     this.proposals[index] = proposal
     return this.proposals[index]
@@ -309,18 +347,53 @@ class Libre {
       return
 
     let count = +await this.deposit.plansCount();
-    for(let i =0; i < count; i++) {
+    for (let i = 0; i < count; i++) {
       let arr = await this.deposit.plans(i),
-      plan = {
-        id: i,
-        period: +arr[this.depositPlanStruct.period],
-        percent: +arr[this.depositPlanStruct.percent],
-        minAmount: +arr[this.depositPlanStruct.minAmount],
-        description: arr[this.depositPlanStruct.description]
-      }
+        plan = {
+          id: i,
+          period: +arr[this.depositPlanStruct.period],
+          percent: +arr[this.depositPlanStruct.percent],
+          minAmount: +arr[this.depositPlanStruct.minAmount],
+          description: arr[this.depositPlanStruct.description]
+        }
 
       this.plans.push(plan)
     }
+  }
+
+  bytecodeToString(address, bytecode) {
+    let result = ""
+
+    try {
+      let contract = this.decodes[address];
+
+      if (!contract)
+        return ""
+
+      let hashMethod = bytecode.substring(0, 10);
+      let params = bytecode.substring(10);
+
+      let abiMethod = contract.abi.find(elem => {
+        return elem.type == 'function' && contract[elem.name].getData().substring(0, 10) === hashMethod
+      })
+
+      let typeParams = abiMethod.inputs.map(param => param.type)
+      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params);
+
+      result = `${abiMethod.name}(${valueParams})`
+    } catch (err) {
+      console.log(err);
+    }
+
+    return result;
+  }
+
+  ethToDate(ethTimestamp) {
+    return (+ethTimestamp > 0) ? (new Date(ethTimestamp * 1000)).toLocaleString() : '-'
+  }
+
+  divDecimals(amount, decimals = 18) {
+    return amount / 10 ** 18
   }
 }
 

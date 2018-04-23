@@ -42,14 +42,15 @@
             <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
             <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
         </b-field>
-        <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
-            <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
+        <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" >
+            <b-field :message="bytecodeMessage" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
+                <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
+            </b-field>
         </b-field>
         <b-field horizontal>
             <p class="control">
-                <button class="button is-primary" v-on:click="createProposal()"
-                    :disabled="button.disabled || tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">
-                  {{ button.name }}
+                <button class="button is-primary" v-on:click="createProposal()" :disabled="button.disabled || tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">
+                  Create Proposal
                 </button>
                 <b-tag v-if="tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">not enough tokens to create proposal</b-tag>
                 <b-tag v-if="!validPeriod">too short debating period (min {{ $libre.proposalParams.minTime / 60 / 60 }} hours)</b-tag>
@@ -79,7 +80,6 @@ export default {
       transactionBytecode: '',
       buffer: '',
       lock: false,
-      button: {name: 'Create Proposal', disabled: true},
       typeProposals: this.$libre.typeProposals,
       selectedType: '',
       validPeriod: true
@@ -135,121 +135,48 @@ export default {
         now = new Date(),
         debatingEnd = (new Date(this.debatingPeriod))
           .setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes()),
-        debatingPeriod = Math.round((debatingEnd - now) / 1000);
+        debatingPeriod = Math.round((debatingEnd - now) / 1000),
+        indexTP = this.$libre.typeProposals.indexOf(this.selectedType),
+        amount = this.amount,
+        buffer = this.buffer;
 
-      this.button = {name: 'Pending...', disabled: true}
+      this.button.isLoading = true
 
       try {
         switch(this.selectedType.key) {
-          //case 'CLEAN': break;
-          case 'UNIVERSAL':
-            txHash = await this.$libre.dao.prUniversal(
-              this.beneficiary, 
-              this.amount,
-              this.description,
-              debatingPeriod,
-              this.transactionBytecode)
-            break;
-          case 'TRANSFER_OWNERSHIP':
-            txHash = await this.$libre.dao.prTransferOwnership(
-              this.beneficiary, 
-              this.description,
-              debatingPeriod)
-            break;
-          case 'ATTACH_TOKEN':
-            txHash = await this.$libre.dao.prAttachToken(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
-          case 'SET_BANK_ADDRESS':
-            txHash = await this.$libre.dao.prBankAddress(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
           case 'SET_FEES':
-            txHash = await this.$libre.dao.prFees(
-              this.amount * 100,
-              this.buffer * 100,
-              this.description,
-              debatingPeriod)
-            break;
-          case 'ADD_ORACLE':
-            txHash = await this.$libre.dao.prAddOracle(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
-          case 'DISABLE_ORACLE':
-            txHash = await this.$libre.dao.prDisableOracle(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
-          case 'ENABLE_ORACLE':
-            txHash = await this.$libre.dao.prEnableOracle(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
-          case 'DELETE_ORACLE':
-            txHash = await this.$libre.dao.prDeleteOracle(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
-          case 'SET_SCHEDULER':
-            txHash = await this.$libre.dao.prScheduler(
-              this.beneficiary,
-              this.description,
-              debatingPeriod)
-            break;
-          case 'WITHDRAW_BALANCE':
-            txHash = await this.$libre.dao.prWithdrawBalance(
-              this.description,
-              debatingPeriod)
+            amount *= 100;
+            buffer *= 100;
             break;
           case 'SET_ORACLE_TIMEOUT':
-            txHash = await this.$libre.dao.prOracleTimeout(
-              this.amount * 60,
-              this.description,
-              debatingPeriod)
-            break;
           case 'SET_ORACLE_ACTUAL':
-            txHash = await this.$libre.dao.prOracleActual(
-              this.amount * 60,
-              this.description,
-              debatingPeriod)
-            break;
           case 'SET_RATE_PERIOD':
-            txHash = await this.$libre.dao.prRatePeriod(
-              this.amount * 60,
-              this.description,
-              debatingPeriod)
+            amount *= 60;
             break;
           case 'SET_LOCK':
-            txHash = await this.$libre.dao.prPause(
-              this.lock === 'true' ? 1 : 0,
-              this.description,
-              debatingPeriod)
-            break;
-          case 'CLAIM_OWNERSHIP':
-            txHash = await this.$libre.dao.prClaimOwnership(
-              this.description,
-              debatingPeriod)
+            amount = this.lock === 'true' ? 1 : 0;
             break;
         }
+
+        txHash = await this.$libre.dao.newProposal(
+          indexTP,
+          this.beneficiary,
+          amount,
+          buffer,
+          this.description,
+          debatingPeriod,
+          this.transactionBytecode)
 
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/dao')
         } else {
-          alert('Creating proposal error')
+          this.$snackbar.open('Creating proposal error');
         }
       }
       catch(err) {
-        alert(this.$eth.getErrorMsg(err))
-        this.button = {name: 'Create Proposal', disabled: true}
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
     },
     startValidDataTimer () {
@@ -260,10 +187,13 @@ export default {
     },
     endValidDataTimer () {
       clearInterval(this.validDataTimer);
+
+      this.button.isLoading = false
     }
   },
   async created () {
     try {
+
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
       this.defaultAddress = window.web3.eth.defaultAccount;
@@ -283,7 +213,10 @@ export default {
     amount: function() {this.validData()},
     debatingPeriod: function() {this.validData()},
     debatingTime: function() {this.validData()},
-    transactionBytecode: function() {this.validData()},
+    transactionBytecode: function() {
+      this.bytecodeMessage = this.$libre.bytecodeToString(this.beneficiary,this.transactionBytecode)
+      this.validData()
+    },
     buffer: function() {this.validData()},
     selectedType: function() {
       this.beneficiary = this.amount = this.transactionBytecode = this.buffer = '';

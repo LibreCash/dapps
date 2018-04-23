@@ -165,9 +165,10 @@ export default {
             })
 
           if (this.currentProposal["code"])
+            let byteString = this.$libre.bytecodeToString(proposal.recipient, proposal.bytecode)
             this.proposalData.push({
               name: this.currentProposal["code"], 
-              value: proposal.bytecode
+              value: byteString.length == 0 ? proposal.bytecode : byteString
             })
           
           this.proposalData.push(
@@ -197,71 +198,89 @@ export default {
     },
 
     async vote (support) {
+      this.isLoading = true;
+
       try {
         let 
           txHash = await this.$libre.dao.vote(this.proposalId, support);
-        this.isLoading = true;
-        let
-          result = await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction'
 
-        alert(result) // Replace it to notify
+        this.$snackbar.open(await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction')
         await this.$libre.updateProposal(this.proposalId)
         this.loadProposal()
         
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err))
-        
-        this.isLoading = false
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
     },
-    async execute () {
+
+    async checkOwner() {
+      this.contractOwner = this.$eth.yourAccount === await this.$libre.dao.owner()
+    },
+
+    async startTimers() {
+      if (this.$libre.proposals[this.proposalId].status != this.$libre.proposalStatus.ACTIVE)
+        return
+
+      this.executeEnable = (this.deadline <= +await this.$eth.getLatestBlockTime());
+
+      this.updatingTicker = setInterval(async () => {
+        this.executeEnable = (this.deadline <= +(await this.$eth.getLatestBlockTime()));
+        if (this.executeEnable || this.$libre.proposals[this.proposalId].status != this.$libre.proposalStatus.ACTIVE)
+          clearInterval(this.updatingTicker)
+      }, 1000)
+    },
+
+    startValidDataTimer () {
+      this.validDataTimer = setInterval(() => {
+        this.validPeriod = this.isDebatingPeriod();
+        this.validData();
+      }, 2000)
+    },
+
+    endValidDataTimer () {
+      clearInterval(this.validDataTimer);
+    },
+
+    async executeProposal() {
+      this.isExecute = true;
+
       try {
-        let 
-          txHash = await this.$libre.dao.executeProposal(this.proposalId);
-        this.isLoading = true;
-        let
-          result = await this.$eth.isSuccess(txHash) ? 'Success execute transaction' : 'Failed execute transaction'
+        let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
 
-        alert(result) // Replace it to notify
-        await this.$libre.updateProposal(this.proposalId)
-        this.loadProposal()
-        
+        if (await this.$eth.isSuccess(txHash)) {
+          this.$snackbar.open('Proposal executed successfully.');
+        } else {
+          this.$snackbar.open('Failed on proposal executions');
+        }
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err))
-        
-        this.isLoading = false
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
+      
+      this.isExecute = false
     },
-    async block () {
+
+    async blocking() {
+      this.isBlock = true
+
       try {
-        let 
-          txHash = await this.$libre.dao.blockingProposal(this.proposalId);
-        this.isLoading = true;
-        let
-          result = await this.$eth.isSuccess(txHash) ? 'Success block transaction' : 'Failed block transaction'
+        let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
 
-        alert(result) // Replace it to notify
-        await this.$libre.updateProposal(this.proposalId)
-        this.loadProposal()
-        
+        if (await this.$eth.isSuccess(txHash)) {
+          this.$snackbar.open('Proposal blocked.');
+        } else {
+          this.$snackbar.open('Proposal not blocked.');
+        }
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err))
-        
-        this.isLoading = false
+        let msg = this.$eth.getErrorMsg(err)
+        console.log(msg)
+        this.$snackbar.open(msg);
       }
-    },
 
-    getNow() {
-      return this.proposalData.find(item => item.data === "now").rawValue;
-    },
-
-    clearTimers() {
-      let intervals = [
-        this.updatingTicker,
-        this.updatingBlockData
-      ]
-
-      intervals.forEach((interval) => clearInterval(interval))
+      this.isBlock = false
     }
   },
   async created () {
@@ -270,9 +289,11 @@ export default {
       await this.$libre.initPromise;
       this.daoAddress = Config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.loadProposal();
+      await this.checkOwner();
+      await this.loadProposal();
+      this.selectedType = this.typeProposals[0];
       this.getTokensCount();
-
+      this.startValidDataTimer();
       this.startUpdatingTime();
     } catch (err) {
       console.log(err)
