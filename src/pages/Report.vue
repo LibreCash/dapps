@@ -13,12 +13,12 @@
               placeholder='Write Report'>
             </b-input>
           </b-field>
-          <a class="button is-info" v-on:click="newReport">Submit</a>
+          <a class="button is-info" v-on:click="newReport" :class="{'is-loading': isLoading}">Submit</a>
         </section>
-        <br>
-        <section v-if="searchData.length < 1" class="table-padding">No reports found</section>
-        <search-results :tableData='searchData'></search-results>
-        <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
+        <div class="level">
+          <section v-if="searchData.length < 1" class="table-padding">No reports found</section>
+          <search-results :tableData='searchData'></search-results>
+        </div>
       </section>
     </div>
 </template>
@@ -46,9 +46,18 @@ export default {
     },
     async newReport () {
       try {
-        await this.$libre.report.addNewReport(this.reportText)
+        this.isLoading = true;
+        let txHash = await this.$libre.report.addNewReport(this.reportText);
+        if (await this.$eth.isSuccess(txHash)) {
+          this.searchReports();
+        } else {
+          this.$snackbar.open('Creating proposal error');
+        }
+        this.isLoading = false;
       } catch (err) {
-        console.log(err)
+        console.log(err);
+        this.$snackbar.open(err);
+        this.isLoading = false;
       }
     },
     async searchReports () {
