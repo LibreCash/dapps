@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="address-block">
-            Address: <a v-if="defaultAddress != 'Unknown'" :href="`https://etherscan.io/address/${defaultAddress}`">{{ defaultAddress }}</a>
+            Address: <a v-if="defaultAddress != 'Unknown'" :href="`https://rinkeby.etherscan.io/address/${defaultAddress}`">{{ defaultAddress }}</a>
             <span v-else>{{ defaultAddress }}</span>
         </div>
         <div v-if="balance > 0 || libertyBalance > 0">

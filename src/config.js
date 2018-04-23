@@ -90,11 +90,6 @@ module.exports = {
         name: 'Scheduler',
         getter: 'scheduler',
         process: data => data
-      },
-      {
-        name: 'Reserve percent',
-        getter: 'getReservePercent',
-        process: data => `${+data} %`
       }
     ]
   },
