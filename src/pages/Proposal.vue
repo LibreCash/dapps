@@ -103,15 +103,15 @@ export default {
 
     updateEnabledButtons () {
       this.isActive = +this.proposal.status === this.$libre.proposalStatuses[0].number;
-      this.enableVote = this.$eth.toTimestamp(this.vote.deadline) > this.getNow() * 1000 &&
-                      !this.vote.voted &&
+      this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > this.getNow() * 1000 &&
+                      !this.votes.voted &&
                       this.tokensCount >= this.$libre.proposalParams.minBalance / Math.pow(10, 18) &&
                       this.isActive;
 
-      this.enableExecute = this.$eth.toTimestamp(this.vote.deadline) < this.getNow() * 1000 && 
+      this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < this.getNow() * 1000 && 
           this.isActive &&
-          (this.vote.yea > this.vote.nay) &&
-          (this.vote.yea + this.vote.nay >= this.$libre.proposalParams.quorum / 10 ** 18);
+          (this.votes.yea > this.votes.nay) &&
+          (this.votes.yea + this.votes.nay >= this.$libre.proposalParams.quorum / 10 ** 18);
       this.enableBlock = this.contractOwner && this.isActive;
     },
 
@@ -141,7 +141,7 @@ export default {
 
       try {
           this.proposal = await this.$libre.updateProposal(this.$route.params.id),
-          this.vote = this.proposal.vote;
+          this.votes = this.proposal.vote;
 
           this.currentProposal = this.typeProposals[this.proposal.type]
           
@@ -162,10 +162,10 @@ export default {
               value: this.$eth.isZeroAddress(this.proposal.recipient) ? '-' : this.proposal.recipient
             })
           
-          if (this.currentProposal["amount"])
+          if (this.currentProposal["amount"] || this.currentProposal["_amount"])
             this.proposalData.push({
-              name: this.currentProposal["amount"], 
-              value: `${this.proposal.amount}`
+              name: this.currentProposal["amount"] || this.currentProposal["_amount"], 
+              value: this.proposal.amount === 1 ? 'YES' : 'NO'
             })
           
           if (this.currentProposal["buf"])
@@ -183,11 +183,11 @@ export default {
           }
             
           
-          this.deadline = this.vote.deadline;
+          this.deadline = this.votes.deadline;
 
           this.proposalData.push(
-            {name: 'Voting:', value: `${this.vote.yea}/${this.vote.nay}`},
-            {name: 'Deadline:', value: new Date(this.vote.deadline * 1000).toLocaleString()},
+            {name: 'Voting:', value: `${this.votes.yea}/${this.votes.nay}`},
+            {name: 'Deadline:', value: new Date(this.votes.deadline * 1000).toLocaleString()},
             {name: 'Now:', data: 'now', rawValue: 0, value: 0},
             {name: 'Description:', value: this.proposal.description}
           )
@@ -206,7 +206,7 @@ export default {
       try {
         let 
           txHash = await this.$libre.dao.vote(this.proposalId, support);
-
+          
         this.$snackbar.open(await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction')
         await this.$libre.updateProposal(this.proposalId)
         this.loadProposal()

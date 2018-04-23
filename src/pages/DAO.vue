@@ -209,15 +209,9 @@ export default {
       this.isLoading = false
 
       this.startUpdatingTime()
-      this.contractOwner = await this.$libre.dao.owner()
       var loginChecker = setInterval(() => {
         if (this.$eth.yourAccount != null) {
           clearInterval(loginChecker)
-          if (this.contractOwner === this.$eth.yourAccount) {
-            this.isOwner = true
-          } else {
-            this.isOwner = false
-          }
         }
       }, 1000)
     },
@@ -339,6 +333,9 @@ export default {
       this.daoAddress = Config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.libertyAddress = this.$libre.libertyAddress;
+      this.contractOwner = await this.$libre.dao.owner()
+      this.isOwner = (this.contractOwner === this.$eth.yourAccount);
+
       this.loadProposals()
       this.getTokensCount()
     } catch (err) {

@@ -152,7 +152,8 @@ class Libre {
       {
         text: 'Set Lock',
         key: 'SET_LOCK',
-        lock: 'Lock:'
+        lock: 'Lock:',
+        _amount: 'Pause' // _ means we show amount line only in prop details
       },
       {
         text: 'Claim Ownership',
