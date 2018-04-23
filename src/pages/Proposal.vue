@@ -31,26 +31,23 @@
             </b-table-column>
           </template>
         </b-table>
-        <div class="columns">
-          <div class="column">
-            <div class="columns">
-              <div class="column">
-                <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="mdi mdi-check"></i></button>
-              </div>
-              <div class="column">
-                <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="mdi mdi-close"></i></button>
-              </div>
-            </div>
+        <div class="columns is-centered">
+          <div class="column is-narrow">
+            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="mdi mdi-check"></i></button>
           </div>
-          <div class="column">
-            <div class="columns">
-              <div class="column" v-if="executeEnable">
-                <button v-bind:class="{'button is-medium is-info':true, 'is-loading':isExecute}" @click="executeProposal()"><i class="mdi mdi-console"></i></button>
-              </div>
-              <div class="column" v-if="contractOwner && $libre.proposals[proposalId] == $libre.proposalStatus.ACTIVE">
-                <button v-bind:class="{'button is-medium is-danger':true, 'is-loading':isBlock}" @click="blocking()"><i class="mdi mdi-block-helper"></i></button>
-              </div>
-            </div>
+          <div class="column is-narrow">
+            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="mdi mdi-close"></i></button>
+          </div>
+          <div class="column is-narrow">
+            <button v-bind:class="{'button is-medium is-info':true, 'is-loading': loadingExecute}"
+              @click="executeProposal()" :disabled="!enableExecute"><i class="mdi mdi-console"></i></button>
+          </div>
+          <div class="column is-narrow">
+            <button v-bind:class="{'button is-medium is-danger':true, 'is-loading': loadingBlock}"
+                @click="blocking()"
+                :disabled="!enableBlock">
+              <i class="mdi mdi-block-helper"></i>
+            </button>
           </div>
         </div>
 
@@ -78,44 +75,46 @@ export default {
       enableVote: false,
       contractOwner: false,
       deadline: '',
-      executeEnable: false,
-      isExecute: false,
-      isBlock: false,
+      enableExecute: false,
+      enableBlock: false,
+      loadingExecute: false,
+      loadingBlock: false,
       tokensCount: '',
       curBlockchainTime: 0
     }
   },
   methods: {
     async updateBlockTime() {
-       this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
+       this.proposalData.find(item => item.data === "now").rawValue += (+(await this.$eth.getLatestBlockTime()));
     },
 
     startUpdatingTime() {
-      this.curBlockchainTime = 0
       this.updatingTicker = setInterval(() => {
-        this.curBlockchainTime++
+       this.proposalData.find(item => item.data === "now").rawValue++;
+       this.proposalData.find(item => item.data === "now").value = new Date(this.getNow() * 1000).toLocaleString();
       }, 1000)
       this.updatingBlockData = setInterval(() => {
         this.updateBlockTime()
       }, 10 * 60 * 1000 /* 10 minutes */)
       this.updateBlockTime()
-      },
+    },
 
-     clearTimers() {
-      this.tableData.forEach(element => {
-        clearInterval(element.updateTimer)
-      })
+    getNow() {
+      return this.proposalData.find(item => item.data === "now").rawValue;
+    },
+
+    clearTimers() {
       let intervals = [
         this.updatingTicker,
-        this.updatingBlockData,
-      ]
+        this.updatingBlockData
+      ];
       intervals.forEach((interval) => clearInterval(interval))
-      },
+    },
 
-      async getTokensCount () {
-        await this.$libre.promiseLibre;
-        this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
-      },
+    async getTokensCount () {
+      await this.$libre.promiseLibre;
+      this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
+    },
 
     async loadProposal () {
       const 
@@ -174,22 +173,22 @@ export default {
           this.proposalData.push(
             {name: 'Voting:', value: `${vote.yea}/${vote.nay}`},
             {name: 'Deadline:', value: new Date(vote.deadline * 1000).toLocaleString()},
+            {name: 'Now:', data: 'now', rawValue: 0, value: 0},
             {name: 'Description:', value: proposal.description}
           )
+          this.updateBlockTime();
+          this.isActive = +proposal.status === this.$libre.proposalStatuses[0].number;
           this.enableVote = this.$eth.toTimestamp(vote.deadline) > this.getNow() &&
-                         !vote.voted ||
+                          !vote.voted &&
                           this.tokensCount >= this.$libre.proposalParams.minBalance &&
                           this.isActive;
 
           this.enableExecute = this.$eth.toTimestamp(vote.deadline) > this.getNow() && 
               this.isActive &&
               (vote.yea > vote.nay) &&
-              (vote.yea + vote.nay >= this.$libre.proposalParams.quorum / 10 ** 18)
-               this.enableBlock = this.isOwner && this.isActive;
+              (vote.yea + vote.nay >= this.$libre.proposalParams.quorum / 10 ** 18);
 
           this.enableBlock = this.isOwner && this.isActive;
-
-          this.startTimers();
       } catch (err) {
         console.log(err)
       }
@@ -218,32 +217,8 @@ export default {
       this.contractOwner = this.$eth.yourAccount === await this.$libre.dao.owner()
     },
 
-    async startTimers() {
-      if (this.$libre.proposals[this.proposalId].status != this.$libre.proposalStatus.ACTIVE)
-        return
-
-      this.executeEnable = (this.deadline <= +await this.$eth.getLatestBlockTime());
-
-      this.updatingTicker = setInterval(async () => {
-        this.executeEnable = (this.deadline <= +(await this.$eth.getLatestBlockTime()));
-        if (this.executeEnable || this.$libre.proposals[this.proposalId].status != this.$libre.proposalStatus.ACTIVE)
-          clearInterval(this.updatingTicker)
-      }, 1000)
-    },
-
-    startValidDataTimer () {
-      this.validDataTimer = setInterval(() => {
-        this.validPeriod = this.isDebatingPeriod();
-        this.validData();
-      }, 2000)
-    },
-
-    endValidDataTimer () {
-      clearInterval(this.validDataTimer);
-    },
-
     async executeProposal() {
-      this.isExecute = true;
+      this.loadingExecute = true;
 
       try {
         let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
@@ -259,11 +234,11 @@ export default {
         this.$snackbar.open(msg);
       }
       
-      this.isExecute = false
+      this.loadingExecute = false
     },
 
     async blocking() {
-      this.isBlock = true
+      this.loadingBlock = true
 
       try {
         let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
@@ -279,7 +254,7 @@ export default {
         this.$snackbar.open(msg);
       }
 
-      this.isBlock = false
+      this.loadingBlock = false
     }
   },
   async created () {
@@ -292,22 +267,13 @@ export default {
       await this.loadProposal();
       this.selectedType = this.typeProposals[0];
       this.getTokensCount();
-      this.startValidDataTimer();
       this.startUpdatingTime();
     } catch (err) {
       console.log(err)
     }
   },
-  clearTimers() {
-    let intervals = [
-    this.updatingTicker,
-    this.updatingBlockData]
-    
-    intervals.forEach((interval) => clearInterval(interval))
-  },
-
   destroyed () {
-    this.endValidDataTimer();
+    this.clearTimers();
   }
 }
 </script>
