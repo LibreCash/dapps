@@ -76,7 +76,7 @@ export default {
           type: "is-danger",
 
           text: isGet
-            ? "To this address, tokens were already sent"
+            ? "Tokens have already been sent to the address"
             : "Not enough tokens on faucet"
         };
       }
