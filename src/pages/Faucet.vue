@@ -1,0 +1,173 @@
+<template>
+	<section class="allMain">
+	
+		<div class="h2-contain">
+	
+			<h2 class="subtitle">Faucet</h2>
+	
+		</div>
+	
+		<br>
+	
+		<div class="table-padding">
+	
+			<address-block></address-block>
+	
+			<div>LBRS: {{ balanceLiberty }}</div>
+	
+			<br>
+	
+			<b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
+	
+			<button v-bind:class="{'button is-primary':true, 'is-loading':isLoading}" @click="getTokens()" :disabled="isDisabled">Get Tokens</button>
+	
+		</div>
+	
+	</section>
+</template>
+
+<script>
+	import AddressBlock from "@/components/AddressBlock";
+	
+	export default {
+	
+		data() {
+	
+			return {
+	
+				balanceLiberty: "loading...",
+	
+				isLoading: false,
+	
+				msg: {
+	
+					type: "is-info",
+	
+					text: "Please wait loading information..."
+	
+				},
+	
+				isDisabled: true
+	
+			};
+	
+		},
+	
+		methods: {
+	
+			async loadLiberty() {
+	
+				this.balanceLiberty = this.$libre
+	
+					.toToken(+await this.$libre.liberty.balanceOf(
+	
+						this.$eth._web3.eth.defaultAccount
+	
+					))
+	
+					.toLocaleString();
+	
+	
+	
+				let balance = this.$libre.toToken(+await this.$libre.faucet.tokenBalance()),
+	
+					isGet = await this.$libre.faucet.tokensSent(
+	
+						this.$eth._web3.eth.defaultAccount
+	
+					);
+	
+	
+	
+				if (!isGet && balance > 2000) {
+	
+					this.isDisabled = false;
+	
+					this.msg.text = "You can get Liberty tokens!";
+	
+				} else {
+	
+					this.msg = {
+	
+						type: "is-danger",
+	
+						text: isGet ?
+	
+							"To this address, tokens were already sent!" :
+	
+							"Not enough tokens on faucet!"
+	
+					};
+	
+				}
+	
+			},
+	
+	
+	
+			async getTokens() {
+	
+				this.isLoading = true;
+	
+				try {
+	
+					let txHash = await this.$libre.faucet.get();
+	
+	
+	
+					if (await this.$eth.isSuccess(txHash)) {
+	
+						this.$snackbar.open("You got Tokens!");
+	
+						this.loadLiberty();
+	
+					} else {
+	
+						this.$snackbar.open("Transaction error!");
+	
+					}
+	
+				} catch (err) {
+	
+					let msg = this.$eth.getErrorMsg(err);
+	
+					console.log(msg);
+	
+					this.$snackbar.open(msg);
+	
+				}
+	
+	
+	
+				this.isLoading = false;
+	
+			}
+	
+		},
+	
+		async created() {
+	
+			try {
+	
+				await this.$eth.accountPromise;
+	
+				await this.$libre.initPromise;
+	
+				this.loadLiberty();
+	
+			} catch (err) {
+	
+				console.log(err);
+	
+			}
+	
+		},
+	
+		components: {
+	
+			AddressBlock
+	
+		}
+	
+	};
+</script>

@@ -10,10 +10,10 @@
             <div class="card-content">
                 <address-block/>
                 <div>DAO Contract: 
-                    <a :href="`https://etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
+                    <a :href="`https://rinkeby.etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
                 </div>
                 <div>Liberty Token: 
-                    <a :href="`https://etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
+                    <a :href="`https://rinkeby.etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
                 </div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
                 <div>Token count: {{ tokensCount }} LBRS</div>

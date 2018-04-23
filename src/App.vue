@@ -7,9 +7,9 @@
                 <span></span>
             </div>
             <div class="LeftNav" id="navMenu">
-                <div href="#" class="logo">
+                <div class="logo">
                     <img src="/src/assets/img/logo.svg" width="200" height="180" />
-                    <h3 >Testing. Works on Rinkeby</h3>
+                    <h3>Testing. Works on Rinkeby</h3>
                 </div>
                 <ul class="MenuLeft">
                     <li>
@@ -141,6 +141,7 @@ export default {
 .logo {
   display: block;
   text-align: center;
+  color: white;
 }
 .MenuLeft {
   margin-top: 75px;
