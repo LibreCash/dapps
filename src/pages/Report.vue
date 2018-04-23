@@ -16,6 +16,7 @@
           <a class="button is-info" v-on:click="newReport">Submit</a>
         </section>
         <br>
+        <section v-if="searchData.length < 1" class="table-padding">No reports found</section>
         <search-results :tableData='searchData'></search-results>
         <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
       </section>
