@@ -217,12 +217,12 @@ class Libre {
     Config.token.address = address;
     this.token = this.getContract(Config.erc20.abi, Config.token.address)
 
-    this.dao = this.getContract(Config.dao.abi, Config.dao.address)
-    this.libertyAddress = address = await this.dao.sharesTokenAddress();
-    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
+    //this.dao = this.getContract(Config.dao.abi, Config.dao.address)
+    //this.libertyAddress = address = await this.dao.sharesTokenAddress();
+    //this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
 
-    this.loans = this.getContract(Config.loans.abi, Config.loans.address)
-    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address)
+    //this.loans = this.getContract(Config.loans.abi, Config.loans.address)
+    //this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address)
   }
 
   getContract(abi, address) {

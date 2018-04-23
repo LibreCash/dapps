@@ -55,9 +55,9 @@ export default {
       this.isLoading = true
       try {
         let j = await this.$libre.report.counter()
-        for (let i = j - 1; i > 0; --i) {
+        for (let i = j - 1; i >= 0; --i) {
           let report = await this.$libre.report.reports(i)
-          console.log(report)
+          //console.log(report)
           this.searchData.push({date: new Date(report[1] * 1000).toLocaleString(), report: report[0]})
         }
       } catch (err) {

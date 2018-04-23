@@ -30,7 +30,7 @@
                             <span>Contract Status</span>
                         </router-link>
                     </li>
-                    <li>
+                    <!--li>
                         <router-link to="/dao">
                             <div class="Rectangle"></div>
                             <span>DAO</span>
@@ -47,7 +47,7 @@
                             <div class="Rectangle"></div>
                             <span>Deposit</span>
                         </router-link>
-                    </li>
+                    </li-->
                 </ul>
                 <ul class="conditions">
                     <li>
