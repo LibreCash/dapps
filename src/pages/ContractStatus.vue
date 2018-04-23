@@ -6,7 +6,7 @@
       </div>
       <br>
       <div class="table-padding">
-        <h3 class="subtitle"><center>Emission contract status</center></h3>
+        <h3 class="subtitle"><center>Exchanger contract status</center></h3>
         <status-bank :tableData='emissionStatus'></status-bank>
       </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
