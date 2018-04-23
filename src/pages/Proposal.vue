@@ -90,24 +90,25 @@ export default {
       this.updatingTicker = setInterval(() => {
        this.proposalData.find(item => item.data === "now").rawValue++;
        this.proposalData.find(item => item.data === "now").value = new Date(this.getNow() * 1000).toLocaleString();
-      }, 1000)
+       this.updateEnabledButtons();
+      }, 1000);
       this.updatingBlockData = setInterval(() => {
         this.updateBlockTime()
       }, 10 * 60 * 1000 /* 10 minutes */);
     },
 
-    updateEnabledButtons (proposal, vote) {
-      this.isActive = +proposal.status === this.$libre.proposalStatuses[0].number;
-      this.enableVote = this.$eth.toTimestamp(vote.deadline) > this.getNow() * 1000 &&
-                      !vote.voted &&
+    updateEnabledButtons () {
+      this.isActive = +this.proposal.status === this.$libre.proposalStatuses[0].number;
+      this.enableVote = this.$eth.toTimestamp(this.vote.deadline) > this.getNow() * 1000 &&
+                      !this.vote.voted &&
                       this.tokensCount >= this.$libre.proposalParams.minBalance / Math.pow(10, 18) &&
                       this.isActive;
 
-      this.enableExecute = this.$eth.toTimestamp(vote.deadline) < this.getNow() * 1000 && 
+      this.enableExecute = this.$eth.toTimestamp(this.vote.deadline) < this.getNow() * 1000 && 
           this.isActive &&
-          (vote.yea > vote.nay) &&
-          (vote.yea + vote.nay >= this.$libre.proposalParams.quorum / 10 ** 18);
-      this.enableBlock = this.isOwner && this.isActive;
+          (this.vote.yea > this.vote.nay) &&
+          (this.vote.yea + this.vote.nay >= this.$libre.proposalParams.quorum / 10 ** 18);
+      this.enableBlock = this.contractOwner && this.isActive;
     },
 
     getNow() {
@@ -135,11 +136,10 @@ export default {
       this.isLoading = true
 
       try {
-          let 
-            proposal = await this.$libre.updateProposal(this.$route.params.id),
-            vote = proposal.vote;
+          this.proposal = await this.$libre.updateProposal(this.$route.params.id),
+          this.vote = this.proposal.vote;
 
-          this.currentProposal = this.typeProposals[proposal.type]
+          this.currentProposal = this.typeProposals[this.proposal.type]
           
           this.proposalData.push({
             name: 'Type:',
@@ -148,20 +148,20 @@ export default {
 
           this.proposalData.push({
             name: 'Status:',
-            value: this.$libre.proposalStatuses[+proposal.status].text
+            value: this.$libre.proposalStatuses[+this.proposal.status].text
           })
 
           // Refactor it 
           if (this.currentProposal["benef"])
             this.proposalData.push({
               name: this.currentProposal["benef"], 
-              value: this.$eth.isZeroAddress(proposal.recipient) ? '-' : proposal.recipient
+              value: this.$eth.isZeroAddress(this.proposal.recipient) ? '-' : this.proposal.recipient
             })
           
           if (this.currentProposal["amount"])
             this.proposalData.push({
               name: this.currentProposal["amount"], 
-              value: `${proposal.amount}`
+              value: `${this.proposal.amount}`
             })
           
           if (this.currentProposal["buf"])
@@ -171,24 +171,24 @@ export default {
             })
 
           if (this.currentProposal["code"]) {
-            let byteString = this.$libre.bytecodeToString(proposal.recipient, proposal.bytecode);
+            let byteString = this.$libre.bytecodeToString(this.proposal.recipient, this.proposal.bytecode);
             this.proposalData.push({
               name: this.currentProposal["code"], 
-              value: byteString.length == 0 ? proposal.bytecode : byteString
+              value: byteString.length == 0 ? this.proposal.bytecode : byteString
             })
           }
             
           
-          this.deadline = vote.deadline;
+          this.deadline = this.vote.deadline;
 
           this.proposalData.push(
-            {name: 'Voting:', value: `${vote.yea}/${vote.nay}`},
-            {name: 'Deadline:', value: new Date(vote.deadline * 1000).toLocaleString()},
+            {name: 'Voting:', value: `${this.vote.yea}/${this.vote.nay}`},
+            {name: 'Deadline:', value: new Date(this.vote.deadline * 1000).toLocaleString()},
             {name: 'Now:', data: 'now', rawValue: 0, value: 0},
-            {name: 'Description:', value: proposal.description}
+            {name: 'Description:', value: this.proposal.description}
           )
           await this.updateBlockTime();
-          this.updateEnabledButtons(proposal, vote);
+          this.updateEnabledButtons();
 
       } catch (err) {
         console.log(err)
@@ -235,7 +235,8 @@ export default {
         this.$snackbar.open(msg);
       }
       
-      this.loadingExecute = false
+      this.loadingExecute = false;
+      this.loadProposal();
     },
 
     async block() {
@@ -254,8 +255,8 @@ export default {
         console.log(msg)
         this.$snackbar.open(msg);
       }
-
-      this.loadingBlock = false
+      this.loadingBlock = false;
+      this.loadProposal();
     }
   },
   async created () {

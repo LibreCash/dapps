@@ -148,9 +148,8 @@ export default {
   },
   methods: {
     async addProposal (index) {
-      var 
-        proposal = this.$libre.proposals[index],
-        vote = proposal.vote;
+      var proposal = this.$libre.proposals[index];
+      var vote = proposal.vote;
 
       if (this[this.filter](proposal))
       {
