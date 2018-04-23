@@ -5,9 +5,12 @@
         <h2 class="subtitle">LibreBank Contract</h2>
       </div>
       <br>
-      <div class="table-padding">
-        <h3 class="subtitle"><center>Exchanger contract status</center></h3>
-        <status-bank :tableData='emissionStatus'></status-bank>
+      <div class="card">
+        <div class="card-content">
+            <h3 class="subtitle"><center>Exchanger contract status</center></h3>
+            <status-bank :tableData='emissionStatus'></status-bank>
+        </div>
+        
       </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
