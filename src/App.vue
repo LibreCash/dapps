@@ -52,6 +52,9 @@ export default {
 };
 </script>
 <style>
+.h2-contain >  .subtitle {
+  text-align: center;
+}
 .eth-address {
   font-size: 1em;
   color: #3498db;

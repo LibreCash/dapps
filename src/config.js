@@ -98,42 +98,42 @@ module.exports = {
     coins: [
       {
         name: 'BTC',
-        address: '3AaBwvJujM7DPVwBG7397Qe6rJigLhKH55',
+        address: '1H6ZZpRmMnrw8ytepV3BYwMjYYnEkWDqVP',
         request: address => `https://blockchain.info/ru/balance?active=${address}&cors=true`,
         process: data => data[Object.keys(data)[0]].final_balance / 10 ** 8,
         href: address => `https://blockchain.info/address/${address}`
       },
       {
         name: 'ETH',
-        address: '0xDeA2255D0a18707d7C95EE47Bb031A80AC612aAE',
+        address: '0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a',
         request: address => `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=NYWQ3JWMICSEVBIPHXWJNW6WQBNQEEZ94P`,
         process: data => data.result / 10 ** 18,
         href: address => `https://etherscan.io/address/${address}`
       },
       {
         name: 'BCH',
-        address: '1EeZBjAUJuAk54arR4tBug5mKJzbh2oqnN',
+        address: '19hZx234vNtLazfx5J2bxHsiWEmeYE8a7k',
         request: address => `https://blockdozer.com/insight-api/addr/${address}/balance`,
         process: data => data / 10 ** 8,
         href: address => `https://bitinfocharts.com/bitcoin%20cash/address/${address}`
       },
       {
         name: 'LTC',
-        address: 'MD3fb4MXTCDPxYPD5J1c3e5fCQJ3FVpfS6',
+        address: '3CDJNfdWX8m2NwuGUV3nhXHXEeLygMXoAj',
         request: address => `https://chain.so/api/v2/get_address_balance/ltc/${address}`,
         process: data => (data.data.confirmed_balance > 0) ? data.data.confirmed_balance : 0,
         href: address => `https://live.blockcypher.com/ltc/address/${address}`
       },
       {
         name: 'ZEC',
-        address: 't1N4dVsTich2VGMLK3GGp4SdCQqNHXU4iwP',
+        address: 't1hASvMj8e6TXWryuB3L5TKXJB7XfNioZP3',
         request: address => `https://zcash.blockexplorer.com/api/addr/${address}`,
         process: data => data.balance,
         href: address => `https://zcash.blockexplorer.com/address/${address}`
       },
       {
         name: 'ZEN',
-        address: 'zndZJGhzDxYcTs1FeSzfKuLtSmgyP7QpqCq',
+        address: 'znaULW3nSEiuiMVa2P9WKXH6mxp4GpVvmpS',
         request: address => `https://explorer.zensystem.io/insight-api-zen/addr/${address}/?noTxList=1`,
         process: data => data.balance,
         href: address => `http://explorer.zenmine.pro/insight/address/${address}`
