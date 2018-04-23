@@ -31,17 +31,6 @@
                         </router-link>
                     </li>
                 </ul>
-                <ul class="conditions">
-                    <li>
-                        <a href="https://librebank.com">LibreBank Site</a>
-                    </li>
-                    <li>
-                        <a href="https://librecash.com">LibreCash Site</a>
-                    </li>
-                    <li>
-                        <a href="https://blog.librebank.com">LibreBank Blog</a>
-                    </li>
-                </ul>
             </div>
         </div>
         <router-view/>
@@ -63,6 +52,9 @@ export default {
 };
 </script>
 <style>
+h2.subtitle {
+  text-align: center;
+}
 .eth-address {
   font-size: 1em;
   color: #3498db;
