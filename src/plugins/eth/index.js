@@ -35,7 +35,7 @@ class ETH {
               '42': 'Kovan'
             }[result]
             if (network !== 'Rinkeby') {
-              Vue.prototype.$snackbar.open('Please use Rinkeby network!!')
+              Vue.prototype.$snackbar.open('Please use Rinkeby network')
             }
           }
         })

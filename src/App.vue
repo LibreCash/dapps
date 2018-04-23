@@ -13,18 +13,6 @@
                 </div>
                 <ul class="MenuLeft">
                     <li>
-                        <router-link to="/">
-                            <div class="Rectangle"></div>
-                            <span>Reports</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/fund">
-                            <div class="Rectangle"></div>
-                            <span>Fund Status</span>
-                        </router-link>
-                    </li>
-                    <li>
                         <router-link to="/status">
                             <div class="Rectangle"></div>
                             <span>Contract Status</span>
@@ -37,15 +25,9 @@
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/loans">
+                        <router-link to="/faucet">
                             <div class="Rectangle"></div>
-                            <span>Loans</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/deposit">
-                            <div class="Rectangle"></div>
-                            <span>Deposit</span>
+                            <span>Faucet</span>
                         </router-link>
                     </li>
                 </ul>
