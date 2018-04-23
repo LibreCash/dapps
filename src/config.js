@@ -135,7 +135,7 @@ module.exports = {
         address: 'zndZJGhzDxYcTs1FeSzfKuLtSmgyP7QpqCq',
         request: address => `https://explorer.zensystem.io/insight-api-zen/addr/${address}/?noTxList=1`,
         process: data => data.balance,
-        href: address => `https://explorer.zenmine.pro/insight/address/${address}`
+        href: address => `http://explorer.zenmine.pro/insight/address/${address}`
       }
     ],
     coinmarketcap: {
