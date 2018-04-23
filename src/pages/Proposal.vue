@@ -92,9 +92,11 @@ export default {
 
     startUpdatingTime() {
       this.updatingTicker = setInterval(() => {
-       this.proposalData.find(item => item.data === "now").rawValue++;
-       this.proposalData.find(item => item.data === "now").value = new Date(this.getNow() * 1000).toLocaleString();
-       this.updateEnabledButtons();
+        if (this.proposalData.find(item => item.data === "now")) {
+          this.proposalData.find(item => item.data === "now").rawValue++;
+          this.proposalData.find(item => item.data === "now").value = new Date(this.getNow() * 1000).toLocaleString();
+          this.updateEnabledButtons();
+        }
       }, 1000);
       this.updatingBlockData = setInterval(() => {
         this.updateBlockTime()
