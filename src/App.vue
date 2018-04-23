@@ -7,9 +7,9 @@
                 <span></span>
             </div>
             <div class="LeftNav" id="navMenu">
-                <div href="#" class="logo">
+                <div class="logo">
                     <img src="/src/assets/img/logo.svg" width="200" height="180" />
-                    <h3 >Testing. Works on Rinkeby</h3>
+                    <h3>Mainnet version</h3>
                 </div>
                 <ul class="MenuLeft">
                     <li>
@@ -30,36 +30,7 @@
                             <span>Contract Status</span>
                         </router-link>
                     </li>
-                    <!--li>
-                        <router-link to="/dao">
-                            <div class="Rectangle"></div>
-                            <span>DAO</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/loans">
-                            <div class="Rectangle"></div>
-                            <span>Loans</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/deposit">
-                            <div class="Rectangle"></div>
-                            <span>Deposit</span>
-                        </router-link>
-                    </li-->
-                </ul>
-                <ul class="conditions">
-                    <li>
-                        <a href="https://librebank.com">LibreBank Site</a>
-                    </li>
-                    <li>
-                        <a href="https://librecash.com">LibreCash Site</a>
-                    </li>
-                    <li>
-                        <a href="https://blog.librebank.com">LibreBank Blog</a>
-                    </li>
-                </ul>
+                  </ul>
             </div>
         </div>
         <router-view/>
@@ -208,6 +179,9 @@ export default {
 .allMain .pagination-link.is-current {
   background-color: #fcc14a;
   border-color: #fcc14a;
+}
+.logo h3 {
+  color:white;
 }
 .allMain .pagination-link,
 .allMain .pagination-previous[disabled],
