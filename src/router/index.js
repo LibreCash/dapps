@@ -31,11 +31,6 @@ export default new Router({
       component: Faucet
     },
     {
-      path: '/dao/proposal/:id',
-      name: 'DAO Proposal Info',
-      component: Proposal
-    },
-    {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal

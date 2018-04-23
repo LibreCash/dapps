@@ -24,7 +24,7 @@
             
         </div>
         <br>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
+        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
         <br><br>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
