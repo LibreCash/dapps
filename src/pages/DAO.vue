@@ -30,9 +30,6 @@
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
           <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
         </b-field>
-        <b-message type="is-warning" v-if="needUpdate">
-          The table isn't actual. Please update the page
-        </b-message>
         <b-table
           :data="tableData"
           :bordered="false"
@@ -145,7 +142,6 @@ export default {
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
-      needUpdate: false,
       isOwner: false,
       contractOwner: null
     }
@@ -317,12 +313,7 @@ export default {
       this.updateBlockTime()
       this.numProposals = -1
       this.updateTableData = setInterval(async () => {
-        var numProposals = +(await this.$libre.dao.numProposals())
-        if (numProposals !== this.numProposals && this.numProposals !== -1) {
-          this.needUpdate = true
-          console.log('you need update')
-          clearInterval(this.updateTableData)
-        }
+        var numProposals = +(await this.$libre.dao.numProposals());
         if (this.numProposals === -1) {
           this.numProposals = numProposals
         }
