@@ -5,14 +5,19 @@
         <h2 class="subtitle">DAO New Proposal</h2>
       </div>
       <br>
-      <div class="table-padding" >
-        <div>Token count: {{ tokensCount }} LBRS</div>
-        <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
-        <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
-        <button @click="$router.go(-1)" :to="{ path: '/loans' }" class="button">
-          <b-icon icon="keyboard-return" size="is-small"></b-icon>
-          <span>Back</span>
-        </button><br><br>
+      <div class="table-padding">
+        <div class="card">
+          <div class="card-content">
+            <div>Token count: {{ tokensCount }} LBRS</div>
+            <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+            <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
+            <button @click="$router.go(-1)" :to="{ path: '/loans' }" class="button">
+              <b-icon icon="keyboard-return" size="is-small"></b-icon>
+              <span>Back</span>
+            </button>
+          </div>
+        </div>
+        <p>&nbsp;</p>
         <b-field horizontal label="Type" >
           <b-select placeholder="Select a type proposal" v-model="selectedType">
               <option v-for="type in typeProposals" v-bind:value="type">

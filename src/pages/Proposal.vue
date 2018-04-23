@@ -6,15 +6,19 @@
       </div>
       <br>
       <div class="table-padding">
-         <div>Token count: {{ tokensCount }} LBRS</div>
-         <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
-         <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
-         <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
+        <div class="card">
+          <div class="card-content">
+            <div>Token count: {{ tokensCount }} LBRS</div>
+            <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+            <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
+            <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
+            <router-link :to="{ path: '/dao' }" class="button">
+              <b-icon icon="keyboard-return" size="is-small"></b-icon>
+              <span>Back</span>
+            </router-link>
+          </div>
+        </div>
          
-        <router-link :to="{ path: '/dao' }" class="button">
-          <b-icon icon="keyboard-return" size="is-small"></b-icon>
-          <span>Back</span>
-        </router-link>
         <b-table :data="proposalData"
           :bordered="false"
           :striped="true"

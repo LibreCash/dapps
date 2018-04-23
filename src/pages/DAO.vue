@@ -21,7 +21,6 @@
                 <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
                 <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             </div>
-            
         </div>
         <br>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
