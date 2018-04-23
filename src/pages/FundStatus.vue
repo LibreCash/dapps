@@ -5,7 +5,7 @@
         <h2 class="subtitle">LibreBank Fund Status</h2>
     </div>
     <br>
-    <div class="table-padding">
+    <div>
 
             <div class="columns">
                 <div class="column is-6">
@@ -63,9 +63,9 @@
                 </div>
             </div>
         </div>
-      <div class="container m-t-sm">
+      <div>
       
-      <div class="table-padding">
+      <div>
 
       <div class="card">
           <header class="card-header">
@@ -82,6 +82,7 @@
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
 </template>
+
 
 <script>
 import StatusCoins from "@/components/StatusCoins";
