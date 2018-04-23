@@ -10,7 +10,6 @@
          <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
          <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
          <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
-         <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
          
         <router-link :to="{ path: '/dao' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
@@ -40,11 +39,11 @@
           </div>
           <div class="column is-narrow">
             <button v-bind:class="{'button is-medium is-info':true, 'is-loading': loadingExecute}"
-              @click="executeProposal()" :disabled="!enableExecute"><i class="mdi mdi-console"></i></button>
+              @click="execute()" :disabled="!enableExecute"><i class="mdi mdi-console"></i></button>
           </div>
           <div class="column is-narrow">
             <button v-bind:class="{'button is-medium is-danger':true, 'is-loading': loadingBlock}"
-                @click="blocking()"
+                @click="block()"
                 :disabled="!enableBlock">
               <i class="mdi mdi-block-helper"></i>
             </button>
@@ -79,13 +78,12 @@ export default {
       enableBlock: false,
       loadingExecute: false,
       loadingBlock: false,
-      tokensCount: '',
-      curBlockchainTime: 0
+      tokensCount: ''
     }
   },
   methods: {
     async updateBlockTime() {
-       this.proposalData.find(item => item.data === "now").rawValue += (+(await this.$eth.getLatestBlockTime()));
+       this.proposalData.find(item => item.data === "now").rawValue = (+(await this.$eth.getLatestBlockTime()));
     },
 
     startUpdatingTime() {
@@ -95,8 +93,21 @@ export default {
       }, 1000)
       this.updatingBlockData = setInterval(() => {
         this.updateBlockTime()
-      }, 10 * 60 * 1000 /* 10 minutes */)
-      this.updateBlockTime()
+      }, 10 * 60 * 1000 /* 10 minutes */);
+    },
+
+    updateEnabledButtons (proposal, vote) {
+      this.isActive = +proposal.status === this.$libre.proposalStatuses[0].number;
+      this.enableVote = this.$eth.toTimestamp(vote.deadline) > this.getNow() * 1000 &&
+                      !vote.voted &&
+                      this.tokensCount >= this.$libre.proposalParams.minBalance / Math.pow(10, 18) &&
+                      this.isActive;
+
+      this.enableExecute = this.$eth.toTimestamp(vote.deadline) < this.getNow() * 1000 && 
+          this.isActive &&
+          (vote.yea > vote.nay) &&
+          (vote.yea + vote.nay >= this.$libre.proposalParams.quorum / 10 ** 18);
+      this.enableBlock = this.isOwner && this.isActive;
     },
 
     getNow() {
@@ -176,19 +187,9 @@ export default {
             {name: 'Now:', data: 'now', rawValue: 0, value: 0},
             {name: 'Description:', value: proposal.description}
           )
-          this.updateBlockTime();
-          this.isActive = +proposal.status === this.$libre.proposalStatuses[0].number;
-          this.enableVote = this.$eth.toTimestamp(vote.deadline) > this.getNow() &&
-                          !vote.voted &&
-                          this.tokensCount >= this.$libre.proposalParams.minBalance &&
-                          this.isActive;
+          await this.updateBlockTime();
+          this.updateEnabledButtons(proposal, vote);
 
-          this.enableExecute = this.$eth.toTimestamp(vote.deadline) > this.getNow() && 
-              this.isActive &&
-              (vote.yea > vote.nay) &&
-              (vote.yea + vote.nay >= this.$libre.proposalParams.quorum / 10 ** 18);
-
-          this.enableBlock = this.isOwner && this.isActive;
       } catch (err) {
         console.log(err)
       }
@@ -217,7 +218,7 @@ export default {
       this.contractOwner = this.$eth.yourAccount === await this.$libre.dao.owner()
     },
 
-    async executeProposal() {
+    async execute() {
       this.loadingExecute = true;
 
       try {
@@ -237,7 +238,7 @@ export default {
       this.loadingExecute = false
     },
 
-    async blocking() {
+    async block() {
       this.loadingBlock = true
 
       try {
@@ -264,9 +265,9 @@ export default {
       this.daoAddress = Config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       await this.checkOwner();
+      await this.getTokensCount();
       await this.loadProposal();
       this.selectedType = this.typeProposals[0];
-      this.getTokensCount();
       this.startUpdatingTime();
     } catch (err) {
       console.log(err)
