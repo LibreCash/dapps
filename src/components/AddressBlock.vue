@@ -5,7 +5,7 @@
             <span v-else>{{ defaultAddress }}</span>
         </div>
         <div v-if="balance > 0 || libertyBalance > 0">
-            Balances: <span v-if="balance > 0">{{ balance }} Libre,</span>
+            Balances: <span v-if="balance > 0">{{ balance }} Libre</span><span v-if="balance > 0 && libertyBalance > 0">,</span>
             <span v-if="libertyBalance > 0">{{ libertyBalance }} LBRS</span>
         </div>
     </div>
