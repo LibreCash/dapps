@@ -162,17 +162,27 @@ export default {
               value: this.$eth.isZeroAddress(this.proposal.recipient) ? '-' : this.proposal.recipient
             })
           
-          if (this.currentProposal["amount"] || this.currentProposal["_amount"])
+          if (this.currentProposal["amount"] || this.currentProposal["_amount"]) {
+            let amount = this.proposal.amount;
+            if (this.currentProposal["type"]) {
+              if ((this.currentProposal["type"] == '%')) amount = `${this.proposal.amount / 100} %`;
+              if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ? 'YES' : 'NO');
+            }
+                          
             this.proposalData.push({
               name: this.currentProposal["amount"] || this.currentProposal["_amount"], 
-              value: this.proposal.amount === 1 ? 'YES' : 'NO'
-            })
+              value: amount
+            });
+          }
           
-          if (this.currentProposal["buf"])
+          if (this.currentProposal["buf"]) {
+            let buffer = (this.currentProposal["type"] && this.currentProposal["type"] == '%') ?
+                          `${this.proposal.buffer / 100} %` : this.proposal.buffer;
             this.proposalData.push({
               name: this.currentProposal["buf"], 
-              value: `${proposal.buffer}`
-            })
+              value: buffer
+            });
+          }
 
           if (this.currentProposal["code"]) {
             let byteString = this.$libre.bytecodeToString(this.proposal.recipient, this.proposal.bytecode);

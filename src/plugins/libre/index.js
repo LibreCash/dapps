@@ -104,7 +104,8 @@ class Libre {
         text: 'Change Fees',
         key: 'SET_FEES',
         amount: 'Buy fee, %:',
-        buf: 'Sell fee, %:'
+        buf: 'Sell fee, %:',
+        type: '%'
       },
       {
         text: 'Add Oracle',
@@ -154,7 +155,8 @@ class Libre {
         text: 'Set Lock',
         key: 'SET_LOCK',
         lock: 'Lock:',
-        _amount: 'Pause' // _ means we show amount line only in prop details
+        _amount: 'Pause',
+        type: 'bool'
       },
       {
         text: 'Claim Ownership',
