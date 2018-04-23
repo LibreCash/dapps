@@ -10,20 +10,19 @@
   
     <br>
   
-    <div class="table-padding">
+    <div class="table-padding level">
   
   
   
       <div class="columns">
   
-        <div class="column is-6">
+        <div class="column">
   
           <div class="card">
   
             <header class="card-header">
   
               <p class="card-header-title">Overall stats</p>
-  
             </header>
   
             <div class="card-content">
@@ -36,31 +35,11 @@
   
                     <div class="tags has-addons is-large">
   
-                      <span class="tag is-large">Minimum change:</span>
+                      <span class="tag is-md">Minimum change:</span>
   
-                      <span class="tag is-success is-large">{{ minCoin.name }}</span>
+                      <span class="tag is-success is-md">{{ minCoin.name }}</span>
   
-                      <span class="tag is-info is-large">{{ minCoin.change24h.toLocaleString()}} USD</span>
-  
-                    </div>
-  
-                  </div>
-  
-                </div>
-  
-  
-  
-                <div class="level">
-  
-                  <div class="level-item level-left">
-  
-                    <div class="tags has-addons is-large">
-  
-                      <span class="tag is-large">Maximum change:</span>
-  
-                      <span class="tag is-success is-large">{{ maxCoin.name }}</span>
-  
-                      <span class="tag is-info is-large">{{ maxCoin.change24h.toLocaleString()}} USD</span>
+                      <span class="tag is-info is-md">{{ minCoin.change24h.toLocaleString()}} USD</span>
   
                     </div>
   
@@ -74,11 +53,31 @@
   
                   <div class="level-item level-left">
   
-                    <div class="tags has-addons is-large">
+                    <div class="tags has-addons is-md">
   
-                      <span class="tag is-large">Total change (24h):</span>
+                      <span class="tag is-md">Maximum change:</span>
   
-                      <span class="tag is-info is-large">{{ allChange24h.toLocaleString()}} USD</span>
+                      <span class="tag is-success is-md">{{ maxCoin.name }}</span>
+  
+                      <span class="tag is-info is-md">{{ maxCoin.change24h.toLocaleString()}} USD</span>
+  
+                    </div>
+  
+                  </div>
+  
+                </div>
+  
+  
+  
+                <div class="level">
+  
+                  <div class="level-item level-left">
+  
+                    <div class="tags has-addons is-md">
+  
+                      <span class="tag is-md">Total change (24h):</span>
+  
+                      <span class="tag is-info is-md">{{ allChange24h.toLocaleString()}} USD</span>
   
                     </div>
   
@@ -95,55 +94,20 @@
           </div>
   
         </div>
-  
-  
-  
-        <div class="column is-6">
-  
-          <div class="card">
-  
-            <header class="card-header">
-  
-              <p class="card-header-title">Assets structure</p>
-  
-            </header>
-  
-            <div class="card-content">
-  
-              <div class="content">
-  
-                <div id="piechart" class="column is-gapless"></div>
-  
-              </div>
-  
-            </div>
-  
-          </div>
-  
-        </div>
-  
       </div>
-  
-    </div>
-  
-    <div>
-  
-  
-  
-      <div class="table-padding">
-  
-  
-  
+      </div>
+      <div class="table-padding level">
+
         <div class="card">
   
           <header class="card-header">
   
             <p class="card-header-title">LibreBank Fund Assests</p>
-  
+            
           </header>
   
           <div class="card-content">
-  
+            <h2 class="has-text-centered">THIS IS A SAMPLE DATA</h2>
             <status-coins :tableData='coinsData'></status-coins>
   
           </div>
@@ -154,6 +118,7 @@
   
       </div>
   
+    </div>
     </div>
   
   
@@ -358,14 +323,7 @@
         }
   
   
-  
-        google.charts.load("current", {
-  
-          packages: ["corechart"]
-  
-        });
-  
-        google.charts.setOnLoadCallback(this.drawChart);
+
   
   
   
@@ -405,9 +363,9 @@
   
           chartArea: {
   
-            width: "80%",
+            width: "280px",
   
-            height: "100%"
+            height: "50px"
   
           }
   
