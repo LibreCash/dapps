@@ -10,7 +10,7 @@
   
     <br>
   
-    <div class="table-padding level">
+    <div class="container">
   
   
   
@@ -96,7 +96,7 @@
         </div>
       </div>
       </div>
-      <div class="table-padding level">
+      <div class="container">
 
         <div class="card">
   

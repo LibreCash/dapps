@@ -35,7 +35,7 @@ class ETH {
               '42': 'Kovan'
             }[result]
             if (network !== 'Main') {
-              Vue.prototype.$snackbar.open('Please use Main network!!')
+              Vue.prototype.$snackbar.open('Please use Mainnet network.')
             }
           }
         })
@@ -110,11 +110,11 @@ class ETH {
   }
 
   getErrorMsg (error) {
-    const LOCK_WALLET = 'Please, unlock you wallet!',
-          METAMASK_REJECT_MESSAGE = 'User denied transaction signature';
+    const LOCK_WALLET = 'Please, unlock you wallet.',
+          METAMASK_REJECT_MESSAGE = 'User denied transaction signature.';
 
     if (!this.metamask)
-      return 'Please, install MetaMask for use it!'
+      return 'Please, install MetaMask for use it.'
 
     if (error.message) {
       if (error.message.includes(METAMASK_REJECT_MESSAGE))
