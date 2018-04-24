@@ -17,7 +17,7 @@
         </section>
         <div class="level">
           <section v-if="searchData.length < 1" class="table-padding">No reports found</section>
-          <search-results :tableData='searchData'></search-results>
+          <search-results :tableData='searchData' v-if="searchData.length > 0"></search-results>
         </div>
       </section>
     </div>
