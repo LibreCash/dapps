@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="address-block">
-            Address: <a v-if="defaultAddress != 'Unknown'" :href="`https://etherscan.io/address/${defaultAddress}`">{{ defaultAddress }}</a>
+            Your address: <a v-if="defaultAddress != 'Unknown'" :href="`https://rinkeby.etherscan.io/address/${defaultAddress}`">{{ defaultAddress }}</a>
             <span v-else>{{ defaultAddress }}</span>
         </div>
         <div v-if="balance > 0 || libertyBalance > 0">
-            Balances: <span v-if="balance > 0">{{ balance }} Libre</span>,
+            Balances: <span v-if="balance > 0">{{ balance }} Libre</span><span v-if="balance > 0 && libertyBalance > 0">,</span>
             <span v-if="libertyBalance > 0">{{ libertyBalance }} LBRS</span>
         </div>
     </div>

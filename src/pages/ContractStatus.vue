@@ -5,19 +5,35 @@
         <h2 class="subtitle">LibreBank Contract</h2>
       </div>
       <br>
-      <div class="card">
-        <div class="card-content">
-            <h3 class="subtitle"><center>Exchanger contract status</center></h3>
-            <status-bank :tableData='emissionStatus'></status-bank>
+      <div class="table-padding">
+        <h3 class="subtitle"><center>Emission contract status</center></h3>
+          <div id="status-bank">
+            <b-table
+              :data="emissionStatus"
+              :bordered="false"
+              :striped="true"
+              :narrowed="false"
+              :loading="false"
+              :paginated="false"
+              :pagination-simple="false"
+              :mobile-cards="true">
+              <template slot-scope="props">
+                <b-table-column field="name" label='Name'>
+                  {{ props.row.name }}
+                </b-table-column>
+                <b-table-column label='Status' centered>
+                  <input class="address" v-if="props.row.type == 'input'" type="text" :value="props.row.data" disabled="disabled" size="25">
+                  <span v-else>{{ props.row.data }}</span>
+                </b-table-column>
+              </template>
+              </b-table>
+          </div>
         </div>
-        
-      </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
 </template>
 
 <script>
-import StatusBank from '@/components/StatusBank'
 import Config from '@/config'
 export default {
   data () {
@@ -28,7 +44,7 @@ export default {
   },
   methods: {
     async getStatusBank () {
-      this.isLoadingBank = true
+      this.isLoading = true
 
       var
         exchanger = this.$libre.bank,
@@ -58,7 +74,7 @@ export default {
         data: totalSupply !== 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'
       })
 
-      this.isLoadind = false
+      this.isLoading = false
     },
 
     
@@ -71,9 +87,6 @@ export default {
     } catch (err) {
       console.log(err)
     }
-  },
-  components: {
-    StatusBank
   }
 }
 </script>

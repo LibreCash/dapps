@@ -34,8 +34,10 @@ class ETH {
               '4': 'Rinkeby',
               '42': 'Kovan'
             }[result]
-            if (network !== 'Main') {
-              Vue.prototype.$snackbar.open('Please use Mainnet network.')
+          
+            if (network !== 'Rinkeby') {
+              Vue.prototype.$snackbar.open('Please use Rinkeby network')
+
             }
           }
         })

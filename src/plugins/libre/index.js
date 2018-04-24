@@ -32,7 +32,7 @@ class Libre {
       'Libre': 0,
       'ETH': 1
     }
-
+    
     this.loansStatus = [
       'active',
       'used',
@@ -42,7 +42,7 @@ class Libre {
     this.proposalParams = {
       minBalance: 2000 * 10 ** 18,
       quorum: 10000 * 10 ** 18,
-      minTime: 6 * 60 * 60
+      minTime: 0//6 * 60 * 60
     }
 
     this.consts = {
@@ -97,13 +97,15 @@ class Libre {
       {
         text: 'New Bank',
         key: 'SET_BANK_ADDRESS',
-        benef: 'Bank Address:'
+        benef: 'Bank Address:',
+        info: `Before offering to change bank address please make sure to attach the current token to the new bank`
       },
       {
         text: 'Change Fees',
         key: 'SET_FEES',
         amount: 'Buy fee, %:',
-        buf: 'Sell fee, %:'
+        buf: 'Sell fee, %:',
+        type: '%'
       },
       {
         text: 'Add Oracle',
@@ -152,7 +154,9 @@ class Libre {
       {
         text: 'Set Lock',
         key: 'SET_LOCK',
-        lock: 'Lock:'
+        lock: 'Lock:',
+        _amount: 'Pause',
+        type: 'bool'
       },
       {
         text: 'Claim Ownership',
@@ -211,11 +215,15 @@ class Libre {
   async init() {
     this.web3 = window.web3;
 
-    this.report = this.getContract(Config.report.abi, Config.report.address)
     this.bank = this.getContract(Config.bank.abi, Config.bank.address)
-    var address = await this.bank.tokenAddress();
-    Config.token.address = address;
-    this.token = this.getContract(Config.token.abi, Config.token.address)
+    var address = await this.bank.tokenAddress()
+    Config.token.address = address
+    this.token = this.getContract(Config.erc20.abi, Config.token.address)
+
+    this.dao = this.getContract(Config.dao.abi, Config.dao.address)
+    this.libertyAddress = address = await this.dao.sharesTokenAddress()
+    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
+    this.faucet = this.getContract(Config.faucet.abi, Config.faucet.address)
   }
 
   getContract(abi, address) {

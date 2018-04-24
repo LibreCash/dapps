@@ -10,10 +10,10 @@
             <div class="card-content">
                 <address-block/>
                 <div>DAO Contract: 
-                    <a :href="`https://etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
+                    <a :href="`https://rinkeby.etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
                 </div>
                 <div>Liberty Token: 
-                    <a :href="`https://etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
+                    <a :href="`https://rinkeby.etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
                 </div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
                 <div>Token count: {{ tokensCount }} LBRS</div>
@@ -21,10 +21,9 @@
                 <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
                 <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             </div>
-            
         </div>
         <br>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
+        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
         <br><br>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
@@ -148,9 +147,8 @@ export default {
   },
   methods: {
     async addProposal (index) {
-      var 
-        proposal = this.$libre.proposals[index],
-        vote = proposal.vote;
+      var proposal = this.$libre.proposals[index];
+      var vote = proposal.vote;
 
       if (this[this.filter](proposal))
       {
@@ -211,15 +209,9 @@ export default {
       this.isLoading = false
 
       this.startUpdatingTime()
-      this.contractOwner = await this.$libre.dao.owner()
       var loginChecker = setInterval(() => {
         if (this.$eth.yourAccount != null) {
           clearInterval(loginChecker)
-          if (this.contractOwner === this.$eth.yourAccount) {
-            this.isOwner = true
-          } else {
-            this.isOwner = false
-          }
         }
       }, 1000)
     },
@@ -341,6 +333,9 @@ export default {
       this.daoAddress = Config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.libertyAddress = this.$libre.libertyAddress;
+      this.contractOwner = await this.$libre.dao.owner()
+      this.isOwner = (this.contractOwner === this.$eth.yourAccount);
+
       this.loadProposals()
       this.getTokensCount()
     } catch (err) {
