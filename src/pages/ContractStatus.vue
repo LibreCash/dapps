@@ -53,7 +53,7 @@ export default {
       this.emissionStatus.push({
         type: 'input',
         name: 'Contract address',
-        data: Config.bank.address
+        data: Config.bank.address[this.$eth.network]
       })
 
       let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]()

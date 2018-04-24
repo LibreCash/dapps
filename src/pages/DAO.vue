@@ -330,7 +330,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Config.dao.address;
+      this.daoAddress = Config.dao.address[this.$eth.network];
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.libertyAddress = this.$libre.libertyAddress;
       this.contractOwner = await this.$libre.dao.owner();

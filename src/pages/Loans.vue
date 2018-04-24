@@ -169,7 +169,7 @@ export default {
   methods: {
     async loadLoans (e) {
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.loansAddress = Config.loans.address;
+      this.loansAddress = Config.loans.address[this.$eth.network];
       this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         return;

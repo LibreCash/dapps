@@ -158,7 +158,7 @@ export default {
 
     async updateData() {
       this.myAddress = window.web3.eth.defaultAccount;
-      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, Config.loans.address));
+      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, Config.loans.address[this.$eth.network]));
       try {
         this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.myAddress));
       } catch (err) {
@@ -170,7 +170,7 @@ export default {
     async approveToken() {
       try {
         this.setMessage('info',`Please confirm the sending of the transaction:\n1. Authorize the transfer of ${this.amount} tokens - wait confirm...\n2. Create Offer Transaction`)
-        let txHash = await this.$libre.token.approve(Config.loans.address, this.$libre.fromToken(this.amount));
+        let txHash = await this.$libre.token.approve(Config.loans.address[this.$eth.network], this.$libre.fromToken(this.amount));
         this.setMessage('info',`Please wait, there is a sending to the network:\n1. Authorize the transfer of ${this.amount} tokens - send to the network...\n2. Create Offer Transaction`)
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success',`The transaction was sent successfully:\n1. Authorize the transfer of ${this.amount} tokens - successfully...\n2. Create Offer Transaction`)

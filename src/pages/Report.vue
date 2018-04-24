@@ -126,7 +126,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.reportAddress = Config.report.address;
+      this.reportAddress = Config.report.address[this.$eth.network];
       this.loadETH();
       this.loadReport();
       this.search();

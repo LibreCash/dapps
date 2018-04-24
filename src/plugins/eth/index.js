@@ -4,7 +4,7 @@ import Web3 from 'web3'
 import SolidityCoder from 'web3/lib/solidity/coder'
 import Config from '@/config'
 
-class ETH {
+export default class ETH {
   static async install (vue, options) {
     const eth = new ETH();
     Object.defineProperty(Vue.prototype, '$eth', {
@@ -16,6 +16,7 @@ class ETH {
     this._web3 = null
     this.yourAccount = null
     this.metamask = false
+    this.network = Vue.config.productionTip ? 'main' : 'rinkeby'
     this.loadWeb3()
   }
 
@@ -33,16 +34,16 @@ class ETH {
               '3': 'Ropsten',
               '4': 'Rinkeby',
               '42': 'Kovan'
-            }[result]
+            }[result],
+              networkUse = this.network[0].toUpperCase() + this.network.substring(1)
           
-            if (network !== 'Rinkeby') {
-              Vue.prototype.$snackbar.open('Please use Rinkeby network')
-
+            if (network !== networkUse) {
+              Vue.prototype.$snackbar.open(`Please use ${networkUse} network`)
             }
           }
         })
       } else {
-        window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider))
+        window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider[this.network]))
         console.log('No web3? You should consider trying MetaMask!')
       }
       web3.SolidityCoder = SolidityCoder;
@@ -190,5 +191,3 @@ class ETH {
     return address === '0x0000000000000000000000000000000000000000'
   }
 }
-
-Vue.use(ETH, {})

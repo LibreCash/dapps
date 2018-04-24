@@ -74,7 +74,7 @@ export default {
         cancel: false
       },
       approve: {
-        address: Config.loans.address,
+        address: Config.loans.address[this.$eth.network],
         amount: ''
       },
       isUpdateRatesActive: false,
@@ -209,10 +209,10 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.myAddress, Config.loans.address)
+      let allowance = +await this.$libre.token.allowance(this.myAddress, Config.loans.address[this.$eth.network])
       if (allowance < amount) {
         this.setMessage('warning',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - wait confirm...`)
-        let txHash = await this.$libre.token.approve(Config.loans.address, amount);
+        let txHash = await this.$libre.token.approve(Config.loans.address[this.$eth.network], amount);
         this.setMessage('warning',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - send to the network...`)
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - successfully...`)
