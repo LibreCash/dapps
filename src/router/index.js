@@ -26,31 +26,31 @@ export default new Router({
       path: '/',
       name: 'DAO',
       component: DAO,
-      menu: false
+      enabled: false
     },
     {
       path: '/status',
       name: 'Contract Status',
       component: ContractStatus,
-      menu: true
+      enabled: true
     },
     {
       path: '/dao',
       name: 'DAO',
       component: DAO,
-      menu: true
+      enabled: true
     },
     {
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
       component: Proposal,
-      menu: false
+      enabled: false
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal,
-      menu: false
+      enabled: false
     },
     {
       path: '/faucet',
@@ -62,13 +62,13 @@ export default new Router({
       path: '/deposit',
       name: 'Deposit',
       component: Deposit,
-      menu: true
+      enabled: true
     },
     {
       path: '/loans',
       name: 'Loans',
       component: Loans,
-      menu: true
+      enabled: true
     },
     {
       path: '/loan/:type/:id',
@@ -80,13 +80,13 @@ export default new Router({
       path: '/loans/new',
       name: 'New Loan Offer',
       component: NewOffer,
-      menu: false
+      enabled: false
     },
     {
       path: '/fund',
       name: 'Fund Status',
       component: FundStatus,
-      menu: true
+      enabled: true
     }
   ],
   mode: 'hash'

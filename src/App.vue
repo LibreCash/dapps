@@ -12,7 +12,7 @@
                 </div>
                 <ul class="MenuLeft">
                   <li v-for="route in $router.options.routes">
-                    <router-link :to="route.path" v-if="route.menu">
+                    <router-link :to="route.path" v-if="route.enabled">
                         <div class="Rectangle"></div>
                         <span>{{ route.name }}</span>
                     </router-link>
