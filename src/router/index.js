@@ -11,6 +11,11 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
+      path: '/',
+      name: 'DAO',
+      component: DAO
+    },
+    {
       path: '/status',
       name: 'Emission Contract Status',
       component: ContractStatus
