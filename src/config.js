@@ -79,12 +79,12 @@ module.exports = {
         getter: 'ratePeriod',
         process: data => `${+data} sec`
       },
-      {
+      /*{
         type: 'input',
         name: 'Owner',
         getter: 'owner',
         process: data => data
-      }
+      }*/
     ]
   },
   token: {
