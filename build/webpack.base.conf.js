@@ -49,6 +49,22 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
+        options: {
+          presets: [
+            ['env', {
+              targets: {
+                browsers: ['last 2 versions', 'safari >= 7', 'IOS >= 6']
+              }
+            }]
+          ],
+          plugins: [
+            ["babel-plugin-transform-runtime", {
+              helpers: true,
+              polyfill: true,
+              regenerator: true
+            }]
+          ]
+        },
         include: [resolve('src'), resolve('test')]
       },
       {
