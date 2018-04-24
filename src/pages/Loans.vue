@@ -16,7 +16,7 @@
         
         <div class="columns" style="padding-top: 2rem">
           <div class="column is-narrow">
-            <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
+            <router-link :to="{ path: '/loans/new' }" class="button is-primary">New Offer</router-link>
           </div>
           <div class="column is-narrow">
             <div class="card">

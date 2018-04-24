@@ -11,24 +11,12 @@
                     <img src="/src/assets/img/logo.svg" width="200" height="180" />
                 </div>
                 <ul class="MenuLeft">
-                    <li>
-                        <router-link to="/status">
-                            <div class="Rectangle"></div>
-                            <span>Contract Status</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/dao">
-                            <div class="Rectangle"></div>
-                            <span>DAO</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/faucet">
-                            <div class="Rectangle"></div>
-                            <span>Faucet</span>
-                        </router-link>
-                    </li>
+                  <li v-for="route in $router.options.routes">
+                    <router-link :to="route.path" v-if="route.menu">
+                        <div class="Rectangle"></div>
+                        <span>{{ route.name }}</span>
+                    </router-link>
+                  </li>
                 </ul>
             </div>
         </div>

@@ -215,6 +215,7 @@ class Libre {
   async init() {
     this.web3 = window.web3;
 
+    this.report = this.getContract(Config.report.abi, Config.report.address)
     this.bank = this.getContract(Config.bank.abi, Config.bank.address)
     var address = await this.bank.tokenAddress()
     Config.token.address = address
@@ -223,7 +224,9 @@ class Libre {
     this.dao = this.getContract(Config.dao.abi, Config.dao.address)
     this.libertyAddress = address = await this.dao.sharesTokenAddress()
     this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
-    this.faucet = this.getContract(Config.faucet.abi, Config.faucet.address)
+    this.loans = this.getContract(Config.loans.abi, Config.loans.address);
+    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address);
+    this.faucet = this.getContract(Config.faucet.abi, Config.faucet.address);
   }
 
   getContract(abi, address) {

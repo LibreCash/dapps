@@ -333,11 +333,11 @@ export default {
       this.daoAddress = Config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.libertyAddress = this.$libre.libertyAddress;
-      this.contractOwner = await this.$libre.dao.owner()
+      this.contractOwner = await this.$libre.dao.owner();
       this.isOwner = (this.contractOwner === this.$eth.yourAccount);
 
-      this.loadProposals()
-      this.getTokensCount()
+      this.loadProposals();
+      this.getTokensCount();
     } catch (err) {
       console.log(err)
     }
