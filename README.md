@@ -1,7 +1,5 @@
 <h1 align="center">
-	<img width="300" src="http://librebank.com/img/logo-black.svg" alt="Awesome">
-	<br>
-	<br>
+	<img width="200px" src="https://librebank.com/img/logo-libre.png" alt="LibreBank logo"></img>
 </h1>
 
 ## LibreBank dApps
@@ -10,7 +8,8 @@ LibreBank dApps (decentalized apps) repository.
 
 ### dApps List:
 1. ETH Blockchain reports DAPP.
-2. LibreBank Fund statuspage. 
+2. LibreBank Fund status page.
+3. LireBank contract status page.
 
 ## Getting Started
 ```sh
