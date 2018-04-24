@@ -108,28 +108,7 @@ export default {
   padding: 30px 60px;
   justify-content: flex-start;
 }
-#search-results {
-  margin-top: 20px;
-  padding: 0 60px;
-}
-#search-results .table thead {
-  display: none;
-}
-#search-results .table tr {
-  display: block;
-  padding: 20px 0;
-}
-#search-results .table tr td {
-  display: block;
-  border: 0;
-  padding-left: 0px;
-}
-#search-results .table tr td:first-child {
-  font-size: 14px;
-}
-#search-results .table tr td.has-text-centered {
-  text-align: left !important;
-}
+
 .logo {
   display: block;
   text-align: center;
@@ -236,16 +215,6 @@ export default {
   .allMain h2 {
     font-size: 22px;
   }
-  #search-results {
-    padding: 0 15px;
-  }
-  #search-results .table tr td {
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-  #search-results .table tr {
-    padding: 7px 0;
-  }
   #Mainblock.is-active .LeftNav {
     height: auto;
     overflow: visible;
@@ -254,9 +223,6 @@ export default {
   }
   .main .navbar-burger {
     margin: 5px 0 10px 15px;
-  }
-  #search-results .table tr td:first-child {
-    font-size: 14px;
   }
   .conditions li a {
     display: block;
