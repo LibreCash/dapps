@@ -9,26 +9,27 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div>DAO Contract Address: 
+                <div>DAO Contract: 
                     <a :href="`https://etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
                 </div>
-                <div>Liberty Token Address: 
+                <div>Liberty Token: 
                     <a :href="`https://etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
                 </div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+                <div>Token count: {{ tokensCount }} LBRS</div>
+                <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+                <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
+                <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             </div>
             
         </div>
         <br>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > 0">New Proposal</router-link>
+        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
         <br><br>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
           <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
         </b-field>
-        <b-message type="is-warning" v-if="needUpdate">
-          The table isn't actual. Please update the page
-        </b-message>
         <b-table
           :data="tableData"
           :bordered="false"
@@ -78,27 +79,29 @@
             <b-table-column label='Actions' centered>
               <!-- details button -->
               <b-tooltip label="Details" type="is-dark" position="is-bottom">
-                <router-link :to="{name: 'DAO Proposal', params: { id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+                <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button" class="button"><i class="mdi mdi-account-card-details"></i></router-link>
               </b-tooltip>
               <!-- vote buttons -->
               <span v-if="!props.row.votingData.voted &&
                           (props.row.deadlineUnix > curBlockchainTime) &&
                           !props.row.loading &&
-                          (tokensCount > 0) &&
+                          (tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip label="Yea" type="is-dark" position="is-bottom">
-                  <button v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
+                  <button class="button" v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Nay" type="is-dark" position="is-bottom">
-                  <button v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+                  <button class="button" v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
                 </b-tooltip>
               </span>
               <!-- execute button -->
               <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
                               (props.row.status === $libre.proposalStatuses[0].text) &&
-                              !props.row.loading">
+                              !props.row.loading &&
+                              (props.row.yea > props.row.nay) &&
+                              (props.row.yea + props.row.nay >= $libre.proposalParams.quorum / Math.pow(10, 18))">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
-                  <button v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+                  <button class="button" v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
                 </b-tooltip>
               </span>
               <span v-else-if="props.row.loading">
@@ -109,7 +112,7 @@
                           (props.row.status === $libre.proposalStatuses[0].text) &&
                           !props.row.loading">
                 <b-tooltip label="Block as owner" type="is-dark" position="is-bottom">
-                  <button v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+                  <button class="button" v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
                 </b-tooltip>
               </span>
             </b-table-column>
@@ -139,7 +142,6 @@ export default {
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
-      needUpdate: false,
       isOwner: false,
       contractOwner: null
     }
@@ -224,7 +226,6 @@ export default {
 
     async getTokensCount () {
       await this.$libre.promiseLibre;
-
       this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
     },
 
@@ -312,12 +313,7 @@ export default {
       this.updateBlockTime()
       this.numProposals = -1
       this.updateTableData = setInterval(async () => {
-        var numProposals = +(await this.$libre.dao.numProposals())
-        if (numProposals !== this.numProposals && this.numProposals !== -1) {
-          this.needUpdate = true
-          console.log('you need update')
-          clearInterval(this.updateTableData)
-        }
+        var numProposals = +(await this.$libre.dao.numProposals());
         if (this.numProposals === -1) {
           this.numProposals = numProposals
         }
