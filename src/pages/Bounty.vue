@@ -62,7 +62,7 @@
                 </div>
               </div>
               <footer class="card-footer">
-                <a v-if="bank.claimed" class="card-footer-item" v-on:click="testEraseBankClaim()">Unclaim</a>
+                <a v-if="bank.claimed && debugButtons" class="card-footer-item" v-on:click="testEraseBankClaim()">Unclaim</a>
                 <a v-if="bank.payment > 0" class="card-footer-item" v-on:click="withdraw('bank')">Withdraw</a>
                 <a class="card-footer-item" v-on:click="targetsBankModal()">New targets</a>
                 <a class="card-footer-item" v-on:click="tabsBounty = 0; termsShown = true">Bounty terms</a>
@@ -108,7 +108,7 @@
                 </div>
               </div>
               <footer class="card-footer">
-                <a v-if="exchanger.claimed" class="card-footer-item" v-on:click="testEraseExchangerClaim()">Unclaim</a>
+                <a v-if="exchanger.claimed && debugButtons" class="card-footer-item" v-on:click="testEraseExchangerClaim()">Unclaim</a>
                 <a v-if="exchanger.payment > 0" class="card-footer-item" v-on:click="withdraw('exchanger')">Withdraw</a>
                 <a class="card-footer-item" v-on:click="targetsExchangerModal()">New targets</a>
                 <a class="card-footer-item" v-on:click="tabsBounty = 1; termsShown = true">Bounty terms</a>
@@ -170,10 +170,10 @@
                 <b-tooltip label="Kill target and get the balance" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="destruct(props.row)"><i class="mdi mdi-bomb"></i></button>
                 </b-tooltip>
-                <b-tooltip label="Hack [test feature]" type="is-dark" position="is-bottom">
+                <b-tooltip label="Hack [test feature]" type="is-dark" position="is-bottom" v-if="debugButtons">
                     <button class="button" v-on:click="hack(props.row, true)" v-if="!props.row.hacked"><i class="mdi mdi-thumb-down"></i></button>
                 </b-tooltip>
-                <b-tooltip label="Unhack [test feature]" type="is-dark" position="is-bottom">
+                <b-tooltip label="Unhack [test feature]" type="is-dark" position="is-bottom" v-if="debugButtons">
                     <button class="button" v-on:click="hack(props.row, false)" v-if="props.row.hacked"><i class="mdi mdi-thumb-up"></i></button>
                 </b-tooltip>
             </b-table-column>
@@ -277,6 +277,7 @@ import Config from '@/config'
 export default {
   data () {
     return {
+      debugButtons: false,
       abiShown: false,
       abiTitle: '',
       abiData: '',
