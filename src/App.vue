@@ -8,7 +8,7 @@
             </div>
             <div class="LeftNav" id="navMenu">
                 <div class="logo">
-                    <img src="/src/assets/img/logo.svg" width="200" height="180" />
+                    <img src="/static/img/logo.svg" width="200" height="180" />
                 </div>
                 <ul class="MenuLeft">
                   <li v-for="route in $router.options.routes">
