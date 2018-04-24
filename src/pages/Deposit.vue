@@ -294,11 +294,11 @@ export default {
 
     async calcProfit(amount, id) {
       if (amount < this.planSelected.minAmount)
-        this.setMessage("warning","Amount less than min amount selected plan")
+        this.setMessage("warning", "Amount is less than min amount in the selected plan")
       else if (amount > this.needAmount)
-        this.setMessage("warning","Amount bigger then max amount")
+        this.setMessage("warning", "Amount is bigger than max amount")
       else
-        this.setMessage("info",`Income: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`)
+        this.setMessage("info", `Income: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`)
     }
   },
 
