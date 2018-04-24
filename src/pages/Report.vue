@@ -51,7 +51,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.searchReports();
         } else {
-          this.$snackbar.open('Creating proposal error');
+          this.$snackbar.open('Creating report error');
         }
         this.isLoading = false;
       } catch (err) {
