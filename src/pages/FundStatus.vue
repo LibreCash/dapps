@@ -96,7 +96,6 @@
         </div>
       </div>
       </div>
-      <div class="container">
 
         <div class="card">
   
@@ -114,9 +113,7 @@
   
         </div>
   
-  
-  
-      </div>
+
   
     </div>
     </div>
