@@ -9,7 +9,7 @@
             <div class="LeftNav" id="navMenu">
                 <div class="logo">
                     <img src="/src/assets/img/logo.svg" width="200" height="180" />
-                    <h3>Testing. Works on Rinkeby</h3>
+                    <
                 </div>
                 <ul class="MenuLeft">
                     <li>
@@ -17,7 +17,7 @@
                             <div class="Rectangle"></div>
                             <span>Contract Status</span>
                         </router-link>
-                    </li>
+                    </li
                     <li>
                         <router-link to="/dao">
                             <div class="Rectangle"></div>
@@ -52,7 +52,7 @@ export default {
 };
 </script>
 <style>
-h2.subtitle {
+.h2-contain >  .subtitle {
   text-align: center;
 }
 .eth-address {
@@ -108,28 +108,7 @@ h2.subtitle {
   padding: 30px 60px;
   justify-content: flex-start;
 }
-#search-results {
-  margin-top: 20px;
-  padding: 0 60px;
-}
-#search-results .table thead {
-  display: none;
-}
-#search-results .table tr {
-  display: block;
-  padding: 20px 0;
-}
-#search-results .table tr td {
-  display: block;
-  border: 0;
-  padding-left: 0px;
-}
-#search-results .table tr td:first-child {
-  font-size: 14px;
-}
-#search-results .table tr td.has-text-centered {
-  text-align: left !important;
-}
+
 .logo {
   display: block;
   text-align: center;
@@ -184,6 +163,9 @@ h2.subtitle {
   background-color: #fcc14a;
   border-color: #fcc14a;
 }
+.logo h3 {
+  color:white;
+}
 .allMain .pagination-link,
 .allMain .pagination-previous[disabled],
 .allMain .pagination-next[disabled],
@@ -234,16 +216,6 @@ h2.subtitle {
   .allMain h2 {
     font-size: 22px;
   }
-  #search-results {
-    padding: 0 15px;
-  }
-  #search-results .table tr td {
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-  #search-results .table tr {
-    padding: 7px 0;
-  }
   #Mainblock.is-active .LeftNav {
     height: auto;
     overflow: visible;
@@ -252,9 +224,6 @@ h2.subtitle {
   }
   .main .navbar-burger {
     margin: 5px 0 10px 15px;
-  }
-  #search-results .table tr td:first-child {
-    font-size: 14px;
   }
   .conditions li a {
     display: block;

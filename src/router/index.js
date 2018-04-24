@@ -4,6 +4,8 @@ import DAO from '@/pages/DAO'
 import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
 import Faucet from '@/pages/Faucet'
+import Report from '@/pages/Report'
+import FundStatus from '@/pages/FundStatus'
 import ContractStatus from '@/pages/ContractStatus'
 
 Vue.use(Router)
@@ -17,7 +19,7 @@ export default new Router({
     },
     {
       path: '/status',
-      name: 'Emission Contract Status',
+      name: 'Exchanger Contract Status',
       component: ContractStatus
     },
     {
@@ -39,6 +41,10 @@ export default new Router({
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal
+    },{
+      path: '/fund',
+      name: 'Fund Status',
+      component: FundStatus
     }
   ],
   mode: 'hash'

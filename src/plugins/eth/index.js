@@ -34,8 +34,10 @@ class ETH {
               '4': 'Rinkeby',
               '42': 'Kovan'
             }[result]
+          
             if (network !== 'Rinkeby') {
               Vue.prototype.$snackbar.open('Please use Rinkeby network')
+
             }
           }
         })
@@ -110,11 +112,11 @@ class ETH {
   }
 
   getErrorMsg (error) {
-    const LOCK_WALLET = 'Please, unlock you wallet!',
-          METAMASK_REJECT_MESSAGE = 'User denied transaction signature';
+    const LOCK_WALLET = 'Please, unlock you wallet.',
+          METAMASK_REJECT_MESSAGE = 'User denied transaction signature.';
 
     if (!this.metamask)
-      return 'Please, install MetaMask for use it!'
+      return 'Please, install MetaMask for use it.'
 
     if (error.message) {
       if (error.message.includes(METAMASK_REJECT_MESSAGE))
