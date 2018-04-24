@@ -113,13 +113,14 @@ class ETH {
 
   getErrorMsg (error) {
     const LOCK_WALLET = 'Please, unlock you wallet.',
-          METAMASK_REJECT_MESSAGE = 'User denied transaction signature.';
+          METAMASK_REJECT_MESSAGE = 'User denied transaction signature.',
+          METAMASK_REJECT_FIREFOX = 'cancelTransaction';
 
     if (!this.metamask)
       return 'Please, install MetaMask for use it.'
 
     if (error.message) {
-      if (error.message.includes(METAMASK_REJECT_MESSAGE))
+      if (error.message.includes(METAMASK_REJECT_MESSAGE) || error.message.includes(METAMASK_REJECT_FIREFOX))
         return 'Transaction was rejected by user'
       if (error.message.includes('Unknown address'))
         return LOCK_WALLET
