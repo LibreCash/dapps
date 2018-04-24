@@ -9,7 +9,6 @@
             <div class="LeftNav" id="navMenu">
                 <div class="logo">
                     <img src="/src/assets/img/logo.svg" width="200" height="180" />
-                    <
                 </div>
                 <ul class="MenuLeft">
                     <li>
@@ -17,7 +16,7 @@
                             <div class="Rectangle"></div>
                             <span>Contract Status</span>
                         </router-link>
-                    </li
+                    </li>
                     <li>
                         <router-link to="/dao">
                             <div class="Rectangle"></div>
