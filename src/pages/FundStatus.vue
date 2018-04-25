@@ -66,7 +66,7 @@
 
 <script>
   import StatusCoins from "@/components/StatusCoins";
-  import Config from "@/config";
+  import Vue from "vue";
   export default {
     data() {
       return {
@@ -91,10 +91,10 @@
         this.coinsData = [];
         this.isLoading = true;
 
-        var coins = Config.balance.coins;
+        var coins = Vue.config.libre.balance.coins;
 
         let response = await axios
-          .get(Config.balance.coinmarketcap.request(0))
+          .get(Vue.config.libre.balance.coinmarketcap.request(0))
           .catch(e => "error"),
           nameCoins = coins.map(coin => coin.name),
           countFind = 0,
@@ -174,7 +174,7 @@
           ["Coin", "USD"]
         ];
   
-        Config.balance.coins.forEach(coin => {
+        Vue.config.libre.balance.coins.forEach(coin => {
           if (coin.balanceUSD !== "-") peiData.push([coin.name, coin.balanceUSD]);
         });
         var data = google.visualization.arrayToDataTable(peiData);

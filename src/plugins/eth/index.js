@@ -2,7 +2,6 @@
 import Vue from 'vue'
 import Web3 from 'web3'
 import SolidityCoder from 'web3/lib/solidity/coder'
-import Config from '@/config'
 
 export default class ETH {
   static async install (vue, options) {

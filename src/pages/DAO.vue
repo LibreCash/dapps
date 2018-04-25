@@ -129,7 +129,7 @@
 
 
 <script>
-import Config from '@/config'
+import Vue from 'vue'
 import AddressBlock from '@/components/AddressBlock'
 
 export default {
@@ -334,7 +334,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Config.dao.address[this.$eth.network];
+      this.daoAddress = Vue.config.libre.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.libertyAddress = this.$libre.libertyAddress;
       this.contractOwner = await this.$libre.dao.owner();

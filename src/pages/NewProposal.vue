@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import Config from '@/config'
+import Vue from 'vue'
 export default {
   data () {
     return {
@@ -210,7 +210,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Config.dao.address[this.$eth.network];
+      this.daoAddress = Vue.config.libre.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.getTokensCount();
       this.startValidDataTimer();

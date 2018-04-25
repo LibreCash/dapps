@@ -130,7 +130,7 @@
 
 <script>
 import AddressBlock from '@/components/AddressBlock'
-import Config from '@/config'
+import Vue from 'vue'
 export default {
   data () {
     return {
@@ -165,7 +165,7 @@ export default {
   methods: {
     async loadLoans (e) {
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.loansAddress = Config.loans.address[this.$eth.network];
+      this.loansAddress = Vue.config.ligre.loans.address;
       this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         return;

@@ -48,7 +48,7 @@
 
 
 <script>
-import Config from '@/config'
+import Vue from 'vue'
 import BRadioButton from 'buefy/src/components/radio/RadioButton'
 export default {
   data () {
@@ -126,7 +126,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.reportAddress = Config.report.address[this.$eth.network];
+      this.reportAddress = Vue.config.libre.report.address;
       this.loadETH();
       this.loadReport();
       this.search();
