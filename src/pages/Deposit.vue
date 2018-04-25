@@ -162,7 +162,7 @@ export default {
       needAmount: '',
       msg: {
         type: 'is-info',
-        notes: ['Select plan to create deposit!']
+        notes: ['Select plan to create deposit.']
       }
     }
   },
@@ -183,9 +183,9 @@ export default {
         this.newPlanLoading = true;
         let txHash = await this.$libre.deposit.createPlan(this.newPlan.period,this.newPlan.percent * this.$libre.consts.REVERSE_PERCENT,this.$libre.fromToken(this.newPlan.minAmount),this.newPlan.description);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('New plan created!');
+          this.$snackbar.open('New plan created');
         } else {
-          this.$snackbar.open('Transaction failed!');
+          this.$snackbar.open('Transaction failed');
         }
         this.pushPlans(true);
         this.newPlanLoading = false;
@@ -226,11 +226,11 @@ export default {
         this.setMessage('warning', [`${action} - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [`${action} - success`]);
-          this.$snackbar.open('New deposit created!');
+          this.$snackbar.open('New deposit created');
           this.updateMyDeposit()
         } else {
           this.setMessage('danger', [`${action} - transaction failed`]);
-          this.$snackbar.open('Transaction failed!');
+          this.$snackbar.open('Transaction failed');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
@@ -247,10 +247,10 @@ export default {
       try {
         let txHash = await this.$libre.deposit.claimDeposit(selectObject.id);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Deposit returned!');
+          this.$snackbar.open('Deposit returned');
           this.updateMyDeposit()
         } else {
-          this.$snackbar.open('Transaction failed!');
+          this.$snackbar.open('Transaction failed');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
