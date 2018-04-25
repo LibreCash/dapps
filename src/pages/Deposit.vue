@@ -85,7 +85,9 @@
           <b-field v-if="planSelected">
             <b-input placeholder="0,00" v-model="amount"></b-input>
             <p class="control">
-              <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}" @click="newDeposit(planSelected.id)" :disabled="amount < planSelected.minAmount">New Deposit</button>
+              <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}"
+                  @click="newDeposit(planSelected.id)"
+                  :disabled="!isInteger(amount) || +amount < planSelected.minAmount">New Deposit</button>
             </p>
           </b-field>
         </div>
@@ -120,10 +122,11 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
-        <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}" @click="claimDeposit(selected)"
-            :disabled="!selected" v-if="myDepositData.length > 0">
-            <span>Claim Deposit</span>
+        <div class="level"></div>
+        <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}"
+                @click="claimDeposit(selected)"
+                :disabled="!selected" v-if="myDepositData.length > 0">
+            Claim Deposit
         </button>
       </div>
       <br><br>
@@ -169,6 +172,10 @@ export default {
         type: `is-${type}`,
         notes: notes
       }
+    },
+
+    isInteger(number) {
+      return +number >= 0
     },
 
     async createPlan() {
