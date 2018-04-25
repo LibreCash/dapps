@@ -6,10 +6,10 @@
       </div>
       <br>
       <div class="table-padding">
-        <button :to="{ path: '/loans' }" class="button">
+        <router-link :to="{ path: '/loans' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
           <span>Back</span>
-        </button>
+        </router-link>
         <span class="icon arrow-left"><i class="arrow-left"></i></span>
         <b-table :data="loanData"
           :bordered="false"
@@ -36,17 +36,17 @@
           </b-message>
         </b-field>
         <br>
-        <div class="columns">
-          <div class="column" v-if="takeEnable">
+        <div class="columns is-centered">
+          <div class="column is-narrow" v-if="takeEnable">
             <button class="button is-success" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
-          <div class="column" v-if="returnEnable">
+          <div class="column is-narrow" v-if="returnEnable">
             <button class="button is-danger" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
           </div>
-          <div class="column" v-if="claimEnable">
+          <div class="column is-narrow" v-if="claimEnable">
             <button class="button is-success" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
           </div>
-          <div class="column" v-if="cancelEnable">
+          <div class="column is-narrow" v-if="cancelEnable">
             <button class="button is-danger" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
           </div>
         </div>
