@@ -50,7 +50,7 @@
                   <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
                   <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
                 </b-field>
-                <b-field><b-message :type="msg.type" style="white-space: pre-wrap;">
+                <b-field><b-message :type="msg.type">
                   <p v-for="note in msg.notes">
                     {{ note }}
                   </p>

@@ -29,7 +29,7 @@
         </b-table>
         <br>
         <b-field v-if="takeEnable || returnEnable || claimEnable || cancelEnable">
-          <b-message :type="msg.type" style="white-space: pre-wrap;">
+          <b-message :type="msg.type">
             <p v-for="note in msg.notes">
               {{ note }}
             </p>
