@@ -2,7 +2,7 @@
     <div>
       <section class="allMain">
         <div class="h2-contain">
-          <h2 class="subtitle">Reports History</h2>
+          <h2 class="subtitle">{{ $route.name }}</h2>
         </div>
         <br>
         <section v-if="owner" class="table-padding">

@@ -2,12 +2,12 @@
 <template>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">LibreBank Contract</h2>
+        <h2 class="subtitle">{{ $route.name }}</h2>
       </div>
       <div class="level"></div>
       <div class="cards">
         <div class="card-content">
-          <h3 class="subtitle"><center>Emission contract status</center></h3>
+          <h3 class="subtitle has-text-centered">Contract status</h3>
           <div id="status-bank">
             <b-table
               :data="emissionStatus"
