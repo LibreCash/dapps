@@ -24,6 +24,7 @@ export default new Router({
   routes: [
     {
       path: '/',
+      alias: '/dao',
       name: 'DAO',
       component: DAO,
       meta: {title: 'DAO - LibreBank'},
@@ -34,13 +35,6 @@ export default new Router({
       name: 'Contract Status',
       meta: {title: 'Contract Status - LibreBank'},
       component: ContractStatus,
-      enabled: true
-    },
-    {
-      path: '/dao',
-      name: 'DAO',
-      component: DAO,
-      meta: {title: 'DAO - LibreBank'},
       enabled: true
     },
     {
