@@ -56,7 +56,7 @@ export default new Router({
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
-      menu: true
+      enabled: true
     },
     {
       path: '/deposit',
@@ -74,7 +74,7 @@ export default new Router({
       path: '/loan/:type/:id',
       name: 'Loan Offer',
       component: Loan,
-      menu: false
+      enabled: false
     },
     {
       path: '/loans/new',

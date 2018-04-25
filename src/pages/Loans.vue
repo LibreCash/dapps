@@ -47,9 +47,6 @@
         <div v-if="loansCount == 0 || searchData.length == 0">
           No loans for selected filter
         </div>
-        <b-message type="is-warning" v-if="needUpdate">
-          The table isn't actual. Please update the page
-        </b-message>
         <b-table
           v-if="searchData.length > 0"
           :data="isEmpty ? [] : searchData"
@@ -147,7 +144,6 @@ export default {
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
-      needUpdate: false,
       loansAddress: '',
       searchData: [],
       isSimple: false,

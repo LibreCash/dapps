@@ -1,21 +1,16 @@
 <template>
 	<section class="allMain">
-	
 		<div class="h2-contain">
-	
 			<h2 class="subtitle">Faucet</h2>
-	
 		</div>
-	
-		<br>
-	
+		<div class="level"></div>
 		<div class="table-padding">
 			<div class="level">
-			<div class="card">
-				<div class="card-content">
-					<address-block></address-block>
-				</div>
-			</div>
+        <div class="card">
+          <div class="card-content">
+            <address-block></address-block>
+          </div>
+        </div>
 			</div>
 			<div class="level">
 			<b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
@@ -77,7 +72,7 @@ export default {
 
           text: isGet
             ? "Tokens have already been sent to the address"
-            : "Not enough tokens on faucet"
+            : "Not enough tokens on the faucet"
         };
       }
     },
@@ -93,7 +88,7 @@ export default {
 
           this.loadLiberty();
         } else {
-          this.$snackbar.open("Error at sending tokens transaction");
+          this.$snackbar.open("Error sending token transaction");
         }
       } catch (err) {
         let msg = this.$eth.getErrorMsg(err);

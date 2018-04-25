@@ -4,7 +4,7 @@
       <div class="h2-contain">
         <h2 class="subtitle">LibreBank Contract</h2>
       </div>
-      <br>
+      <div class="level"></div>
       <div class="table-padding">
         <h3 class="subtitle"><center>Emission contract status</center></h3>
           <div id="status-bank">
