@@ -12,6 +12,11 @@ Vue.config.productionTip = false
 Vue.use(ETH, {})
 Vue.use(Libre, {})
 
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title
+  next()
+})
+
 new Vue({
   el: '#app',
   router,

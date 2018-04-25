@@ -26,11 +26,13 @@ export default new Router({
       path: '/',
       name: 'DAO',
       component: DAO,
+      meta: {title: 'DAO - LibreBank'},
       enabled: false
     },
     {
       path: '/status',
       name: 'Contract Status',
+      meta: {title: 'Contract Status - LibreBank'},
       component: ContractStatus,
       enabled: true
     },
@@ -38,54 +40,63 @@ export default new Router({
       path: '/dao',
       name: 'DAO',
       component: DAO,
+      meta: {title: 'DAO - LibreBank'},
       enabled: true
     },
     {
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
       component: Proposal,
+      meta: {title: 'Proposal Info - LibreBank'},
       enabled: false
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal,
+      meta: {title: 'New proposal - Librebank'},
       enabled: false
     },
     {
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
+      meta: {title: 'LBRS Faucet - Librebank'},
       enabled: true
     },
     {
       path: '/deposit',
       name: 'Deposit',
       component: Deposit,
+      meta: {title: 'Deposit - Librebank'},
       enabled: true
     },
     {
       path: '/loans',
       name: 'Loans',
       component: Loans,
+      meta: {title: 'Loans - Librebank'},
       enabled: true
     },
     {
       path: '/loan/:type/:id',
       name: 'Loan Offer',
       component: Loan,
+      meta: {title: 'Loan offer - Librebank'},
       enabled: false
     },
     {
       path: '/loans/new',
       name: 'New Loan Offer',
       component: NewOffer,
+      meta: {title: 'New loan offer - Librebank'},
       enabled: false
     },
     {
       path: '/fund',
       name: 'Fund Status',
       component: FundStatus,
+      meta: {title: 'Fund status - Librebank'},
       enabled: true
     }
   ],
