@@ -187,10 +187,10 @@ export default {
       let txHash;
       let bankState = this.$libre.bankState[+await this.$libre.bank.getState()];
       let action = 'Getting current exchange rate:';
+      let price = +await this.$libre.bank.requestPrice();
       let disclaimer = `1. Requesting rates (cost ${this.$eth.fromWei(price)} ETH)`;
       if (bankState != 'PROCESSING_ORDERS') {
         if (bankState == 'REQUEST_RATES') {
-          let price = +await this.$libre.bank.requestPrice();
           this.setMessage('info', [action, `${disclaimer} - waiting for confirmations...`, '2. Rate calculation']);
           txHash = await this.$libre.bank.requestRates({value: price});
           this.setMessage('info', [action, `${disclaimer} - sending to the network...`, '2. Rate calculation'])
