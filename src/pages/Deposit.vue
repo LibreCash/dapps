@@ -13,6 +13,7 @@
             </div>
         </div>
         <div v-if="owner">
+          <div class="level"></div>
           <b-collapse class="card" :open="false">
             <div slot="trigger" slot-scope="props" class="card-header">
               <p class="card-header-title">Create Plan</p>
@@ -38,7 +39,7 @@
                   <b-input v-model="newPlan.description"></b-input>
                 </b-field>
                 <b-field horizontal>
-                  <button class="button is-primary" @click="createPlan()">Create Plan</button>
+                  <button class="button is-primary" :class="{'is-loading': newPlanLoading}" @click="createPlan()">Create Plan</button>
                 </b-field>
               </div>
             </div>
@@ -138,6 +139,7 @@ export default {
     return {
       deposit: Config.deposit.address[this.$eth.network],
       isLoading: false,
+      newPlanLoading: false,
       owner: false,
       plansData: [],
       isloadingPlans: true,
@@ -171,12 +173,15 @@ export default {
 
     async createPlan() {
       try {
+        this.newPlanLoading = true;
         let txHash = await this.$libre.deposit.createPlan(this.newPlan.period,this.newPlan.percent * this.$libre.consts.REVERSE_PERCENT,this.$libre.fromToken(this.newPlan.minAmount),this.newPlan.description);
         if (await this.$eth.isSuccess(txHash)) {
           this.$snackbar.open('New plan created!');
         } else {
           this.$snackbar.open('Transaction failed!');
         }
+        this.pushPlans(true);
+        this.newPlanLoading = false;
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
@@ -248,8 +253,9 @@ export default {
       this.isClaimLoading = false
     },
 
-    async pushPlans() {
-      await this.$libre.loadPlans();
+    async pushPlans (force = false) {
+      await this.$libre.loadPlans(force);
+      this.plansData = [];
       this.$libre.plans.forEach((plan) => {
         this.plansData.push({
           id: plan.id,

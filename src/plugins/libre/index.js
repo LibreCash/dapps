@@ -352,8 +352,8 @@ export default class Libre {
     }
   }
 
-  async loadPlans() {
-    if (this.plans.length > 0)
+  async loadPlans(force = false) {
+    if (this.plans.length > 0 && !force)
       return
 
     let count = +await this.deposit.plansCount();
