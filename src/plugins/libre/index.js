@@ -221,11 +221,11 @@ export default class Libre {
     this.bank = this.getContract(Config.bank.abi, Config.bank.address[network])
     var address = await this.bank.tokenAddress()
     Config.token.address = address
-    this.token = this.getContract(Config.erc20.abi, Config.token.address[network])
+    this.token = this.getContract(Config.erc20.abi, Config.token.address)
 
     this.dao = this.getContract(Config.dao.abi, Config.dao.address[network])
     this.libertyAddress = address = await this.dao.sharesTokenAddress()
-    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress[network])
+    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
     this.loans = this.getContract(Config.loans.abi, Config.loans.address[network]);
     this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address[network]);
     this.faucet = this.getContract(Config.faucet.abi, Config.faucet.address[network]);
