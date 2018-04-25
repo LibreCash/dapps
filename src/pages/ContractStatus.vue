@@ -5,8 +5,9 @@
         <h2 class="subtitle">LibreBank Contract</h2>
       </div>
       <div class="level"></div>
-      <div class="table-padding">
-        <h3 class="subtitle"><center>Emission contract status</center></h3>
+      <div class="cards">
+        <div class="card-content">
+          <h3 class="subtitle"><center>Emission contract status</center></h3>
           <div id="status-bank">
             <b-table
               :data="emissionStatus"
@@ -26,9 +27,10 @@
                   <span v-else>{{ props.row.data }}</span>
                 </b-table-column>
               </template>
-              </b-table>
+            </b-table>
           </div>
         </div>
+      </div>
       <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
     </section>
 </template>
