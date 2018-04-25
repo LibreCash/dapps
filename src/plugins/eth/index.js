@@ -16,7 +16,7 @@ export default class ETH {
     this._web3 = null
     this.yourAccount = null
     this.metamask = false
-    this.network = Vue.config.productionTip ? 'main' : 'rinkeby'
+    this.network = Vue.config.libre.network
     this.loadWeb3()
   }
 
@@ -43,7 +43,7 @@ export default class ETH {
           }
         })
       } else {
-        window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider[this.network]))
+        window.web3 = new Web3(new Web3.providers.HttpProvider(Vue.config.libre.provider))
         console.log('No web3? You should consider trying MetaMask!')
       }
       web3.SolidityCoder = SolidityCoder;

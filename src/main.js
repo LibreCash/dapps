@@ -6,11 +6,13 @@ import router from './router'
 import './plugins/buefy'
 import ETH from './plugins/eth'
 import Libre from './plugins/libre'
+import Config from './config'
 
 Vue.config.productionTip = false
 
 Vue.use(ETH, {})
 Vue.use(Libre, {})
+Vue.use(Config, {build: 'dao'})
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
