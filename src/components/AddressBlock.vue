@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="address-block">
-            Your address: <a v-if="defaultAddress != 'Unknown'" :href="`https://rinkeby.etherscan.io/address/${defaultAddress}`">{{ defaultAddress }}</a>
-            <span v-else>{{ defaultAddress }}</span>
+            Your address: <a v-if="defaultAddress != 'Unknown'" :href="$libre.addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
+            <span v-else><input class="address" :value="defaultAddress"></span>
         </div>
         <div v-if="balance > 0 || libertyBalance > 0">
             Balances: <span v-if="balance > 0">{{ balance }} Libre</span><span v-if="balance > 0 && libertyBalance > 0">,</span>
