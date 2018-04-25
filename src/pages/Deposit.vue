@@ -190,7 +190,7 @@ export default {
       let action = `1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - waiting for confirmations...`]);
-        let txHash = await this.$libre.token.approve(Config.deposit.addressConfig.deposit.address[this.$eth.network], amount);
+        let txHash = await this.$libre.token.approve(Config.deposit.address[this.$eth.network], amount);
         this.setMessage('warning', [disclaimer, `${action} - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [disclaimer, `${action} - success`]);
