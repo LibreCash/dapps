@@ -42,7 +42,7 @@ export default class Libre {
     this.proposalParams = {
       minBalance: 2000 * 10 ** 18,
       quorum: 10000 * 10 ** 18,
-      minTime: 0//6 * 60 * 60
+      minTime: 6 * 60 * 60
     }
 
     this.consts = {
