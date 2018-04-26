@@ -114,6 +114,7 @@
           </div>
           <div class="column">
             <b-pagination
+                v-if="loansCount > perPage"
                 @change="loadLoans"
                 :total="loansCount"
                 :current.sync="vpage"

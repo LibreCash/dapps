@@ -10,7 +10,7 @@
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
           <span>Back</span>
         </router-link>
-        <span class="icon arrow-left"><i class="arrow-left"></i></span>
+        <div class="level"></div>
         <b-table :data="loanData"
           :bordered="false"
           :striped="true"
@@ -36,20 +36,21 @@
           </b-message>
         </b-field>
         <div class="level"></div>
-        <div class="columns is-centered">
-          <div class="column is-narrow" v-if="takeEnable">
+        <div class="level">
+          <div class="level-item has-text-centered" v-if="takeEnable">
             <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
-          <div class="column is-narrow" v-if="returnEnable">
+          <div class="level-item has-text-centered" v-if="returnEnable">
             <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
           </div>
-          <div class="column is-narrow" v-if="claimEnable">
+          <div class="level-item has-text-centered" v-if="claimEnable">
             <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
           </div>
-          <div class="column is-narrow" v-if="cancelEnable">
+          <div class="level-item has-text-centered" v-if="cancelEnable">
             <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
           </div>
         </div>
+        <div class="level"></div>
       </div>
       
     </section>

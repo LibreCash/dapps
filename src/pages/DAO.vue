@@ -56,7 +56,7 @@
           :striped="true"
           :narrowed="false"
           :loading="isLoading"
-          :paginated="true"
+          :paginated="perPage < tableData.length"
           :per-page="perPage"
           :current-page.sync="currentPage"
           :pagination-simple="false"
