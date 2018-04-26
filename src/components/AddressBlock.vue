@@ -1,12 +1,18 @@
 <template>
     <div>
-        <div class="address-block">
-            Your address: <a v-if="defaultAddress != 'Unknown'" :href="$libre.addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
-            <span v-else><input class="address" :value="defaultAddress"></span>
-        </div>
-        <div>
-            Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
-        </div>
+        <section v-if="!unknownData">
+            <div class="address-block">
+                Your address: <a :href="$libre.addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
+            </div>
+            <div>
+                Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
+            </div>
+        </section>
+        <section v-else>
+            <div>
+                No metamask / not logged in
+            </div>
+        </section>
     </div>
 </template>
 

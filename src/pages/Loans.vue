@@ -15,7 +15,7 @@
         </div>
         <div class="level"></div>
         <nav class="level">
-          <div class="level-item has-text-centered">
+          <div class="level-item has-text-centered" v-if="canCreate">
             <div>
               <p class="heading">Create</p>
               <p><router-link :to="{ path: '/loans/new' }" class="button is-primary">New Offer</router-link></p>
@@ -162,7 +162,8 @@ export default {
       isMine: false,
       loansCount: 0,
       perPage: 10,
-      curBlockchainTime: 0
+      curBlockchainTime: 0,
+      canCreate: true
     }
   },
   methods: {
@@ -249,6 +250,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
+      this.canCreate = this.$eth._web3.eth.defaultAccount != undefined;
       this.startUpdatingTime();
       this.loadLoans()
     } catch (err) {
