@@ -221,9 +221,11 @@ export default {
   padding: 0 40px;
 }
 input.address {
-  border-width: 0 0 1px 0;
-  border-color: #949191;
-  background-color: white;
+  width: 100%;
+  text-align: inherit;
+  border: 0;
+  background: transparent;
+  font-size: inherit;
 }
 .chart-height {
   min-height: 200px;

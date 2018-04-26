@@ -90,10 +90,11 @@
             </p>
           </b-field>
         </div>
-        <hr>
         <div class="level"></div>
         <h3 class="subtitle has-text-centered" v-if="myDepositData.length > 0">My Deposits</h3>
-        <b-table :data="myDepositData"
+        <b-table
+          v-if="myDepositData.length > 0"
+          :data="myDepositData"
           :bordered="false"
           :striped="true"
           :narrowed="false"

@@ -7,7 +7,6 @@
       <div class="level"></div>
       <div class="cards">
         <div class="card-content">
-          <h3 class="subtitle has-text-centered">Contract status</h3>
           <div id="status-bank">
             <b-table
               :data="emissionStatus"
