@@ -13,37 +13,38 @@
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
             </div>
         </div>
-        
-        <div class="columns" style="padding-top: 2rem">
-          <div class="column is-narrow">
-            <router-link :to="{ path: '/loans/new' }" class="button is-primary">New Offer</router-link>
-          </div>
-          <div class="column is-narrow">
-            <div class="card">
-                <div class="card-content">
-                    <center><span>Type loans:</span></center>
-                    <b-field>
-                      <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
-                      <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
-                    </b-field>
-                </div>
+        <div class="level"></div>
+        <nav class="level">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Create</p>
+              <p><router-link :to="{ path: '/loans/new' }" class="button is-primary">New Offer</router-link></p>
             </div>
-            
           </div>
-          <div class="column">
-            <div class="card">
-                <div class="card-content">
-                    <div><center>State loans:</center></div>
-                    <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
-                    <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
-                    <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
-                    <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
-                </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Loan type</p>
+              <p>
+                <b-field>
+                  <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
+                  <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
+                </b-field>
+              </p>
             </div>
-            
           </div>
-        </div>
-        <br>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Loan state</p>
+              <p>
+                <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
+                <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
+                <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
+                <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+              </p>
+            </div>
+          </div>
+        </nav>
+        <div class="level"></div>
         <div v-if="loansCount == 0 || searchData.length == 0">
           No loans for selected filter
         </div>
