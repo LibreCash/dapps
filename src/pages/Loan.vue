@@ -36,7 +36,7 @@
           </b-message>
         </b-field>
         <div class="level"></div>
-        <div class="level">
+        <div class="level" v-if="loggedIn">
           <div class="level-item has-text-centered" v-if="takeEnable">
             <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
@@ -71,6 +71,7 @@ export default {
       returnEnable: false,
       claimEnable: false,
       cancelEnable: false,
+      loggedIn: false,
       isAllowanceActive: false,
       btnloading: {
         takeLoan: false,
@@ -143,6 +144,7 @@ export default {
               this.returnEnable = true;
           }
 
+          this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
 
           this.loanData.push({name: 'Type', data: this.$route.params.type})
           this.loanData.push({name: 'ID', data: +this.$route.params.id})
