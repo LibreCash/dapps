@@ -27,13 +27,29 @@
             </div>
         </div>
         <div class="level"></div>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
+        <nav class="level">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Create</p>
+              <p>
+                <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary"
+                      v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
+              </p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Proposal type</p>
+              <p>
+                <b-field>
+                  <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
+                  <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
+                </b-field>
+              </p>
+            </div>
+          </div>
+        </nav>
         <div class="level"></div>
-        <div class="level"></div>
-        <b-field>
-          <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
-          <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
-        </b-field>
         <b-table
           :data="tableData"
           :bordered="false"
