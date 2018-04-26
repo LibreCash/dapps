@@ -10,14 +10,10 @@
             <div class="card-content">
                 <address-block/>
                 <div>DAO Contract: 
-                  <a :href="$libre.addressToLink(daoAddress)" target="_blank">
-                    <input class="address" :value="daoAddress">
-                  </a>
+                  <input class="address" :value="daoAddress">
                 </div>
                 <div>Liberty Token: 
-                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank">
-                    <input class="address" :value="libertyAddress">
-                  </a>
+                  <input class="address" :value="libertyAddress">
                 </div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
                 <div>Token count: {{ tokensCount }} LBRS</div>

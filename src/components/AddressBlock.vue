@@ -2,7 +2,7 @@
     <div>
         <section v-if="!unknownData">
             <div class="address-block">
-                Your address: <a :href="$libre.addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
+                Your address: <input class="address" :value="defaultAddress">
             </div>
             <div>
                 Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
