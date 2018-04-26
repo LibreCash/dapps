@@ -4,7 +4,7 @@
       <div class="h2-contain">
         <h2 class="subtitle">{{ loanType }} Loan #{{ loanId }}</h2>
       </div>
-      <br>
+      <div class="level"></div>
       <div class="table-padding">
         <router-link :to="{ path: '/loans' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
@@ -27,7 +27,7 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
+        <div class="level"></div>
         <b-field v-if="takeEnable || returnEnable || claimEnable || cancelEnable">
           <b-message :type="msg.type">
             <p v-for="note in msg.notes">
@@ -35,7 +35,7 @@
             </p>
           </b-message>
         </b-field>
-        <br>
+        <div class="level"></div>
         <div class="columns is-centered">
           <div class="column is-narrow" v-if="takeEnable">
             <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>

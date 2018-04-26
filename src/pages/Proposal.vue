@@ -4,7 +4,7 @@
       <div class="h2-contain">
         <h2 class="subtitle">DAO Proposal #{{ $route.params.id }}</h2>
       </div>
-      <br>
+      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
           <div class="card-content">

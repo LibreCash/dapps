@@ -23,7 +23,7 @@
             </div>
             <div class="card-content">
               <div class="content">
-                <div>Address Deposit contract: {{ deposit }}</div><br>
+                <p>Deposit contract address: {{ deposit }}</p>
                 <b-field horizontal label="Period, sec">
                   <b-field :message="$libre.periodToString(newPlan.period)">
                     <b-input v-model="newPlan.period"></b-input>
@@ -44,9 +44,8 @@
               </div>
             </div>
           </b-collapse>
-          <br>
         </div>
-        <br>
+        <div class="level"></div>
         <h3 class="subtitle has-text-centered">Plans</h3>
         <b-table :data="plansData"
           :bordered="false"
@@ -73,7 +72,7 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
+        <div class="level"></div>
         <div>
           <b-field>
             <b-message :type="msg.type" style="white-space: wrap;">
@@ -92,7 +91,7 @@
           </b-field>
         </div>
         <hr>
-        <br>
+        <div class="level"></div>
         <h3 class="subtitle has-text-centered" v-if="myDepositData.length > 0">My Deposits</h3>
         <b-table :data="myDepositData"
           :bordered="false"
@@ -129,7 +128,8 @@
             Claim Deposit
         </button>
       </div>
-      <br><br>
+      <div class="level"></div>
+      <div class="level"></div>
     </section>
   </div>
 </template>

@@ -4,7 +4,7 @@
         <div class="h2-contain">
           <h2 class="subtitle">{{ $route.name }}</h2>
         </div>
-        <br>
+        <div class="level"></div>
         <section v-if="owner" class="table-padding">
           <b-field>
             <b-input

@@ -26,9 +26,10 @@
                 <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             </div>
         </div>
-        <br>
+        <div class="level"></div>
         <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
-        <br><br>
+        <div class="level"></div>
+        <div class="level"></div>
         <b-field>
           <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
           <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
