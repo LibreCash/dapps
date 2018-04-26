@@ -38,16 +38,16 @@
         <br>
         <div class="columns is-centered">
           <div class="column is-narrow" v-if="takeEnable">
-            <button class="button is-success" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
+            <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
           <div class="column is-narrow" v-if="returnEnable">
-            <button class="button is-danger" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
+            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
           </div>
           <div class="column is-narrow" v-if="claimEnable">
-            <button class="button is-success" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
+            <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
           </div>
           <div class="column is-narrow" v-if="cancelEnable">
-            <button class="button is-danger" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
+            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
           </div>
         </div>
       </div>
