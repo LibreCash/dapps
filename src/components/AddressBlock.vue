@@ -12,12 +12,13 @@
 
 <script>
 export default {
-  data() {
-    return {
-      defaultAddress: 'Unknown',
-      balance: 0,
-      libertyBalance:0
-    }
+    data() {
+        return {
+            unknownData: false,
+            defaultAddress: 'Unknown',
+            balance: 0,
+            libertyBalance:0
+        }
   },
 
   async created() {
@@ -26,6 +27,7 @@ export default {
         await this.$libre.initPromise;
         this.defaultAddress = window.web3.eth.defaultAccount;
         if (this.defaultAddress == undefined) {
+            this.unknownData = true;
             this.balance = "Unknown"
             this.defaultAddress = "Unknown"
             this.libertyBalance = "Unknown"

@@ -23,7 +23,7 @@
             </div>
             <div class="card-content">
               <div class="content">
-                <p>Deposit contract address: {{ deposit }}</p>
+                <p>Deposit contract address: <input class="address" :value="deposit"></p>
                 <b-field horizontal label="Period, sec">
                   <b-field :message="$libre.periodToString(newPlan.period)">
                     <b-input v-model="newPlan.period"></b-input>

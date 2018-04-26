@@ -28,12 +28,11 @@
         </div>
         <div class="level"></div>
         <nav class="level">
-          <div class="level-item has-text-centered">
+          <div class="level-item has-text-centered" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">
             <div>
               <p class="heading">Create</p>
               <p>
-                <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary"
-                      v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
+                <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">New Proposal</router-link>
               </p>
             </div>
           </div>

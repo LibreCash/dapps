@@ -9,7 +9,7 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div>Loans contract address: <a :href="`https://etherscan.io/address/${loansAddress}`">{{ loansAddress }}</a></div>
+                <div>Loans contract address: <input class="address" :value="loansAddress"></div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
             </div>
         </div>
@@ -45,7 +45,7 @@
           </div>
         </nav>
         <div class="level"></div>
-        <div v-if="loansCount == 0 || searchData.length == 0">
+        <div v-if="loansCount == 0 || searchData.length == 0" class="has-text-centered">
           No loans for selected filter
         </div>
         <b-table
@@ -95,6 +95,7 @@
             </b-table-column>
           </template>
         </b-table>
+        <div class="level"></div>
         <div class="columns">
           <div class="column is-narrow">
             <b-tooltip label="Items on page">
