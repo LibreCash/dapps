@@ -11,10 +11,10 @@
             <div>Token count: {{ tokensCount }} LBRS</div>
             <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
             <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
-            <button :to="{ path: '/dao' }" class="button">
+            <router-link :to="{ path: '/dao' }" class="button">
               <b-icon icon="keyboard-return" size="is-small"></b-icon>
               <span>Back</span>
-            </button>
+            </router-link>
           </div>
         </div>
         <p>&nbsp;</p>
