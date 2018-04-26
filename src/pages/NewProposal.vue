@@ -2,23 +2,31 @@
     <div>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">DAO New Proposal</h2>
+        <h2 class="subtitle">{{ $route.name }}</h2>
       </div>
-      <br>
-      <div class="table-padding" >
-        <div>Token count: {{ tokensCount }} LBRS</div>
-        <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
-        <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
-        <button @click="$router.go(-1)" :to="{ path: '/loans' }" class="button">
-          <b-icon icon="keyboard-return" size="is-small"></b-icon>
-          <span>Back</span>
-        </button><br><br>
+      <div class="level"></div>
+      <div class="table-padding">
+        <div class="card">
+          <div class="card-content">
+            <div>Token count: {{ tokensCount }} LBRS</div>
+            <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+            <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
+            <button :to="{ path: '/dao' }" class="button">
+              <b-icon icon="keyboard-return" size="is-small"></b-icon>
+              <span>Back</span>
+            </button>
+          </div>
+        </div>
+        <p>&nbsp;</p>
         <b-field horizontal label="Type" >
           <b-select placeholder="Select a type proposal" v-model="selectedType">
               <option v-for="type in typeProposals" v-bind:value="type">
                 {{ type.text }}
               </option>
           </b-select>
+        </b-field>
+        <b-field horizontal v-if="selectedType['info']" label="Information">
+          {{ selectedType['info'] }}
         </b-field>
         <b-field horizontal :label="selectedType['benef']" v-if="selectedType['benef']" :type="isAddress(beneficiary) ? '' : 'is-danger'">
             <b-input v-model="beneficiary" placeholder="0x0000000000000000000000000000000000000000"></b-input>
@@ -59,7 +67,7 @@
             </p>
         </b-field>
       </div>
-      <br>
+      <div class="level"></div>
     </section>
     </div>
 
@@ -202,7 +210,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Config.dao.address;
+      this.daoAddress = Config.dao.address[this.$eth.network];
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.getTokensCount();
       this.startValidDataTimer();

@@ -2,9 +2,9 @@
   <div>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">Deposit</h2>
+        <h2 class="subtitle">{{ $route.name }}</h2>
       </div>
-      <br>
+      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
             <div class="card-content">
@@ -13,6 +13,7 @@
             </div>
         </div>
         <div v-if="owner">
+          <div class="level"></div>
           <b-collapse class="card" :open="false">
             <div slot="trigger" slot-scope="props" class="card-header">
               <p class="card-header-title">Create Plan</p>
@@ -22,7 +23,7 @@
             </div>
             <div class="card-content">
               <div class="content">
-                <div>Address Deposit contract: {{ deposit }}</div><br>
+                <p>Deposit contract address: <input class="address" :value="deposit"></p>
                 <b-field horizontal label="Period, sec">
                   <b-field :message="$libre.periodToString(newPlan.period)">
                     <b-input v-model="newPlan.period"></b-input>
@@ -38,14 +39,13 @@
                   <b-input v-model="newPlan.description"></b-input>
                 </b-field>
                 <b-field horizontal>
-                  <button class="button is-primary" @click="createPlan()">Create Plan</button>
+                  <button class="button is-primary" :class="{'is-loading': newPlanLoading}" @click="createPlan()">Create Plan</button>
                 </b-field>
               </div>
             </div>
           </b-collapse>
-          <br>
         </div>
-        <br>
+        <div class="level"></div>
         <h3 class="subtitle has-text-centered">Plans</h3>
         <b-table :data="plansData"
           :bordered="false"
@@ -72,22 +72,29 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
+        <div class="level"></div>
         <div>
           <b-field>
-            <b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
+            <b-message :type="msg.type" style="white-space: wrap;">
+              <p v-for="note in msg.notes">
+                {{ note }}
+              </p>
+            </b-message>
           </b-field>
           <b-field v-if="planSelected">
             <b-input placeholder="0,00" v-model="amount"></b-input>
             <p class="control">
-              <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}" @click="newDeposit(planSelected.id)" :disabled="amount < planSelected.minAmount">New Deposit</button>
+              <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}"
+                  @click="newDeposit(planSelected.id)"
+                  :disabled="!isInteger(amount) || +amount < planSelected.minAmount">New Deposit</button>
             </p>
           </b-field>
         </div>
-        <hr>
-        <br>
+        <div class="level"></div>
         <h3 class="subtitle has-text-centered" v-if="myDepositData.length > 0">My Deposits</h3>
-        <b-table :data="myDepositData"
+        <b-table
+          v-if="myDepositData.length > 0"
+          :data="myDepositData"
           :bordered="false"
           :striped="true"
           :narrowed="false"
@@ -115,13 +122,15 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
-        <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}" @click="claimDeposit(selected)"
-            :disabled="!selected" v-if="myDepositData.length > 0">
-            <span>Claim Deposit</span>
+        <div class="level"></div>
+        <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}"
+                @click="claimDeposit(selected)"
+                :disabled="!selected" v-if="myDepositData.length > 0">
+            Claim Deposit
         </button>
       </div>
-      <br><br>
+      <div class="level"></div>
+      <div class="level"></div>
     </section>
   </div>
 </template>
@@ -132,8 +141,9 @@ import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
     return {
-      deposit: Config.deposit.address,
+      deposit: Config.deposit.address[this.$eth.network],
       isLoading: false,
+      newPlanLoading: false,
       owner: false,
       plansData: [],
       isloadingPlans: true,
@@ -153,26 +163,33 @@ export default {
       needAmount: '',
       msg: {
         type: 'is-info',
-        text: 'To create a deposit, select a plan!'
+        notes: ['Select plan to create deposit.']
       }
     }
   },
   methods: {
-    setMessage(type, message) {
+    setMessage(type, notes) {
       this.msg = {
         type: `is-${type}`,
-        text: message
+        notes: notes
       }
+    },
+
+    isInteger(number) {
+      return +number >= 0
     },
 
     async createPlan() {
       try {
+        this.newPlanLoading = true;
         let txHash = await this.$libre.deposit.createPlan(this.newPlan.period,this.newPlan.percent * this.$libre.consts.REVERSE_PERCENT,this.$libre.fromToken(this.newPlan.minAmount),this.newPlan.description);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('New Plan created!');
+          this.$snackbar.open('New plan created');
         } else {
-          this.$snackbar.open('Transaction fail!');
+          this.$snackbar.open('Transaction failed');
         }
+        this.pushPlans(true);
+        this.newPlanLoading = false;
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
@@ -181,19 +198,21 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Config.deposit.address)
+      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Config.deposit.address[this.$eth.network]);
+      let disclaimer = 'Available amount for deposit:';
+      let action = `1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens`;
       if (allowance < amount) {
-        this.setMessage('warning',`Available amount for deposit:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - wait confirm...`)
-        let txHash = await this.$libre.token.approve(Config.deposit.address, amount);
-        this.setMessage('warning',`Available amount for deposit:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - send to the network...`)
+        this.setMessage('warning', [disclaimer, `${action} - waiting for confirmations...`]);
+        let txHash = await this.$libre.token.approve(Config.deposit.address[this.$eth.network], amount);
+        this.setMessage('warning', [disclaimer, `${action} - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
-          this.setMessage('success',`Available amount for deposit:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - successfully...`)
+          this.setMessage('success', [disclaimer, `${action} - success`]);
         } else {
-          this.setMessage('danger',`Available amount for deposit:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - fail transaction...`)
-          return false
+          this.setMessage('danger', [disclaimer, `${action} - transaction failed`]);
+          return false;
         }
       }
-      return true
+      return true;
     },
 
     async newDeposit(id) {
@@ -201,23 +220,24 @@ export default {
       try {
         if (!(await this.approveLibre(this.$libre.fromToken(this.amount))))
           return
+        let action = 'Creating new deposit ';
 
-        this.setMessage('warning',`Create New Deposit - wait confirm...`)
+        this.setMessage('warning', [`${action} - waiting for confirmations...`]);
         let txHash = await this.$libre.deposit.createDeposit(this.$libre.fromToken(this.amount),id);
-        this.setMessage('warning',`Create New Deposit - send to the network...`)
+        this.setMessage('warning', [`${action} - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
-          this.setMessage('success',`Create New Deposit - successfully...`)
-          this.$snackbar.open('New Deposit created!');
+          this.setMessage('success', [`${action} - success`]);
+          this.$snackbar.open('New deposit created');
           this.updateMyDeposit()
         } else {
-          this.setMessage('danger',`Create New Deposit - fail transaction...`)
-          this.$snackbar.open('Transaction fail!');
+          this.setMessage('danger', [`${action} - transaction failed`]);
+          this.$snackbar.open('Transaction failed');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
         this.$snackbar.open(msg);
-        this.msg.text += `\n${msg}`
+        this.msg.notes.push(msg);
       }
       this.newDepositLoading = false;
     },
@@ -228,10 +248,10 @@ export default {
       try {
         let txHash = await this.$libre.deposit.claimDeposit(selectObject.id);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Deposit returned!');
+          this.$snackbar.open('Deposit returned');
           this.updateMyDeposit()
         } else {
-          this.$snackbar.open('Transaction fail!');
+          this.$snackbar.open('Transaction failed');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
@@ -241,8 +261,9 @@ export default {
       this.isClaimLoading = false
     },
 
-    async pushPlans() {
-      await this.$libre.loadPlans();
+    async pushPlans (force = false) {
+      await this.$libre.loadPlans(force);
+      this.plansData = [];
       this.$libre.plans.forEach((plan) => {
         this.plansData.push({
           id: plan.id,
@@ -294,11 +315,11 @@ export default {
 
     async calcProfit(amount, id) {
       if (amount < this.planSelected.minAmount)
-        this.setMessage("warning","Amount less than min amount selected plan!")
+        this.setMessage("warning", ["Amount is less than min amount in the selected plan"]);
       else if (amount > this.needAmount)
-        this.setMessage("warning","Amount bigger then max amount!")
+        this.setMessage("warning", ["Amount is bigger than max amount"]);
       else
-        this.setMessage("info",`Income: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`)
+        this.setMessage("info", [`Income: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`]);
     }
   },
 

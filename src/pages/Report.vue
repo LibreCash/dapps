@@ -2,9 +2,9 @@
     <div>
       <section class="allMain">
         <div class="h2-contain">
-          <h2 class="subtitle">Reports History</h2>
+          <h2 class="subtitle">{{ $route.name }}</h2>
         </div>
-        <br>
+        <div class="level"></div>
         <section v-if="owner" class="table-padding">
           <b-field>
             <b-input
@@ -13,11 +13,34 @@
               placeholder='Write Report'>
             </b-input>
           </b-field>
-          <a class="button is-info" v-on:click="newReport">Submit</a>
+          <a class="button is-info" v-on:click="newReport" :class="{'is-loading': isLoading}">Submit</a>
         </section>
-        <br>
-        <search-results :tableData='searchData'></search-results>
-        <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
+        <div class="level">
+          <section v-if="searchData.length == 0" class="level-item">No reports found</section>
+          <section v-if="searchData.length > 0" class="level-item">
+            <b-table
+              :is-fullwidth="true"
+              :data="searchData"
+              :bordered="false"
+              :striped="true"
+              :narrowed="false"
+              :loading="isLoading"
+              :paginated="true"
+              :per-page="perPage"
+              :current-page.sync="currentPage"
+              :pagination-simple="false"
+              :mobile-cards="true">
+              <template slot-scope="props">
+                <b-table-column label='Date' centered>
+                  {{ props.row.date }}
+                </b-table-column>
+                <b-table-column label='Report' centered>
+                  {{ props.row.report }}
+                </b-table-column>
+              </template>
+            </b-table>
+          </section>
+        </div>
       </section>
     </div>
 </template>
@@ -26,7 +49,6 @@
 
 <script>
 import Config from '@/config'
-import SearchResults from '@/components/SearchResults'
 import BRadioButton from 'buefy/src/components/radio/RadioButton'
 export default {
   data () {
@@ -36,7 +58,9 @@ export default {
       owner: false,
       reportNumber: 0,
       searchData: [],
-      isLoading: false
+      isLoading: false,
+      currentPage: 1,
+      perPage: 5
     }
   },
   methods: {
@@ -45,19 +69,33 @@ export default {
     },
     async newReport () {
       try {
-        await this.$libre.report.addNewReport(this.reportText)
+        this.isLoading = true;
+        let txHash = await this.$libre.report.addNewReport(this.reportText);
+        if (await this.$eth.isSuccess(txHash)) {
+          this.searchReports();
+        } else {
+          this.$snackbar.open('Creating report error');
+        }
+        this.isLoading = false;
       } catch (err) {
-        console.log(err)
+        console.log(err);
+        this.$snackbar.open(err);
+        this.isLoading = false;
       }
     },
     async searchReports () {
       this.searchData = []
+      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 1"})
+      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 2"})
+      //this.searchData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 3"})
+      //this.searchData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 4"})
+      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 5"})
       this.isLoading = true
       try {
         let j = await this.$libre.report.counter()
-        for (let i = j - 1; i > 0; --i) {
+        for (let i = j - 1; i >= 0; --i) {
           let report = await this.$libre.report.reports(i)
-          console.log(report)
+          //console.log(report)
           this.searchData.push({date: new Date(report[1] * 1000).toLocaleString(), report: report[0]})
         }
       } catch (err) {
@@ -88,7 +126,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.reportAddress = Config.report.address;
+      this.reportAddress = Config.report.address[this.$eth.network];
       this.loadETH();
       this.loadReport();
       this.search();
@@ -98,7 +136,6 @@ export default {
     }
   },
   components: {
-    SearchResults,
     BRadioButton
   }
 }

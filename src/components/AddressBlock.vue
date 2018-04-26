@@ -1,24 +1,30 @@
 <template>
     <div>
-        <div class="address-block">
-            Address: <a v-if="defaultAddress != 'Unknown'" :href="`https://etherscan.io/address/${defaultAddress}`">{{ defaultAddress }}</a>
-            <span v-else>{{ defaultAddress }}</span>
-        </div>
-        <div v-if="balance > 0 || libertyBalance > 0">
-            Balances: <span v-if="balance > 0">{{ balance }} Libre</span><span v-if="balance > 0 && libertyBalance > 0">,</span>
-            <span v-if="libertyBalance > 0">{{ libertyBalance }} LBRS</span>
-        </div>
+        <section v-if="!unknownData">
+            <div class="address-block">
+                Your address: <a :href="$libre.addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
+            </div>
+            <div>
+                Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
+            </div>
+        </section>
+        <section v-else>
+            <div>
+                No metamask / not logged in
+            </div>
+        </section>
     </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      defaultAddress: 'Unknown',
-      balance: 0,
-      libertyBalance:0
-    }
+    data() {
+        return {
+            unknownData: false,
+            defaultAddress: 'Unknown',
+            balance: 0,
+            libertyBalance:0
+        }
   },
 
   async created() {
@@ -27,6 +33,7 @@ export default {
         await this.$libre.initPromise;
         this.defaultAddress = window.web3.eth.defaultAccount;
         if (this.defaultAddress == undefined) {
+            this.unknownData = true;
             this.balance = "Unknown"
             this.defaultAddress = "Unknown"
             this.libertyBalance = "Unknown"

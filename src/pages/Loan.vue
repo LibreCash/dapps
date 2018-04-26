@@ -4,13 +4,13 @@
       <div class="h2-contain">
         <h2 class="subtitle">{{ loanType }} Loan #{{ loanId }}</h2>
       </div>
-      <br>
+      <div class="level"></div>
       <div class="table-padding">
-        <button @click="$router.go(-1)" :to="{ path: '/loans' }" class="button">
+        <router-link :to="{ path: '/loans' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
           <span>Back</span>
-        </button>
-        <span class="icon arrow-left"><i class="arrow-left"></i></span>
+        </router-link>
+        <div class="level"></div>
         <b-table :data="loanData"
           :bordered="false"
           :striped="true"
@@ -27,25 +27,30 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
+        <div class="level"></div>
         <b-field v-if="takeEnable || returnEnable || claimEnable || cancelEnable">
-          <b-message :type="msg.type" style="white-space: pre-wrap;">{{ msg.text }}</b-message>
+          <b-message :type="msg.type">
+            <p v-for="note in msg.notes">
+              {{ note }}
+            </p>
+          </b-message>
         </b-field>
-        <br>
-        <div class="columns">
-          <div class="column" v-if="takeEnable">
-            <button v-bind:class="{'button is-success': true, 'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
+        <div class="level"></div>
+        <div class="level">
+          <div class="level-item has-text-centered" v-if="takeEnable">
+            <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
-          <div class="column" v-if="returnEnable">
-            <button v-bind:class="{'button is-danger': true, 'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
+          <div class="level-item has-text-centered" v-if="returnEnable">
+            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
           </div>
-          <div class="column" v-if="claimEnable">
-            <button v-bind:class="{'button is-success': true, 'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
+          <div class="level-item has-text-centered" v-if="claimEnable">
+            <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
           </div>
-          <div class="column" v-if="cancelEnable">
-            <button v-bind:class="{'button is-danger': true, 'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
+          <div class="level-item has-text-centered" v-if="cancelEnable">
+            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
           </div>
         </div>
+        <div class="level"></div>
       </div>
       
     </section>
@@ -74,21 +79,21 @@ export default {
         cancel: false
       },
       approve: {
-        address: Config.loans.address,
+        address: Config.loans.address[this.$eth.network],
         amount: ''
       },
       isUpdateRatesActive: false,
       msg: {
         type: 'is-info',
-        text: 'Please select to action'
+        notes: ['Please select an action']
       }
     }
   },
   methods: {
-    setMessage(type, message) {
+    setMessage(type, notes) {
       this.msg = {
         type: `is-${type}`,
-        text: message
+        notes: notes
       }
     },
 
@@ -115,7 +120,19 @@ export default {
             if (loan.holder === this.$eth.yourAccount)
               this.cancelEnable = true;
 
-            this.setMessage('warning',`To take a loan you need:\n1. The current exchange rate. It consists of two transactions:\n- request rate\n- rate calculation\n2. Available amount of collateral. ${this.loanType == 'ETH'? 'It consists two transactions:\n- authorize the transfer tokens\n- take offer transaction' : ''}`)
+            let ETHActions = this.loanType == 'ETH' ? [
+              'It consists two transactions:', 
+              '- authorize the transfer tokens',
+              '- take offer transaction'
+            ] : [];
+
+            this.setMessage('warning', [
+              'To take a loan you need:',
+              '1. The current exchange rate. It consists of two transactions:',
+              '- requesting rates',
+              '- rate calculation',
+              '2. Available amount of collateral.'
+            ].concat(ETHActions));
           } else if (loan.status == 'used') {
             this.takeEnable = this.cancelEnable = false;
             
@@ -170,58 +187,92 @@ export default {
     async actualizeRates() {
       let txHash;
       let bankState = this.$libre.bankState[+await this.$libre.bank.getState()];
+      let action = 'Getting current exchange rate:';
+      let price = +await this.$libre.bank.requestPrice();
+      let disclaimer = `1. Requesting rates (cost ${this.$eth.fromWei(price)} ETH)`;
       if (bankState != 'PROCESSING_ORDERS') {
         if (bankState == 'REQUEST_RATES') {
-          let price = +await this.$libre.bank.requestPrice();
-          this.setMessage('info',`Get current exchange rate:\n1. Request rate (cost ${this.$eth.fromWei(price)} ETH) - wait confirm...\n2. Rate calculation`);
+          this.setMessage('info', [action, `${disclaimer} - waiting for confirmations...`, '2. Rate calculation']);
           txHash = await this.$libre.bank.requestRates({value: price});
-          this.setMessage('info',`Get current exchange rate:\n1. Request rate (cost ${this.$eth.fromWei(price)} ETH) - send to the network...\n2. Rate calculation`)
+          this.setMessage('info', [action, `${disclaimer} - sending to the network...`, '2. Rate calculation'])
           if (await this.$eth.isSuccess(txHash)) {
             bankState = this.$libre.bankState[+await this.$libre.bank.getState()];
           } else {
-            this.setMessage('danger',`Get current exchange rate:\n1. Request rate (cost ${this.$eth.fromWei(price,'ether')} ETH) - fail transaction...\n2. Rate calculation`)
+            this.setMessage('danger', [action, `${disclaimer} - transaction failed...`, '2. Rate calculation']);
             return false
           }
         }
 
         if (bankState == 'WAIT_ORACLES') {
-          this.setMessage('success',`Get current exchange rate:\n1. request rate - successfully...\nPlease wait while we receive a response from the oracles. This may take about 10 minutes...\n\n2. rate calculation`)
+          this.setMessage('success', [
+            action,
+            `${disclaimer} - success`,
+            'Please wait while we receive responses from oracles. It may take about 10 minutes...',
+            '',
+            '2. rate calculation'
+          ]);
           await this.waitOracles()
           bankState = this.$libre.bankState[+await this.$libre.bank.getState()];
         }
 
         if (bankState == 'CALC_RATES') {
-          this.setMessage('warning',`Get current exchange rate:\n1. request rate - successfully\n2. rate calculation - wait confirm...`)
+          this.setMessage('warning', [
+            action,
+            `${disclaimer} - success`,
+            '',
+            '',
+            '2. rate calculation - waiting for confirmations...'
+          ]);
           txHash = await this.$libre.bank.calcRates();
-          this.setMessage('warning',`Get current exchange rate:\n1. request rate - successfully\n2. rate calculation - send to the network...`)
+          this.setMessage('warning', [
+            action,
+            `${disclaimer} - success`,
+            '',
+            '',
+            '2. rate calculation - sending to the network...'
+          ]);
           if (await this.$eth.isSuccess(txHash)) {
-            this.setMessage('success',`Get current exchange rate:\n1. request rate - successfully\n2. rate calculation - successfully...`)
+            this.setMessage('success', [
+              action,
+              `${disclaimer} - success`,
+              '',
+              '',
+              '2. rate calculation - success'
+            ]);
           } else {
-            this.setMessage('danger',`Get current exchange rate:\n1. request rate - successfully...\n2. rate calculation - fail transaction...`)
-            return false
+            this.setMessage('danger', [
+              action,
+              `${disclaimer} - success`,
+              '',
+              '',
+              '2. rate calculation - transaction failed'
+              ]);
+            return false;
           }
         } else {
-          return false
+          return false;
         }
       }
 
-      return true
+      return true;
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.myAddress, Config.loans.address)
+      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Config.deposit.address[this.$eth.network]);
+      let disclaimer = 'Available amount for deposit:';
+      let action = `1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens`;
       if (allowance < amount) {
-        this.setMessage('warning',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - wait confirm...`)
-        let txHash = await this.$libre.token.approve(Config.loans.address, amount);
-        this.setMessage('warning',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - send to the network...`)
+        this.setMessage('warning', [disclaimer, `${action} - waiting for confirmations...`]);
+        let txHash = await this.$libre.token.approve(Config.deposit.address[this.$eth.network], amount);
+        this.setMessage('warning', [disclaimer, `${action} - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
-          this.setMessage('success',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - successfully...`)
+          this.setMessage('success', [disclaimer, `${action} - success`]);
         } else {
-          this.setMessage('danger',`Available amount of collateral:\n1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens - fail transaction...`)
-          return false
+          this.setMessage('danger', [disclaimer, `${action} - transaction failed`]);
+          return false;
         }
       }
-      return true
+      return true;
     },
 
     async loanAction(action) {
@@ -244,17 +295,17 @@ export default {
             return
         }
 
-        this.setMessage('warning',`${action} transaction - wait confirm...`)
-        let txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId,{value: value}));
-        this.setMessage('warning',`${action} transaction - send to the network...`)
+        this.setMessage('warning', [`${action} transaction - waiting for confirmation...`]);
+        let txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId, {value: value}));
+        this.setMessage('warning', [`${action} transaction - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open(`${action} transaction - successfully`)
-          this.setMessage('success',`${action} transaction - successfully...`)
-          this.loadLoan()
+          this.$snackbar.open(`${action} transaction - success`);
+          this.setMessage('success', [`${action} transaction - success`]);
+          this.loadLoan();
         }
         else {
           this.$snackbar.open(`${action} transaction - fail`)
-          this.setMessage('danger',`${action} transaction - fail transaction...`)
+          this.setMessage('danger', [`${action} transaction - transaction failed`]);
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)

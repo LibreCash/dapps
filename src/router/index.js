@@ -1,16 +1,23 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Report from '@/pages/Report'
-import FundStatus from '@/pages/FundStatus'
+// DAO
 import DAO from '@/pages/DAO'
-import Loans from '@/pages/Loans'
 import Bounty from '@/pages/Bounty'
-import Loan from '@/pages/Loan'
 import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
-import NewOffer from '@/pages/NewOffer'
-import ContractStatus from '@/pages/ContractStatus'
+// FAUCET
+import Faucet from '@/pages/Faucet'
+// DEPOSIT
 import Deposit from '@/pages/Deposit'
+// REPORT
+import Report from '@/pages/Report'
+// LOANS
+import Loans from '@/pages/Loans'
+import Loan from '@/pages/Loan'
+import NewOffer from '@/pages/NewOffer'
+// STATUSES
+import FundStatus from '@/pages/FundStatus'
+import ContractStatus from '@/pages/ContractStatus'
 
 Vue.use(Router)
 
@@ -19,57 +26,94 @@ export default new Router({
     {
       path: '/',
       name: 'Report',
-      component: Report
+      component: Report,
+      meta: {title: 'Blockchain report - LibreBank'},
+      enabled: true
+    },
+    {
+      path: '/',
+      name: 'DAO',
+      component: DAO,
+      meta: {title: 'DAO - LibreBank'},
+      enabled: false
     },
     {
       path: '/status',
-      name: 'Emission Contract Status',
-      component: ContractStatus
-    },
-    {
-      path: '/fund',
-      name: 'Fund Status',
-      component: FundStatus
+      name: 'Contract Status',
+      meta: {title: 'Contract Status - LibreBank'},
+      component: ContractStatus,
+      enabled: true
     },
     {
       path: '/dao',
-      name: 'LibreBank DAO',
-      component: DAO
-    },
-    {
-      path: '/loans',
-      name: 'LibreBank Loans',
-      component: Loans
-    },
-    {
-      path: '/bounty',
-      name: 'Bounty Program',
-      component: Bounty
+      name: 'DAO',
+      component: DAO,
+      meta: {title: 'DAO - LibreBank'},
+      enabled: true
     },
     {
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
-      component: Proposal
-    },
-    {
-      path: '/dao/loan/:type/:id',
-      name: 'Loan Offer',
-      component: Loan
-    },
-    {
-      path: '/dao/new_offer',
-      name: 'New offer',
-      component: NewOffer
+      component: Proposal,
+      meta: {title: 'Proposal Info - LibreBank'},
+      enabled: false
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
-      component: NewProposal
+      component: NewProposal,
+      meta: {title: 'New proposal - Librebank'},
+      enabled: false
+    },
+    {
+      path: '/bounty',
+      name: 'Bounty Program',
+      component: Bounty,
+      meta: {title: 'Contracts Bounty - Librebank'},
+      enabled: true
+    },
+    {
+      path: '/faucet',
+      name: 'Faucet',
+      component: Faucet,
+      meta: {title: 'LBRS Faucet - Librebank'},
+      enabled: true
+
     },
     {
       path: '/deposit',
       name: 'Deposit',
-      component: Deposit
+      component: Deposit,
+      meta: {title: 'Deposit - Librebank'},
+      enabled: true
+    },
+    {
+      path: '/loans',
+      name: 'Loans',
+      component: Loans,
+      meta: {title: 'Loans - Librebank'},
+      enabled: true
+    },
+    {
+      path: '/loan/:type/:id',
+      name: 'Loan Offer',
+      component: Loan,
+      meta: {title: 'Loan offer - Librebank'},
+      enabled: false
+    },
+    {
+      path: '/loans/new',
+      name: 'New Loan Offer',
+      component: NewOffer,
+      meta: {title: 'New loan offer - Librebank'},
+      enabled: false
+    },
+    {
+      path: '/fund',
+      name: 'Fund Status',
+      component: FundStatus,
+      meta: {title: 'Fund status - Librebank'},
+      enabled: true
     }
   ],
   mode: 'hash'

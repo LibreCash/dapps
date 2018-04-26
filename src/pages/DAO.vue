@@ -2,41 +2,60 @@
   <div>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">DAO Proposal</h2>
+        <h2 class="subtitle">{{ $route.name }}</h2>
       </div>
-      <br>
+      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
             <div class="card-content">
                 <address-block/>
                 <div>DAO Contract: 
-                    <a :href="`https://etherscan.io/address/${daoAddress}`">{{ daoAddress }}</a>
+                  <a :href="$libre.addressToLink(daoAddress)" target="_blank">
+                    <input class="address" :value="daoAddress">
+                  </a>
                 </div>
                 <div>Liberty Token: 
-                    <a :href="`https://etherscan.io/address/${libertyAddress}`">{{ libertyAddress }}</a>
+                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank">
+                    <input class="address" :value="libertyAddress">
+                  </a>
                 </div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
                 <div>Token count: {{ tokensCount }} LBRS</div>
-                <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
-                <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
+                <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / Math.pow(10, 18) }} LBRS</div>
+                <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / Math.pow(10, 18) }} LBRS</div>
                 <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             </div>
-            
         </div>
-        <br>
-        <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary" v-if="tokensCount > $libre.proposalParams.minBalance / Math.pow(10, 18)">New Proposal</router-link>
-        <br><br>
-        <b-field>
-          <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
-          <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
-        </b-field>
+        <div class="level"></div>
+        <nav class="level">
+          <div class="level-item has-text-centered" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">
+            <div>
+              <p class="heading">Create</p>
+              <p>
+                <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">New Proposal</router-link>
+              </p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Proposal type</p>
+              <p>
+                <b-field>
+                  <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
+                  <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
+                </b-field>
+              </p>
+            </div>
+          </div>
+        </nav>
+        <div class="level"></div>
         <b-table
           :data="tableData"
           :bordered="false"
           :striped="true"
           :narrowed="false"
           :loading="isLoading"
-          :paginated="true"
+          :paginated="perPage < tableData.length"
           :per-page="perPage"
           :current-page.sync="currentPage"
           :pagination-simple="false"
@@ -148,9 +167,8 @@ export default {
   },
   methods: {
     async addProposal (index) {
-      var 
-        proposal = this.$libre.proposals[index],
-        vote = proposal.vote;
+      var proposal = this.$libre.proposals[index];
+      var vote = proposal.vote;
 
       if (this[this.filter](proposal))
       {
@@ -211,15 +229,9 @@ export default {
       this.isLoading = false
 
       this.startUpdatingTime()
-      this.contractOwner = await this.$libre.dao.owner()
       var loginChecker = setInterval(() => {
         if (this.$eth.yourAccount != null) {
           clearInterval(loginChecker)
-          if (this.contractOwner === this.$eth.yourAccount) {
-            this.isOwner = true
-          } else {
-            this.isOwner = false
-          }
         }
       }, 1000)
     },
@@ -338,11 +350,14 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Config.dao.address;
+      this.daoAddress = Config.dao.address[this.$eth.network];
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.libertyAddress = this.$libre.libertyAddress;
-      this.loadProposals()
-      this.getTokensCount()
+      this.contractOwner = await this.$libre.dao.owner();
+      this.isOwner = (this.contractOwner === this.$eth.yourAccount);
+
+      this.loadProposals();
+      this.getTokensCount();
     } catch (err) {
       console.log(err)
     }

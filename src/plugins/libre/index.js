@@ -3,11 +3,13 @@ import Vue from 'vue'
 import Web3 from 'web3'
 import Config from '@/config'
 
-class Libre {
-  static install(vue, options) {
+export default class Libre {
+  static install (vue, options) {
     const libre = new Libre()
     Object.defineProperty(Vue.prototype, '$libre', {
-      get() { return libre }
+      get() {
+        return libre
+      }
     })
   }
 
@@ -76,8 +78,7 @@ class Libre {
       'deadline': 3
     }
 
-    this.typeProposals = [
-      {
+    this.typeProposals = [{
         text: 'Custom',
         key: 'UNIVERSAL',
         benef: 'Beneficiary:',
@@ -97,13 +98,15 @@ class Libre {
       {
         text: 'New Bank',
         key: 'SET_BANK_ADDRESS',
-        benef: 'Bank Address:'
+        benef: 'Bank Address:',
+        info: `Before offering to change bank address please make sure to attach the current token to the new bank`
       },
       {
         text: 'Change Fees',
         key: 'SET_FEES',
         amount: 'Buy fee, %:',
-        buf: 'Sell fee, %:'
+        buf: 'Sell fee, %:',
+        type: '%'
       },
       {
         text: 'Add Oracle',
@@ -152,7 +155,9 @@ class Libre {
       {
         text: 'Set Lock',
         key: 'SET_LOCK',
-        lock: 'Lock:'
+        lock: 'Lock:',
+        _amount: 'Pause',
+        type: 'bool'
       },
       {
         text: 'Claim Ownership',
@@ -165,8 +170,7 @@ class Libre {
       }
     ]
 
-    this.proposalStatuses = [
-      {
+    this.proposalStatuses = [{
         text: 'ACTIVE',
         number: 0
       },
@@ -210,26 +214,29 @@ class Libre {
 
   async init() {
     this.web3 = window.web3;
+    let network = Vue.prototype.$eth.network
+    console.log(network)
 
-    this.report = this.getContract(Config.report.abi, Config.report.address)
-    this.bank = this.getContract(Config.bank.abi, Config.bank.address)
-    var address = await this.bank.tokenAddress();
-    Config.token.address = address;
+    this.report = this.getContract(Config.report.abi, Config.report.address[network])
+    this.bank = this.getContract(Config.bank.abi, Config.bank.address[network])
+    var address = await this.bank.tokenAddress()
+    Config.token.address = address
     this.token = this.getContract(Config.erc20.abi, Config.token.address)
 
     this.dao = this.getContract(Config.dao.abi, Config.dao.address)
-    this.libertyAddress = address = await this.dao.sharesTokenAddress();
-    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress);
+    this.libertyAddress = address = await this.dao.sharesTokenAddress()
+    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
 
-    this.loans = this.getContract(Config.loans.abi, Config.loans.address);
-    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address);
+    this.loans = this.getContract(Config.loans.abi, Config.loans.address)
+    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address)
 
-    this.bounty = {};
-    this.bounty.bank = this.getContract(Config.bounty.bank.abi, Config.bounty.bank.address);
-    this.bounty.exchanger = this.getContract(Config.bounty.exchanger.abi, Config.bounty.exchanger.address);
+    this.bounty = {
+      bank: this.getContract(Config.bounty.bank.abi, Config.bounty.bank.address),
+      exchanger: this.getContract(Config.bounty.exchanger.abi, Config.bounty.exchanger.address)
+    }
   }
 
-  getContract(abi, address) {
+  getContract (abi, address) {
     if (!this.decodes)
       this.decodes = {}
 
@@ -246,7 +253,7 @@ class Libre {
     })
   }
 
-  getLoanObject(contractArray) {
+  getLoanObject (contractArray) {
     return {
       holder: contractArray[this.loansStruct.holder],
       recipient: contractArray[this.loansStruct.recipient],
@@ -260,7 +267,7 @@ class Libre {
     }
   }
 
-  getProposalObject(contractArray) {
+  getProposalObject (contractArray) {
     return {
       type: +contractArray[this.proposalStruct.type],
       recipient: contractArray[this.proposalStruct.recipient],
@@ -272,37 +279,37 @@ class Libre {
     }
   }
 
-  toToken(contractNumber, decimals = this.consts.DECIMALS) {
-    return +contractNumber / 10 ** decimals;
+  toToken (contractNumber, decimals = this.consts.DECIMALS) {
+    return +contractNumber / 10 ** decimals
   }
 
-  fromToken(amount, decimals = this.consts.DECIMALS) {
-    return +amount * 10 ** decimals;
+  fromToken (amount, decimals = this.consts.DECIMALS) {
+    return +amount * 10 ** decimals
   }
 
-  periodToString(seconds) {
-    var years = Math.floor(seconds / (60 * 60 * 24 * 365));
-    seconds -= years * 60 * 60 * 24 * 365;
+  periodToString (seconds) {
+    let years = Math.floor(seconds / (60 * 60 * 24 * 365))
+    seconds -= years * 60 * 60 * 24 * 365
 
-    var months = Math.floor(seconds / (60 * 60 * 24 * 30));
-    seconds -= months * 60 * 60 * 24 * 30;
+    let months = Math.floor(seconds / (60 * 60 * 24 * 30))
+    seconds -= months * 60 * 60 * 24 * 30
 
-    var days = Math.floor(seconds / (60 * 60 * 24));
-    seconds -= days * 60 * 60 * 24;
+    let days = Math.floor(seconds / (60 * 60 * 24))
+    seconds -= days * 60 * 60 * 24
 
-    var hours = Math.floor(seconds / (60 * 60));
-    seconds -= hours * 60 * 60;
+    let hours = Math.floor(seconds / (60 * 60));
+    seconds -= hours * 60 * 60
 
-    var minutes = Math.floor(seconds / 60);
-    seconds -= minutes * 60;
+    let minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60
 
-    if (hours < 10) { hours = "0" + hours; }
-    if (minutes < 10) { minutes = "0" + minutes; }
-    if (seconds < 10) { seconds = "0" + seconds; }
-    return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`;
+    hours = hours < 10 ? '0' + hours : hours
+    minutes = minutes < 10 ? '0' + minutes : minutes
+    seconds = seconds < 10 ? '0' + seconds : seconds
+    return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`
   }
 
-  getVotingObject(contractArray) {
+  getVotingObject (contractArray) {
     return {
       yea: +contractArray[this.voteStruct.yea] / 10 ** this.consts.DECIMALS,
       nay: +contractArray[this.voteStruct.nay] / 10 ** this.consts.DECIMALS,
@@ -311,7 +318,7 @@ class Libre {
     }
   }
 
-  getDepositObject(contractArray) {
+  getDepositObject (contractArray) {
     return {
       timestamp: +contractArray[this.depositData.timestamp],
       deadline: +contractArray[this.depositData.deadline],
@@ -321,15 +328,19 @@ class Libre {
     }
   }
 
-  async updateProposal(index) {
-    let proposal = this.getProposalObject(await this.dao.getProposal(index));
-    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
+  addressToLink (address) {
+    return `https://${Vue.prototype.$eth.network == 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/address/${address}`
+  }
+
+  async updateProposal (index) {
+    let proposal = this.getProposalObject(await this.dao.getProposal(index))
+    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index))
 
     this.proposals[index] = proposal
     return this.proposals[index]
   }
 
-  async updateProposals(callEach) {
+  async updateProposals (callEach) {
     try {
       let length = await this.dao.prsLength()
 
@@ -346,11 +357,11 @@ class Libre {
     }
   }
 
-  async loadPlans() {
-    if (this.plans.length > 0)
+  async loadPlans (force = false) {
+    if (this.plans.length > 0 && !force)
       return
 
-    let count = +await this.deposit.plansCount();
+    let count = +await this.deposit.plansCount()
     for (let i = 0; i < count; i++) {
       let arr = await this.deposit.plans(i),
         plan = {
@@ -369,36 +380,26 @@ class Libre {
     let result = ""
 
     try {
-      let contract = this.decodes[address];
+      let contract = this.decodes[address]
 
       if (!contract)
         return ""
 
-      let hashMethod = bytecode.substring(0, 10);
-      let params = bytecode.substring(10);
+      let hashMethod = bytecode.substring(0, 10)
+      let params = bytecode.substring(10)
 
       let abiMethod = contract.abi.find(elem => {
         return elem.type == 'function' && contract[elem.name].getData().substring(0, 10) === hashMethod
       })
 
       let typeParams = abiMethod.inputs.map(param => param.type)
-      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params);
+      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params)
 
       result = `${abiMethod.name}(${valueParams})`
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
 
-    return result;
-  }
-
-  ethToDate(ethTimestamp) {
-    return (+ethTimestamp > 0) ? (new Date(ethTimestamp * 1000)).toLocaleString() : '-'
-  }
-
-  divDecimals(amount, decimals = 18) {
-    return amount / 10 ** 18
+    return result
   }
 }
-
-Vue.use(Libre, {})

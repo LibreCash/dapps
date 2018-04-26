@@ -34,8 +34,13 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     new UglifyJsPlugin({
       uglifyOptions: {
+        ecma: 8,
         compress: {
-          warnings: false
+          warnings: true
+        },
+        safari10: true,
+        mangle: {
+          safari10: true
         }
       },
       sourceMap: config.build.productionSourceMap,
@@ -81,7 +86,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      minChunks (module) {
+      minChunks(module) {
         // any required modules inside node_modules are extracted to vendor
         return (
           module.resource &&

@@ -2,54 +2,52 @@
   <div>
     <section class="allMain">
       <div class="h2-contain">
-        <h2 class="subtitle">Loans</h2>
+        <h2 class="subtitle">{{ $route.name }}</h2>
       </div>
-      <br>
+      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div>Loans contract address: <a :href="`https://etherscan.io/address/${loansAddress}`">{{ loansAddress }}</a></div>
+                <div>Loans contract address: <input class="address" :value="loansAddress"></div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
             </div>
         </div>
-        
-        <div class="columns" style="padding-top: 2rem">
-          <div class="column is-narrow">
-            <router-link :to="{ path: '/dao/new_offer' }" class="button is-primary">New Offer</router-link>
-          </div>
-          <div class="column is-narrow">
-            <div class="card">
-                <div class="card-content">
-                    <center><span>Type loans:</span></center>
-                    <b-field>
-                      <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
-                      <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
-                    </b-field>
-                </div>
+        <div class="level"></div>
+        <nav class="level">
+          <div class="level-item has-text-centered" v-if="canCreate">
+            <div>
+              <p class="heading">Create</p>
+              <p><router-link :to="{ path: '/loans/new' }" class="button is-primary">New Offer</router-link></p>
             </div>
-            
           </div>
-          <div class="column">
-            <div class="card">
-                <div class="card-content">
-                    <div><center>State loans:</center></div>
-                    <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
-                    <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
-                    <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
-                    <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
-                </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Loan type</p>
+              <p>
+                <b-field>
+                  <b-radio-button v-model="ethType" native-value="ETH" type="is-success" @input="loadLoans()">ETH</b-radio-button>
+                  <b-radio-button v-model="ethType" native-value="Libre" type="is-success" checked @input="loadLoans()">Libre</b-radio-button>
+                </b-field>
+              </p>
             </div>
-            
           </div>
-        </div>
-        <br>
-        <div v-if="loansCount == 0 || searchData.length == 0">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Loan state</p>
+              <p>
+                <b-switch v-model="isActive" @input="loadLoans()">active</b-switch>
+                <b-switch v-model="isUsed" @input="loadLoans()">used</b-switch>
+                <b-switch v-model="isCompleted" @input="loadLoans()">completed</b-switch>
+                <b-switch v-model="isMine" @input="loadLoans()">mine</b-switch>
+              </p>
+            </div>
+          </div>
+        </nav>
+        <div class="level"></div>
+        <div v-if="loansCount == 0 || searchData.length == 0" class="has-text-centered">
           No loans for selected filter
         </div>
-        <b-message type="is-warning" v-if="needUpdate">
-          The table isn't actual. Please update the page
-        </b-message>
         <b-table
           v-if="searchData.length > 0"
           :data="isEmpty ? [] : searchData"
@@ -93,10 +91,11 @@
               {{ props.row.status }}
             </b-table-column>
             <b-table-column label='Actions' centered>
-              <router-link :to="{name: 'Loan Offer', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+              <router-link class="button" :to="{name: 'Loan Offer', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
             </b-table-column>
           </template>
         </b-table>
+        <div class="level"></div>
         <div class="columns">
           <div class="column is-narrow">
             <b-tooltip label="Items on page">
@@ -116,6 +115,7 @@
           </div>
           <div class="column">
             <b-pagination
+                v-if="loansCount > perPage"
                 @change="loadLoans"
                 :total="loansCount"
                 :current.sync="vpage"
@@ -147,7 +147,6 @@ export default {
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
-      needUpdate: false,
       loansAddress: '',
       searchData: [],
       isSimple: false,
@@ -163,13 +162,14 @@ export default {
       isMine: false,
       loansCount: 0,
       perPage: 10,
-      curBlockchainTime: 0
+      curBlockchainTime: 0,
+      canCreate: true
     }
   },
   methods: {
     async loadLoans (e) {
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.loansAddress = Config.loans.address;
+      this.loansAddress = Config.loans.address[this.$eth.network];
       this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         return;
@@ -250,6 +250,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
+      this.canCreate = this.$eth._web3.eth.defaultAccount != undefined;
       this.startUpdatingTime();
       this.loadLoans()
     } catch (err) {

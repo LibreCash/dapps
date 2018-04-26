@@ -7,64 +7,18 @@
                 <span></span>
             </div>
             <div class="LeftNav" id="navMenu">
-                <div href="#" class="logo">
-                    <img src="/src/assets/img/logo.svg" width="200" height="180" />
-                    <h3 >Testing. Works on Rinkeby</h3>
+                <div class="logo">
+                  <router-link to="/">
+                    <img src="/static/img/logo.svg" width="200" height="180" />
+                  </router-link>
                 </div>
                 <ul class="MenuLeft">
-                    <li>
-                        <router-link to="/">
-                            <div class="Rectangle"></div>
-                            <span>Reports</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/fund">
-                            <div class="Rectangle"></div>
-                            <span>Fund Status</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/status">
-                            <div class="Rectangle"></div>
-                            <span>Contract Status</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/dao">
-                            <div class="Rectangle"></div>
-                            <span>DAO</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/loans">
-                            <div class="Rectangle"></div>
-                            <span>Loans</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/deposit">
-                            <div class="Rectangle"></div>
-                            <span>Deposit</span>
-                        </router-link>
-                    </li>
-                    <li>
-                        <router-link to="/bounty">
-                            <div class="Rectangle"></div>
-                            <span>Bounty</span>
-                        </router-link>
-                    </li>
-                </ul>
-                <ul class="conditions">
-                    <li>
-                        <a href="https://librebank.com">LibreBank Site</a>
-                    </li>
-                    <li>
-                        <a href="https://librecash.com">LibreCash Site</a>
-                    </li>
-                    <li>
-                        <a href="https://blog.librebank.com">LibreBank Blog</a>
-                    </li>
+                  <li v-for="route in $router.options.routes" :key="route.path">
+                    <router-link :to="route.path" v-if="route.enabled">
+                        <div class="Rectangle"></div>
+                        <span>{{ route.name }}</span>
+                    </router-link>
+                  </li>
                 </ul>
             </div>
         </div>
@@ -87,6 +41,9 @@ export default {
 };
 </script>
 <style>
+.h2-contain >  .subtitle {
+  text-align: center;
+}
 .eth-address {
   font-size: 1em;
   color: #3498db;
@@ -140,31 +97,11 @@ export default {
   padding: 30px 60px;
   justify-content: flex-start;
 }
-#search-results {
-  margin-top: 20px;
-  padding: 0 60px;
-}
-#search-results .table thead {
-  display: none;
-}
-#search-results .table tr {
-  display: block;
-  padding: 20px 0;
-}
-#search-results .table tr td {
-  display: block;
-  border: 0;
-  padding-left: 0px;
-}
-#search-results .table tr td:first-child {
-  font-size: 14px;
-}
-#search-results .table tr td.has-text-centered {
-  text-align: left !important;
-}
+
 .logo {
   display: block;
   text-align: center;
+  color: white;
 }
 .MenuLeft {
   margin-top: 75px;
@@ -214,6 +151,9 @@ export default {
 .allMain .pagination-link.is-current {
   background-color: #fcc14a;
   border-color: #fcc14a;
+}
+.logo h3 {
+  color:white;
 }
 .allMain .pagination-link,
 .allMain .pagination-previous[disabled],
@@ -265,16 +205,6 @@ export default {
   .allMain h2 {
     font-size: 22px;
   }
-  #search-results {
-    padding: 0 15px;
-  }
-  #search-results .table tr td {
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-  #search-results .table tr {
-    padding: 7px 0;
-  }
   #Mainblock.is-active .LeftNav {
     height: auto;
     overflow: visible;
@@ -283,9 +213,6 @@ export default {
   }
   .main .navbar-burger {
     margin: 5px 0 10px 15px;
-  }
-  #search-results .table tr td:first-child {
-    font-size: 14px;
   }
   .conditions li a {
     display: block;
@@ -296,9 +223,11 @@ export default {
   padding: 0 40px;
 }
 input.address {
-  border-width: 0 0 1px 0;
-  border-color: #949191;
-  background-color: white;
+  width: 100%;
+  text-align: inherit;
+  border: 0;
+  background: transparent;
+  font-size: inherit;
 }
 .chart-height {
   min-height: 200px;
