@@ -1,5 +1,5 @@
 <template>
-    <div>
+  <div>
         <section v-if="owner" class="table-padding">
           <b-field>
             <b-input
@@ -38,21 +38,44 @@
                 <b-table-column label='Asset' centered v-if="!props.row.nojson">
                   {{ props.row.asset }}
                 </b-table-column>
-                <b-table-column label='From' centered v-if="!props.row.nojson">
-                  <span v-if="isAddress(props.row.from)"><a :href="$libre.addressToLink(props.row.from)">address</a></span>
-                  <span v-else>{{ props.row.from }}</span>                  
-                </b-table-column>
-                <b-table-column label='To' centered v-if="!props.row.nojson">
-                  <span v-if="isAddress(props.row.to)"><a :href="$libre.addressToLink(props.row.asset)">address</a></span>
-                  <span v-else>{{ props.row.to }}</span>                  
-                </b-table-column>
-                <b-table-column label='txAm' centered v-if="!props.row.nojson">
-                  {{ props.row.txAm }}
+                <b-table-column label='Actions' centered v-if="!props.row.nojson">
+                  <button class="button" @click="showModal(props.row)">show</button>
                 </b-table-column>
               </template>
             </b-table>
-            </section>
+          </section>
         </div>
+        <b-modal :active.sync="isReportModalActive" :width="640" scroll="keep">
+          <div class="card">
+            <div class="card-content">
+              <p class="subtitle">
+                Date: {{ curReport.date }}
+              </p>
+              <p class="title">
+                {{ curReport.descr }}
+              </p>
+              <p class="subtitle">
+                Asset: {{ curReport.asset }}
+              </p>
+              <p class="subtitle">
+                Tx: {{ curReport.txAm }}
+              </p>
+            </div>
+            <footer class="card-footer" v-if="isAddress(curReport.to) || isAddress(curReport.from)">
+              <div class="card-footer-item" v-if="isAddress(curReport.from)">
+                <div class="address-block">
+                  <p>From: </p>
+                  <a :href="$libre.addressToLink(curReport.from)" class="is-text-overflow">{{ curReport.from }}</a>
+                </div>
+              </div>
+              <div class="card-footer-item address-block" v-if="isAddress(curReport.to)">
+                
+                  To: <a :href="$libre.addressToLink(curReport.to)" class="is-text-overflow">{{ curReport.to }}</a>
+                
+              </div>
+            </footer>
+          </div>
+        </b-modal>
     </div>
 </template>
 
@@ -63,6 +86,7 @@ export default {
   data () {
     return {
       reportAddress: '',
+      curReport: {},
       reportText: '',
       owner: false,
       reportNumber: 0,
@@ -70,12 +94,18 @@ export default {
       searchData: [],
       isLoading: false,
       currentPage: 1,
-      perPage: 5
+      perPage: 5,
+      isReportModalActive: false
     }
   },
   methods: {
     isAddress (address) {
       return web3.isAddress(address)
+    },
+
+    showModal (row) {
+      this.curReport = row;
+      this.isReportModalActive = true;
     },
 
     async search () {
