@@ -66,6 +66,7 @@ export default {
       returnEnable: false,
       claimEnable: false,
       cancelEnable: false,
+      loggedIn: false,
       isAllowanceActive: false,
       btnloading: {
         takeLoan: false,
@@ -138,6 +139,7 @@ export default {
               this.returnEnable = true;
           }
 
+          this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
 
           this.loanData.push({name: 'Type', data: this.$route.params.type})
           this.loanData.push({name: 'ID', data: +this.$route.params.id})

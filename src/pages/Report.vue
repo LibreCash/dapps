@@ -1,5 +1,5 @@
 <template>
-    <div>
+  <div>
         <section v-if="owner" class="table-padding">
           <b-field>
             <b-input
@@ -29,17 +29,55 @@
                 <b-table-column label='Date' centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column label='Report' centered>
-                  {{ props.row.report }}
+                <b-table-column label='Description' centered :colspan="props.row.nojson ? 6 : 0">
+                  {{ props.row.descr }}
+                </b-table-column>
+                <b-table-column label='Type' centered v-if="!props.row.nojson">
+                  {{ props.row.tp }}
+                </b-table-column>
+                <b-table-column label='Asset' centered v-if="!props.row.nojson">
+                  {{ props.row.asset }}
+                </b-table-column>
+                <b-table-column label='Actions' centered v-if="!props.row.nojson">
+                  <button class="button" @click="showModal(props.row)">show</button>
                 </b-table-column>
               </template>
             </b-table>
-            </section>
+          </section>
         </div>
+        <b-modal :active.sync="isReportModalActive" :width="640" scroll="keep">
+          <div class="card">
+            <div class="card-content">
+              <p class="subtitle">
+                Date: {{ curReport.date }}
+              </p>
+              <p class="title">
+                {{ curReport.descr }}
+              </p>
+              <p class="subtitle">
+                Asset: {{ curReport.asset }}
+              </p>
+              <p class="subtitle">
+                Tx: {{ curReport.txAm }}
+              </p>
+            </div>
+            <footer class="card-footer" v-if="isAddress(curReport.to) || isAddress(curReport.from)">
+              <div class="card-footer-item" v-if="isAddress(curReport.from)">
+                <div class="address-block">
+                  <p>From: </p>
+                  <a :href="$libre.addressToLink(curReport.from)" class="is-text-overflow">{{ curReport.from }}</a>
+                </div>
+              </div>
+              <div class="card-footer-item address-block" v-if="isAddress(curReport.to)">
+                
+                  To: <a :href="$libre.addressToLink(curReport.to)" class="is-text-overflow">{{ curReport.to }}</a>
+                
+              </div>
+            </footer>
+          </div>
+        </b-modal>
     </div>
 </template>
-
-
 
 <script>
 import Config from '@/config'
@@ -48,16 +86,28 @@ export default {
   data () {
     return {
       reportAddress: '',
+      curReport: {},
       reportText: '',
       owner: false,
       reportNumber: 0,
+      rawData: [],
       searchData: [],
       isLoading: false,
       currentPage: 1,
-      perPage: 5
+      perPage: 5,
+      isReportModalActive: false
     }
   },
   methods: {
+    isAddress (address) {
+      return web3.isAddress(address)
+    },
+
+    showModal (row) {
+      this.curReport = row;
+      this.isReportModalActive = true;
+    },
+
     async search () {
       this.searchReports()
     },
@@ -78,17 +128,32 @@ export default {
       }
     },
     async searchReports () {
-      this.searchData = []
+      this.rawData = []
+      //this.rawData.push({date: new Date().toLocaleString(), report: '{"tp": "wow", "asset":"libre","from":"0x","to":"0x","descr":"i","txAm":"lll"}'})
+      //this.rawData.push({date: new Date().toLocaleString(), report: "For testing purposes 2"})
+      //this.rawData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 3"})
+      //this.rawData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 4"})
+      //this.rawData.push({date: new Date().toLocaleString(), report: "For testing purposes 5"})
       this.isLoading = true
       try {
         let j = await this.$libre.report.counter()
         for (let i = j - 1; i >= 0; --i) {
           let report = await this.$libre.report.reports(i)
-          this.searchData.push({date: new Date(report[1] * 1000).toLocaleString(), report: report[0]})
+          this.rawData.push({date: new Date(report[1] * 1000).toLocaleString(), report: report[0]})
         }
       } catch (err) {
         console.log(err)
       }
+      this.searchData = this.rawData.map((val) => {
+        let result;
+        try {
+          result = JSON.parse(val.report);
+          result.date = val.date;
+        } catch (err) {
+          result = {date: val.date, descr: val.report, nojson: true};
+        }
+        return result;
+      });
       this.isLoading = false
     },
     async loadReport () {

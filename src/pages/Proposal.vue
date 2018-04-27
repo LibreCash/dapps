@@ -33,7 +33,7 @@
           </template>
         </b-table>
         <div class="level"></div>
-        <div class="level is-mobile">
+        <div class="level is-mobile" v-if="loggedIn">
           <div class="level-item has-text-centered">
             <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="fas fa-thumbs-up"></i></button>
           </div>
@@ -70,6 +70,7 @@ export default {
       isLoading: false,
       isPaginated: true,
       isPaginationSimple: false,
+      loggedIn: false,
       typeProposals: this.$libre.typeProposals,
       currentProposal: '',
       enableVote: false,
@@ -132,6 +133,7 @@ export default {
     },
 
     async loadProposal () {
+      this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
       const 
         struct = this.$libre.proposalStruct
     
