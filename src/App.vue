@@ -49,6 +49,17 @@ export default {
 };
 </script>
 <style>
+
+.is-text-overflow {
+    flex: 1;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.is-text-overflow::-webkit-scrollbar { 
+    display: none; 
+}
+
 .h2-contain > .subtitle {
   text-align: center;
 }
