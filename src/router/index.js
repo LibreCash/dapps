@@ -23,17 +23,19 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'DAO',
-      component: DAO,
-      meta: {title: 'DAO - LibreBank'},
-      enabled: false
+      path: '/report',
+      name: 'Report',
+      component: Report,
+      meta: {title: 'Blockchain Report - Librebank'},
+      icon: 'fas fa-chart-pie',
+      enabled: true
     },
     {
-      path: '/reports',
-      name: 'Reports',
-      meta: {title: 'Reports - LibreBank'},
-      component: Report,
+      path: '/fund',
+      name: 'Fund Status',
+      component: FundStatus,
+      meta: {title: 'Fund status - Librebank'},
+      icon: 'fas fa-university',
       enabled: true
     },
     {
@@ -41,13 +43,15 @@ export default new Router({
       name: 'Contract Status',
       meta: {title: 'Contract Status - LibreBank'},
       component: ContractStatus,
+      icon: 'fas fa-file-alt',
       enabled: true
     },
     {
-      path: '/dao',
+      path: '/',
       name: 'DAO',
       component: DAO,
       meta: {title: 'DAO - LibreBank'},
+      icon: 'fas fa-users',
       enabled: true
     },
     {
@@ -69,6 +73,7 @@ export default new Router({
       name: 'Faucet',
       component: Faucet,
       meta: {title: 'LBRS Faucet - Librebank'},
+      icon: 'fas fa-hand-holding-usd',
       enabled: true
     },
     {
@@ -76,6 +81,7 @@ export default new Router({
       name: 'Deposit',
       component: Deposit,
       meta: {title: 'Deposit - Librebank'},
+      icon: 'fas fa-piggy-bank',
       enabled: true
     },
     {
@@ -83,6 +89,7 @@ export default new Router({
       name: 'Loans',
       component: Loans,
       meta: {title: 'Loans - Librebank'},
+      icon: 'fas fa-credit-card',
       enabled: true
     },
     {
@@ -98,13 +105,6 @@ export default new Router({
       component: NewOffer,
       meta: {title: 'New loan offer - Librebank'},
       enabled: false
-    },
-    {
-      path: '/fund',
-      name: 'Fund Status',
-      component: FundStatus,
-      meta: {title: 'Fund status - Librebank'},
-      enabled: true
     }
   ],
   mode: 'hash'

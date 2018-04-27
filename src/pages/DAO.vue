@@ -1,10 +1,5 @@
 <template>
   <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">{{ $route.name }}</h2>
-      </div>
-      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
             <div class="card-content">
@@ -94,7 +89,7 @@
             <b-table-column label='Actions' centered>
               <!-- details button -->
               <b-tooltip label="Details" type="is-dark" position="is-bottom">
-                <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button" class="button"><i class="mdi mdi-account-card-details"></i></router-link>
+                <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button" class="button"><i class="fas fa-id-card"></i></router-link>
               </b-tooltip>
               <!-- vote buttons -->
               <span v-if="!props.row.votingData.voted &&
@@ -103,10 +98,10 @@
                           (tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip label="Yea" type="is-dark" position="is-bottom">
-                  <button class="button" v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
+                  <button class="button" v-on:click="vote(props.row, true)"><i class="fas fa-thumbs-up"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Nay" type="is-dark" position="is-bottom">
-                  <button class="button" v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+                  <button class="button" v-on:click="vote(props.row, false)"><i class="fas fa-thumbs-down"></i></button>
                 </b-tooltip>
               </span>
               <!-- execute button -->
@@ -116,7 +111,7 @@
                               (props.row.yea > props.row.nay) &&
                               (props.row.yea + props.row.nay >= $libre.proposalParams.quorum / Math.pow(10, 18))">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
-                  <button class="button" v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+                  <button class="button" v-on:click="execute(props.row)"><i class="fas fa-play"></i></button>
                 </b-tooltip>
               </span>
               <span v-else-if="props.row.loading">
@@ -127,7 +122,7 @@
                           (props.row.status === $libre.proposalStatuses[0].text) &&
                           !props.row.loading">
                 <b-tooltip label="Block as owner" type="is-dark" position="is-bottom">
-                  <button class="button" v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+                  <button class="button" v-on:click="block(props.row)"><i class="fas fa-ban"></i></button>
                 </b-tooltip>
               </span>
             </b-table-column>

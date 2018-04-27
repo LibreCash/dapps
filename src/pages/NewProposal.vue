@@ -1,20 +1,15 @@
 <template>
     <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">{{ $route.name }}</h2>
-      </div>
-      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
           <div class="card-content">
             <div>Token count: {{ tokensCount }} LBRS</div>
             <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
             <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
-            <button :to="{ path: '/dao' }" class="button">
+            <router-link :to="{ path: '/dao' }" class="button">
               <b-icon icon="keyboard-return" size="is-small"></b-icon>
               <span>Back</span>
-            </button>
+            </router-link>
           </div>
         </div>
         <p>&nbsp;</p>
@@ -68,7 +63,6 @@
         </b-field>
       </div>
       <div class="level"></div>
-    </section>
     </div>
 
 </template>

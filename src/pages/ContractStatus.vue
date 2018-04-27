@@ -1,10 +1,5 @@
 /* eslint-disable-one-var */
 <template>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">{{ $route.name }}</h2>
-      </div>
-      <div class="level"></div>
       <div class="cards">
         <div class="card-content">
           <div id="status-bank">
@@ -29,9 +24,8 @@
             </b-table>
           </div>
         </div>
-      </div>
-      <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
-    </section>
+        <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
+      </div> 
 </template>
 
 <script>

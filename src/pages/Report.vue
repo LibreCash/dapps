@@ -1,10 +1,5 @@
 <template>
     <div>
-      <section class="allMain">
-        <div class="h2-contain">
-          <h2 class="subtitle">{{ $route.name }}</h2>
-        </div>
-        <div class="level"></div>
         <section v-if="owner" class="table-padding">
           <b-field>
             <b-input
@@ -34,29 +29,30 @@
                 <b-table-column label='Date' centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column label='descr' centered :colspan="props.row.nojson ? 6 : 1">
+                <b-table-column label='Description' centered :colspan="props.row.nojson ? 6 : 1">
                   {{ props.row.descr }}
                 </b-table-column>
-                <b-table-column label='Tp' centered v-if="!props.row.nojson">
+                <b-table-column label='Type' centered v-if="!props.row.nojson">
                   {{ props.row.tp }}
                 </b-table-column>
                 <b-table-column label='Asset' centered v-if="!props.row.nojson">
                   {{ props.row.asset }}
                 </b-table-column>
                 <b-table-column label='From' centered v-if="!props.row.nojson">
-                  {{ props.row.from }}
+                  <span v-if="isAddress(props.row.from)"><a :href="$libre.addressToLink(props.row.asset)">address</a></span>
+                  <span v-else>{{ props.row.from }}</span>                  
                 </b-table-column>
                 <b-table-column label='To' centered v-if="!props.row.nojson">
-                  {{ props.row.to }}
+                  <span v-if="isAddress(props.row.to)"><a :href="$libre.addressToLink(props.row.asset)">address</a></span>
+                  <span v-else>{{ props.row.to }}</span>                  
                 </b-table-column>
                 <b-table-column label='txAm' centered v-if="!props.row.nojson">
                   {{ props.row.txAm }}
                 </b-table-column>
               </template>
             </b-table>
-          </section>
+            </section>
         </div>
-      </section>
     </div>
 </template>
 
@@ -78,6 +74,10 @@ export default {
     }
   },
   methods: {
+    isAddress (address) {
+      return web3.isAddress(address)
+    },
+
     async search () {
       this.searchReports()
     },

@@ -1,10 +1,5 @@
 <template>
     <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">{{ loanType }} Loan #{{ loanId }}</h2>
-      </div>
-      <div class="level"></div>
       <div class="table-padding">
         <router-link :to="{ path: '/loans' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
@@ -52,8 +47,6 @@
         </div>
         <div class="level"></div>
       </div>
-      
-    </section>
     </div>
 </template>
 
