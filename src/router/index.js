@@ -30,6 +30,13 @@ export default new Router({
       enabled: false
     },
     {
+      path: '/reports',
+      name: 'Reports',
+      meta: {title: 'Reports - LibreBank'},
+      component: Report,
+      enabled: true
+    },
+    {
       path: '/status',
       name: 'Contract Status',
       meta: {title: 'Contract Status - LibreBank'},
