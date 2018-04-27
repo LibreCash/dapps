@@ -2,8 +2,10 @@
     <div>
       <div class="table-padding">
         <router-link :to="{ path: '/loans' }" class="button">
-          <b-icon icon="keyboard-return" size="is-small"></b-icon>
-          <span>Back</span>
+          <div class="icon">
+            <i class="fas fa-arrow-left" size="is-small"></i>
+          </div>
+          <div>Back</div>
         </router-link>
         <div class="level"></div>
         <b-table :data="loanData"

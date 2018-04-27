@@ -9,8 +9,10 @@
             <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
             <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
-              <b-icon icon="keyboard-return" size="is-small"></b-icon>
-              <span>Back</span>
+              <div class="icon">
+                <i class="fas fa-arrow-left" size="is-small"></i>
+              </div>
+              <div>Back</div>
             </router-link>
           </div>
         </div>

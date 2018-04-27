@@ -88,7 +88,7 @@
               {{ props.row.status }}
             </b-table-column>
             <b-table-column label='Actions' centered>
-              <router-link class="button" :to="{name: 'Loan Offer', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+              <router-link class="button" :to="{name: 'Loan Offer', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="fas fa-id-card  "></i></router-link>
             </b-table-column>
           </template>
         </b-table>
