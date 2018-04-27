@@ -181,13 +181,13 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/dao')
         } else {
-          this.$snackbar.open('Creating proposal error');
+          this.$libre.notify('Creating proposal error');
         }
       }
       catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       this.button.isLoading = false

@@ -118,12 +118,12 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.searchReports();
         } else {
-          this.$snackbar.open('Creating report error');
+          this.$libre.notify('Creating report error');
         }
         this.isLoading = false;
       } catch (err) {
         console.log(err);
-        this.$snackbar.open(err);
+        this.$libre.notify(err,'is-danger');
         this.isLoading = false;
       }
     },

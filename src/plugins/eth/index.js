@@ -26,7 +26,7 @@ export default class ETH {
         this.metamask = true;
         window.web3 = new Web3(window.web3.currentProvider)
         web3.version.getNetwork((error, result) => {
-          if (error) Vue.prototype.$snackbar.open(error)
+          if (error) Vue.prototype.$snackbar.open({message: error, indefinite: true})
           else {
             let network = {
               '1': 'Main',
@@ -38,7 +38,7 @@ export default class ETH {
               networkUse = this.network[0].toUpperCase() + this.network.substring(1)
           
             if (network !== networkUse) {
-              Vue.prototype.$snackbar.open(`Please use ${networkUse} network`)
+              Vue.prototype.$snackbar.open({message: `Please use ${networkUse} network`, indefinite: true})
             }
           }
         })

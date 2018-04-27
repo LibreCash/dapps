@@ -398,7 +398,12 @@ export default class Libre {
     return result;
   }
 
-  ethToDate(ethTimestamp) {
-    return (+ethTimestamp > 0) ? (new Date(ethTimestamp * 1000)).toLocaleString() : '-'
+  async notify(message, type='is-success') {
+    Vue.prototype.$snackbar.open({
+      message,
+      type,
+      indefinite: type == 'is-danger',
+      queue: true
+    });
   }
 }

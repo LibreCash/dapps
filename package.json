@@ -11,7 +11,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "buefy": "^0.6.2",
+    "buefy": "^0.6.5",
     "ethjs": "^0.3.3",
     "moment": "^2.22.1",
     "moment-timezone": "^0.5.16",
