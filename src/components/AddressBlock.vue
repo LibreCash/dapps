@@ -2,7 +2,8 @@
     <div>
         <section v-if="!unknownData">
             <div class="address-block">
-                Your address: <input class="address" :value="defaultAddress">
+                <p>Your address:</p>
+                <a :href="$libre.addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
             </div>
             <div>
                 Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
@@ -15,7 +16,11 @@
         </section>
     </div>
 </template>
-
+<style>
+.address-block {
+    display: flex
+}
+</style>
 <script>
 export default {
     data() {

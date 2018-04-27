@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="main" id="Mainblock">
+        <div class="main" id="Mainblock" :class="{'is-active': navIsActive}">
             <div class="navbar-burger burger" @click="toggleMenu" :class="{'is-active': navIsActive}" data-target="Mainblock">
                 <span></span>
                 <span></span>
@@ -38,7 +38,7 @@ export default {
   name: "navbar",
   data() {
     return {
-      navIsActive: false
+      navIsActive: true
     };
   },
   methods: {
@@ -49,6 +49,17 @@ export default {
 };
 </script>
 <style>
+
+.is-text-overflow {
+    flex: 1;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.is-text-overflow::-webkit-scrollbar { 
+    display: none; 
+}
+
 .h2-contain > .subtitle {
   text-align: center;
 }

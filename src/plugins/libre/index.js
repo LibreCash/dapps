@@ -401,8 +401,4 @@ export default class Libre {
   ethToDate(ethTimestamp) {
     return (+ethTimestamp > 0) ? (new Date(ethTimestamp * 1000)).toLocaleString() : '-'
   }
-
-  divDecimals(amount, decimals = 18) {
-    return amount / 10 ** 18
-  }
 }
