@@ -1,10 +1,6 @@
 <template>
     <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">DAO Proposal #{{ $route.params.id }}</h2>
-      </div>
-      <br>
+      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
           <div class="card-content">
@@ -34,29 +30,28 @@
             </b-table-column>
           </template>
         </b-table>
-        <div class="columns is-centered">
-          <div class="column is-narrow">
-            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="mdi mdi-check"></i></button>
+        <div class="level"></div>
+        <div class="level is-mobile">
+          <div class="level-item has-text-centered">
+            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="fas fa-thumbs-up"></i></button>
           </div>
-          <div class="column is-narrow">
-            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="mdi mdi-close"></i></button>
+          <div class="level-item has-text-centered">
+            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="fas fa-thumbs-down"></i></button>
           </div>
-          <div class="column is-narrow">
+          <div class="level-item has-text-centered">
             <button v-bind:class="{'button is-medium is-info':true, 'is-loading': loadingExecute}"
-              @click="execute()" :disabled="!enableExecute"><i class="mdi mdi-console"></i></button>
+              @click="execute()" :disabled="!enableExecute"><i class="fas fa-play"></i></button>
           </div>
-          <div class="column is-narrow">
+          <div class="level-item has-text-centered">
             <button v-bind:class="{'button is-medium is-danger':true, 'is-loading': loadingBlock}"
                 @click="block()"
                 :disabled="!enableBlock">
-              <i class="mdi mdi-block-helper"></i>
+              <i class="fas fa-ban"></i>
             </button>
           </div>
         </div>
-
+        <div class="level"></div>
       </div>
-      
-    </section>
     </div>
 </template>
 

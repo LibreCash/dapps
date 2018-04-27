@@ -1,9 +1,6 @@
 /* eslint-disable-one-var */
 <template>
-  <section class="allMain">
-    <div class="h2-contain">
-      <h2 class="subtitle">LibreBank Fund Status</h2>
-    </div>
+  <div>
     <div class="level"></div>
     <div class="container">
       <div class="columns">
@@ -60,7 +57,7 @@
     </div>
 
     <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
-  </section>
+  </div>
 </template>
 
 

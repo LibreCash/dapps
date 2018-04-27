@@ -1,25 +1,32 @@
 <template>
     <div>
-        <div class="address-block">
-            Your address: <a v-if="defaultAddress != 'Unknown'" :href="addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
-            <span v-else><input class="address" :value="defaultAddress"></span>
-        </div>
-        <div>
-            Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
-        </div>
+        <section v-if="!unknownData">
+            <div class="address-block">
+                Your address: <a :href="addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
+            </div>
+            <div>
+                Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
+            </div>
+        </section>
+        <section v-else>
+            <div>
+                No metamask / not logged in
+            </div>
+        </section>
     </div>
 </template>
 
 <script>
 import Vue from 'vue'
 export default {
-  data() {
-    return {
-      defaultAddress: 'Unknown',
-      balance: 0,
-      libertyBalance:0,
-      addressToLink: Vue.config.libre.addressToLink
-    }
+    data() {
+        return {
+            unknownData: false,
+            defaultAddress: 'Unknown',
+            balance: 0,
+            libertyBalance:0,
+            addressToLink: Vue.config.libre.addressToLink
+        }
   },
 
   async created() {
@@ -28,6 +35,7 @@ export default {
         await this.$libre.initPromise;
         this.defaultAddress = window.web3.eth.defaultAccount;
         if (this.defaultAddress == undefined) {
+            this.unknownData = true;
             this.balance = "Unknown"
             this.defaultAddress = "Unknown"
             this.libertyBalance = "Unknown"

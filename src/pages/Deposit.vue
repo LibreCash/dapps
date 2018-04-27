@@ -1,10 +1,5 @@
 <template>
   <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">Deposit</h2>
-      </div>
-      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
             <div class="card-content">
@@ -23,7 +18,7 @@
             </div>
             <div class="card-content">
               <div class="content">
-                <div>Address Deposit contract: {{ deposit }}</div><br>
+                <p>Deposit contract address: <input class="address" :value="deposit"></p>
                 <b-field horizontal label="Period, sec">
                   <b-field :message="$libre.periodToString(newPlan.period)">
                     <b-input v-model="newPlan.period"></b-input>
@@ -44,9 +39,8 @@
               </div>
             </div>
           </b-collapse>
-          <br>
         </div>
-        <br>
+        <div class="level"></div>
         <h3 class="subtitle has-text-centered">Plans</h3>
         <b-table :data="plansData"
           :bordered="false"
@@ -73,7 +67,7 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
+        <div class="level"></div>
         <div>
           <b-field>
             <b-message :type="msg.type" style="white-space: wrap;">
@@ -85,14 +79,17 @@
           <b-field v-if="planSelected">
             <b-input placeholder="0,00" v-model="amount"></b-input>
             <p class="control">
-              <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}" @click="newDeposit(planSelected.id)" :disabled="amount < planSelected.minAmount">New Deposit</button>
+              <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}"
+                  @click="newDeposit(planSelected.id)"
+                  :disabled="!isInteger(amount) || +amount < planSelected.minAmount">New Deposit</button>
             </p>
           </b-field>
         </div>
-        <hr>
-        <br>
+        <div class="level"></div>
         <h3 class="subtitle has-text-centered" v-if="myDepositData.length > 0">My Deposits</h3>
-        <b-table :data="myDepositData"
+        <b-table
+          v-if="myDepositData.length > 0"
+          :data="myDepositData"
           :bordered="false"
           :striped="true"
           :narrowed="false"
@@ -120,14 +117,15 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
-        <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}" @click="claimDeposit(selected)"
-            :disabled="!selected" v-if="myDepositData.length > 0">
-            <span>Claim Deposit</span>
+        <div class="level"></div>
+        <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}"
+                @click="claimDeposit(selected)"
+                :disabled="!selected" v-if="myDepositData.length > 0">
+            Claim Deposit
         </button>
       </div>
-      <br><br>
-    </section>
+      <div class="level"></div>
+      <div class="level"></div>
   </div>
 </template>
 
@@ -159,7 +157,7 @@ export default {
       needAmount: '',
       msg: {
         type: 'is-info',
-        notes: ['Select plan to create deposit!']
+        notes: ['Select plan to create deposit.']
       }
     }
   },
@@ -171,14 +169,18 @@ export default {
       }
     },
 
+    isInteger(number) {
+      return +number >= 0
+    },
+
     async createPlan() {
       try {
         this.newPlanLoading = true;
         let txHash = await this.$libre.deposit.createPlan(this.newPlan.period,this.newPlan.percent * this.$libre.consts.REVERSE_PERCENT,this.$libre.fromToken(this.newPlan.minAmount),this.newPlan.description);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('New plan created!');
+          this.$snackbar.open('New plan created');
         } else {
-          this.$snackbar.open('Transaction failed!');
+          this.$snackbar.open('Transaction failed');
         }
         this.pushPlans(true);
         this.newPlanLoading = false;
@@ -219,11 +221,11 @@ export default {
         this.setMessage('warning', [`${action} - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [`${action} - success`]);
-          this.$snackbar.open('New deposit created!');
+          this.$snackbar.open('New deposit created');
           this.updateMyDeposit()
         } else {
           this.setMessage('danger', [`${action} - transaction failed`]);
-          this.$snackbar.open('Transaction failed!');
+          this.$snackbar.open('Transaction failed');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
@@ -240,10 +242,10 @@ export default {
       try {
         let txHash = await this.$libre.deposit.claimDeposit(selectObject.id);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Deposit returned!');
+          this.$snackbar.open('Deposit returned');
           this.updateMyDeposit()
         } else {
-          this.$snackbar.open('Transaction failed!');
+          this.$snackbar.open('Transaction failed');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)

@@ -1,13 +1,7 @@
 /* eslint-disable-one-var */
 <template>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">LibreBank Contract</h2>
-      </div>
-      <div class="level"></div>
       <div class="cards">
         <div class="card-content">
-          <h3 class="subtitle"><center>Emission contract status</center></h3>
           <div id="status-bank">
             <b-table
               :data="emissionStatus"
@@ -19,10 +13,10 @@
               :pagination-simple="false"
               :mobile-cards="true">
               <template slot-scope="props">
-                <b-table-column field="name" label='Name'>
+                <b-table-column field="name" label='Parameter'>
                   {{ props.row.name }}
                 </b-table-column>
-                <b-table-column label='Status' centered>
+                <b-table-column label='Value' centered>
                   <input class="address" v-if="props.row.type == 'input'" type="text" :value="props.row.data" disabled="disabled" size="25">
                   <span v-else>{{ props.row.data }}</span>
                 </b-table-column>
@@ -30,9 +24,8 @@
             </b-table>
           </div>
         </div>
-      </div>
-      <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
-    </section>
+        <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
+      </div> 
 </template>
 
 <script>
@@ -58,22 +51,21 @@ export default {
         data: Vue.config.libre.bank.address
       })
 
-      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]()
-        .catch(e => 'error')))
-
-      status.forEach((item,i)=>{
-        this.emissionStatus.push({
-          type: item.type,
-          name: item.name,
-          data: dataBank[i] !== 'error' ? status[i].process(dataBank[i]) : '-'
-        })
-      })
-  
-
+      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error')))
       let totalSupply = await this.$libre.token.totalSupply().catch(e => 'error')
+      status.forEach((item,i)=>{
+        if(dataBank[i] !== 'error') {
+          this.emissionStatus.push({
+            type: item.type,
+            name: item.name,
+            data: status[i].process(dataBank[i])
+          })
+        }
+      })
+
       this.emissionStatus.push({
         name: 'Total Supply',
-        data: totalSupply !== 'error' ? `${totalSupply / 10 ** 18} LIBRE` : '-'
+        data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       })
 
       this.isLoading = false

@@ -23,17 +23,32 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      alias: '/dao',
-      name: 'DAO',
-      component: DAO,
-      meta: {title: 'DAO - LibreBank'}
+      path: '/report',
+      name: 'Report',
+      component: Report,
+      meta: {title: 'Blockchain Report - Librebank'},
+      icon: 'fas fa-chart-pie'
+    },
+    {
+      path: '/fund',
+      name: 'Fund Status',
+      component: FundStatus,
+      meta: {title: 'Fund status - Librebank'},
+      icon: 'fas fa-university'
     },
     {
       path: '/status',
       name: 'Contract Status',
       component: ContractStatus,
-      meta: {title: 'Contract Status - LibreBank'}
+      icon: 'fas fa-file-alt'
+    },
+    {
+      path: '/',
+      alias: '/dao',
+      name: 'DAO',
+      component: DAO,
+      meta: {title: 'DAO - LibreBank'},
+      icon: 'fas fa-users'
     },
     {
       path: '/dao/proposal/:id',
@@ -51,19 +66,22 @@ export default new Router({
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
-      meta: {title: 'LBRS Faucet - Librebank'}
+      meta: {title: 'LBRS Faucet - Librebank'},
+      icon: 'fas fa-hand-holding-usd'
     },
     {
       path: '/deposit',
       name: 'Deposit',
       component: Deposit,
-      meta: {title: 'Deposit - Librebank'}
+      meta: {title: 'Deposit - Librebank'},
+      icon: 'fas fa-piggy-bank'
     },
     {
       path: '/loans',
       name: 'Loans',
       component: Loans,
-      meta: {title: 'Loans - Librebank'}
+      meta: {title: 'Loans - Librebank'},
+      icon: 'fas fa-credit-card'
     },
     {
       path: '/loan/:type/:id',
@@ -76,12 +94,6 @@ export default new Router({
       name: 'New Loan Offer',
       component: NewOffer,
       meta: {title: 'New loan offer - Librebank'}
-    },
-    {
-      path: '/fund',
-      name: 'Fund Status',
-      component: FundStatus,
-      meta: {title: 'Fund status - Librebank'}
     }
   ],
   mode: 'hash'

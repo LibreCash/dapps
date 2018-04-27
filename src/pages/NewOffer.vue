@@ -1,10 +1,5 @@
 <template>
   <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">New Loan Offer</h2>
-      </div>
-      <div class="level"></div>
       <div class="table-padding">
         <div class="level">
           <div class="level-left">          
@@ -50,7 +45,7 @@
                   <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
                   <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
                 </b-field>
-                <b-field><b-message :type="msg.type" style="white-space: pre-wrap;">
+                <b-field><b-message :type="msg.type" v-if="msg.notes.length != 0">
                   <p v-for="note in msg.notes">
                     {{ note }}
                   </p>
@@ -67,7 +62,6 @@
           </div>
         </div>
       </div>
-    </section>
     <div class="level"></div>
   </div>
 </template>
@@ -96,7 +90,7 @@ export default {
       isOfferOpen: true,
       msg: {
         type: 'is-danger',
-        text: 'Please enter correct information'
+        notes: []
       },
       isLoadingButton: false
     }

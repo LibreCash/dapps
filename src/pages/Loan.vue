@@ -1,16 +1,11 @@
 <template>
     <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">{{ loanType }} Loan #{{ loanId }}</h2>
-      </div>
-      <br>
       <div class="table-padding">
-        <button :to="{ path: '/loans' }" class="button">
+        <router-link :to="{ path: '/loans' }" class="button">
           <b-icon icon="keyboard-return" size="is-small"></b-icon>
           <span>Back</span>
-        </button>
-        <span class="icon arrow-left"><i class="arrow-left"></i></span>
+        </router-link>
+        <div class="level"></div>
         <b-table :data="loanData"
           :bordered="false"
           :striped="true"
@@ -27,32 +22,31 @@
             </b-table-column>
           </template>
         </b-table>
-        <br>
+        <div class="level"></div>
         <b-field v-if="takeEnable || returnEnable || claimEnable || cancelEnable">
-          <b-message :type="msg.type" style="white-space: pre-wrap;">
+          <b-message :type="msg.type">
             <p v-for="note in msg.notes">
               {{ note }}
             </p>
           </b-message>
         </b-field>
-        <br>
-        <div class="columns">
-          <div class="column" v-if="takeEnable">
-            <button class="button is-success" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
+        <div class="level"></div>
+        <div class="level">
+          <div class="level-item has-text-centered" v-if="takeEnable">
+            <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
-          <div class="column" v-if="returnEnable">
-            <button class="button is-danger" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
+          <div class="level-item has-text-centered" v-if="returnEnable">
+            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
           </div>
-          <div class="column" v-if="claimEnable">
-            <button class="button is-success" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
+          <div class="level-item has-text-centered" v-if="claimEnable">
+            <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
           </div>
-          <div class="column" v-if="cancelEnable">
-            <button class="button is-danger" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
+          <div class="level-item has-text-centered" v-if="cancelEnable">
+            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
           </div>
         </div>
+        <div class="level"></div>
       </div>
-      
-    </section>
     </div>
 </template>
 
@@ -187,10 +181,10 @@ export default {
       let txHash;
       let bankState = this.$libre.bankState[+await this.$libre.bank.getState()];
       let action = 'Getting current exchange rate:';
+      let price = +await this.$libre.bank.requestPrice();
       let disclaimer = `1. Requesting rates (cost ${this.$eth.fromWei(price)} ETH)`;
       if (bankState != 'PROCESSING_ORDERS') {
         if (bankState == 'REQUEST_RATES') {
-          let price = +await this.$libre.bank.requestPrice();
           this.setMessage('info', [action, `${disclaimer} - waiting for confirmations...`, '2. Rate calculation']);
           txHash = await this.$libre.bank.requestRates({value: price});
           this.setMessage('info', [action, `${disclaimer} - sending to the network...`, '2. Rate calculation'])

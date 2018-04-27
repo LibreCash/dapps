@@ -1,9 +1,4 @@
 <template>
-	<section class="allMain">
-		<div class="h2-contain">
-			<h2 class="subtitle">Faucet</h2>
-		</div>
-		<div class="level"></div>
 		<div class="table-padding">
 			<div class="level">
         <div class="card">
@@ -16,11 +11,10 @@
 			<b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
 			</div>
 			<div class="level">
-			<button v-bind:class="{'levet-item button is-primary':true, 'is-loading':isLoading}" @click="getTokens()" :disabled="isDisabled">Get Tokens</button>
+			  <button class="button is-primary" v-bind:class="{'is-loading':isLoading}"
+            @click="getTokens()" :disabled="isDisabled">Get Tokens</button>
 			</div>
 		</div>
-	
-	</section>
 </template>
 
 <script>
@@ -30,15 +24,11 @@ export default {
   data() {
     return {
       balanceLiberty: "loading...",
-
       isLoading: false,
-
       msg: {
         type: "is-info",
-
         text: "Loading information..."
       },
-
       isDisabled: true
     };
   },
@@ -52,25 +42,27 @@ export default {
             this.$eth._web3.eth.defaultAccount
           )
         )
-
         .toLocaleString();
 
       let balance = this.$libre.toToken(
           +await this.$libre.faucet.tokenBalance()
         ),
-        isGet = await this.$libre.faucet.tokensSent(
+        isGot = await this.$libre.faucet.tokensSent(
           this.$eth._web3.eth.defaultAccount
         );
 
-      if (!isGet && balance > 2000) {
+      if (!isGot && balance > 2000 && this.$eth._web3.eth.defaultAccount) {
         this.isDisabled = false;
-
         this.msg.text = "You can get LBRS.";
+      } else if (!this.$eth._web3.eth.defaultAccount) {
+        this.msg = {
+          type: "is-danger",
+          text: "No metamask / not logged in"
+        };
       } else {
         this.msg = {
           type: "is-danger",
-
-          text: isGet
+          text: isGot
             ? "Tokens have already been sent to the address"
             : "Not enough tokens on the faucet"
         };
@@ -105,9 +97,7 @@ export default {
   async created() {
     try {
       await this.$eth.accountPromise;
-
       await this.$libre.initPromise;
-
       this.loadLiberty();
     } catch (err) {
       console.log(err);
