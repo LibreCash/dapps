@@ -1,9 +1,4 @@
 <template>
-	<section class="allMain">
-		<div class="h2-contain">
-			<h2 class="subtitle">{{ $route.name }}</h2>
-		</div>
-		<div class="level"></div>
 		<div class="table-padding">
 			<div class="level">
         <div class="card">
@@ -20,8 +15,6 @@
             @click="getTokens()" :disabled="isDisabled">Get Tokens</button>
 			</div>
 		</div>
-	
-	</section>
 </template>
 
 <script>

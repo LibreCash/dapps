@@ -1,10 +1,5 @@
 <template>
     <div>
-      <section class="allMain">
-        <div class="h2-contain">
-          <h2 class="subtitle">{{ $route.name }}</h2>
-        </div>
-        <div class="level"></div>
         <section v-if="owner" class="table-padding">
           <b-field>
             <b-input
@@ -39,9 +34,8 @@
                 </b-table-column>
               </template>
             </b-table>
-          </section>
+            </section>
         </div>
-      </section>
     </div>
 </template>
 
@@ -85,17 +79,11 @@ export default {
     },
     async searchReports () {
       this.searchData = []
-      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 1"})
-      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 2"})
-      //this.searchData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 3"})
-      //this.searchData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 4"})
-      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 5"})
       this.isLoading = true
       try {
         let j = await this.$libre.report.counter()
         for (let i = j - 1; i >= 0; --i) {
           let report = await this.$libre.report.reports(i)
-          //console.log(report)
           this.searchData.push({date: new Date(report[1] * 1000).toLocaleString(), report: report[0]})
         }
       } catch (err) {
