@@ -38,7 +38,7 @@ export default {
   name: "navbar",
   data() {
     return {
-      navIsActive: false
+      navIsActive: true
     };
   },
   methods: {
