@@ -30,7 +30,7 @@
                   {{ props.row.date }}
                 </b-table-column>
                 <b-table-column label='Description' centered :colspan="props.row.nojson ? 6 : 0">
-                  {{ props.row.descr }}
+                  {{ props.row.descr  | truncate(10) }}
                 </b-table-column>
                 <b-table-column label='Type' centered v-if="!props.row.nojson">
                   {{ props.row.tp }}
@@ -62,7 +62,7 @@
               </p>
             </div>
             <footer class="card-footer" v-if="isAddress(curReport.to) || isAddress(curReport.from)">
-              <div class="card-footer-item flex" v-if="isAddress(curReport.from)">
+              <div class="card-footer-item flex footer-resp" v-if="isAddress(curReport.from)">
                   <p>From: </p>
                   <a :href="$libre.addressToLink(curReport.from)" class="is-text-overflow">{{ curReport.from }}</a>
               </div>
