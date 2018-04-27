@@ -215,7 +215,6 @@ export default class Libre {
   async init() {
     this.web3 = window.web3;
     let network = Vue.prototype.$eth.network
-    console.log(network)
 
     this.report = this.getContract(Config.report.abi, Config.report.address[network])
     this.bank = this.getContract(Config.bank.abi, Config.bank.address[network])
