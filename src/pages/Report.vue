@@ -20,7 +20,7 @@
               :striped="true"
               :narrowed="false"
               :loading="isLoading"
-              :paginated="true"
+              :paginated="perPage < searchData.length"
               :per-page="perPage"
               :current-page.sync="currentPage"
               :pagination-simple="false"
@@ -29,8 +29,8 @@
                 <b-table-column label='Date' centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column label='Description' centered :colspan="props.row.nojson ? 6 : 0">
-                  {{ props.row.descr  | truncate(10) }}
+                <b-table-column label='Description' class="truncated" centered :colspan="props.row.nojson ? 6 : 0">
+                  {{ props.row.descr }}
                 </b-table-column>
                 <b-table-column label='Type' centered v-if="!props.row.nojson">
                   {{ props.row.tp }}
@@ -39,7 +39,7 @@
                   {{ props.row.asset }}
                 </b-table-column>
                 <b-table-column label='Actions' centered v-if="!props.row.nojson">
-                  <button class="button" @click="showModal(props.row)">show</button>
+                  <button class="button" @click="showModal(props.row)"><i class="fas fa-id-card"></i></button>
                 </b-table-column>
               </template>
             </b-table>
@@ -51,10 +51,10 @@
               <p class="subtitle">
                 Date: {{ curReport.date }}
               </p>
-              <p class="title">
+              <p class="title top-padding-1">
                 {{ curReport.descr }}
               </p>
-              <p class="subtitle">
+              <p class="subtitle top-padding-1">
                 Asset: {{ curReport.asset }}
               </p>
               <p class="subtitle">
@@ -77,6 +77,16 @@
 <style>
 .footer-resp {
   max-width: 100%;
+}
+.top-padding-1 {
+  padding-top: 1em;
+}
+.truncated {
+    white-space: nowrap;
+    max-width: 400px;
+    overflow: hidden;
+    padding: 5px;
+    text-overflow: ellipsis;
 }
 </style>
 <script>
