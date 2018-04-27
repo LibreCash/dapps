@@ -47,15 +47,15 @@
         </div>
         <b-table
           v-if="searchData.length > 0"
-          :data="isEmpty ? [] : searchData"
-          :bordered="isBordered"
-          :striped="isStriped"
-          :narrowed="isNarrowed"
+          :data="searchData"
+          :bordered="false"
+          :striped="true"
+          :narrowed="false"
           :loading="tableLoading"
           :per-page="perPage"
           :current-page.sync="currentPage"
-          :mobile-cards="hasMobileCards"
-          :responsive="isResponsive">
+          :mobile-cards="true"
+          :responsive="true">
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column label='Holder' centered v-if="props.row.holder == '-'">
                 not set
@@ -116,9 +116,9 @@
                 @change="loadLoans"
                 :total="loansCount"
                 :current.sync="vpage"
-                :simple="isSimple"
-                :order="paginationOrder"
-                :rounded="isRounded"
+                :simple="false"
+                :order="is-centered"
+                :rounded="true"
                 :per-page="perPage">
             </b-pagination>
           </div>
@@ -133,21 +133,12 @@ import Config from '@/config'
 export default {
   data () {
     return {
-      isEmpty: false,
-      isBordered: false,
-      isStriped: true,
-      isNarrowed: false,
       tableLoading: false,
-      hasMobileCards: true,
-      isResponsive: true,
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
       loansAddress: '',
       searchData: [],
-      isSimple: false,
-      isRounded: true,
-      paginationOrder: 'is-centered',
       defaultAddress: '',
       pages: [1],
       vpage: 1,
@@ -206,7 +197,7 @@ export default {
               recipient: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient,
               timestampUnix: loan.timestamp,
               timestamp: new Date(loan.timestamp * 1000).toLocaleString(),
-              period: new Date((loan.timestamp + loan.period) * 1000).toLocaleString(),
+              period: this.$libre.periodToString(loan.period),
               amount: this.$eth.fromWei(loan.amount),
               margin: this.$eth.fromWei(loan.margin),
               refund: this.$eth.fromWei(loan.refund),
