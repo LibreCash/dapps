@@ -10,9 +10,15 @@ import Config from './config'
 
 Vue.config.productionTip = false
 
+Vue.use(Config, {build: 'dao'})
 Vue.use(ETH, {})
 Vue.use(Libre, {})
-Vue.use(Config, {build: 'dao'})
+
+router.options.routes.forEach(route => {
+  if (Vue.config.libre.routes.includes(route.name))
+    route.enabled = true
+  else route.enabled = false
+})
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title

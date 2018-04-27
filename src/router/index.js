@@ -27,71 +27,61 @@ export default new Router({
       alias: '/dao',
       name: 'DAO',
       component: DAO,
-      meta: {title: 'DAO - LibreBank'},
-      enabled: false
+      meta: {title: 'DAO - LibreBank'}
     },
     {
       path: '/status',
       name: 'Contract Status',
-      meta: {title: 'Contract Status - LibreBank'},
       component: ContractStatus,
-      enabled: true
+      meta: {title: 'Contract Status - LibreBank'}
     },
     {
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
       component: Proposal,
-      meta: {title: 'Proposal Info - LibreBank'},
-      enabled: false
+      meta: {title: 'Proposal Info - LibreBank'}
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal,
-      meta: {title: 'New proposal - Librebank'},
-      enabled: false
+      meta: {title: 'New proposal - Librebank'}
     },
     {
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
-      meta: {title: 'LBRS Faucet - Librebank'},
-      enabled: true
+      meta: {title: 'LBRS Faucet - Librebank'}
     },
     {
       path: '/deposit',
       name: 'Deposit',
       component: Deposit,
-      meta: {title: 'Deposit - Librebank'},
-      enabled: true
+      meta: {title: 'Deposit - Librebank'}
     },
     {
       path: '/loans',
       name: 'Loans',
       component: Loans,
-      meta: {title: 'Loans - Librebank'},
-      enabled: true
+      meta: {title: 'Loans - Librebank'}
     },
     {
       path: '/loan/:type/:id',
       name: 'Loan Offer',
       component: Loan,
-      meta: {title: 'Loan offer - Librebank'},
-      enabled: false
+      meta: {title: 'Loan offer - Librebank'}
     },
     {
       path: '/loans/new',
       name: 'New Loan Offer',
       component: NewOffer,
-      meta: {title: 'New loan offer - Librebank'},
-      enabled: false
+      meta: {title: 'New loan offer - Librebank'}
     },
     {
       path: '/fund',
       name: 'Fund Status',
       component: FundStatus,
-      meta: {title: 'Fund status - Librebank'},
-      enabled: true
+      meta: {title: 'Fund status - Librebank'}
     }
   ],
   mode: 'hash'

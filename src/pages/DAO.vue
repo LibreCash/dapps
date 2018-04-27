@@ -10,12 +10,12 @@
             <div class="card-content">
                 <address-block/>
                 <div>DAO Contract: 
-                  <a :href="$libre.addressToLink(daoAddress)" target="_blank">
+                  <a :href="addressToLink(daoAddress)" target="_blank">
                     <input class="address" :value="daoAddress">
                   </a>
                 </div>
                 <div>Liberty Token: 
-                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank">
+                  <a :href="addressToLink(libertyAddress)" target="_blank">
                     <input class="address" :value="libertyAddress">
                   </a>
                 </div>
@@ -146,7 +146,8 @@ export default {
       perPage: 5,
       curBlockchainTime: 0,
       isOwner: false,
-      contractOwner: null
+      contractOwner: null,
+      addressToLink: Vue.config.libre.addressToLink
     }
   },
   methods: {

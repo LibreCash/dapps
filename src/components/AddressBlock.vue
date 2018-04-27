@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="address-block">
-            Your address: <a v-if="defaultAddress != 'Unknown'" :href="$libre.addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
+            Your address: <a v-if="defaultAddress != 'Unknown'" :href="addressToLink(defaultAddress)"><input class="address" :value="defaultAddress"></a>
             <span v-else><input class="address" :value="defaultAddress"></span>
         </div>
         <div>
@@ -11,12 +11,14 @@
 </template>
 
 <script>
+import Vue from 'vue'
 export default {
   data() {
     return {
       defaultAddress: 'Unknown',
       balance: 0,
-      libertyBalance:0
+      libertyBalance:0,
+      addressToLink: Vue.config.libre.addressToLink
     }
   },
 
