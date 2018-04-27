@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="main" id="Mainblock">
+        <div class="main" id="Mainblock" :class="{'is-active': navIsActive}">
             <div class="navbar-burger burger" @click="toggleMenu" :class="{'is-active': navIsActive}" data-target="Mainblock">
                 <span></span>
                 <span></span>
