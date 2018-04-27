@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card container  ">
       <header class="card-header">
         <p class="card-header-title">LibreBank Fund Assests</p>
       </header>

@@ -324,7 +324,7 @@ export default class Libre {
   }
 
   addressToLink(address) {
-    return `https://${Vue.prototype.$eth.network == 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/address/${address}`
+    return `https://${Vue.prototype.$eth.network === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/address/${address}`
   }
 
   async updateProposal(index) {
