@@ -52,6 +52,14 @@ export default new Router({
       component: DAO,
       meta: {title: 'DAO - LibreBank'},
       icon: 'fas fa-users',
+      enabled: false
+    },
+    {
+      path: '/dao',
+      name: 'DAO',
+      component: DAO,
+      meta: {title: 'DAO - LibreBank'},
+      icon: 'fas fa-users',
       enabled: true
     },
     {
