@@ -242,11 +242,11 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(id, support),
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
-        this.$snackbar.open(message)
+        this.$libre.notify(message)
       }catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       try {
@@ -257,7 +257,7 @@ export default {
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       row.loading = false
     
@@ -269,13 +269,13 @@ export default {
       let 
         txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
-        this.$snackbar.open(message);
+        this.$libre.notify(message);
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       row.loading = false
     },
@@ -289,13 +289,13 @@ export default {
       try {
         let txHash = await this.$libre.dao.executeProposal(id),
             message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
-        this.$snackbar.open(message)
+        this.$libre.notify(message)
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       row.loading = false

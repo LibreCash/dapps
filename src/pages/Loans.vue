@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div class="flex">Loans contract address: <a class="address" :hred="loansAddress">{{loansAddress}}</a></div>
+                <div class="flex">Loans contract address: <a class="address is-text-overflow" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
             </div>
         </div>

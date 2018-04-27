@@ -52,11 +52,12 @@
       </header>
       <div class="card-content">
         <h2 class="has-text-centered">THIS IS A SAMPLE DATA</h2>
-        <status-coins :tableData='coinsData'></status-coins>
+        <status-coins :tableData='coinsData' />
       </div>
     </div>
-
+    <pie-chart :coins="pieChart" />
     <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
+
   </div>
 </template>
 
@@ -64,6 +65,8 @@
 <script>
   import StatusCoins from "@/components/StatusCoins";
   import Config from "@/config";
+  import PieChart from '@/components/PieChart'
+
   export default {
     data() {
       return {
@@ -79,7 +82,8 @@
           name: "",
           change24h: 0
         },
-        isLoading: false
+        isLoading: false,
+        pieChart: undefined
       };
     },
   
@@ -160,6 +164,8 @@
           });
         }
 
+        this.pieChart = coins;
+
         this.maxCoin = maxCoin;
         this.minCoin = minCoin;
 
@@ -203,7 +209,8 @@
     },
 
     components: {
-      StatusCoins
+      StatusCoins,
+      PieChart
     }
   };
 </script>

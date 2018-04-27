@@ -296,18 +296,18 @@ export default {
         let txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId, {value: value}));
         this.setMessage('warning', [`${action} transaction - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open(`${action} transaction - success`);
+          this.$libre.notify(`${action} transaction - success`);
           this.setMessage('success', [`${action} transaction - success`]);
           this.loadLoan();
         }
         else {
-          this.$snackbar.open(`${action} transaction - fail`)
+          this.$libre.notify(`${action} transaction - fail`)
           this.setMessage('danger', [`${action} transaction - transaction failed`]);
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       this.btnloading[action] = false
     }

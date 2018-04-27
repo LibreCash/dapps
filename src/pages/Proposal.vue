@@ -218,14 +218,14 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(this.proposalId, support);
           
-        this.$snackbar.open(await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction')
+        this.$libre.notify(await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction')
         await this.$libre.updateProposal(this.proposalId)
         this.loadProposal()
         
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
     },
 
@@ -240,14 +240,14 @@ export default {
         let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Proposal executed successfully.');
+          this.$libre.notify('Proposal executed successfully.');
         } else {
-          this.$snackbar.open('Failed on proposal executions');
+          this.$libre.notify('Failed on proposal executions');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       
       this.loadingExecute = false;
@@ -261,14 +261,14 @@ export default {
         let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Proposal blocked.');
+          this.$libre.notify('Proposal blocked.');
         } else {
-          this.$snackbar.open('Proposal not blocked.');
+          this.$libre.notify('Proposal not blocked.');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       this.loadingBlock = false;
       this.loadProposal();
