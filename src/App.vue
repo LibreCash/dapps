@@ -8,10 +8,12 @@
             </div>
             <div class="LeftNav" id="navMenu">
                 <div class="logo">
+                  <router-link to="/">
                     <img src="/static/img/logo.svg" width="200" height="180" />
+                  </router-link>
                 </div>
                 <ul class="MenuLeft">
-                  <li v-for="route in $router.options.routes">
+                  <li v-for="route in $router.options.routes" :key="route.path">
                     <router-link :to="route.path" v-if="route.enabled">
                         <div class="Rectangle"></div>
                         <span>{{ route.name }}</span>

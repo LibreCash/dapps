@@ -12,14 +12,12 @@
   },
   "dependencies": {
     "buefy": "^0.6.2",
-    "bulma": "^0.6.2",
     "ethjs": "^0.3.3",
     "moment": "^2.22.1",
     "moment-timezone": "^0.5.16",
     "vue": "^2.5.16",
     "vue-i18n": "^7.6.0",
     "vue-router": "^3.0.1",
-    "vue-scrollto": "^2.11.0",
     "web3": "^0.15.3"
   },
   "devDependencies": {
