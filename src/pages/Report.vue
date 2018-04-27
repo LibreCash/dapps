@@ -29,8 +29,8 @@
                 <b-table-column label='Date' centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column label='Description' :colspan="props.row.nojson ? 6 : 0">
-                  {{ props.row.descr }}
+                <b-table-column label='Description' centered :colspan="props.row.nojson ? 6 : 0">
+                  {{ props.row.descr  | truncate(10) }}
                 </b-table-column>
                 <b-table-column label='Type' centered v-if="!props.row.nojson">
                   {{ props.row.tp }}
