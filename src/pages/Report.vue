@@ -34,8 +34,23 @@
                 <b-table-column label='Date' centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column label='Report' centered>
-                  {{ props.row.report }}
+                <b-table-column label='descr' centered :colspan="props.row.nojson ? 6 : 1">
+                  {{ props.row.descr }}
+                </b-table-column>
+                <b-table-column label='Tp' centered v-if="!props.row.nojson">
+                  {{ props.row.tp }}
+                </b-table-column>
+                <b-table-column label='Asset' centered v-if="!props.row.nojson">
+                  {{ props.row.asset }}
+                </b-table-column>
+                <b-table-column label='From' centered v-if="!props.row.nojson">
+                  {{ props.row.from }}
+                </b-table-column>
+                <b-table-column label='To' centered v-if="!props.row.nojson">
+                  {{ props.row.to }}
+                </b-table-column>
+                <b-table-column label='txAm' centered v-if="!props.row.nojson">
+                  {{ props.row.txAm }}
                 </b-table-column>
               </template>
             </b-table>
@@ -44,8 +59,6 @@
       </section>
     </div>
 </template>
-
-
 
 <script>
 import Config from '@/config'
@@ -57,6 +70,7 @@ export default {
       reportText: '',
       owner: false,
       reportNumber: 0,
+      rawData: [],
       searchData: [],
       isLoading: false,
       currentPage: 1,
@@ -84,23 +98,32 @@ export default {
       }
     },
     async searchReports () {
-      this.searchData = []
-      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 1"})
-      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 2"})
-      //this.searchData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 3"})
-      //this.searchData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 4"})
-      //this.searchData.push({date: new Date().toLocaleString(), report: "For testing purposes 5"})
+      this.rawData = []
+      //this.rawData.push({date: new Date().toLocaleString(), report: '{"tp": "wow", "asset":"libre","from":"0x","to":"0x","descr":"i","txAm":"lll"}'})
+      //this.rawData.push({date: new Date().toLocaleString(), report: "For testing purposes 2"})
+      //this.rawData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 3"})
+      //this.rawData.push({date: new Date().toLocaleString(), report: "Report for testing purposes 4"})
+      //this.rawData.push({date: new Date().toLocaleString(), report: "For testing purposes 5"})
       this.isLoading = true
       try {
         let j = await this.$libre.report.counter()
         for (let i = j - 1; i >= 0; --i) {
           let report = await this.$libre.report.reports(i)
-          //console.log(report)
-          this.searchData.push({date: new Date(report[1] * 1000).toLocaleString(), report: report[0]})
+          this.rawData.push({date: new Date(report[1] * 1000).toLocaleString(), report: report[0]})
         }
       } catch (err) {
         console.log(err)
       }
+      this.searchData = this.rawData.map((val) => {
+        let result;
+        try {
+          result = JSON.parse(val.report);
+          result.date = val.date;
+        } catch (err) {
+          result = {date: val.date, descr: val.report, nojson: true};
+        }
+        return result;
+      });
       this.isLoading = false
     },
     async loadReport () {
