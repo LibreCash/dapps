@@ -11,10 +11,10 @@
           <a class="button is-info" v-on:click="newReport" :class="{'is-loading': isLoading}">Submit</a>
         </section>
         <div class="level">
-          <section v-if="searchData.length == 0" class="level-item">No reports found</section>
-          <section v-if="searchData.length > 0" class="level-item">
+          <section v-if="searchData.length == 0" class="level-item ">No reports found</section>
+          <section v-if="searchData.length > 0" class="level-item footer-resp">
             <b-table
-              :is-fullwidth="true"
+              class="table-container"
               :data="searchData"
               :bordered="false"
               :striped="true"
@@ -29,7 +29,7 @@
                 <b-table-column label='Date' centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column label='Description' centered :colspan="props.row.nojson ? 6 : 0">
+                <b-table-column label='Description' :colspan="props.row.nojson ? 6 : 0">
                   {{ props.row.descr }}
                 </b-table-column>
                 <b-table-column label='Type' centered v-if="!props.row.nojson">
@@ -45,7 +45,7 @@
             </b-table>
           </section>
         </div>
-        <b-modal :active.sync="isReportModalActive" :width="640" scroll="keep">
+        <b-modal :active.sync="isReportModalActive" :width="640" scroll="keep"  >
           <div class="card">
             <div class="card-content">
               <p class="subtitle">
