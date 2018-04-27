@@ -29,7 +29,7 @@
                 <b-table-column label='Date' centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column label='Description' centered :colspan="props.row.nojson ? 6 : 1">
+                <b-table-column label='Description' centered :colspan="props.row.nojson ? 6 : 0">
                   {{ props.row.descr }}
                 </b-table-column>
                 <b-table-column label='Type' centered v-if="!props.row.nojson">
@@ -39,7 +39,7 @@
                   {{ props.row.asset }}
                 </b-table-column>
                 <b-table-column label='From' centered v-if="!props.row.nojson">
-                  <span v-if="isAddress(props.row.from)"><a :href="$libre.addressToLink(props.row.asset)">address</a></span>
+                  <span v-if="isAddress(props.row.from)"><a :href="$libre.addressToLink(props.row.from)">address</a></span>
                   <span v-else>{{ props.row.from }}</span>                  
                 </b-table-column>
                 <b-table-column label='To' centered v-if="!props.row.nojson">
