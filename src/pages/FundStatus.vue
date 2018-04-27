@@ -83,7 +83,7 @@
           change24h: 0
         },
         isLoading: false,
-        pieChart: Config.balance.coins
+        pieChart: undefined
       };
     },
   

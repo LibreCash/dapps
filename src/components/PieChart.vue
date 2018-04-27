@@ -6,8 +6,7 @@ export default {
   props: ['coins'],
   methods: {
     updateData() {
-      console.log("Hello",this.coins);
-      if (!this.coins[0].balanceUSD)
+      if (!this.coins)
         return;
 
       this.renderChart({
@@ -26,12 +25,8 @@ export default {
     this.updateData()
   },
   watch: {
-    '$props': {
-      handler: function(newVal, oldVal) {
-        console.log("Update")
-        this.updateData()
-      },
-      deep: true
+    coins(newVal, oldVal) {
+      this.updateData()
     }
   }
 }
