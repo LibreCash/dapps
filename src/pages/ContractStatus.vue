@@ -4,6 +4,7 @@
         <div class="card-content">
           <div id="status-bank">
             <b-table
+              class="centered"
               :data="emissionStatus"
               :bordered="false"
               :striped="true"
@@ -16,9 +17,8 @@
                 <b-table-column field="name" label='Parameter'>
                   {{ props.row.name }}
                 </b-table-column>
-                <b-table-column label='Value' centered>
-                  <input class="address" v-if="props.row.type == 'input'" type="text" :value="props.row.data" disabled="disabled" size="25">
-                  <span v-else>{{ props.row.data }}</span>
+                <b-table-column label='Value' centered >
+                <span class="is-text-overflow">{{ props.row.data }}</span>
                 </b-table-column>
               </template>
             </b-table>

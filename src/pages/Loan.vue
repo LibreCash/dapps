@@ -16,8 +16,8 @@
             <b-table-column>
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column centered>
-              <input class="address" v-if="props.row.type == 'input'" type="text" :value="props.row.data" disabled="disabled" size="25">
+            <b-table-column centered class="flex">
+              <a  v-if="props.row.type == 'input'" :href="$libre.addressToLink(props.row.data)" target="_blank" class="is-text-overflow">{{props.row.data}}</a>
               <span v-else>{{ props.row.data }}</span>
             </b-table-column>
           </template>
@@ -31,17 +31,17 @@
           </b-message>
         </b-field>
         <div class="level"></div>
-        <div class="level" v-if="loggedIn">
-          <div class="level-item has-text-centered" v-if="takeEnable">
+        <div class="level has-text-centered">
+          <div class="level-item" v-if="takeEnable">
             <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
-          <div class="level-item has-text-centered" v-if="returnEnable">
+          <div class="level-item" v-if="returnEnable">
             <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
           </div>
-          <div class="level-item has-text-centered" v-if="claimEnable">
+          <div class="level-item" v-if="claimEnable">
             <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
           </div>
-          <div class="level-item has-text-centered" v-if="cancelEnable">
+          <div class="level-item" v-if="cancelEnable">
             <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
           </div>
         </div>

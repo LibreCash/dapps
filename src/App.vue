@@ -49,7 +49,12 @@ export default {
 };
 </script>
 <style>
-
+.centered {
+  vertical-align:middle
+}
+.flex {
+  display: flex;
+}
 .is-text-overflow {
     flex: 1;
     overflow: auto;
