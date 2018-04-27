@@ -62,23 +62,23 @@
               </p>
             </div>
             <footer class="card-footer" v-if="isAddress(curReport.to) || isAddress(curReport.from)">
-              <div class="card-footer-item" v-if="isAddress(curReport.from)">
-                <div class="address-block">
+              <div class="card-footer-item flex footer-resp" v-if="isAddress(curReport.from)">
                   <p>From: </p>
                   <a :href="$libre.addressToLink(curReport.from)" class="is-text-overflow">{{ curReport.from }}</a>
-                </div>
               </div>
-              <div class="card-footer-item address-block" v-if="isAddress(curReport.to)">
-                
-                  To: <a :href="$libre.addressToLink(curReport.to)" class="is-text-overflow">{{ curReport.to }}</a>
-                
+              <div class="card-footer-item flex footer-resp" v-if="isAddress(curReport.to)">
+                  <p>To:</p><a :href="$libre.addressToLink(curReport.to)" class="is-text-overflow">{{ curReport.to }}</a>
               </div>
             </footer>
           </div>
         </b-modal>
     </div>
 </template>
-
+<style>
+.footer-resp {
+  max-width: 100%;
+}
+</style>
 <script>
 import Config from '@/config'
 import BRadioButton from 'buefy/src/components/radio/RadioButton'
