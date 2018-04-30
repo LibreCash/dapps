@@ -77,6 +77,7 @@ export default new Router({
       name: 'Bounty Program',
       component: Bounty,
       meta: {title: 'Contracts Bounty - Librebank'},
+      icon: 'fas fa-gift',
       enabled: true
     },
     {
