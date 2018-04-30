@@ -3,26 +3,26 @@
       <div class="table-padding">
         <div class="card">
           <div class="card-content">
-            <div>Token count: {{ tokensCount }} LBRS</div>
-            <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
-            <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
+            <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
+            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+            <div>{{ $t('lang.dao.min-deadline') }}: {{ $libre.proposalParams.minTime }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
                 <div class="icon">
                   <i class="fas fa-arrow-left" size="is-small"></i>
                 </div>
-                <div>Back</div>
+                <div>{{ $t('lang.common.back') }}</div>
             </router-link>
           </div>
         </div>
         <p>&nbsp;</p>
-        <b-field horizontal label="Type" >
-          <b-select placeholder="Select a type proposal" v-model="selectedType">
+        <b-field horizontal :label="$t('lang.common.type')" >
+          <b-select :placeholder="$t('lang.dao.select-type')" v-model="selectedType">
               <option v-for="type in typeProposals" v-bind:value="type">
                 {{ type.text }}
               </option>
           </b-select>
         </b-field>
-        <b-field horizontal v-if="selectedType['info']" label="Information">
+        <b-field horizontal v-if="selectedType['info']" :label="$t('lang.common.information')">
           {{ selectedType['info'] }}
         </b-field>
         <b-field horizontal :label="selectedType['benef']" v-if="selectedType['benef']" :type="isAddress(beneficiary) ? '' : 'is-danger'">
@@ -40,12 +40,12 @@
             <option>false</option>
           </b-select>
         </b-field>
-        <b-field horizontal label="Description:">
+        <b-field horizontal :label="$t('lang.dao.description-row')">
             <b-input type="textarea" v-model="description"></b-input>
         </b-field>
-        <b-field horizontal label="Debating period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
-            <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar" icon-pack="fas"></b-datepicker>
-            <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime" icon-pack="fas"></b-timepicker>
+        <b-field horizontal :label="$t('lang.dao.period-row')" :type="isDebatingPeriod() ? '' : 'is-danger'">
+            <b-datepicker :placeholder="$t('lang.common.click-to-select')" v-model="debatingPeriod" icon="calendar" icon-pack="fas"></b-datepicker>
+            <b-timepicker :placeholder="$t('lang.common.set-time')" icon="clock" v-model="debatingTime" icon-pack="fas"></b-timepicker>
         </b-field>
         <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" >
             <b-field :message="bytecodeMessage" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
@@ -57,10 +57,10 @@
                 <button class="button is-primary" v-on:click="createProposal()"
                     :disabled="button.disabled || tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)"
                     :class="{'is-loading': button.isLoading}">
-                  Create Proposal
+                  {{ $t('lang.dao.create-proposal') }}
                 </button>
-                <b-tag v-if="tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">not enough tokens to create proposal</b-tag>
-                <b-tag v-if="!validPeriod">too short debating period (min {{ $libre.proposalParams.minTime / 60 / 60 }} hours)</b-tag>
+                <b-tag v-if="tokensCount < $libre.proposalParams.minBalance / Math.pow(10, 18)">{{ $t('lang.dao.not-enough-tokens') }}</b-tag>
+                <b-tag v-if="!validPeriod">{{ $t('lang.dao.debating-period-1') }} {{ $libre.proposalParams.minTime / 60 / 60 }} {{ $t('lang.dao.debating-period-2') }}</b-tag>
             </p>
         </b-field>
       </div>
@@ -71,6 +71,7 @@
 
 <script>
 import Vue from 'vue'
+import i18n from '../locales'
 export default {
   data () {
     return {
@@ -181,7 +182,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/dao')
         } else {
-          this.$libre.notify('Creating proposal error');
+          this.$libre.notify(i18n.t('lang.dao.create-error'));
         }
       }
       catch(err) {

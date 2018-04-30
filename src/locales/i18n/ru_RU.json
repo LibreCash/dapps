@@ -1,0 +1,28 @@
+{
+    "tabs": {
+        "reports": "Отчеты",
+        "fundStatus": "Статус фонда",
+        "contractStatus": "Статус контракта",
+        "dao": "ДАО",
+        "proposal": "Информация о пропозале",
+        "newProposal": "Новый пропозал",
+        "faucet": "Кран",
+        "deposit": "Депозит",
+        "loans": "Долговые обязательства",
+        "loan": "Долговое обязательство",
+        "newLoan": "Новое долговое обязательство"
+    },
+    "titles": {
+        "reports": "Отчет - LibreBank",
+        "fundStatus": "Статус фонда - LibreBank",
+        "contractStatus": "Статус контракта - LibreBank",
+        "dao": "ДАО - LibreBank",
+        "proposal": "Информация о пропозале - LibreBank",
+        "newProposal": "Новый пропозал - LibreBank",
+        "faucet": "Кран LBRS - LibreBank",
+        "deposit": "Депозит - LibreBank",
+        "loans": "Долговые обязательства - LibreBank",
+        "loan": "Долговое обязательство - LibreBank",
+        "newLoan": "Новое долговое обязательство - LibreBank"
+    }
+}
