@@ -27,7 +27,7 @@
               </header>
               <div class="card-content">
                 <div class="content">
-                  <p>Bounty contract: {{ bountyBankAddress }}</p>
+                  <p class="flex">Bounty contract: <a :href="this.$libre.addressToLink(bountyBankAddress)" class="is-text-overflow">{{ bountyBankAddress }}</a></p>
                   <b-field grouped group-multiline>
                     <div class="control">
                       <b-taglist attached>
@@ -73,7 +73,7 @@
               </header>
               <div class="card-content">
                 <div class="content">
-                  <p>Bounty contract: {{ bountyExchangerAddress }}</p>
+                  <p class="flex">Bounty contract: <a :href="this.$libre.addressToLink(bountyExchangerAddress)" class="is-text-overflow">{{bountyExchangerAddress }}</a></p>
                   <b-field grouped group-multiline>
                     <div class="control">
                       <b-taglist attached>
@@ -142,16 +142,16 @@
             </b-table-column>
             <b-table-column label='ABI' centered>
                 <b-tooltip label="Get ABI" type="is-dark" position="is-bottom">
-                    <button class="button" v-on:click="showABI(props.row)"><i class="mdi mdi-json"></i></button>
+                    <button class="button" v-on:click="showABI(props.row)"><i class="fas fa-code"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Get Mist script" type="is-dark" position="is-bottom">
-                    <button class="button" v-on:click="showMist(props.row)"><i class="mdi mdi-currency-eth"></i></button>
+                    <button class="button" v-on:click="showMist(props.row)"><i class="fas fa-terminal"></i></button>
                 </b-tooltip>
             </b-table-column>
             <b-table-column label='Hacked' centered>
                 {{ props.row.hacked }}
                 <b-tooltip label="Update info" type="is-dark" position="is-bottom">
-                    <button class="button" v-on:click="update(props.row)"><i class="mdi mdi-refresh"></i></button>
+                    <button class="button" v-on:click="update(props.row)"><i class="fas fa-sync"></i></button>
                 </b-tooltip>
             </b-table-column>            
             <b-table-column label='Actions' centered>
@@ -160,16 +160,16 @@
                       !props.row.hacked ||
                       (props.row.type == 'bank' && (bank.claimed || bank.deadlineUnix < curBlockchainTime)) ||
                       (props.row.type == 'exchanger' && (exchanger.claimed || exchanger.deadlineUnix < curBlockchainTime))
-                    "><i class="mdi mdi-target"></i></button>
+                    "><i class="fas fa-bullseye"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Kill target and get the balance" type="is-dark" position="is-bottom">
-                    <button class="button" v-on:click="destruct(props.row)"><i class="mdi mdi-bomb"></i></button>
+                    <button class="button" v-on:click="destruct(props.row)"><i class="fas fa-bomb"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Hack [test feature]" type="is-dark" position="is-bottom" v-if="debugButtons">
-                    <button class="button" v-on:click="hack(props.row, true)" v-if="!props.row.hacked"><i class="mdi mdi-thumb-down"></i></button>
+                    <button class="button" v-on:click="hack(props.row, true)" v-if="!props.row.hacked"><i class="fas fa-thumbs-down"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Unhack [test feature]" type="is-dark" position="is-bottom" v-if="debugButtons">
-                    <button class="button" v-on:click="hack(props.row, false)" v-if="props.row.hacked"><i class="mdi mdi-thumb-up"></i></button>
+                    <button class="button" v-on:click="hack(props.row, false)" v-if="props.row.hacked"><i class="fas fa-thumbs-up"></i></button>
                 </b-tooltip>
             </b-table-column>
           </template>
@@ -319,9 +319,12 @@ export default {
     }
   },
   methods: {
+    // TODO: use it from $eth
     isAddress (address) {
       return web3.isAddress(address)
     },
+    
+    // TODO: use it from $eth
     isInteger (number) {
       return +number >= 0
     },
@@ -524,14 +527,12 @@ export default {
       this.updateClaimed();
     },
     async getBounties () {
-      this.bank.bounty = await this.$eth.getBalance(Config.bounty.bank.address) / 10**18;
-      this.exchanger.bounty = await this.$eth.getBalance(Config.bounty.exchanger.address) / 10**18;
+      this.bank.bounty = this.$libre.toToken(await this.$eth.getBalance(Config.bounty.bank.address[this.network]));
+      this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(Config.bounty.exchanger.address[this.network]));
     },
     async getDeadlines () {
-      this.bank.deadlineUnix = +await this.$libre.bounty.bank.deadline();
-      this.exchanger.deadlineUnix = +await this.$libre.bounty.exchanger.deadline();
-      this.bank.deadline = new Date(this.bank.deadlineUnix * 1000).toLocaleString();
-      this.exchanger.deadline = new Date(this.exchanger.deadlineUnix * 1000).toLocaleString();
+      this.bank.deadline = this.$eth.toDateString( +await this.$libre.bounty.bank.deadline());
+      this.exchanger.deadline = this.$eth.toDateString(+await this.$libre.bounty.exchanger.deadline());
     },
     async loadTargets (e) {
       this.searchData = [];
@@ -608,9 +609,10 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
+      this.network = this.$eth.network;
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.bountyBankAddress = Config.bounty.bank.address;
-      this.bountyExchangerAddress = Config.bounty.exchanger.address;
+      this.bountyBankAddress = Config.bounty.bank.address[this.network];
+      this.bountyExchangerAddress = Config.bounty.exchanger.address[this.network];
       this.startUpdatingTime();
       this.getBounties(); // no await, start async
       this.getDeadlines();

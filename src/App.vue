@@ -49,6 +49,7 @@ export default {
 };
 </script>
 <style>
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700&subset=latin-ext');
 /* Read this: https://github.com/jgthms/bulma/issues/218 */
 .bm--card-equal-height {
    display: flex;
