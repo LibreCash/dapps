@@ -215,23 +215,27 @@ export default class Libre {
     this.web3 = window.web3;
     let config = Vue.config.libre
 
-    this.report = this.getContract(config.report.abi, config.report.address)
+    if (config.report) this.report = this.getContract(config.report.abi, config.report.address)
     this.bank = this.getContract(config.bank.abi, config.bank.address)
     var address = await this.bank.tokenAddress()
     config.token.address = address
     this.token = this.getContract(config.erc20.abi, config.token.address)
 
-    this.dao = this.getContract(config.dao.abi, config.dao.address)
-    this.libertyAddress = address = await this.dao.sharesTokenAddress()
-    this.liberty = this.getContract(config.erc20.abi, this.libertyAddress)
-
-    this.loans = this.getContract(config.loans.abi, config.loans.address)
-    this.deposit = this.getContract(config.deposit.abi, config.deposit.address)
-
-    this.bounty = {
-      bank: this.getContract(config.bounty.bank.abi, config.bounty.bank.address),
-      exchanger: this.getContract(config.bounty.exchanger.abi, config.bounty.exchanger.address)
+    if (config.dao) {
+      this.dao = this.getContract(config.dao.abi, config.dao.address)
+      this.libertyAddress = address = await this.dao.sharesTokenAddress()
+      this.liberty = this.getContract(config.erc20.abi, this.libertyAddress)
     }
+
+    if (config.loans) this.loans = this.getContract(config.loans.abi, config.loans.address)
+    if (config.deposit) this.deposit = this.getContract(config.deposit.abi, config.deposit.address)
+    if (config.faucet) this.faucet = this.getContract(config.faucet.abi, config.faucet.address)
+
+    if (config.bounty) 
+      this.bounty = {
+        bank: this.getContract(config.bounty.bank.abi, config.bounty.bank.address),
+        exchanger: this.getContract(config.bounty.exchanger.abi, config.bounty.exchanger.address)
+      }
   }
 
   getContract (abi, address) {

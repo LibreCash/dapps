@@ -6,7 +6,7 @@ export default class Config {
   }
 
   constructor(config) {
-    Object.keys(config).forEach(key => this[key] = config[key])
+    Object.assign(this, config)
 
     // common configs
     this.balance = {
