@@ -14,7 +14,7 @@
             <div slot="trigger" slot-scope="props" class="card-header">
               <p class="card-header-title">Create Plan</p>
               <a class="card-header-icon">
-                <b-icon :icon="props.open ? 'menu-down' : 'menu-up'"></b-icon>
+                <b-icon :icon="props.open ? 'caret-down' : 'caret-up'" icon-pack="fas"></b-icon>
               </a>
             </div>
             <div class="card-content">

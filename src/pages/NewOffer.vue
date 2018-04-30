@@ -42,8 +42,8 @@
                   <b-input v-model="margin" placeholder="0"></b-input>
                 </b-field>
                 <b-field horizontal label="Offer period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
-                  <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
-                  <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
+                  <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-edit" icon-pack="fas"></b-datepicker>
+                  <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime" icon-pack="fas"></b-timepicker>
                 </b-field>
                 <b-field><b-message :type="msg.type" v-if="msg.notes.length != 0">
                   <p v-for="note in msg.notes">
