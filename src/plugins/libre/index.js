@@ -3,15 +3,16 @@ import Vue from 'vue'
 import Web3 from 'web3'
 
 export default class Libre {
-  static install(vue, options) {
+  static install (vue, options) {
     const libre = new Libre()
     Object.defineProperty(Vue.prototype, '$libre', {
-      get() { return libre }
+      get() {
+        return libre
+      }
     })
   }
 
-  constructor() {
-
+  constructor () {
     this.loansStruct = {
       'holder': 0,
       'recipient': 1,
@@ -31,7 +32,7 @@ export default class Libre {
       'Libre': 0,
       'ETH': 1
     }
-    
+
     this.loansStatus = [
       'active',
       'used',
@@ -75,8 +76,7 @@ export default class Libre {
       'deadline': 3
     }
 
-    this.typeProposals = [
-      {
+    this.typeProposals = [{
         text: 'Custom',
         key: 'UNIVERSAL',
         benef: 'Beneficiary:',
@@ -168,8 +168,7 @@ export default class Libre {
       }
     ]
 
-    this.proposalStatuses = [
-      {
+    this.proposalStatuses = [{
         text: 'ACTIVE',
         number: 0
       },
@@ -204,11 +203,12 @@ export default class Libre {
       amount: 2,
       margin: 3,
       plan: 4
-    };
+    }
 
-    this.proposals = [];
-    this.plans = [];
-    this.initPromise = this.init();
+    this.proposals = []
+    this.plans = []
+    this.initPromise = this.init()
+    this.addressToLink = Vue.config.libre.addressToLink
   }
 
   async init() {
@@ -224,12 +224,17 @@ export default class Libre {
     this.dao = this.getContract(config.dao.abi, config.dao.address)
     this.libertyAddress = address = await this.dao.sharesTokenAddress()
     this.liberty = this.getContract(config.erc20.abi, this.libertyAddress)
-    this.loans = this.getContract(config.loans.abi, config.loans.address);
-    this.deposit = this.getContract(config.deposit.abi, config.deposit.address);
-    this.faucet = this.getContract(config.faucet.abi, config.faucet.address);
+
+    this.loans = this.getContract(config.loans.abi, config.loans.address)
+    this.deposit = this.getContract(config.deposit.abi, config.deposit.address)
+
+    this.bounty = {
+      bank: this.getContract(config.bounty.bank.abi, config.bounty.bank.address),
+      exchanger: this.getContract(config.bounty.exchanger.abi, config.bounty.exchanger.address)
+    }
   }
 
-  getContract(abi, address) {
+  getContract (abi, address) {
     if (!this.decodes)
       this.decodes = {}
 
@@ -246,7 +251,7 @@ export default class Libre {
     })
   }
 
-  getLoanObject(contractArray) {
+  getLoanObject (contractArray) {
     return {
       holder: contractArray[this.loansStruct.holder],
       recipient: contractArray[this.loansStruct.recipient],
@@ -260,7 +265,7 @@ export default class Libre {
     }
   }
 
-  getProposalObject(contractArray) {
+  getProposalObject (contractArray) {
     return {
       type: +contractArray[this.proposalStruct.type],
       recipient: contractArray[this.proposalStruct.recipient],
@@ -272,37 +277,37 @@ export default class Libre {
     }
   }
 
-  toToken(contractNumber, decimals = this.consts.DECIMALS) {
-    return +contractNumber / 10 ** decimals;
+  toToken (contractNumber, decimals = this.consts.DECIMALS) {
+    return +contractNumber / 10 ** decimals
   }
 
-  fromToken(amount, decimals = this.consts.DECIMALS) {
-    return +amount * 10 ** decimals;
+  fromToken (amount, decimals = this.consts.DECIMALS) {
+    return +amount * 10 ** decimals
   }
 
-  periodToString(seconds) {
-    var years = Math.floor(seconds / (60 * 60 * 24 * 365));
-    seconds -= years * 60 * 60 * 24 * 365;
+  periodToString (seconds) {
+    var years = Math.floor(seconds / (60 * 60 * 24 * 365))
+    seconds -= years * 60 * 60 * 24 * 365
 
-    var months = Math.floor(seconds / (60 * 60 * 24 * 30));
-    seconds -= months * 60 * 60 * 24 * 30;
+    var months = Math.floor(seconds / (60 * 60 * 24 * 30))
+    seconds -= months * 60 * 60 * 24 * 30
 
-    var days = Math.floor(seconds / (60 * 60 * 24));
-    seconds -= days * 60 * 60 * 24;
+    var days = Math.floor(seconds / (60 * 60 * 24))
+    seconds -= days * 60 * 60 * 24
 
-    var hours = Math.floor(seconds / (60 * 60));
-    seconds -= hours * 60 * 60;
+    var hours = Math.floor(seconds / (60 * 60))
+    seconds -= hours * 60 * 60
 
     var minutes = Math.floor(seconds / 60);
-    seconds -= minutes * 60;
+    seconds -= minutes * 60
 
-    if (hours < 10) { hours = "0" + hours; }
-    if (minutes < 10) { minutes = "0" + minutes; }
-    if (seconds < 10) { seconds = "0" + seconds; }
-    return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`;
+    if (hours < 10) { hours = '0' + hours }
+    if (minutes < 10) { minutes = '0' + minutes }
+    if (seconds < 10) { seconds = '0' + seconds }
+    return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`
   }
 
-  getVotingObject(contractArray) {
+  getVotingObject (contractArray) {
     return {
       yea: +contractArray[this.voteStruct.yea] / 10 ** this.consts.DECIMALS,
       nay: +contractArray[this.voteStruct.nay] / 10 ** this.consts.DECIMALS,
@@ -311,7 +316,7 @@ export default class Libre {
     }
   }
 
-  getDepositObject(contractArray) {
+  getDepositObject (contractArray) {
     return {
       timestamp: +contractArray[this.depositData.timestamp],
       deadline: +contractArray[this.depositData.deadline],
@@ -324,12 +329,11 @@ export default class Libre {
   async updateProposal(index) {
     let proposal = this.getProposalObject(await this.dao.getProposal(index));
     proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
-
     this.proposals[index] = proposal
     return this.proposals[index]
   }
 
-  async updateProposals(callEach) {
+  async updateProposals (callEach) {
     try {
       let length = await this.dao.prsLength()
 
@@ -337,7 +341,7 @@ export default class Libre {
         return
 
       for (let i = length - 1; i >= 0; --i) {
-        await this.updateProposal(i);
+        await this.updateProposal(i)
         if (callEach)
           callEach(i)
       }
@@ -346,13 +350,16 @@ export default class Libre {
     }
   }
 
-  async loadPlans(force = false) {
+  async loadPlans (force = false) {
     if (this.plans.length > 0 && !force)
       return
 
-    let count = +await this.deposit.plansCount();
+    let 
+      count = +await this.deposit.plansCount()
+    
     for (let i = 0; i < count; i++) {
-      let arr = await this.deposit.plans(i),
+      let
+        arr = await this.deposit.plans(i),
         plan = {
           id: i,
           period: +arr[this.depositPlanStruct.period],
@@ -365,34 +372,42 @@ export default class Libre {
     }
   }
 
-  bytecodeToString(address, bytecode) {
-    let result = ""
+  bytecodeToString (address, bytecode) {
+    let 
+      result = '',
+      hashMethod,
+      params
 
     try {
-      let contract = this.decodes[address];
+      let contract = this.decodes[address]
 
       if (!contract)
-        return ""
+        return ''
 
-      let hashMethod = bytecode.substring(0, 10);
-      let params = bytecode.substring(10);
+      hashMethod = bytecode.substring(0, 10)
+      params = bytecode.substring(10)
 
       let abiMethod = contract.abi.find(elem => {
-        return elem.type == 'function' && contract[elem.name].getData().substring(0, 10) === hashMethod
+        return elem.type === 'function' && contract[elem.name].getData().substring(0, 10) === hashMethod
       })
 
       let typeParams = abiMethod.inputs.map(param => param.type)
-      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params);
+      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params)
 
       result = `${abiMethod.name}(${valueParams})`
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
 
-    return result;
+    return result
   }
 
-  ethToDate(ethTimestamp) {
-    return (+ethTimestamp > 0) ? (new Date(ethTimestamp * 1000)).toLocaleString() : '-'
+  async notify (message, type = 'is-success') {
+    Vue.prototype.$snackbar.open({
+      message,
+      type,
+      indefinite: type === 'is-danger',
+      queue: true
+    })
   }
 }

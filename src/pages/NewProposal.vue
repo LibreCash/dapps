@@ -7,8 +7,10 @@
             <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
             <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
-              <b-icon icon="keyboard-return" size="is-small"></b-icon>
-              <span>Back</span>
+                <div class="icon">
+                  <i class="fas fa-arrow-left" size="is-small"></i>
+                </div>
+                <div>Back</div>
             </router-link>
           </div>
         </div>
@@ -179,13 +181,13 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/dao')
         } else {
-          this.$snackbar.open('Creating proposal error');
+          this.$libre.notify('Creating proposal error');
         }
       }
       catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       this.button.isLoading = false

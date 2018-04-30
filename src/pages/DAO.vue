@@ -4,17 +4,12 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div>DAO Contract: 
-                  <a :href="addressToLink(daoAddress)" target="_blank">
-                    <input class="address" :value="daoAddress">
-                  </a>
+                <div class="flex">DAO Contract: 
+                  <a :href="$libre.addressToLink(daoAddress)" target="_blank" class="is-text-overflow">{{daoAddress}}</a></div>
+                <div class="flex">Liberty Token: 
+                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow">{{libertyAddress}}</a>
                 </div>
-                <div>Liberty Token: 
-                  <a :href="addressToLink(libertyAddress)" target="_blank">
-                    <input class="address" :value="libertyAddress">
-                  </a>
-                </div>
-                <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+                <div> Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
                 <div>Token count: {{ tokensCount }} LBRS</div>
                 <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / Math.pow(10, 18) }} LBRS</div>
                 <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / Math.pow(10, 18) }} LBRS</div>
@@ -45,6 +40,7 @@
         </nav>
         <div class="level"></div>
         <b-table
+          class="centered"
           :data="tableData"
           :bordered="false"
           :striped="true"
@@ -70,7 +66,7 @@
                 not set
             </b-table-column>
             <b-table-column label='Recipient' centered v-else>
-              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
+              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank">address</a>
             </b-table-column>
             <b-table-column field="report.amount" label='Amount' centered>
               {{ props.row.amount }}
@@ -157,8 +153,7 @@ export default {
       perPage: 5,
       curBlockchainTime: 0,
       isOwner: false,
-      contractOwner: null,
-      addressToLink: Vue.config.libre.addressToLink
+      contractOwner: null
     }
   },
   methods: {
@@ -247,11 +242,11 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(id, support),
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
-        this.$snackbar.open(message)
+        this.$libre.notify(message)
       }catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       try {
@@ -262,7 +257,7 @@ export default {
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       row.loading = false
     
@@ -274,13 +269,13 @@ export default {
       let 
         txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
-        this.$snackbar.open(message);
+        this.$libre.notify(message);
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       row.loading = false
     },
@@ -294,13 +289,13 @@ export default {
       try {
         let txHash = await this.$libre.dao.executeProposal(id),
             message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
-        this.$snackbar.open(message)
+        this.$libre.notify(message)
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       row.loading = false

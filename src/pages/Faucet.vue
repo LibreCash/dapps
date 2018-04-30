@@ -76,18 +76,16 @@ export default {
         let txHash = await this.$libre.faucet.get();
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open("Tokens sent");
+          this.$libre.notify("Tokens sent");
 
           this.loadLiberty();
         } else {
-          this.$snackbar.open("Error sending token transaction");
+          this.$libre.notify("Error sending token transaction");
         }
       } catch (err) {
         let msg = this.$eth.getErrorMsg(err);
-
         console.log(msg);
-
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       this.isLoading = false;

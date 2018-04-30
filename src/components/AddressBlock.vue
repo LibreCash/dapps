@@ -1,7 +1,7 @@
 <template>
     <div>
         <section v-if="!unknownData">
-            <div class="address-block">
+            <div class="flex">
                 <p>Your address:</p>
                 <a :href="addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
             </div>
@@ -16,11 +16,6 @@
         </section>
     </div>
 </template>
-<style>
-.address-block {
-    display: flex
-}
-</style>
 <script>
 import Vue from 'vue'
 export default {

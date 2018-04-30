@@ -2,8 +2,10 @@
     <div>
       <div class="table-padding">
         <router-link :to="{ path: '/loans' }" class="button">
-          <b-icon icon="keyboard-return" size="is-small"></b-icon>
-          <span>Back</span>
+          <div class="icon">
+            <i class="fas fa-arrow-left" size="is-small"></i>
+          </div>
+          <div>Back</div>
         </router-link>
         <div class="level"></div>
         <b-table :data="loanData"
@@ -16,8 +18,8 @@
             <b-table-column>
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column centered>
-              <input class="address" v-if="props.row.type == 'input'" type="text" :value="props.row.data" disabled="disabled" size="25">
+            <b-table-column centered class="flex">
+              <a  v-if="props.row.type == 'input'" :href="$libre.addressToLink(props.row.data)" target="_blank" class="is-text-overflow">{{props.row.data}}</a>
               <span v-else>{{ props.row.data }}</span>
             </b-table-column>
           </template>
@@ -31,17 +33,17 @@
           </b-message>
         </b-field>
         <div class="level"></div>
-        <div class="level">
-          <div class="level-item has-text-centered" v-if="takeEnable">
+        <div class="level has-text-centered">
+          <div class="level-item" v-if="takeEnable">
             <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">Take</button>
           </div>
-          <div class="level-item has-text-centered" v-if="returnEnable">
+          <div class="level-item" v-if="returnEnable">
             <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">Return</button>
           </div>
-          <div class="level-item has-text-centered" v-if="claimEnable">
+          <div class="level-item" v-if="claimEnable">
             <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">Claim</button>
           </div>
-          <div class="level-item has-text-centered" v-if="cancelEnable">
+          <div class="level-item" v-if="cancelEnable">
             <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">Cancel</button>
           </div>
         </div>
@@ -64,6 +66,7 @@ export default {
       returnEnable: false,
       claimEnable: false,
       cancelEnable: false,
+      loggedIn: false,
       isAllowanceActive: false,
       btnloading: {
         takeLoan: false,
@@ -136,10 +139,13 @@ export default {
               this.returnEnable = true;
           }
 
+          this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
 
-          this.loanData.push({name: 'Type', data: this.$route.params.type})
-          this.loanData.push({name: 'ID', data: +this.$route.params.id})
-          this.loanData.push({name: 'Holder', data: loan.holder, type: 'input'})
+          this.loanData.push(
+            {name: 'Type', data: this.$route.params.type},
+            {name: 'ID', data: +this.$route.params.id},
+            {name: 'Holder', data: loan.holder, type: 'input'}
+          )
 
           if (loan.status != 'active') {
             this.loanData.push({name: 'Recipient', data: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient, type: this.$eth.isZeroAddress(loan.recipient)? '':'input'})
@@ -149,10 +155,12 @@ export default {
             this.loanData.push({name: 'Period', data: this.$libre.periodToString(loan.period)})
           }
 
-          this.loanData.push({name: 'Amount', data: this.$eth.fromWei(loan.amount)})
-          this.loanData.push({name: 'Margin', data: this.$eth.fromWei(loan.margin)})
-          this.loanData.push({name: 'Refund', data: this.$eth.fromWei(loan.refund)})
-          this.loanData.push({name: 'Status', data: loan.status})
+          this.loanData.push(
+            {name: 'Amount', data: this.$eth.fromWei(loan.amount)},
+            {name: 'Margin', data: this.$eth.fromWei(loan.margin)},
+            {name: 'Refund', data: this.$eth.fromWei(loan.refund)},
+            {name: 'Status', data: loan.status}
+          )
       } catch (err) {
         console.log(err)
       }
@@ -292,18 +300,18 @@ export default {
         let txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId, {value: value}));
         this.setMessage('warning', [`${action} transaction - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open(`${action} transaction - success`);
+          this.$libre.notify(`${action} transaction - success`);
           this.setMessage('success', [`${action} transaction - success`]);
           this.loadLoan();
         }
         else {
-          this.$snackbar.open(`${action} transaction - fail`)
+          this.$libre.notify(`${action} transaction - fail`)
           this.setMessage('danger', [`${action} transaction - transaction failed`]);
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       this.btnloading[action] = false
     }

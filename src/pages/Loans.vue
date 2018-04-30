@@ -6,19 +6,19 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div>Loans contract address: <input class="address" :value="loansAddress"></div>
+                <div class="flex">Loans contract address: <a class="address is-text-overflow" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
                 <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
             </div>
         </div>
         <div class="level"></div>
-        <nav class="level">
-          <div class="level-item has-text-centered" v-if="canCreate">
+        <nav class="level has-text-centered">
+          <div class="level-item" v-if="canCreate">
             <div>
               <p class="heading">Create</p>
               <p><router-link :to="{ path: '/loans/new' }" class="button is-primary">New Offer</router-link></p>
             </div>
           </div>
-          <div class="level-item has-text-centered">
+          <div class="level-item">
             <div>
               <p class="heading">Loan type</p>
               <p>
@@ -29,7 +29,7 @@
               </p>
             </div>
           </div>
-          <div class="level-item has-text-centered">
+          <div class="level-item">
             <div>
               <p class="heading">Loan state</p>
               <p>
@@ -61,13 +61,13 @@
                 not set
             </b-table-column>
             <b-table-column label='Holder' centered v-else>
-              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.holder">address</a>
+              <a :href="$libre.addressToLink(props.row.holder)" target="_blank" class="is-text-overflow">address</a>
             </b-table-column>
             <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
                 not set
             </b-table-column>
             <b-table-column label='Recipient' centered v-else>
-              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
+              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank" class="is-text-overflow">address</a>
             </b-table-column>
             <b-table-column label='Date' centered>
               {{ props.row.timestamp }}
@@ -88,7 +88,7 @@
               {{ props.row.status }}
             </b-table-column>
             <b-table-column label='Actions' centered>
-              <router-link class="button" :to="{name: 'Loan Offer', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="mdi mdi-account-card-details"></i></router-link>
+              <router-link class="button" :to="{name: 'Loan Offer', params: { type: props.row.type, id: props.row.id }}" tag="button"><i class="fas fa-id-card  "></i></router-link>
             </b-table-column>
           </template>
         </b-table>
