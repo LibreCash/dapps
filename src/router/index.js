@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // DAO
 import DAO from '@/pages/DAO'
+import Bounty from '@/pages/Bounty'
 import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
 // FAUCET
@@ -10,6 +11,7 @@ import Faucet from '@/pages/Faucet'
 import Deposit from '@/pages/Deposit'
 // REPORT
 import Report from '@/pages/Report'
+import ReportPage from '@/pages/ReportPage'
 // LOANS
 import Loans from '@/pages/Loans'
 import Loan from '@/pages/Loan'
@@ -23,12 +25,20 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/report',
-      name: 'Report',
+      path: '/reports',
+      name: 'Reports',
       component: Report,
       meta: {title: 'Blockchain Report - Librebank'},
       icon: 'fas fa-chart-pie',
       enabled: true
+    },
+    {
+      path: '/report/:id',
+      name: 'Report Page',
+      component: ReportPage,
+      meta: {title: 'Blockchain Report - Librebank'},
+      icon: 'fas fa-chart-pie',
+      enabled: false
     },
     {
       path: '/fund',
@@ -70,12 +80,20 @@ export default new Router({
       enabled: false
     },
     {
+      path: '/bounty',
+      name: 'Bounty Program',
+      component: Bounty,
+      meta: {title: 'Contracts Bounty - Librebank'},
+      enabled: true
+    },
+    {
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
       meta: {title: 'LBRS Faucet - Librebank'},
       icon: 'fas fa-hand-holding-usd',
       enabled: true
+
     },
     {
       path: '/deposit',

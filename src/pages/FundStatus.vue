@@ -1,11 +1,11 @@
 /* eslint-disable-one-var */
 <template>
-  <div>
+  <div class="max-width">
     <div class="level"></div>
-    <div class="container">
+    <div class="container table-padding max-width">
       <div class="columns">
-        <div class="column">
-          <div class="card">
+        <div class="column is-6">
+          <div class="card bm--card-equal-height">
             <header class="card-header">
               <p class="card-header-title">Overall stats</p>
             </header>
@@ -43,10 +43,22 @@
             </div>
           </div>
         </div>
+        <div class="column is-6">
+          <div class="card bm--card-equal-height">
+            <header class="card-header">
+              <p class="card-header-title">Overall stats</p>
+            </header>
+             <div class="card-content">
+              <div class="content chart">
+                <pie-chart :coins="pieChart" />
+              </div>
+             </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="card container  ">
+    <div class="container table-padding">
+    <div class="card">
       <header class="card-header">
         <p class="card-header-title">LibreBank Fund Assests</p>
       </header>
@@ -55,13 +67,22 @@
         <status-coins :tableData='coinsData' />
       </div>
     </div>
-    <pie-chart :coins="pieChart" />
     <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
-
+  </div>
   </div>
 </template>
 
+<style>
+.chartjs-size-monitor  {
+  height: 100%;
+  max-height: 300px;
+  max-width: 100%;
+}
+.max-width {
+  max-width:100%;
+}
 
+</style> 
 <script>
   import StatusCoins from "@/components/StatusCoins";
   import Config from "@/config";
@@ -83,7 +104,8 @@
           change24h: 0
         },
         isLoading: false,
-        pieChart: undefined
+        pieChart: undefined,
+        
       };
     },
   
@@ -165,44 +187,17 @@
         }
 
         this.pieChart = coins;
-
         this.maxCoin = maxCoin;
         this.minCoin = minCoin;
-
         this.isLoading = false;
-      },
-
-      drawChart() {
-        var peiData = [
-          ["Coin", "USD"]
-        ];
-  
-        Config.balance.coins.forEach(coin => {
-          if (coin.balanceUSD !== "-") peiData.push([coin.name, coin.balanceUSD]);
-        });
-        var data = google.visualization.arrayToDataTable(peiData);
-
-        var options = {
-          title: "Fund Structure",
-          chartArea: {
-            width: "280px",
-            height: "50px"
-          }
-        };
-
-        var chart = new google.visualization.PieChart( 
-          document.getElementById("piechart")
-        );
-
-        chart.draw(data, options); 
       }
     },
 
     async created() {
       try {
-        await this.$eth.accountPromise;
-        await this.$libre.initPromise;
-        this.getBalancesData();
+        await this.$eth.accountPromise,
+        await this.$libre.initPromise,
+        await this.getBalancesData()
       } catch (err) {
         console.log(err);
       }

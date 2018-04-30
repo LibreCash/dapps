@@ -13,12 +13,12 @@ export default {
         labels: this.coins.map(coin => coin.name),
         datasets: [
           {
-            label: 'GitHub Commits',
+            label: 'Fund struct',
             backgroundColor: ['#ff3300','#3366ff','#33cc33','#999966','#ff9933','#ff3399'],
             data: this.coins.map(coin => coin.balanceUSD)
           }
         ]
-      })
+      },{responsive: true, maintainAspectRatio: false})
     }
   },
   mounted () {

@@ -141,9 +141,11 @@ export default {
 
           this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
 
-          this.loanData.push({name: 'Type', data: this.$route.params.type})
-          this.loanData.push({name: 'ID', data: +this.$route.params.id})
-          this.loanData.push({name: 'Holder', data: loan.holder, type: 'input'})
+          this.loanData.push(
+            {name: 'Type', data: this.$route.params.type},
+            {name: 'ID', data: +this.$route.params.id},
+            {name: 'Holder', data: loan.holder, type: 'input'}
+          )
 
           if (loan.status != 'active') {
             this.loanData.push({name: 'Recipient', data: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient, type: this.$eth.isZeroAddress(loan.recipient)? '':'input'})
@@ -153,10 +155,12 @@ export default {
             this.loanData.push({name: 'Period', data: this.$libre.periodToString(loan.period)})
           }
 
-          this.loanData.push({name: 'Amount', data: this.$eth.fromWei(loan.amount)})
-          this.loanData.push({name: 'Margin', data: this.$eth.fromWei(loan.margin)})
-          this.loanData.push({name: 'Refund', data: this.$eth.fromWei(loan.refund)})
-          this.loanData.push({name: 'Status', data: loan.status})
+          this.loanData.push(
+            {name: 'Amount', data: this.$eth.fromWei(loan.amount)},
+            {name: 'Margin', data: this.$eth.fromWei(loan.margin)},
+            {name: 'Refund', data: this.$eth.fromWei(loan.refund)},
+            {name: 'Status', data: loan.status}
+          )
       } catch (err) {
         console.log(err)
       }
