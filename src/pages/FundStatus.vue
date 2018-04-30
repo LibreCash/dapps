@@ -1,8 +1,8 @@
 /* eslint-disable-one-var */
 <template>
-  <div>
+  <div class="max-width">
     <div class="level"></div>
-    <div class="container table-padding">
+    <div class="container table-padding max-width">
       <div class="columns">
         <div class="column is-6">
           <div class="card bm--card-equal-height">
@@ -85,7 +85,12 @@
 .chartjs-size-monitor  {
   height: 100%;
   max-height: 300px;
+  max-width: 100%;
 }
+.max-width {
+  max-width:100%;
+}
+
 </style> 
 <script>
   import StatusCoins from "@/components/StatusCoins";
