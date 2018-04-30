@@ -68,7 +68,6 @@ import Config from '@/config'
 export default {
   data () {
     return {
-      reportAddress: '',
       curReport: {},
       reportText: '',
       owner: false,

@@ -1,20 +1,20 @@
 <template>
-		<div class="table-padding">
-			<div class="level">
+    <div class="table-padding">
+      <div class="level">
         <div class="card">
           <div class="card-content">
             <address-block></address-block>
           </div>
         </div>
-			</div>
-			<div class="level">
-			<b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
-			</div>
-			<div class="level">
-			  <button class="button is-primary" v-bind:class="{'is-loading':isLoading}"
+      </div>
+      <div class="level">
+      <b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
+      </div>
+      <div class="level">
+        <button class="button is-primary" v-bind:class="{'is-loading':isLoading}"
             @click="getTokens()" :disabled="isDisabled">Get Tokens</button>
-			</div>
-		</div>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -35,9 +35,7 @@ export default {
 
   methods: {
     async loadLiberty() {
-      this.balanceLiberty = this.$libre
-
-        .toToken(
+      this.balanceLiberty = this.$libre.toToken(
           +await this.$libre.liberty.balanceOf(
             this.$eth._web3.eth.defaultAccount
           )

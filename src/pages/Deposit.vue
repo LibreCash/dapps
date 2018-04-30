@@ -14,7 +14,7 @@
             <div slot="trigger" slot-scope="props" class="card-header">
               <p class="card-header-title">Create Plan</p>
               <a class="card-header-icon">
-                <b-icon :icon="props.open ? 'menu-down' : 'menu-up'"></b-icon>
+                <b-icon :icon="props.open ? 'caret-down' : 'caret-up'" icon-pack="fas"></b-icon>
               </a>
             </div>
             <div class="card-content">
@@ -130,12 +130,12 @@
 </template>
 
 <script>
-import Config from '@/config'
+import Vue from 'vue'
 import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
     return {
-      deposit: Config.deposit.address[this.$eth.network],
+      deposit: Vue.config.libre.deposit.address,
       isLoading: false,
       newPlanLoading: false,
       owner: false,
@@ -192,12 +192,12 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Config.deposit.address[this.$eth.network]);
+      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Vue.config.libre.deposit.address);
       let disclaimer = 'Available amount for deposit:';
       let action = `1. Authorize the transfer ${this.$libre.toToken(amount)} Libre tokens`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - waiting for confirmations...`]);
-        let txHash = await this.$libre.token.approve(Config.deposit.address[this.$eth.network], amount);
+        let txHash = await this.$libre.token.approve(Vue.config.libre.deposit.address, amount);
         this.setMessage('warning', [disclaimer, `${action} - sending to the network...`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [disclaimer, `${action} - success`]);

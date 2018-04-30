@@ -44,8 +44,8 @@
             <b-input type="textarea" v-model="description"></b-input>
         </b-field>
         <b-field horizontal label="Debating period:" :type="isDebatingPeriod() ? '' : 'is-danger'">
-            <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar-today"></b-datepicker>
-            <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime"></b-timepicker>
+            <b-datepicker placeholder="Click to select..." v-model="debatingPeriod" icon="calendar" icon-pack="fas"></b-datepicker>
+            <b-timepicker placeholder="Set time..." icon="clock" v-model="debatingTime" icon-pack="fas"></b-timepicker>
         </b-field>
         <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" >
             <b-field :message="bytecodeMessage" :type="isByteCode(transactionBytecode) ? 'is-success' : 'is-danger'">
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import Config from '@/config'
+import Vue from 'vue'
 export default {
   data () {
     return {
@@ -206,7 +206,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Config.dao.address[this.$eth.network];
+      this.daoAddress = Vue.config.libre.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.getTokensCount();
       this.startValidDataTimer();

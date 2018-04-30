@@ -29,8 +29,7 @@ export default new Router({
       name: 'Reports',
       component: Report,
       meta: {title: 'Blockchain Report - Librebank'},
-      icon: 'fas fa-chart-pie',
-      enabled: true
+      icon: 'fas fa-chart-pie'
     },
     {
       path: '/report/:id',
@@ -45,16 +44,13 @@ export default new Router({
       name: 'Fund Status',
       component: FundStatus,
       meta: {title: 'Fund status - Librebank'},
-      icon: 'fas fa-university',
-      enabled: true
+      icon: 'fas fa-university'
     },
     {
       path: '/status',
       name: 'Contract Status',
-      meta: {title: 'Contract Status - LibreBank'},
       component: ContractStatus,
-      icon: 'fas fa-file-alt',
-      enabled: true
+      icon: 'fas fa-file-alt'
     },
     {
       path: '/dao',
@@ -62,22 +58,19 @@ export default new Router({
       name: 'DAO',
       component: DAO,
       meta: {title: 'DAO - LibreBank'},
-      icon: 'fas fa-users',
-      enabled: true
+      icon: 'fas fa-users'
     },
     {
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
       component: Proposal,
-      meta: {title: 'Proposal Info - LibreBank'},
-      enabled: false
+      meta: {title: 'Proposal Info - LibreBank'}
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal,
-      meta: {title: 'New proposal - Librebank'},
-      enabled: false
+      meta: {title: 'New proposal - Librebank'}
     },
     {
       path: '/bounty',
@@ -93,38 +86,32 @@ export default new Router({
       component: Faucet,
       meta: {title: 'LBRS Faucet - Librebank'},
       icon: 'fas fa-hand-holding-usd',
-      enabled: true
-
     },
     {
       path: '/deposit',
       name: 'Deposit',
       component: Deposit,
       meta: {title: 'Deposit - Librebank'},
-      icon: 'fas fa-piggy-bank',
-      enabled: true
+      icon: 'fas fa-piggy-bank'
     },
     {
       path: '/loans',
       name: 'Loans',
       component: Loans,
       meta: {title: 'Loans - Librebank'},
-      icon: 'fas fa-credit-card',
-      enabled: true
+      icon: 'fas fa-credit-card'
     },
     {
       path: '/loan/:type/:id',
       name: 'Loan Offer',
       component: Loan,
-      meta: {title: 'Loan offer - Librebank'},
-      enabled: false
+      meta: {title: 'Loan offer - Librebank'}
     },
     {
       path: '/loans/new',
       name: 'New Loan Offer',
       component: NewOffer,
-      meta: {title: 'New loan offer - Librebank'},
-      enabled: false
+      meta: {title: 'New loan offer - Librebank'}
     }
   ],
   mode: 'hash'

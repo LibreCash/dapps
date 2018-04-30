@@ -197,7 +197,7 @@
       </header>
       <section class="modal-card-body">
         <b-tabs type="is-boxed" v-model="tabsBounty">
-            <b-tab-item label="Bank Bounty" icon="bank">
+            <b-tab-item label="Bank Bounty" icon="university" icon-pack="fas">
               <b-message title="Rate = 0" :closable="false" type="is-info">
                   You get reward if buyRate or sellRate is 0
               </b-message>
@@ -211,7 +211,7 @@
                   You get reward if you own more LIBRE than the bank ever issued
               </b-message>
             </b-tab-item>
-            <b-tab-item label="Exchanger Bounty" icon="cash-multiple">
+            <b-tab-item label="Exchanger Bounty" icon="exchange-alt" icon-pack="fas">
               <b-message title="Rate = 0" :closable="false" type="is-info">
                   You get reward if buyRate or sellRate is 0
               </b-message>
