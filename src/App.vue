@@ -49,6 +49,15 @@ export default {
 };
 </script>
 <style>
+/* Read this: https://github.com/jgthms/bulma/issues/218 */
+.bm--card-equal-height {
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+}
+.bm--card-equal-height .card-footer {
+   margin-top: auto;
+}
 .centered {
   vertical-align:middle
 }

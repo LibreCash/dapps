@@ -73,15 +73,6 @@
 </template>
 
 <style>
-/* Read this: https://github.com/jgthms/bulma/issues/218 */
-.bm--card-equal-height {
-   display: flex;
-   flex-direction: column;
-   height: 100%;
-}
-.bm--card-equal-height .card-footer {
-   margin-top: auto;
-}
 .chartjs-size-monitor  {
   height: 100%;
   max-height: 300px;

@@ -1,21 +1,16 @@
 <template>
   <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">Bounty program</h2>
-      </div>
-      <br>
       <div class="table-padding">
         <div class="columns">
           <div class="column">
-            <div class="card">
+            <div class="card bm--card-equal-height">
               <div class="card-content">
                 <address-block>one</address-block>
               </div>
             </div>
           </div>
           <div class="column">
-            <div class="card">
+            <div class="card bm--card-equal-height">
               <div class="card-content">
                 Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}
               </div>
@@ -24,7 +19,7 @@
         </div>
         <div class="columns">
           <div class="column is-6">
-            <div class="card">
+            <div class="card bm--card-equal-height">
               <header class="card-header">
                 <p class="card-header-title">
                   Bank Bounty
