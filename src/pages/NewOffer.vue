@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import Config from '@/config'
+import Vue from 'vue'
 import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
@@ -161,7 +161,7 @@ export default {
 
     async updateData() {
       this.myAddress = window.web3.eth.defaultAccount;
-      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, Config.loans.address[this.$eth.network]));
+      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, Vue.config.libre.loans.address));
       try {
         this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.myAddress));
       } catch (err) {
@@ -177,7 +177,7 @@ export default {
           `1. Authorize the transfer of ${this.amount} tokens - waiting for confirmations...`,
           '2. Create Offer Transaction'
         ]);
-        let txHash = await this.$libre.token.approve(Config.loans.address[this.$eth.network], this.$libre.fromToken(this.amount));
+        let txHash = await this.$libre.token.approve(Vue.config.libre.loans.address, this.$libre.fromToken(this.amount));
         this.setMessage('info', [
           'Please wait, there is a sending to the network:',
           `1. Authorize the transfer of ${this.amount} tokens - send to the network...`,

@@ -34,6 +34,7 @@
     </div>
 </template>
 <script>
+import Vue from 'vue'
 export default {
   name: "navbar",
   data() {

@@ -1,7 +1,6 @@
 /* eslint-disable no-trailing-spaces */
 import Vue from 'vue'
 import Web3 from 'web3'
-import Config from '@/config'
 
 export default class Libre {
   static install (vue, options) {
@@ -209,30 +208,34 @@ export default class Libre {
     this.proposals = []
     this.plans = []
     this.initPromise = this.init()
+    this.addressToLink = Vue.config.libre.addressToLink
   }
 
-  async init () {
-    this.web3 = window.web3
-    let network = Vue.prototype.$eth.network
+  async init() {
+    this.web3 = window.web3;
+    let config = Vue.config.libre
 
-    this.report = this.getContract(Config.report.abi, Config.report.address[network])
-    this.bank = this.getContract(Config.bank.abi, Config.bank.address[network])
+    if (config.report) this.report = this.getContract(config.report.abi, config.report.address)
+    this.bank = this.getContract(config.bank.abi, config.bank.address)
     var address = await this.bank.tokenAddress()
-    Config.token.address = address
-    this.token = this.getContract(Config.erc20.abi, Config.token.address[network])
+    config.token.address = address
+    this.token = this.getContract(config.erc20.abi, config.token.address)
 
-    this.dao = this.getContract(Config.dao.abi, Config.dao.address[network])
-    this.libertyAddress = address = await this.dao.sharesTokenAddress()
-    this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
-
-    this.loans = this.getContract(Config.loans.abi, Config.loans.address[network])
-    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address[network])
-    this.faucet = this.getContract(Config.faucet.abi, Config.faucet.address[network])
-    
-    this.bounty = {
-      bank: this.getContract(Config.bounty.bank.abi, Config.bounty.bank.address[network]),
-      exchanger: this.getContract(Config.bounty.exchanger.abi, Config.bounty.exchanger.address[network])
+    if (config.dao) {
+      this.dao = this.getContract(config.dao.abi, config.dao.address)
+      this.libertyAddress = address = await this.dao.sharesTokenAddress()
+      this.liberty = this.getContract(config.erc20.abi, this.libertyAddress)
     }
+
+    if (config.loans) this.loans = this.getContract(config.loans.abi, config.loans.address)
+    if (config.deposit) this.deposit = this.getContract(config.deposit.abi, config.deposit.address)
+    if (config.faucet) this.faucet = this.getContract(config.faucet.abi, config.faucet.address)
+
+    if (config.bounty) 
+      this.bounty = {
+        bank: this.getContract(config.bounty.bank.abi, config.bounty.bank.address),
+        exchanger: this.getContract(config.bounty.exchanger.abi, config.bounty.exchanger.address)
+      }
   }
 
   getContract (abi, address) {
@@ -327,11 +330,7 @@ export default class Libre {
     }
   }
 
-  addressToLink (address) {
-    return `https://${Vue.prototype.$eth.network === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/address/${address}`
-  }
-
-  async updateProposal (index) {
+  async updateProposal(index) {
     let proposal = this.getProposalObject(await this.dao.getProposal(index));
     proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
     this.proposals[index] = proposal

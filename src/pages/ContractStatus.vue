@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import Config from '@/config'
+import Vue from 'vue'
 export default {
   data () {
     return {
@@ -43,12 +43,12 @@ export default {
 
       var
         exchanger = this.$libre.bank,
-        status = Config.bank.status
+        status = Vue.config.libre.bank.status
 
       this.emissionStatus.push({
         type: 'input',
         name: 'Contract address',
-        data: Config.bank.address[this.$eth.network]
+        data: Vue.config.libre.bank.address
       })
 
       let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error')))
