@@ -227,7 +227,8 @@ export default class Libre {
 
     this.loans = this.getContract(Config.loans.abi, Config.loans.address[network])
     this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address[network])
-
+    this.faucet = this.getContract(Config.faucet.abi, Config.faucet.address[network])
+    
     this.bounty = {
       bank: this.getContract(Config.bounty.bank.abi, Config.bounty.bank.address[network]),
       exchanger: this.getContract(Config.bounty.exchanger.abi, Config.bounty.exchanger.address[network])
