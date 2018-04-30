@@ -3,7 +3,7 @@
         <section v-if="!unknownData">
             <div class="flex">
                 <p>Your address:</p>
-                <a :href="addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
+                <a :href="$libre.addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
             </div>
             <div>
                 Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
@@ -17,15 +17,13 @@
     </div>
 </template>
 <script>
-import Vue from 'vue'
 export default {
     data() {
         return {
             unknownData: false,
             defaultAddress: 'Unknown',
             balance: 0,
-            libertyBalance:0,
-            addressToLink: Vue.config.libre.addressToLink
+            libertyBalance:0
         }
   },
 
