@@ -87,7 +87,10 @@
   import StatusCoins from "@/components/StatusCoins";
   import Vue from "vue";
   import Config from "@/config";
+<<<<<<< HEAD
   import i18n from '../locales'
+=======
+>>>>>>> dev
   import PieChart from '@/components/PieChart'
 
   export default {

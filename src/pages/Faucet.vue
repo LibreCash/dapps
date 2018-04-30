@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="level">
-      <b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
+      <b-message :type="msg.type">{{ msg.text }}</b-message>
       </div>
       <div class="level">
         <button class="button is-primary" v-bind:class="{'is-loading':isLoading}"
