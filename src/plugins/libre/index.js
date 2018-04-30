@@ -13,8 +13,7 @@ export default class Libre {
     })
   }
 
-  constructor() {
-
+  constructor () {
     this.loansStruct = {
       'holder': 0,
       'recipient': 1,
@@ -205,17 +204,16 @@ export default class Libre {
       amount: 2,
       margin: 3,
       plan: 4
-    };
+    }
 
-    this.proposals = [];
-    this.plans = [];
-    this.initPromise = this.init();
+    this.proposals = []
+    this.plans = []
+    this.initPromise = this.init()
   }
 
-  async init() {
-    this.web3 = window.web3;
+  async init () {
+    this.web3 = window.web3
     let network = Vue.prototype.$eth.network
-    console.log(network)
 
     this.report = this.getContract(Config.report.abi, Config.report.address[network])
     this.bank = this.getContract(Config.bank.abi, Config.bank.address[network])
@@ -288,24 +286,24 @@ export default class Libre {
   }
 
   periodToString (seconds) {
-    let years = Math.floor(seconds / (60 * 60 * 24 * 365))
+    var years = Math.floor(seconds / (60 * 60 * 24 * 365))
     seconds -= years * 60 * 60 * 24 * 365
 
-    let months = Math.floor(seconds / (60 * 60 * 24 * 30))
+    var months = Math.floor(seconds / (60 * 60 * 24 * 30))
     seconds -= months * 60 * 60 * 24 * 30
 
-    let days = Math.floor(seconds / (60 * 60 * 24))
+    var days = Math.floor(seconds / (60 * 60 * 24))
     seconds -= days * 60 * 60 * 24
 
-    let hours = Math.floor(seconds / (60 * 60));
+    var hours = Math.floor(seconds / (60 * 60))
     seconds -= hours * 60 * 60
 
-    let minutes = Math.floor(seconds / 60);
+    var minutes = Math.floor(seconds / 60);
     seconds -= minutes * 60
 
-    hours = hours < 10 ? '0' + hours : hours
-    minutes = minutes < 10 ? '0' + minutes : minutes
-    seconds = seconds < 10 ? '0' + seconds : seconds
+    if (hours < 10) { hours = '0' + hours }
+    if (minutes < 10) { minutes = '0' + minutes }
+    if (seconds < 10) { seconds = '0' + seconds }
     return `${years}y ${months}m ${days}d ${hours}:${minutes}:${seconds}`
   }
 
@@ -329,13 +327,12 @@ export default class Libre {
   }
 
   addressToLink (address) {
-    return `https://${Vue.prototype.$eth.network == 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/address/${address}`
+    return `https://${Vue.prototype.$eth.network === 'rinkeby' ? 'rinkeby.' : ''}etherscan.io/address/${address}`
   }
 
   async updateProposal (index) {
-    let proposal = this.getProposalObject(await this.dao.getProposal(index))
-    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index))
-
+    let proposal = this.getProposalObject(await this.dao.getProposal(index));
+    proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
     this.proposals[index] = proposal
     return this.proposals[index]
   }
@@ -348,7 +345,7 @@ export default class Libre {
         return
 
       for (let i = length - 1; i >= 0; --i) {
-        await this.updateProposal(i);
+        await this.updateProposal(i)
         if (callEach)
           callEach(i)
       }
@@ -361,9 +358,12 @@ export default class Libre {
     if (this.plans.length > 0 && !force)
       return
 
-    let count = +await this.deposit.plansCount()
+    let 
+      count = +await this.deposit.plansCount()
+    
     for (let i = 0; i < count; i++) {
-      let arr = await this.deposit.plans(i),
+      let
+        arr = await this.deposit.plans(i),
         plan = {
           id: i,
           period: +arr[this.depositPlanStruct.period],
@@ -376,20 +376,23 @@ export default class Libre {
     }
   }
 
-  bytecodeToString(address, bytecode) {
-    let result = ""
+  bytecodeToString (address, bytecode) {
+    let 
+      result = '',
+      hashMethod,
+      params
 
     try {
       let contract = this.decodes[address]
 
       if (!contract)
-        return ""
+        return ''
 
-      let hashMethod = bytecode.substring(0, 10)
-      let params = bytecode.substring(10)
+      hashMethod = bytecode.substring(0, 10)
+      params = bytecode.substring(10)
 
       let abiMethod = contract.abi.find(elem => {
-        return elem.type == 'function' && contract[elem.name].getData().substring(0, 10) === hashMethod
+        return elem.type === 'function' && contract[elem.name].getData().substring(0, 10) === hashMethod
       })
 
       let typeParams = abiMethod.inputs.map(param => param.type)
@@ -401,5 +404,14 @@ export default class Libre {
     }
 
     return result
+  }
+
+  async notify (message, type = 'is-success') {
+    Vue.prototype.$snackbar.open({
+      message,
+      type,
+      indefinite: type === 'is-danger',
+      queue: true
+    })
   }
 }

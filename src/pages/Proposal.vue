@@ -1,9 +1,5 @@
 <template>
     <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">DAO Proposal #{{ $route.params.id }}</h2>
-      </div>
       <div class="level"></div>
       <div class="table-padding">
         <div class="card">
@@ -13,8 +9,10 @@
             <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
             <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
-              <b-icon icon="keyboard-return" size="is-small"></b-icon>
-              <span>Back</span>
+              <div class="icon">
+                <i class="fas fa-arrow-left" size="is-small"></i>
+              </div>
+              <div>Back</div>
             </router-link>
           </div>
         </div>
@@ -35,29 +33,27 @@
           </template>
         </b-table>
         <div class="level"></div>
-        <div class="level is-mobile">
+        <div class="level is-mobile" v-if="loggedIn">
           <div class="level-item has-text-centered">
-            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="mdi mdi-check"></i></button>
+            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="fas fa-thumbs-up"></i></button>
           </div>
           <div class="level-item has-text-centered">
-            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="mdi mdi-close"></i></button>
+            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="fas fa-thumbs-down"></i></button>
           </div>
           <div class="level-item has-text-centered">
             <button v-bind:class="{'button is-medium is-info':true, 'is-loading': loadingExecute}"
-              @click="execute()" :disabled="!enableExecute"><i class="mdi mdi-console"></i></button>
+              @click="execute()" :disabled="!enableExecute"><i class="fas fa-play"></i></button>
           </div>
           <div class="level-item has-text-centered">
             <button v-bind:class="{'button is-medium is-danger':true, 'is-loading': loadingBlock}"
                 @click="block()"
                 :disabled="!enableBlock">
-              <i class="mdi mdi-block-helper"></i>
+              <i class="fas fa-ban"></i>
             </button>
           </div>
         </div>
         <div class="level"></div>
       </div>
-      
-    </section>
     </div>
 </template>
 
@@ -74,6 +70,7 @@ export default {
       isLoading: false,
       isPaginated: true,
       isPaginationSimple: false,
+      loggedIn: false,
       typeProposals: this.$libre.typeProposals,
       currentProposal: '',
       enableVote: false,
@@ -136,6 +133,7 @@ export default {
     },
 
     async loadProposal () {
+      this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
       const 
         struct = this.$libre.proposalStruct
     
@@ -220,14 +218,14 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(this.proposalId, support);
           
-        this.$snackbar.open(await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction')
+        this.$libre.notify(await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction')
         await this.$libre.updateProposal(this.proposalId)
         this.loadProposal()
         
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
     },
 
@@ -242,14 +240,14 @@ export default {
         let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Proposal executed successfully.');
+          this.$libre.notify('Proposal executed successfully.');
         } else {
-          this.$snackbar.open('Failed on proposal executions');
+          this.$libre.notify('Failed on proposal executions');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       
       this.loadingExecute = false;
@@ -263,14 +261,14 @@ export default {
         let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Proposal blocked.');
+          this.$libre.notify('Proposal blocked.');
         } else {
-          this.$snackbar.open('Proposal not blocked.');
+          this.$libre.notify('Proposal not blocked.');
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       this.loadingBlock = false;
       this.loadProposal();

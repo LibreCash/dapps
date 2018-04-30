@@ -11,6 +11,7 @@ import Faucet from '@/pages/Faucet'
 import Deposit from '@/pages/Deposit'
 // REPORT
 import Report from '@/pages/Report'
+import ReportPage from '@/pages/ReportPage'
 // LOANS
 import Loans from '@/pages/Loans'
 import Loan from '@/pages/Loan'
@@ -24,31 +25,44 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'Report',
+      path: '/reports',
+      name: 'Reports',
       component: Report,
-      meta: {title: 'Blockchain report - LibreBank'},
+      meta: {title: 'Blockchain Report - Librebank'},
+      icon: 'fas fa-chart-pie',
       enabled: true
     },
     {
-      path: '/',
-      name: 'DAO',
-      component: DAO,
-      meta: {title: 'DAO - LibreBank'},
+      path: '/report/:id',
+      name: 'Report Page',
+      component: ReportPage,
+      meta: {title: 'Blockchain Report - Librebank'},
+      icon: 'fas fa-chart-pie',
       enabled: false
+    },
+    {
+      path: '/fund',
+      name: 'Fund Status',
+      component: FundStatus,
+      meta: {title: 'Fund status - Librebank'},
+      icon: 'fas fa-university',
+      enabled: true
     },
     {
       path: '/status',
       name: 'Contract Status',
       meta: {title: 'Contract Status - LibreBank'},
       component: ContractStatus,
+      icon: 'fas fa-file-alt',
       enabled: true
     },
     {
       path: '/dao',
+      alias: '/',
       name: 'DAO',
       component: DAO,
       meta: {title: 'DAO - LibreBank'},
+      icon: 'fas fa-users',
       enabled: true
     },
     {
@@ -77,6 +91,7 @@ export default new Router({
       name: 'Faucet',
       component: Faucet,
       meta: {title: 'LBRS Faucet - Librebank'},
+      icon: 'fas fa-hand-holding-usd',
       enabled: true
 
     },
@@ -85,6 +100,7 @@ export default new Router({
       name: 'Deposit',
       component: Deposit,
       meta: {title: 'Deposit - Librebank'},
+      icon: 'fas fa-piggy-bank',
       enabled: true
     },
     {
@@ -92,6 +108,7 @@ export default new Router({
       name: 'Loans',
       component: Loans,
       meta: {title: 'Loans - Librebank'},
+      icon: 'fas fa-credit-card',
       enabled: true
     },
     {
@@ -107,13 +124,6 @@ export default new Router({
       component: NewOffer,
       meta: {title: 'New loan offer - Librebank'},
       enabled: false
-    },
-    {
-      path: '/fund',
-      name: 'Fund Status',
-      component: FundStatus,
-      meta: {title: 'Fund status - Librebank'},
-      enabled: true
     }
   ],
   mode: 'hash'

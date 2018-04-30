@@ -1,9 +1,6 @@
 /* eslint-disable-one-var */
 <template>
-  <section class="allMain">
-    <div class="h2-contain">
-      <h2 class="subtitle">{{ $route.name }}</h2>
-    </div>
+  <div>
     <div class="level"></div>
     <div class="container">
       <div class="columns">
@@ -49,24 +46,27 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card container  ">
       <header class="card-header">
         <p class="card-header-title">LibreBank Fund Assests</p>
       </header>
       <div class="card-content">
         <h2 class="has-text-centered">THIS IS A SAMPLE DATA</h2>
-        <status-coins :tableData='coinsData'></status-coins>
+        <status-coins :tableData='coinsData' />
       </div>
     </div>
-
+    <pie-chart :coins="pieChart" />
     <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
-  </section>
+
+  </div>
 </template>
 
 
 <script>
   import StatusCoins from "@/components/StatusCoins";
   import Config from "@/config";
+  import PieChart from '@/components/PieChart'
+
   export default {
     data() {
       return {
@@ -82,7 +82,8 @@
           name: "",
           change24h: 0
         },
-        isLoading: false
+        isLoading: false,
+        pieChart: undefined
       };
     },
   
@@ -163,6 +164,8 @@
           });
         }
 
+        this.pieChart = coins;
+
         this.maxCoin = maxCoin;
         this.minCoin = minCoin;
 
@@ -206,7 +209,8 @@
     },
 
     components: {
-      StatusCoins
+      StatusCoins,
+      PieChart
     }
   };
 </script>

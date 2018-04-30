@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="main" id="Mainblock">
+        <div class="main" id="Mainblock" :class="{'is-active': navIsActive}">
             <div class="navbar-burger burger" @click="toggleMenu" :class="{'is-active': navIsActive}" data-target="Mainblock">
                 <span></span>
                 <span></span>
@@ -15,14 +15,22 @@
                 <ul class="MenuLeft">
                   <li v-for="route in $router.options.routes" :key="route.path">
                     <router-link :to="route.path" v-if="route.enabled">
-                        <div class="Rectangle"></div>
-                        <span>{{ route.name }}</span>
+                          <div class="icon">
+                            <i :class="route.icon"></i>
+                          </div>
+                          <span>{{route.name }}</span>
                     </router-link>
                   </li>
                 </ul>
             </div>
         </div>
-        <router-view/>
+        <section class="allMain">
+          <div class="h2-contain">
+            <h2 class="subtitle">{{ $route.name }}</h2>
+          </div>
+          <div class="level"></div>
+          <router-view/>
+      </section>
     </div>
 </template>
 <script>
@@ -30,7 +38,7 @@ export default {
   name: "navbar",
   data() {
     return {
-      navIsActive: false
+      navIsActive: true
     };
   },
   methods: {
@@ -41,7 +49,23 @@ export default {
 };
 </script>
 <style>
-.h2-contain >  .subtitle {
+.centered {
+  vertical-align:middle
+}
+.flex {
+  display: flex;
+}
+.is-text-overflow {
+    flex: 1;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.is-text-overflow::-webkit-scrollbar { 
+    display: none; 
+}
+
+.h2-contain > .subtitle {
   text-align: center;
 }
 .eth-address {
@@ -153,7 +177,7 @@ export default {
   border-color: #fcc14a;
 }
 .logo h3 {
-  color:white;
+  color: white;
 }
 .allMain .pagination-link,
 .allMain .pagination-previous[disabled],

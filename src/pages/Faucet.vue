@@ -1,9 +1,4 @@
 <template>
-	<section class="allMain">
-		<div class="h2-contain">
-			<h2 class="subtitle">{{ $route.name }}</h2>
-		</div>
-		<div class="level"></div>
 		<div class="table-padding">
 			<div class="level">
         <div class="card">
@@ -20,8 +15,6 @@
             @click="getTokens()" :disabled="isDisabled">Get Tokens</button>
 			</div>
 		</div>
-	
-	</section>
 </template>
 
 <script>
@@ -83,18 +76,16 @@ export default {
         let txHash = await this.$libre.faucet.get();
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open("Tokens sent");
+          this.$libre.notify("Tokens sent");
 
           this.loadLiberty();
         } else {
-          this.$snackbar.open("Error sending token transaction");
+          this.$libre.notify("Error sending token transaction");
         }
       } catch (err) {
         let msg = this.$eth.getErrorMsg(err);
-
         console.log(msg);
-
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       this.isLoading = false;

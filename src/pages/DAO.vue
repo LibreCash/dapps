@@ -1,25 +1,15 @@
 <template>
   <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">{{ $route.name }}</h2>
-      </div>
-      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div>DAO Contract: 
-                  <a :href="$libre.addressToLink(daoAddress)" target="_blank">
-                    <input class="address" :value="daoAddress">
-                  </a>
+                <div class="flex">DAO Contract: 
+                  <a :href="$libre.addressToLink(daoAddress)" target="_blank" class="is-text-overflow">{{daoAddress}}</a></div>
+                <div class="flex">Liberty Token: 
+                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow">{{libertyAddress}}</a>
                 </div>
-                <div>Liberty Token: 
-                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank">
-                    <input class="address" :value="libertyAddress">
-                  </a>
-                </div>
-                <div>Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+                <div> Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
                 <div>Token count: {{ tokensCount }} LBRS</div>
                 <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / Math.pow(10, 18) }} LBRS</div>
                 <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / Math.pow(10, 18) }} LBRS</div>
@@ -50,6 +40,7 @@
         </nav>
         <div class="level"></div>
         <b-table
+          class="centered"
           :data="tableData"
           :bordered="false"
           :striped="true"
@@ -75,7 +66,7 @@
                 not set
             </b-table-column>
             <b-table-column label='Recipient' centered v-else>
-              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.recipient">address</a>
+              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank">address</a>
             </b-table-column>
             <b-table-column field="report.amount" label='Amount' centered>
               {{ props.row.amount }}
@@ -98,7 +89,7 @@
             <b-table-column label='Actions' centered>
               <!-- details button -->
               <b-tooltip label="Details" type="is-dark" position="is-bottom">
-                <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button" class="button"><i class="mdi mdi-account-card-details"></i></router-link>
+                <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button" class="button"><i class="fas fa-id-card"></i></router-link>
               </b-tooltip>
               <!-- vote buttons -->
               <span v-if="!props.row.votingData.voted &&
@@ -107,10 +98,10 @@
                           (tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip label="Yea" type="is-dark" position="is-bottom">
-                  <button class="button" v-on:click="vote(props.row, true)"><i class="mdi mdi-check"></i></button>
+                  <button class="button" v-on:click="vote(props.row, true)"><i class="fas fa-thumbs-up"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Nay" type="is-dark" position="is-bottom">
-                  <button class="button" v-on:click="vote(props.row, false)"><i class="mdi mdi-close"></i></button>
+                  <button class="button" v-on:click="vote(props.row, false)"><i class="fas fa-thumbs-down"></i></button>
                 </b-tooltip>
               </span>
               <!-- execute button -->
@@ -120,7 +111,7 @@
                               (props.row.yea > props.row.nay) &&
                               (props.row.yea + props.row.nay >= $libre.proposalParams.quorum / Math.pow(10, 18))">
                 <b-tooltip label="Execute" type="is-dark" position="is-bottom">
-                  <button class="button" v-on:click="execute(props.row)"><i class="mdi mdi-console"></i></button>
+                  <button class="button" v-on:click="execute(props.row)"><i class="fas fa-play"></i></button>
                 </b-tooltip>
               </span>
               <span v-else-if="props.row.loading">
@@ -131,7 +122,7 @@
                           (props.row.status === $libre.proposalStatuses[0].text) &&
                           !props.row.loading">
                 <b-tooltip label="Block as owner" type="is-dark" position="is-bottom">
-                  <button class="button" v-on:click="block(props.row)"><i class="mdi mdi-block-helper"></i></button>
+                  <button class="button" v-on:click="block(props.row)"><i class="fas fa-ban"></i></button>
                 </b-tooltip>
               </span>
             </b-table-column>
@@ -251,11 +242,11 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(id, support),
           message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
-        this.$snackbar.open(message)
+        this.$libre.notify(message)
       }catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       try {
@@ -266,7 +257,7 @@ export default {
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       row.loading = false
     
@@ -278,13 +269,13 @@ export default {
       let 
         txHash = await this.$libre.dao.blockingProposal(row.id),
         message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
-        this.$snackbar.open(message);
+        this.$libre.notify(message);
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       row.loading = false
     },
@@ -298,13 +289,13 @@ export default {
       try {
         let txHash = await this.$libre.dao.executeProposal(id),
             message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
-        this.$snackbar.open(message)
+        this.$libre.notify(message)
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       row.loading = false

@@ -1,20 +1,17 @@
 <template>
     <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">{{ $route.name }}</h2>
-      </div>
-      <div class="level"></div>
       <div class="table-padding">
         <div class="card">
           <div class="card-content">
             <div>Token count: {{ tokensCount }} LBRS</div>
             <div>Min token count to create: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
             <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
-            <button :to="{ path: '/dao' }" class="button">
-              <b-icon icon="keyboard-return" size="is-small"></b-icon>
-              <span>Back</span>
-            </button>
+            <router-link :to="{ path: '/dao' }" class="button">
+                <div class="icon">
+                  <i class="fas fa-arrow-left" size="is-small"></i>
+                </div>
+                <div>Back</div>
+            </router-link>
           </div>
         </div>
         <p>&nbsp;</p>
@@ -68,7 +65,6 @@
         </b-field>
       </div>
       <div class="level"></div>
-    </section>
     </div>
 
 </template>
@@ -185,13 +181,13 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/dao')
         } else {
-          this.$snackbar.open('Creating proposal error');
+          this.$libre.notify('Creating proposal error');
         }
       }
       catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       this.button.isLoading = false

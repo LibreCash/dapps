@@ -23,10 +23,10 @@ export default class ETH {
   async loadWeb3 () {
     try {
       if (typeof web3 !== 'undefined') {
-        this.metamask = true;
+        this.metamask = true
         window.web3 = new Web3(window.web3.currentProvider)
         web3.version.getNetwork((error, result) => {
-          if (error) Vue.prototype.$snackbar.open(error)
+          if (error) Vue.prototype.$snackbar.open({message: error, indefinite: true})
           else {
             let network = {
               '1': 'Main',
@@ -38,7 +38,7 @@ export default class ETH {
               networkUse = this.network[0].toUpperCase() + this.network.substring(1)
           
             if (network !== networkUse) {
-              Vue.prototype.$snackbar.open(`Please use ${networkUse} network`)
+              Vue.prototype.$snackbar.open({message: `Please use ${networkUse} network`, indefinite: true})
             }
           }
         })
@@ -46,7 +46,7 @@ export default class ETH {
         window.web3 = new Web3(new Web3.providers.HttpProvider(Config.provider[this.network]))
         console.log('No web3? You should consider trying MetaMask!')
       }
-      web3.SolidityCoder = SolidityCoder;
+      web3.SolidityCoder = SolidityCoder
 
       this.accountPromise = this.loadAccounts();
     } catch (err) {
@@ -54,19 +54,19 @@ export default class ETH {
     }
   }
 
-  async loadAccounts() {
+  async loadAccounts () {
     return new Promise((resolve, reject) => {
       this._web3 = window.web3
       this._web3.eth.getAccounts((err, accounts) => {
         this._web3.eth.defaultAccount = accounts[0];
         this.yourAccount = accounts[0];
 
-        var account = this.yourAccount;
-        setInterval(function() {
+        var account = this.yourAccount
+        setInterval(function () {
           if (web3.eth.accounts[0] !== account)
-            location.reload();
-        }, 1000);
-        resolve();
+            location.reload()
+        }, 1000)
+        resolve()
       })
     })
   }
@@ -130,13 +130,17 @@ export default class ETH {
         return LOCK_WALLET
     }
 
-    if (error.message) return error.message;
-    if (error.msg) return error.msg;
+    if (error.message) return error.message
+    if (error.msg) return error.msg
     return error;
   }
 
   toTimestamp (solidityTimestamp) {
     return solidityTimestamp * 1000
+  }
+
+  toDateString (solitityTimestamp) {
+    return +solitityTimestamp > 0 ? new Date(+solitityTimestamp * 1000).toDateString() : '-'
   }
 
   async isSuccess (hash) {
@@ -187,7 +191,7 @@ export default class ETH {
     return this._web3.toWei(amount, units)
   }
 
-  isZeroAddress(address) {
+  isZeroAddress (address) {
     return address === '0x0000000000000000000000000000000000000000'
   }
 }

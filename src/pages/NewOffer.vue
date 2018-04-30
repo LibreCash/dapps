@@ -1,10 +1,5 @@
 <template>
   <div>
-    <section class="allMain">
-      <div class="h2-contain">
-        <h2 class="subtitle">{{ $route.name }}</h2>
-      </div>
-      <div class="level"></div>
       <div class="table-padding">
         <div class="level">
           <div class="level-left">          
@@ -67,7 +62,6 @@
           </div>
         </div>
       </div>
-    </section>
     <div class="level"></div>
   </div>
 </template>
@@ -197,7 +191,7 @@ export default {
           ]);
           await this.updateData()
         } else {
-          this.$snackbar.open(`Authorize the transfer of ${this.amount} tokens - error`);
+          this.$libre.notify(`Authorize the transfer of ${this.amount} tokens - error`);
           this.setMessage('danger', [
             'The transaction ended with error:',
             `1. Authorize the transfer of ${this.amount} tokens - error`,
@@ -207,7 +201,7 @@ export default {
         }
       } catch(err) {
         console.log(err)
-        this.$snackbar.open();
+        this.$libre.notify(err);
         this.setMessage('danger', [
           'The transaction ended with error:'
           `1. Authorize the transfer of ${this.amount} tokens - ${this.$eth.getErrorMsg(err)}`,
@@ -275,7 +269,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/loans')
         } else {
-          this.$snackbar.open('Creating offer error');
+          this.$libre.notify('Creating offer error');
           this.setMessage('danger', [
             'The transaction ended with error:',
             'Create Offer Transaction'
@@ -283,10 +277,11 @@ export default {
         }
       }
       catch(err) {
-        this.$snackbar.open(this.$eth.getErrorMsg(err));
+        let msg = this.$eth.getErrorMsg(err);
+        this.$libre.notify(msg,'is-danger');
         this.setMessage('danger', [
           'The transaction ended with error: Create Offer Transaction',
-          this.$eth.getErrorMsg(err)
+          msg
         ]);
       }
       this.button = {name: 'Create Offer', disabled: false}
