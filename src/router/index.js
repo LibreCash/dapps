@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // DAO
 import DAO from '@/pages/DAO'
+import Bounty from '@/pages/Bounty'
 import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
 // FAUCET
@@ -79,12 +80,20 @@ export default new Router({
       enabled: false
     },
     {
+      path: '/bounty',
+      name: 'Bounty Program',
+      component: Bounty,
+      meta: {title: 'Contracts Bounty - Librebank'},
+      enabled: true
+    },
+    {
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
       meta: {title: 'LBRS Faucet - Librebank'},
       icon: 'fas fa-hand-holding-usd',
       enabled: true
+
     },
     {
       path: '/deposit',
