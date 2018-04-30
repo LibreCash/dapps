@@ -21,8 +21,8 @@
                       <span>{{ $t(`lang.tabs.${route.meta.locale}`) }}</span>
                     </router-link>
                   </li>
-                  <li>
-                    <b-field>
+                  <li class="level">
+                    <b-field class="level-item">
                       <b-select v-model="locale">
                         <option
                           v-for="(locale, index) in $i18n.messages.locales"
@@ -47,7 +47,11 @@
 </template>
 <script>
 import Vue from 'vue'
-import i18n from './locales';
+import i18n from './locales'
+
+console.log(i18n.messages.locales);
+console.log(i18n.locale)
+console.log(i18n.messages.locales.indexOf(i18n.locale))
 export default {
   name: "navbar",
   data() {
@@ -161,13 +165,13 @@ export default {
 .MenuLeft {
   margin-top: 75px;
 }
-.MenuLeft li a {
+.MenuLeft li a, .MenuLeft li .lang-selector {
   color: #ffffff;
   font-size: 20px;
   display: block;
   padding: 20px 10px 20px 40px;
   border-left: 4px solid transparent;
-}
+},
 .MenuLeft li a.router-link-exact-active {
   border-left: 4px solid #fcc14a;
 }

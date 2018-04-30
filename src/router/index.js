@@ -29,30 +29,27 @@ export default new Router({
       name: 'Reports',
       component: Report,
       meta: {locale: 'reports'},
-      icon: 'fas fa-chart-pie',
-      enabled: true
+      icon: 'fas fa-chart-pie'
     },
     {
       path: '/report/:id',
       name: 'Report Page',
       component: ReportPage,
-      meta: {title: 'Blockchain Report - Librebank'},
-      icon: 'fas fa-chart-pie',
-      enabled: false
+      meta: {locale: 'reports'},
+      icon: 'fas fa-chart-pie'
     },
     {
       path: '/fund',
       name: 'Fund Status',
       component: FundStatus,
       meta: {locale: 'fundStatus'},
-      icon: 'fas fa-university',
-      enabled: true
+      icon: 'fas fa-university'
     },
     {
       path: '/status',
       name: 'Contract Status',
-      meta: {locale: 'contractStatus'},
       component: ContractStatus,
+      meta: {locale: 'contractStatus'},
       icon: 'fas fa-file-alt'
     },
     {
@@ -61,67 +58,59 @@ export default new Router({
       name: 'DAO',
       component: DAO,
       meta: {locale: 'dao'},
-      icon: 'fas fa-users',
-      enabled: true
+      icon: 'fas fa-users'
     },
     {
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
       component: Proposal,
-      meta: {locale: 'proposal'},
-      enabled: false
+      meta: {locale: 'dao'}
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal,
-      meta: {locale: 'newProposal'},
-      enabled: false
+      meta: {locale: 'dao'}
     },
     {
       path: '/bounty',
       name: 'Bounty Program',
       component: Bounty,
       meta: {locale: 'bounty'},
-      icon: 'fas fa-gift',
-      enabled: true
+      icon: 'fas fa-gift'
     },
     {
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
       meta: {locale: 'faucet'},
-      icon: 'fas fa-hand-holding-usd',
+      icon: 'fas fa-hand-holding-usd'
     },
     {
       path: '/deposit',
       name: 'Deposit',
       component: Deposit,
       meta: {locale: 'deposit'},
-      icon: 'fas fa-piggy-bank',
-      enabled: true
+      icon: 'fas fa-piggy-bank'
     },
     {
       path: '/loans',
       name: 'Loans',
       component: Loans,
       meta: {locale: 'loans'},
-      icon: 'fas fa-credit-card',
-      enabled: true
+      icon: 'fas fa-credit-card'
     },
     {
       path: '/loan/:type/:id',
       name: 'Loan Offer',
       component: Loan,
-      meta: {locale: 'loan'},
-      enabled: false
+      meta: {locale: 'loans'}
     },
     {
       path: '/loans/new',
       name: 'New Loan Offer',
       component: NewOffer,
-      meta: {locale: 'newLoan'},
-      enabled: false
+      meta: {locale: 'loans'}
     }
   ],
   mode: 'hash'

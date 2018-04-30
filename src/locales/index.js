@@ -14,7 +14,7 @@ import ru from './i18n/ru_RU'
  * Config
  */
 Vue.use(VueI18n);
-let locales = ['en', 'ru'];
+var locales = ['en', 'ru']
 
 /**
  * Export

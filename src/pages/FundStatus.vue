@@ -84,15 +84,12 @@
 
 </style> 
 <script>
-  import StatusCoins from "@/components/StatusCoins";
-  import Vue from "vue";
-  import Config from "@/config";
-<<<<<<< HEAD
+  import StatusCoins from '@/components/StatusCoins'
+  import Vue from 'vue'
+  import Config from "@/config"
   import i18n from '../locales'
-=======
->>>>>>> dev
   import PieChart from '@/components/PieChart'
-
+  import axios from 'axios'
   export default {
     data() {
       return {

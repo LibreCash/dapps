@@ -1,8 +1,7 @@
 /* eslint-disable-one-var */
 <template>
-      <div class="cards">
-        <div class="card-content">
-          <div id="status-bank">
+      <div class="level">
+        <div class="level-item">
             <b-table
               class="centered"
               :data="emissionStatus"
@@ -22,7 +21,6 @@
                 </b-table-column>
               </template>
             </b-table>
-          </div>
         </div>
         <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
       </div> 
@@ -48,7 +46,7 @@ export default {
 
       this.emissionStatus.push({
         type: 'input',
-        name: i18n.t('lang.common.contract-address'),
+        name: 'Contract address',
         data: Vue.config.libre.bank.address
       })
 
