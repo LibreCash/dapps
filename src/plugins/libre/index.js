@@ -219,18 +219,18 @@ export default class Libre {
     this.bank = this.getContract(Config.bank.abi, Config.bank.address[network])
     var address = await this.bank.tokenAddress()
     Config.token.address = address
-    this.token = this.getContract(Config.erc20.abi, Config.token.address)
+    this.token = this.getContract(Config.erc20.abi, Config.token.address[network])
 
-    this.dao = this.getContract(Config.dao.abi, Config.dao.address)
+    this.dao = this.getContract(Config.dao.abi, Config.dao.address[network])
     this.libertyAddress = address = await this.dao.sharesTokenAddress()
     this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
 
-    this.loans = this.getContract(Config.loans.abi, Config.loans.address)
-    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address)
+    this.loans = this.getContract(Config.loans.abi, Config.loans.address[network])
+    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address[network])
 
     this.bounty = {
-      bank: this.getContract(Config.bounty.bank.abi, Config.bounty.bank.address),
-      exchanger: this.getContract(Config.bounty.exchanger.abi, Config.bounty.exchanger.address)
+      bank: this.getContract(Config.bounty.bank.abi, Config.bounty.bank.address[network]),
+      exchanger: this.getContract(Config.bounty.exchanger.abi, Config.bounty.exchanger.address[network])
     }
   }
 
