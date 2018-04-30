@@ -14,10 +14,10 @@
               :pagination-simple="false"
               :mobile-cards="true">
               <template slot-scope="props">
-                <b-table-column field="name" label='Parameter'>
+                <b-table-column field="name" :label="$t('lang.common.parameter')">
                   {{ props.row.name }}
                 </b-table-column>
-                <b-table-column label='Value' centered >
+                <b-table-column :label="$t('lang.common.value')" centered >
                 <span class="is-text-overflow">{{ props.row.data }}</span>
                 </b-table-column>
               </template>
@@ -29,7 +29,8 @@
 </template>
 
 <script>
-import Config from '@/config'
+import Vue from 'vue'
+import i18n from '../locales'
 export default {
   data () {
     return {
@@ -43,17 +44,17 @@ export default {
 
       var
         exchanger = this.$libre.bank,
-        status = Config.bank.status
+        status = Vue.config.libre.bank.status
 
       this.emissionStatus.push({
         type: 'input',
-        name: 'Contract address',
-        data: Config.bank.address[this.$eth.network]
+        name: i18n.t('lang.common.contract-address'),
+        data: Vue.config.libre.bank.address
       })
 
       let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error')))
       let totalSupply = await this.$libre.token.totalSupply().catch(e => 'error')
-      status.forEach((item,i)=>{
+      status.forEach((item, i) => {
         if(dataBank[i] !== 'error') {
           this.emissionStatus.push({
             type: item.type,
@@ -64,7 +65,7 @@ export default {
       })
 
       this.emissionStatus.push({
-        name: 'Total Supply',
+        name: i18n.t('lang.common.total-supply'),
         data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       })
 

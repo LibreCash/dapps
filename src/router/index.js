@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // DAO
 import DAO from '@/pages/DAO'
+import Bounty from '@/pages/Bounty'
 import Proposal from '@/pages/Proposal'
 import NewProposal from '@/pages/NewProposal'
 // FAUCET
@@ -10,6 +11,7 @@ import Faucet from '@/pages/Faucet'
 import Deposit from '@/pages/Deposit'
 // REPORT
 import Report from '@/pages/Report'
+import ReportPage from '@/pages/ReportPage'
 // LOANS
 import Loans from '@/pages/Loans'
 import Loan from '@/pages/Loan'
@@ -23,42 +25,42 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/report',
-      name: 'Report',
+      path: '/reports',
+      name: 'Reports',
       component: Report,
-      meta: {title: 'Blockchain Report - Librebank'},
+      meta: {locale: 'reports'},
       icon: 'fas fa-chart-pie',
       enabled: true
+    },
+    {
+      path: '/report/:id',
+      name: 'Report Page',
+      component: ReportPage,
+      meta: {title: 'Blockchain Report - Librebank'},
+      icon: 'fas fa-chart-pie',
+      enabled: false
     },
     {
       path: '/fund',
       name: 'Fund Status',
       component: FundStatus,
-      meta: {title: 'Fund status - Librebank'},
+      meta: {locale: 'fundStatus'},
       icon: 'fas fa-university',
       enabled: true
     },
     {
       path: '/status',
       name: 'Contract Status',
-      meta: {title: 'Contract Status - LibreBank'},
+      meta: {locale: 'contractStatus'},
       component: ContractStatus,
-      icon: 'fas fa-file-alt',
-      enabled: true
-    },
-    {
-      path: '/',
-      name: 'DAO',
-      component: DAO,
-      meta: {title: 'DAO - LibreBank'},
-      icon: 'fas fa-users',
-      enabled: false
+      icon: 'fas fa-file-alt'
     },
     {
       path: '/dao',
+      alias: '/',
       name: 'DAO',
       component: DAO,
-      meta: {title: 'DAO - LibreBank'},
+      meta: {locale: 'dao'},
       icon: 'fas fa-users',
       enabled: true
     },
@@ -66,29 +68,36 @@ export default new Router({
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
       component: Proposal,
-      meta: {title: 'Proposal Info - LibreBank'},
+      meta: {locale: 'proposal'},
       enabled: false
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal,
-      meta: {title: 'New proposal - Librebank'},
+      meta: {locale: 'newProposal'},
       enabled: false
+    },
+    {
+      path: '/bounty',
+      name: 'Bounty Program',
+      component: Bounty,
+      meta: {locale: 'bounty'},
+      icon: 'fas fa-gift',
+      enabled: true
     },
     {
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
-      meta: {title: 'LBRS Faucet - Librebank'},
+      meta: {locale: 'faucet'},
       icon: 'fas fa-hand-holding-usd',
-      enabled: true
     },
     {
       path: '/deposit',
       name: 'Deposit',
       component: Deposit,
-      meta: {title: 'Deposit - Librebank'},
+      meta: {locale: 'deposit'},
       icon: 'fas fa-piggy-bank',
       enabled: true
     },
@@ -96,7 +105,7 @@ export default new Router({
       path: '/loans',
       name: 'Loans',
       component: Loans,
-      meta: {title: 'Loans - Librebank'},
+      meta: {locale: 'loans'},
       icon: 'fas fa-credit-card',
       enabled: true
     },
@@ -104,14 +113,14 @@ export default new Router({
       path: '/loan/:type/:id',
       name: 'Loan Offer',
       component: Loan,
-      meta: {title: 'Loan offer - Librebank'},
+      meta: {locale: 'loan'},
       enabled: false
     },
     {
       path: '/loans/new',
       name: 'New Loan Offer',
       component: NewOffer,
-      meta: {title: 'New loan offer - Librebank'},
+      meta: {locale: 'newLoan'},
       enabled: false
     }
   ],

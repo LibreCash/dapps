@@ -6,28 +6,24 @@ import router from './router'
 import './plugins/buefy'
 import ETH from './plugins/eth'
 import Libre from './plugins/libre'
-import VueI18n from 'vue-i18n'
+import i18n from './locales'
+import Config from './config'
 
 Vue.config.productionTip = false
 
+Vue.use(Config, {build: 'dao'})
 Vue.use(ETH, {})
 Vue.use(Libre, {})
-Vue.use(VueI18n)
 
-router.beforeEach((to, from, next) => {
-  document.title = to.meta.title
-  next()
+router.options.routes.forEach(route => {
+  if (Vue.config.libre.routes.includes(route.name))
+    route.enabled = true
+  else route.enabled = false
 })
 
-const i18n = new VueI18n({
-  locale: 'en',
-  messages: {
-    en: {
-      message: {
-        hello: "yo"
-      }
-    }
-  },
+router.beforeEach((to, from, next) => {
+  document.title = i18n.t(`lang.titles.${to.meta.locale}`);
+  next()
 })
 
 new Vue({

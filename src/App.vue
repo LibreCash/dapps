@@ -15,11 +15,23 @@
                 <ul class="MenuLeft">
                   <li v-for="route in $router.options.routes" :key="route.path">
                     <router-link :to="route.path" v-if="route.enabled">
-                          <div class="icon">
-                            <i :class="route.icon"></i>
-                          </div>
-                          <span>{{route.name }}</span>
+                      <div class="icon">
+                        <i :class="route.icon"></i>
+                      </div>
+                      <span>{{ $t(`lang.tabs.${route.meta.locale}`) }}</span>
                     </router-link>
+                  </li>
+                  <li>
+                    <b-field>
+                      <b-select v-model="locale">
+                        <option
+                          v-for="(locale, index) in $i18n.messages.locales"
+                          :value="index"
+                          :key="index">
+                          {{ locale }}
+                        </option>
+                      </b-select>
+                    </b-field>
                   </li>
                 </ul>
             </div>
@@ -34,10 +46,13 @@
     </div>
 </template>
 <script>
+import Vue from 'vue'
+import i18n from './locales';
 export default {
   name: "navbar",
   data() {
     return {
+      locale: i18n.messages.locales.indexOf(i18n.locale),
       navIsActive: true
     };
   },
@@ -45,10 +60,26 @@ export default {
     toggleMenu: function() {
       this.navIsActive = !this.navIsActive;
     }
+  },
+  watch: {
+    locale: function (newVal) {
+      i18n.locale = i18n.messages.locales[+newVal];
+      localStorage.setItem("locale", newVal);
+    }
   }
 };
 </script>
 <style>
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700&subset=latin-ext');
+/* Read this: https://github.com/jgthms/bulma/issues/218 */
+.bm--card-equal-height {
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+}
+.bm--card-equal-height .card-footer {
+   margin-top: auto;
+}
 .centered {
   vertical-align:middle
 }
