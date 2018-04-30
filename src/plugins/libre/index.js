@@ -7,7 +7,9 @@ export default class Libre {
   static install (vue, options) {
     const libre = new Libre()
     Object.defineProperty(Vue.prototype, '$libre', {
-      get() { return libre }
+      get() {
+        return libre
+      }
     })
   }
 
@@ -31,7 +33,7 @@ export default class Libre {
       'Libre': 0,
       'ETH': 1
     }
-    
+
     this.loansStatus = [
       'active',
       'used',
@@ -75,8 +77,7 @@ export default class Libre {
       'deadline': 3
     }
 
-    this.typeProposals = [
-      {
+    this.typeProposals = [{
         text: 'Custom',
         key: 'UNIVERSAL',
         benef: 'Beneficiary:',
@@ -168,8 +169,7 @@ export default class Libre {
       }
     ]
 
-    this.proposalStatuses = [
-      {
+    this.proposalStatuses = [{
         text: 'ACTIVE',
         number: 0
       },
@@ -221,12 +221,17 @@ export default class Libre {
     Config.token.address = address
     this.token = this.getContract(Config.erc20.abi, Config.token.address)
 
-    this.dao = this.getContract(Config.dao.abi, Config.dao.address[network])
+    this.dao = this.getContract(Config.dao.abi, Config.dao.address)
     this.libertyAddress = address = await this.dao.sharesTokenAddress()
     this.liberty = this.getContract(Config.erc20.abi, this.libertyAddress)
-    this.loans = this.getContract(Config.loans.abi, Config.loans.address[network]);
-    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address[network]);
-    this.faucet = this.getContract(Config.faucet.abi, Config.faucet.address[network]);
+
+    this.loans = this.getContract(Config.loans.abi, Config.loans.address)
+    this.deposit = this.getContract(Config.deposit.abi, Config.deposit.address)
+
+    this.bounty = {
+      bank: this.getContract(Config.bounty.bank.abi, Config.bounty.bank.address),
+      exchanger: this.getContract(Config.bounty.exchanger.abi, Config.bounty.exchanger.address)
+    }
   }
 
   getContract (abi, address) {
@@ -328,7 +333,6 @@ export default class Libre {
   async updateProposal (index) {
     let proposal = this.getProposalObject(await this.dao.getProposal(index));
     proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
-
     this.proposals[index] = proposal
     return this.proposals[index]
   }
@@ -356,7 +360,7 @@ export default class Libre {
 
     let 
       count = +await this.deposit.plansCount()
-
+    
     for (let i = 0; i < count; i++) {
       let
         arr = await this.deposit.plans(i),
@@ -392,7 +396,7 @@ export default class Libre {
       })
 
       let typeParams = abiMethod.inputs.map(param => param.type)
-      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params);
+      let valueParams = web3.SolidityCoder.decodeParams(typeParams, params)
 
       result = `${abiMethod.name}(${valueParams})`
     } catch (err) {
