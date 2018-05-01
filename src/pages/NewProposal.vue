@@ -54,16 +54,22 @@
         </b-field>
         <b-field horizontal label="$t('lang.dao.period-row')">
             <b-field :type="getType(validPeriod)">
-                <b-datepicker style="margin-right: 10px"
+                <b-datepicker
                     placeholder="$t('lang.common.click-to-select')"
                     v-model="debatingPeriod"
                     icon="calendar"
-                    icon-pack="fas"></b-datepicker>
-                <b-timepicker 
-                    placeholder="$t('lang.common.set-time')"
+                    icon-pack="fas"
+                    expanded
+                    ></b-datepicker> 
+            </b-field>
+            <b-field :type="getType(validPeriod)">
+                  <b-timepicker
+                   placeholder="$t('lang.common.set-time')"
                     icon="clock"
                     v-model="debatingTime"
-                    icon-pack="fas"></b-timepicker>
+                    icon-pack="fas"
+                    expanded
+                    ></b-timepicker>
             </b-field>
         </b-field>
         <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" >
