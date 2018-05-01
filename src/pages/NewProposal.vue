@@ -52,7 +52,7 @@
         <b-field horizontal :label="$t('lang.dao.description-row')">
             <b-input type="textarea" v-model="description"></b-input>
         </b-field>
-        <b-field horizontal label="Debating period:">
+        <b-field horizontal :label="$t('lang.dao.period-row')">
             <b-field :type="getType(validPeriod)">
                 <b-datepicker
                     placeholder="$t('lang.common.click-to-select')"
@@ -64,13 +64,13 @@
             </b-field>
             <b-field :type="getType(validPeriod)">
                   <b-timepicker
-                   placeholder=""$t('lang.common.set-time')"
+                    placeholder="$t('lang.common.set-time')"
                     icon="clock"
                     v-model="debatingTime"
                     icon-pack="fas"
                     expanded
                     ></b-timepicker>
-            </b-field>         
+            </b-field>
         </b-field>
         <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" >
             <b-field :message="bytecodeMessage" :type="validCode ? 'is-success' : 'is-danger'">
@@ -152,7 +152,7 @@ export default {
     },
 
     validTokens() {
-        return this.tokensCount >= this.$libre.proposalParams.minBalance / Math.pow(10, 18)
+        return this.tokensCount >= this.$libre.toToken(this.$libre.proposalParams.minBalance)
     }
   },
   methods: {
