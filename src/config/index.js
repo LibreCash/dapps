@@ -3,6 +3,7 @@ import Vue from 'vue'
 export default class Config {
   static install (vue, options) {
     Vue.config.libre = new Config(require(`./${options.build ? options.build : 'config_default'}.js`))
+    Vue.prototype.config = Vue.config.libre
   }
 
   constructor(config) {

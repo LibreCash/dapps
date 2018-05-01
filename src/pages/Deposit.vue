@@ -122,7 +122,7 @@
         <div class="level"></div>
         <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}"
                 @click="claimDeposit(selected)"
-                :disabled="!selected" v-if="myDepositData.length > 0">
+                :disabled="!claimEnable" v-if="myDepositData.length > 0">
             {{ $t('lang.deposit.claim-deposit') }}
         </button>
       </div>
@@ -132,13 +132,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import AddressBlock from '@/components/AddressBlock'
 import i18n from '../locales'
 export default {
   data () {
     return {
-      deposit: Vue.config.libre.deposit.address,
+      deposit: this.config.deposit.address,
       isLoading: false,
       newPlanLoading: false,
       owner: false,
@@ -162,6 +161,11 @@ export default {
         type: 'is-info',
         notes: [i18n.t('lang.deposit.tip-select-plan')]
       }
+    }
+  },
+  computed: {
+    claimEnable() {
+        return this.selected && this.selected.deadline.search(i18n.t('lang.common.outdated')) > 0
     }
   },
   methods: {
@@ -195,7 +199,7 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Vue.config.libre.deposit.address);
+      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.deposit.address);
       let _waiting = i18n.t('lang.common.tips.waiting'),
           _sending = i18n.t('lang.common.tips.sending'),
           _success = i18n.t('lang.common.success-low'),
@@ -205,7 +209,7 @@ export default {
       let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
-        let txHash = await this.$libre.token.approve(Vue.config.libre.deposit.address, amount);
+        let txHash = await this.$libre.token.approve(this.config.deposit.address, amount);
         this.setMessage('warning', [disclaimer, `${action} - ${_sending}`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [disclaimer, `${action} - ${_success}`]);

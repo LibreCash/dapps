@@ -5,7 +5,7 @@
           <div class="column">
             <div class="card bm--card-equal-height">
               <div class="card-content">
-                <address-block>one</address-block>
+                <address-block />
               </div>
             </div>
           </div>
@@ -114,15 +114,15 @@
 
         <b-table
           v-if="searchData.length > 0"
-          :data="isEmpty ? [] : searchData"
-          :bordered="isBordered"
-          :striped="isStriped"
-          :narrowed="isNarrowed"
+          :data="searchData"
+          :bordered="false"
+          :striped="true"
+          :narrowed="false"
           :loading="tableLoading"
-          :mobile-cards="hasMobileCards"
-          :responsive="isResponsive"
+          :mobile-cards="true"
+          :responsive="true"
           :paginated="true"
-          :per-page="perPage"
+          :per-page="10"
           :pagination-simple="false">
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column label='Address' centered v-if="props.row.address == '-'">
@@ -266,7 +266,6 @@
 
 <script>
 import AddressBlock from '@/components/AddressBlock'
-import Config from '@/config'
 import i18n from '../locales'
 export default {
   data () {
@@ -282,23 +281,12 @@ export default {
       sellFee: 0,
       buyFee: 0,
       newTargetLoading: false,
-      isEmpty: false,
-      isBordered: false,
-      isStriped: true,
-      isNarrowed: false,
       tableLoading: false,
-      hasMobileCards: true,
-      isResponsive: true,
-      perPage: 10,
       curBlockchainTime: 0,
       bountyBankAddress: '',
       bountyExchangerAddress: '',
       searchData: [],
       defaultAddress: '',
-      isActive: true,
-      isUsed: false,
-      isCompleted: false,
-      isMine: false,
       targetCount: 0,
       curBlockchainTime: 0,
       bank: {
@@ -384,9 +372,9 @@ export default {
     },
     getABI (row) {
         let ABI;
-        if (row.name == "LibreCash") ABI = Config.bounty.bank.targets.token.abi;
-        else if (row.name == "ComplexBank") ABI = Config.bounty.bank.targets.bank.abi;
-        else if (row.name == "ComplexExchanger") ABI = Config.bounty.exchanger.targets.exchanger.abi;
+        if (row.name == "LibreCash") ABI = this.config.bounty.bank.targets.token.abi;
+        else if (row.name == "ComplexBank") ABI = this.config.bounty.bank.targets.bank.abi;
+        else if (row.name == "ComplexExchanger") ABI = this.config.bounty.exchanger.targets.exchanger.abi;
         else ABI = i18n.t('lang.bounty.no-abi');
         return ABI;
     },
@@ -530,8 +518,8 @@ export default {
       this.updateClaimed();
     },
     async getBounties () {
-      this.bank.bounty = this.$libre.toToken(await this.$eth.getBalance(Config.bounty.bank.address[this.network]));
-      this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(Config.bounty.exchanger.address[this.network]));
+      this.bank.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.bank.address[this.network]));
+      this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.exchanger.address[this.network]));
     },
     async getDeadlines () {
       this.bank.deadline = this.$eth.toDateString(+await this.$libre.bounty.bank.deadline());
@@ -557,7 +545,7 @@ export default {
               type: target.type,
               name: '...',
               contract: this.$libre.getContract(
-                target.type == 'bank' ? Config.bounty.bank.targets.bank.abi : Config.bounty.exchanger.targets.exchanger.abi,
+                target.type == 'bank' ? this.config.bounty.bank.targets.bank.abi : this.config.bounty.exchanger.targets.exchanger.abi,
                 target.address
               ),
               hacked: false,
@@ -569,10 +557,10 @@ export default {
               this.searchData[searchDataLength - 1].name = _name;
               // "ComplexBank" -> deafult, see upper
               if (_name == "LibreCash") {
-                this.searchData[searchDataLength - 1].contract = this.$libre.getContract(Config.bounty.bank.targets.token.abi, target.address);
+                this.searchData[searchDataLength - 1].contract = this.$libre.getContract(this.config.bounty.bank.targets.token.abi, target.address);
               }
               if (_name == "ComplexExchanger") {
-                this.searchData[searchDataLength - 1].contract = this.$libre.getContract(Config.bounty.exchanger.targets.exchanger.abi, target.address);
+                this.searchData[searchDataLength - 1].contract = this.$libre.getContract(this.config.bounty.exchanger.targets.exchanger.abi, target.address);
               }            
           });
           this.searchData[searchDataLength - 1].contract.checkInvariant(this.defaultAddress).then((notHacked) => {
@@ -614,8 +602,8 @@ export default {
       await this.$libre.initPromise;
       this.network = this.$eth.network;
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.bountyBankAddress = Config.bounty.bank.address[this.network];
-      this.bountyExchangerAddress = Config.bounty.exchanger.address[this.network];
+      this.bountyBankAddress = this.config.bounty.bank.address[this.network];
+      this.bountyExchangerAddress = this.config.bounty.exchanger.address[this.network];
       this.startUpdatingTime();
       this.getBounties(); // no await, start async
       this.getDeadlines();

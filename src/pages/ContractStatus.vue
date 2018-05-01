@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import i18n from '../locales'
 export default {
   data () {
@@ -42,12 +41,12 @@ export default {
 
       var
         exchanger = this.$libre.bank,
-        status = Vue.config.libre.bank.status
+        status = this.config.bank.status
 
       this.emissionStatus.push({
         type: 'input',
         name: 'Contract address',
-        data: Vue.config.libre.bank.address
+        data: this.config.bank.address
       })
 
       let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error')))

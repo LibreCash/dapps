@@ -85,8 +85,6 @@
 </style> 
 <script>
   import StatusCoins from '@/components/StatusCoins'
-  import Vue from 'vue'
-  import Config from "@/config"
   import i18n from '../locales'
   import PieChart from '@/components/PieChart'
   import axios from 'axios'
@@ -116,10 +114,10 @@
         this.coinsData = [];
         this.isLoading = true;
 
-        var coins = Vue.config.libre.balance.coins;
+        var coins = this.config.balance.coins;
 
         let response = await axios
-          .get(Vue.config.libre.balance.coinmarketcap.request(0))
+          .get(this.config.balance.coinmarketcap.request(0))
           .catch(e => "error"),
           nameCoins = coins.map(coin => coin.name),
           countFind = 0,
