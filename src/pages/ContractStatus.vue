@@ -1,8 +1,7 @@
 /* eslint-disable-one-var */
 <template>
-      <div class="cards">
-        <div class="card-content">
-          <div id="status-bank">
+      <div class="level">
+        <div class="level-item">
             <b-table
               class="centered"
               :data="emissionStatus"
@@ -14,15 +13,14 @@
               :pagination-simple="false"
               :mobile-cards="true">
               <template slot-scope="props">
-                <b-table-column field="name" label='Parameter'>
+                <b-table-column field="name" :label="$t('lang.common.parameter')">
                   {{ props.row.name }}
                 </b-table-column>
-                <b-table-column label='Value' centered >
+                <b-table-column :label="$t('lang.common.value')" centered >
                 <span class="is-text-overflow">{{ props.row.data }}</span>
                 </b-table-column>
               </template>
             </b-table>
-          </div>
         </div>
         <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
       </div> 
@@ -30,6 +28,7 @@
 
 <script>
 import Vue from 'vue'
+import i18n from '../locales'
 export default {
   data () {
     return {
@@ -53,7 +52,7 @@ export default {
 
       let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error')))
       let totalSupply = await this.$libre.token.totalSupply().catch(e => 'error')
-      status.forEach((item,i)=>{
+      status.forEach((item, i) => {
         if(dataBank[i] !== 'error') {
           this.emissionStatus.push({
             type: item.type,
@@ -64,7 +63,7 @@ export default {
       })
 
       this.emissionStatus.push({
-        name: 'Total Supply',
+        name: i18n.t('lang.common.total-supply'),
         data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       })
 

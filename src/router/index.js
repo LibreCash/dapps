@@ -28,28 +28,28 @@ export default new Router({
       path: '/reports',
       name: 'Reports',
       component: Report,
-      meta: {title: 'Blockchain Report - Librebank'},
+      meta: {locale: 'reports'},
       icon: 'fas fa-chart-pie'
     },
     {
       path: '/report/:id',
       name: 'Report Page',
       component: ReportPage,
-      meta: {title: 'Blockchain Report - Librebank'},
-      icon: 'fas fa-chart-pie',
-      enabled: false
+      meta: {locale: 'report'},
+      icon: 'fas fa-chart-pie'
     },
     {
       path: '/fund',
       name: 'Fund Status',
       component: FundStatus,
-      meta: {title: 'Fund status - Librebank'},
+      meta: {locale: 'fundStatus'},
       icon: 'fas fa-university'
     },
     {
       path: '/status',
       name: 'Contract Status',
       component: ContractStatus,
+      meta: {locale: 'contractStatus'},
       icon: 'fas fa-file-alt'
     },
     {
@@ -57,61 +57,60 @@ export default new Router({
       alias: '/',
       name: 'DAO',
       component: DAO,
-      meta: {title: 'DAO - LibreBank'},
+      meta: {locale: 'dao'},
       icon: 'fas fa-users'
     },
     {
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
       component: Proposal,
-      meta: {title: 'Proposal Info - LibreBank'}
+      meta: {locale: 'proposal'}
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal,
-      meta: {title: 'New proposal - Librebank'}
+      meta: {locale: 'newProposal'}
     },
     {
       path: '/bounty',
       name: 'Bounty Program',
       component: Bounty,
-      meta: {title: 'Contracts Bounty - Librebank'},
-      icon: 'fas fa-gift',
-      enabled: true
+      meta: {locale: 'bounty'},
+      icon: 'fas fa-gift'
     },
     {
       path: '/faucet',
       name: 'Faucet',
       component: Faucet,
-      meta: {title: 'LBRS Faucet - Librebank'},
-      icon: 'fas fa-hand-holding-usd',
+      meta: {locale: 'faucet'},
+      icon: 'fas fa-hand-holding-usd'
     },
     {
       path: '/deposit',
       name: 'Deposit',
       component: Deposit,
-      meta: {title: 'Deposit - Librebank'},
+      meta: {locale: 'deposit'},
       icon: 'fas fa-piggy-bank'
     },
     {
       path: '/loans',
       name: 'Loans',
       component: Loans,
-      meta: {title: 'Loans - Librebank'},
+      meta: {locale: 'loans'},
       icon: 'fas fa-credit-card'
     },
     {
       path: '/loan/:type/:id',
       name: 'Loan Offer',
       component: Loan,
-      meta: {title: 'Loan offer - Librebank'}
+      meta: {locale: 'loan'}
     },
     {
       path: '/loans/new',
       name: 'New Loan Offer',
       component: NewOffer,
-      meta: {title: 'New loan offer - Librebank'}
+      meta: {locale: 'newLoan'}
     }
   ],
   mode: 'hash'
