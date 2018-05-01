@@ -35,7 +35,7 @@ export default new Router({
       path: '/report/:id',
       name: 'Report Page',
       component: ReportPage,
-      meta: {locale: 'reports'},
+      meta: {locale: 'report'},
       icon: 'fas fa-chart-pie'
     },
     {
@@ -64,13 +64,13 @@ export default new Router({
       path: '/dao/proposal/:id',
       name: 'DAO Proposal Info',
       component: Proposal,
-      meta: {locale: 'dao'}
+      meta: {locale: 'proposal'}
     },
     {
       path: '/dao/new_proposal',
       name: 'New proposal',
       component: NewProposal,
-      meta: {locale: 'dao'}
+      meta: {locale: 'newProposal'}
     },
     {
       path: '/bounty',
@@ -104,13 +104,13 @@ export default new Router({
       path: '/loan/:type/:id',
       name: 'Loan Offer',
       component: Loan,
-      meta: {locale: 'loans'}
+      meta: {locale: 'loan'}
     },
     {
       path: '/loans/new',
       name: 'New Loan Offer',
       component: NewOffer,
-      meta: {locale: 'loans'}
+      meta: {locale: 'newLoan'}
     }
   ],
   mode: 'hash'
