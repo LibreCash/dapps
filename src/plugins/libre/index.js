@@ -155,7 +155,7 @@ export default class Libre {
         text: i18n.t('lang.proposal-types.set-lock'),
         key: 'SET_LOCK',
         lock: i18n.t('lang.proposal-types.lock'),
-        _amount: i18n.t('lang.proposal-types.period'),
+        _amount: i18n.t('lang.proposal-types.lock'),
         type: 'bool'
       },
       {

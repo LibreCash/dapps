@@ -94,7 +94,7 @@
         <div class="columns">
           <div class="column is-narrow">
             <b-tooltip :label="$t('lang.common.tooltips.items-on-page')">
-              <b-field>
+              <b-field :label="$t('lang.common.tooltips.items-on-page') + ':'">
                 <b-select v-model="perPage" @input="loadLoans()">
                   <option value="3">3</option>
                   <option value="5">5</option>

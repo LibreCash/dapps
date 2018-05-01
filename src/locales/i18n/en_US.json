@@ -63,6 +63,8 @@
         "loading-dots": "loading...",
         "loading-info-dots": "Loading information...",
         "max-amount": "Max amount",
+        "no": "no",
+        "nothing": "nothing",
         "not-set": "not set",
         "no-metamask": "No metamask / not logged in",
         "outdated": "outdated",
@@ -75,6 +77,7 @@
         "please-select-action": "Please select an action",
         "please-wait-for-sending": "Please wait, there is a sending to the network:",
         "recipient": "Recipient",
+        "seconds-short": "sec",
         "set-time": "Set time...",
         "submit": "Submit",
         "success-low": "success",
@@ -87,6 +90,7 @@
         "update-allowance": "Update Allowance",
         "value": "Value",
         "votes": "Votes",
+        "yes": "yes",
         "your-address": "Your address",
         "your-information": "Your information",
         "withdraw": "Withdraw",
@@ -269,7 +273,7 @@
         "message1-5": "2. Available amount of collateral.",
         "act-disclaimer": "1. Requesting rates (cost",
         "act-2nd-action": "2. Rate calculation",
-        "pls-wait-oracles": "'Please wait while we receive responses from oracles. It may take about 10 minutes...'",
+        "pls-wait-oracles": "Please wait while we receive responses from oracles. It may take about 10 minutes...",
         "new-offer": "New offer",
         "create-offer": "Create offer",
         "create-offer-transation": "Create offer transaction",
@@ -330,6 +334,11 @@
         "lock": "Lock:",
         "pause": "Pause",
         "new-arbitrator-address": "New Arbitrator Address"
-
+    },
+    "messages": {
+        "install-metamask": "Please install MetaMask to use it.",
+        "user-rejected": "Transaction was rejected by user",
+        "pls-unlock": "Please unlock you wallet.",
+        "only-network": "Please use {network} network"
     }
 }

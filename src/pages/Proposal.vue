@@ -168,7 +168,8 @@ export default {
             let amount = this.proposal.amount;
             if (this.currentProposal["type"]) {
               if ((this.currentProposal["type"] == '%')) amount = `${this.proposal.amount / 100} %`;
-              if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ? 'YES' : 'NO');
+              if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ?
+                                  i18n.t('lang.common.yes') : i18n.t('lang.common.no'));
             }
                           
             this.proposalData.push({
