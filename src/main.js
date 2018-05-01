@@ -6,6 +6,7 @@ import router from './router'
 import './plugins/buefy'
 import ETH from './plugins/eth'
 import Libre from './plugins/libre'
+import i18n from './locales'
 import Config from './config'
 
 Vue.config.productionTip = false
@@ -21,13 +22,14 @@ router.options.routes.forEach(route => {
 })
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title
+  document.title = i18n.t(`lang.titles.${to.meta.locale}`);
   next()
 })
 
 new Vue({
   el: '#app',
   router,
+  i18n,
   template: '<App/>',
   components: { App }
 })

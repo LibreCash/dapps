@@ -13,13 +13,25 @@
                   </router-link>
                 </div>
                 <ul class="MenuLeft">
-                  <li v-for="route in $router.options.routes" :key="route.path">
-                    <router-link :to="route.path" v-if="route.enabled">
-                          <div class="icon">
-                            <i :class="route.icon"></i>
-                          </div>
-                          <span>{{route.name }}</span>
+                  <li v-for="route in $router.options.routes" :key="route.path" v-if="route.enabled">
+                    <router-link :to="route.path">
+                      <div class="icon">
+                        <i :class="route.icon"></i>
+                      </div>
+                      <span>{{ $t(`lang.tabs.${route.meta.locale}`) }}</span>
                     </router-link>
+                  </li>
+                  <li class="level">
+                    <b-field class="level-item">
+                      <b-select v-model="locale">
+                        <option
+                          v-for="(locale, index) in $i18n.messages.locales"
+                          :value="index"
+                          :key="index">
+                          {{ locale }}
+                        </option>
+                      </b-select>
+                    </b-field>
                   </li>
                 </ul>
             </div>
@@ -35,16 +47,28 @@
 </template>
 <script>
 import Vue from 'vue'
+import i18n from './locales'
+
+console.log(i18n.messages.locales);
+console.log(i18n.locale)
+console.log(i18n.messages.locales.indexOf(i18n.locale))
 export default {
   name: "navbar",
   data() {
     return {
+      locale: i18n.messages.locales.indexOf(i18n.locale),
       navIsActive: true
     };
   },
   methods: {
     toggleMenu: function() {
       this.navIsActive = !this.navIsActive;
+    }
+  },
+  watch: {
+    locale: function (newVal) {
+      i18n.locale = i18n.messages.locales[+newVal];
+      localStorage.setItem("locale", newVal);
     }
   }
 };
@@ -141,13 +165,13 @@ export default {
 .MenuLeft {
   margin-top: 75px;
 }
-.MenuLeft li a {
+.MenuLeft li a, .MenuLeft li .lang-selector {
   color: #ffffff;
   font-size: 20px;
   display: block;
   padding: 20px 10px 20px 40px;
   border-left: 4px solid transparent;
-}
+},
 .MenuLeft li a.router-link-exact-active {
   border-left: 4px solid #fcc14a;
 }

@@ -1,6 +1,7 @@
 /* eslint-disable no-trailing-spaces */
 import Vue from 'vue'
 import Web3 from 'web3'
+import i18n from '@/locales'
 
 export default class Libre {
   static install (vue, options) {
@@ -77,92 +78,92 @@ export default class Libre {
     }
 
     this.typeProposals = [{
-        text: 'Custom',
+        text: i18n.t('lang.proposal-types.custom'),
         key: 'UNIVERSAL',
-        benef: 'Beneficiary:',
-        amount: 'Amount Wei:',
-        code: 'Bytecode:'
+        benef: i18n.t('lang.proposal-types.beneficiary'),
+        amount: i18n.t('lang.proposal-types.amount-wei'),
+        code: i18n.t('lang.proposal-types.bytecode')
       },
       {
-        text: 'Transfer Ownership',
+        text: i18n.t('lang.proposal-types.transfer-ownership'),
         key: 'TRANSFER_OWNERSHIP',
-        benef: 'New Owner:'
+        benef: i18n.t('lang.proposal-types.new-owner')
       },
       {
-        text: 'New Token',
+        text: i18n.t('lang.proposal-types.new-token'),
         key: 'ATTACH_TOKEN',
-        benef: 'Token Address:'
+        benef: i18n.t('lang.proposal-types.token-address')
       },
       {
-        text: 'New Bank',
+        text: i18n.t('lang.proposal-types.new-bank'),
         key: 'SET_BANK_ADDRESS',
-        benef: 'Bank Address:',
-        info: `Before offering to change bank address please make sure to attach the current token to the new bank`
+        benef: i18n.t('lang.proposal-types.bank-address'),
+        info: i18n.t('lang.proposal-types.bank-info')
       },
       {
-        text: 'Change Fees',
+        text: i18n.t('lang.proposal-types.change-fees'),
         key: 'SET_FEES',
-        amount: 'Buy fee, %:',
-        buf: 'Sell fee, %:',
+        amount: i18n.t('lang.proposal-types.buy-fee'),
+        buf: i18n.t('lang.proposal-types.sell-fee'),
         type: '%'
       },
       {
-        text: 'Add Oracle',
+        text: i18n.t('lang.proposal-types.add-oracle'),
         key: 'ADD_ORACLE',
-        benef: 'Oracle Address:'
+        benef: i18n.t('lang.proposal-types.oracle-address')
       },
       {
-        text: 'Disable Oracle',
+        text: i18n.t('lang.proposal-types.disable-oracle'),
         key: 'DISABLE_ORACLE',
-        benef: 'Oracle Address:'
+        benef: i18n.t('lang.proposal-types.oracle-address')
       },
       {
-        text: 'Enable Oracle',
+        text: i18n.t('lang.proposal-types.enable-oracle'),
         key: 'ENABLE_ORACLE',
-        benef: 'Oracle Address:'
+        benef: i18n.t('lang.proposal-types.oracle-address')
       },
       {
-        text: 'Delete Oracle',
+        text: i18n.t('lang.proposal-types.delete-oracle'),
         key: 'DELETE_ORACLE',
-        benef: 'Oracle Address:'
+        benef: i18n.t('lang.proposal-types.oracle-address')
       },
       {
-        text: 'Set Scheduler',
+        text: i18n.t('lang.proposal-types.set-scheduler'),
         key: 'SET_SCHEDULER',
-        benef: 'Scheduler Address:'
+        benef: i18n.t('lang.proposal-types.scheduler-address')
       },
       {
-        text: 'Withdraw Balance',
+        text: i18n.t('lang.proposal-types.withdraw-balance'),
         key: 'WITHDRAW_BALANCE'
       },
       {
-        text: 'New Oracle Timeout',
+        text: i18n.t('lang.proposal-types.new-oracle-timeout'),
         key: 'SET_ORACLE_TIMEOUT',
-        amount: 'Period, minutes:'
+        amount: i18n.t('lang.proposal-types.period')
       },
       {
-        text: 'New Oracle Actual Time',
+        text: i18n.t('lang.proposal-types.new-oracle-actual-time'),
         key: 'SET_ORACLE_ACTUAL',
-        amount: 'Period, minutes:'
+        amount: i18n.t('lang.proposal-types.period')
       },
       {
-        text: 'New Rate Period',
+        text: i18n.t('lang.proposal-types.new-rate-period'),
         key: 'SET_RATE_PERIOD',
-        amount: 'Period, minutes:'
+        amount: i18n.t('lang.proposal-types.period')
       },
       {
-        text: 'Set Lock',
+        text: i18n.t('lang.proposal-types.set-lock'),
         key: 'SET_LOCK',
-        lock: 'Lock:',
-        _amount: 'Pause',
+        lock: i18n.t('lang.proposal-types.lock'),
+        _amount: i18n.t('lang.proposal-types.period'),
         type: 'bool'
       },
       {
-        text: 'Claim Ownership',
+        text: i18n.t('lang.proposal-types.claim-ownership'),
         key: 'CLAIM_OWNERSHIP'
       },
       {
-        text: 'Change Arbitrator',
+        text: i18n.t('lang.proposal-types.change-arbitrator'),
         key: 'CHANGE_ARBITRATOR',
         benef: 'New Arbitrator Address:'
       }
