@@ -41,7 +41,7 @@
                   <b-input v-model="margin" placeholder="0"></b-input>
                 </b-field>
                 <b-field horizontal :label="$t('lang.loans.period-row')" :type="isDebatingPeriod() ? '' : 'is-danger'">
-                  <b-datepicker :placeholder="$t('lang.common.click-to-select')" v-model="debatingPeriod" icon="calendar-edit" icon-pack="fas"></b-datepicker>
+                  <b-datepicker :placeholder="$t('lang.common.click-to-select')" v-model="debatingPeriod" icon="calendar" icon-pack="fas"></b-datepicker>
                   <b-timepicker :placeholder="$t('lang.common.set-time')" icon="clock" v-model="debatingTime" icon-pack="fas"></b-timepicker>
                 </b-field>
                 <b-field><b-message :type="msg.type" v-if="msg.notes.length != 0">
