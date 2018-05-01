@@ -165,7 +165,7 @@ export default class Libre {
       {
         text: i18n.t('lang.proposal-types.change-arbitrator'),
         key: 'CHANGE_ARBITRATOR',
-        benef: 'New Arbitrator Address:'
+        benef: i18n.t('lang.proposal-types.new-arbitrator-address')
       }
     ]
 

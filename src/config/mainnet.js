@@ -108,17 +108,17 @@ module.exports = {
       {
         name: i18n.t('lang.status.oracle-timeout'),
         getter: 'oracleTimeout',
-        process: data => `${+data} sec`
+        process: data => `${+data} ${i18n.t('lang.common.seconds-short')}`
       },
       {
         name: i18n.t('lang.status.oracle-actual'),
         getter: 'oracleActual',
-        process: data => `${+data} sec`
+        process: data => `${+data} ${i18n.t('lang.common.seconds-short')}`
       },
       {
         name: i18n.t('lang.status.rate-period'),
         getter: 'ratePeriod',
-        process: data => `${+data} sec`
+        process: data => `${+data} ${i18n.t('lang.common.seconds-short')}`
       },
       {
         type: 'input',

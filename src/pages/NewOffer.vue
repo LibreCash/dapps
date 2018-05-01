@@ -265,7 +265,7 @@ export default {
         let msg = this.$eth.getErrorMsg(err);
         this.$libre.notify(msg, 'is-danger');
         this.setMessage('danger', [
-          `${i18n.t('lang.common.ended-with-error')}: ${action}`,
+          `${i18n.t('lang.common.ended-with-error')}:`,
           msg
         ]);
       }
