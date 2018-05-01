@@ -1,6 +1,7 @@
 {
     "tabs": {
         "reports": "Reports",
+        "report": "Report",
         "fundStatus": "Fund Status",
         "contractStatus": "Contract Status",
         "dao": "DAO",
@@ -14,7 +15,8 @@
         "bounty": "Bounty Program"
     },
     "titles": {
-        "reports": "Blockchain Report - LibreBank",
+        "reports": "Blockchain Reports - LibreBank",
+        "report": "Blockchain Report - LibreBank",
         "fundStatus": "Fund status - LibreBank",
         "contractStatus": "Contract Status - LibreBank",
         "dao": "DAO - LibreBank",

@@ -13,8 +13,8 @@
                   </router-link>
                 </div>
                 <ul class="MenuLeft">
-                  <li v-for="route in $router.options.routes" :key="route.path">
-                    <router-link :to="route.path" v-if="route.enabled">
+                  <li v-for="route in $router.options.routes" :key="route.path" v-if="route.enabled">
+                    <router-link :to="route.path">
                       <div class="icon">
                         <i :class="route.icon"></i>
                       </div>
