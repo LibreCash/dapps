@@ -12,7 +12,7 @@
           <div class="column">
             <div class="card bm--card-equal-height">
               <div class="card-content">
-                Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}
+                {{ $t('lang.common.current-time') }}: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}
               </div>
             </div>
           </div>          
@@ -22,34 +22,34 @@
             <div class="card bm--card-equal-height">
               <header class="card-header">
                 <p class="card-header-title">
-                  Bank Bounty
+                  {{ $t('lang.bounty.bank-program') }}
                 </p>
               </header>
               <div class="card-content">
                 <div class="content">
-                  <p class="flex">Bounty contract: <a :href="this.$libre.addressToLink(bountyBankAddress)" class="is-text-overflow">{{ bountyBankAddress }}</a></p>
+                  <p class="flex">{{ $t('lang.contracts.bounty') }}: <a :href="this.$libre.addressToLink(bountyBankAddress)" class="is-text-overflow">{{ bountyBankAddress }}</a></p>
                   <b-field grouped group-multiline>
                     <div class="control">
                       <b-taglist attached>
-                          <b-tag>bounty</b-tag>
+                          <b-tag>{{ $t('lang.common.bounty-word') }}</b-tag>
                           <b-tag type="is-info">{{ bank.bounty }} ETH</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
                       <b-taglist attached>
-                          <b-tag>deadline</b-tag>
+                          <b-tag>{{ $t('lang.common.deadline-low') }}</b-tag>
                           <b-tag type="is-info">{{ bank.deadlineUnix == 0 ? '...' : bank.deadline }}</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
                       <b-taglist attached>
-                          <b-tag>claimed</b-tag>
+                          <b-tag>{{ $t('lang.common.claimed') }}</b-tag>
                           <b-tag type="is-info">{{ bank.claimed ? 'yes' : 'no' }}</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
                       <b-taglist attached>
-                          <b-tag>payment</b-tag>
+                          <b-tag>{{ $t('lang.common.payment') }}</b-tag>
                           <b-tag type="is-info">{{ bank.payment == 0 ? 'nothing' : bank.payment + 'ETH' }}</b-tag>
                       </b-taglist>
                     </div>
@@ -58,9 +58,9 @@
               </div>
               <footer class="card-footer">
                 <a v-if="bank.claimed && debugButtons" class="card-footer-item" v-on:click="testEraseBankClaim()">Unclaim</a>
-                <a v-if="bank.payment > 0" class="card-footer-item" v-on:click="withdraw('bank')">Withdraw</a>
-                <a class="card-footer-item" v-on:click="targetsBankModal()">New targets</a>
-                <a class="card-footer-item" v-on:click="tabsBounty = 0; termsShown = true">Bounty terms</a>
+                <a v-if="bank.payment > 0" class="card-footer-item" v-on:click="withdraw('bank')">{{ $t('lang.common.withdraw') }}</a>
+                <a class="card-footer-item" v-on:click="targetsBankModal()">{{ $t('lang.bounty.new-targets') }}</a>
+                <a class="card-footer-item" v-on:click="tabsBounty = 0; termsShown = true">{{ $t('lang.bounty.terms') }}</a>
               </footer>
             </div>
           </div>
@@ -68,34 +68,34 @@
             <div class="card">
               <header class="card-header">
                 <p class="card-header-title">
-                  Exchanger Bounty
+                  {{ $t('lang.bounty.exchanger-program') }}
                 </p>
               </header>
               <div class="card-content">
                 <div class="content">
-                  <p class="flex">Bounty contract: <a :href="this.$libre.addressToLink(bountyExchangerAddress)" class="is-text-overflow">{{bountyExchangerAddress }}</a></p>
+                  <p class="flex">{{ $t('lang.contracts.bounty') }}: <a :href="this.$libre.addressToLink(bountyExchangerAddress)" class="is-text-overflow">{{bountyExchangerAddress }}</a></p>
                   <b-field grouped group-multiline>
                     <div class="control">
                       <b-taglist attached>
-                          <b-tag>bounty</b-tag>
+                          <b-tag>{{ $t('lang.common.bounty-word') }}</b-tag>
                           <b-tag type="is-info">{{ exchanger.bounty }} ETH</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
                       <b-taglist attached>
-                          <b-tag>deadline</b-tag>
+                          <b-tag>{{ $t('lang.common.deadline-low') }}</b-tag>
                           <b-tag type="is-info">{{ exchanger.deadlineUnix == 0 ? '...' : exchanger.deadline }}</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
                       <b-taglist attached>
-                          <b-tag>claimed</b-tag>
+                          <b-tag>{{ $t('lang.common.claimed') }}</b-tag>
                           <b-tag type="is-info">{{ exchanger.claimed ? 'yes' : 'no' }}</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
                       <b-taglist attached>
-                          <b-tag>payment</b-tag>
+                          <b-tag>{{ $t('lang.common.payment') }}</b-tag>
                           <b-tag type="is-info">{{ exchanger.payment == 0 ? 'nothing' : exchanger.payment + 'ETH' }}</b-tag>
                       </b-taglist>
                     </div>
@@ -104,9 +104,9 @@
               </div>
               <footer class="card-footer">
                 <a v-if="exchanger.claimed && debugButtons" class="card-footer-item" v-on:click="testEraseExchangerClaim()">Unclaim</a>
-                <a v-if="exchanger.payment > 0" class="card-footer-item" v-on:click="withdraw('exchanger')">Withdraw</a>
-                <a class="card-footer-item" v-on:click="targetsExchangerModal()">New targets</a>
-                <a class="card-footer-item" v-on:click="tabsBounty = 1; termsShown = true">Bounty terms</a>
+                <a v-if="exchanger.payment > 0" class="card-footer-item" v-on:click="withdraw('exchanger')">{{ $t('lang.common.withdraw') }}</a>
+                <a class="card-footer-item" v-on:click="targetsExchangerModal()">{{ $t('lang.bounty.new-targets') }}</a>
+                <a class="card-footer-item" v-on:click="tabsBounty = 1; termsShown = true">{{ $t('lang.bounty.terms') }}</a>
               </footer>
             </div>
           </div>
@@ -126,43 +126,43 @@
           :pagination-simple="false">
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column label='Address' centered v-if="props.row.address == '-'">
-                not set
+              {{ $t('lang.common.not-set') }}
             </b-table-column>
-            <b-table-column label='Address' centered v-else>
-              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.address">address</a>
+            <b-table-column :label="$t('lang.bounty.address-row')" centered v-else>
+              <a :href="'https://rinkeby.etherscan.io/address/'+props.row.address">{{ $t('lang.common.address') }}</a>
             </b-table-column>
 
-            <b-table-column label='Name' centered>
+            <b-table-column :label="$t('lang.bounty.name-row')" centered>
               {{ props.row.name }}
               <b-tag>{{ props.row.type }}</b-tag>
               <b-tag v-if="(props.row.type == 'bank' && bank.claimed) ||
-                      (props.row.type == 'exchanger' && exchanger.claimed)">claimed</b-tag>
+                      (props.row.type == 'exchanger' && exchanger.claimed)">{{ $t('lang.common.claimed') }}</b-tag>
               <b-tag v-if="(props.row.type == 'bank' && bank.deadlineUnix < curBlockchainTime) ||
-                      (props.row.type == 'exchanger' && exchanger.deadlineUnix < curBlockchainTime)">deadlined</b-tag>
+                      (props.row.type == 'exchanger' && exchanger.deadlineUnix < curBlockchainTime)">{{ $t('lang.common.deadlined') }}</b-tag>
             </b-table-column>
-            <b-table-column label='ABI' centered>
-                <b-tooltip label="Get ABI" type="is-dark" position="is-bottom">
+            <b-table-column :label="$t('lang.bounty.abi-row')" centered>
+                <b-tooltip :label="$t('lang.bounty.get-abi-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="showABI(props.row)"><i class="fas fa-code"></i></button>
                 </b-tooltip>
-                <b-tooltip label="Get Mist script" type="is-dark" position="is-bottom">
+                <b-tooltip :label="$t('lang.bounty.mist-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="showMist(props.row)"><i class="fas fa-terminal"></i></button>
                 </b-tooltip>
             </b-table-column>
-            <b-table-column label='Hacked' centered>
+            <b-table-column :label="$t('lang.bounty.hacked-row')" centered>
                 {{ props.row.hacked }}
-                <b-tooltip label="Update info" type="is-dark" position="is-bottom">
+                <b-tooltip :label="$t('lang.bounty.update-info-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="update(props.row)"><i class="fas fa-sync"></i></button>
                 </b-tooltip>
             </b-table-column>            
-            <b-table-column label='Actions' centered>
-                <b-tooltip label="Claim reward" type="is-dark" position="is-bottom">
+            <b-table-column :label="$t('lang.bounty.actions-row')" centered>
+                <b-tooltip :label="$t('lang.bounty.claim-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="claim(props.row)" :disabled="
                       !props.row.hacked ||
                       (props.row.type == 'bank' && (bank.claimed || bank.deadlineUnix < curBlockchainTime)) ||
                       (props.row.type == 'exchanger' && (exchanger.claimed || exchanger.deadlineUnix < curBlockchainTime))
                     "><i class="fas fa-bullseye"></i></button>
                 </b-tooltip>
-                <b-tooltip label="Kill target and get the balance" type="is-dark" position="is-bottom">
+                <b-tooltip :label="$t('lang.bounty.kill-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="destruct(props.row)"><i class="fas fa-bomb"></i></button>
                 </b-tooltip>
                 <b-tooltip label="Hack [test feature]" type="is-dark" position="is-bottom" v-if="debugButtons">
@@ -175,7 +175,6 @@
           </template>
         </b-table>
       </div>
-    </section>
     <!-- abi data modal -->
     <b-modal :active.sync="abiShown">
       <header class="modal-card-head">
@@ -187,66 +186,66 @@
           </b-field>
       </section>
       <footer class="modal-card-foot">
-          <button class="button" type="button" @click="abiShown = false">Close</button>
+        <button class="button" type="button" @click="abiShown = false">{{ $t('lang.common.close') }}</button>
       </footer>
     </b-modal>
     <!-- bounty terms modal -->
     <b-modal :active.sync="termsShown">
       <header class="modal-card-head">
-          <p class="modal-card-title">Bounty terms</p>
+          <p class="modal-card-title">{{ $t('lang.bounty.terms') }}</p>
       </header>
       <section class="modal-card-body">
         <b-tabs type="is-boxed" v-model="tabsBounty">
-            <b-tab-item label="Bank Bounty" icon="university" icon-pack="fas">
-              <b-message title="Rate = 0" :closable="false" type="is-info">
-                  You get reward if buyRate or sellRate is 0
+            <b-tab-item :label="$t('lang.bounty.bank-program')" icon="university" icon-pack="fas">
+              <b-message :title="$t('lang.bounty.term.rate0-title')" :closable="false" type="is-info">
+                  {{ $t('lang.bounty.term.rate0') }}
               </b-message>
-              <b-message title="Buy Rate is over Sell Rate" :closable="false" type="is-info">
-                  You get reward if buyRate > sellRate
+              <b-message :title="$t('lang.bounty.term.buy-bigger-title')" :closable="false" type="is-info">
+                  {{ $t('lang.bounty.term.buy-bigger') }}
               </b-message>
-              <b-message title="Huge number of tokens" :closable="false" type="is-info">
-                  You get reward if you own 2<sup>255</sup> LIBRE or more (the half of maximum allowed by smart-contract types)
+              <b-message :title="$t('lang.bounty.term.much-libre-title')" :closable="false" type="is-info">
+                  {{ $t('lang.bounty.term.much-libre') }}
               </b-message>
-              <b-message title="More tokens than issued" :closable="false" type="is-info">
-                  You get reward if you own more LIBRE than the bank ever issued
+              <b-message :title="$t('lang.bounty.term.overflow-libre-title')" :closable="false" type="is-info">
+                  {{ $t('lang.bounty.term.overflow-libre') }}
               </b-message>
             </b-tab-item>
-            <b-tab-item label="Exchanger Bounty" icon="exchange-alt" icon-pack="fas">
-              <b-message title="Rate = 0" :closable="false" type="is-info">
-                  You get reward if buyRate or sellRate is 0
+            <b-tab-item :label="$t('lang.bounty.exchanger-program')" icon="exchange-alt" icon-pack="fas">
+              <b-message :title="$t('lang.bounty.term.rate0-title')" :closable="false" type="is-info">
+                  {{ $t('lang.bounty.term.rate0') }}
               </b-message>
-              <b-message title="Buy Rate is over Sell Rate" :closable="false" type="is-info">
-                  You get reward if buyRate > sellRate
+              <b-message :title="$t('lang.bounty.term.buy-bigger-title')" :closable="false" type="is-info">
+                  {{ $t('lang.bounty.term.buy-bigger') }}
               </b-message>
 
             </b-tab-item>
         </b-tabs>
       </section>
       <footer class="modal-card-foot">
-          <button class="button" type="button" @click="termsShown = false">Close</button>
+          <button class="button" type="button" @click="termsShown = false">{{ $t('lang.common.close') }}</button>
       </footer>
     </b-modal>
     <!-- new targets modal -->
     <b-modal :active.sync="newTargetsShown">
         <header class="modal-card-head">
-            <p class="modal-card-title">New targets for {{ newTargetsType }}</p>
+            <p class="modal-card-title">{{ $t('lang.bounty.new-targets-for') }} {{ newTargetsType }}</p>
         </header>
         <section class="modal-card-body">
-            <b-field label="Buy fee, %">
+            <b-field :label="$t('lang.bounty.labels.buy-fee')">
                 <b-input v-model="buyFee"></b-input>
             </b-field>
-            <b-field label="Sell fee, %">
+            <b-field :label="$t('lang.bounty.labels.sell-fee')">
                 <b-input v-model="sellFee"></b-input>
             </b-field>
-            <b-field label="Deadline, minutes" v-if="newTargetsType == 'exchanger'">
+            <b-field :label="$t('lang.bounty.labels.deadline')" v-if="newTargetsType == 'exchanger'">
                 <b-input v-model="targetDeadline"></b-input>
             </b-field>
-            <b-field label="Withdraw wallet" v-if="newTargetsType == 'exchanger'">
+            <b-field :label="$t('lang.bounty.labels.wallet')" v-if="newTargetsType == 'exchanger'">
                 <b-input v-model="targetWithdraw"></b-input>
             </b-field>
         </section>
         <footer class="modal-card-foot">
-            <button class="button" type="button" @click="newTargetsShown = false">Close</button>
+            <button class="button" type="button" @click="newTargetsShown = false">{{ $t('lang.common.close') }}</button>
             <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}"
               :disabled="!(
                 isValidFee(buyFee) &&
@@ -259,7 +258,7 @@
                     isAddress(targetWithdraw)
                   )
                 )
-              )">Create targets</button>
+              )">{{ $t('lang.bounty.create-targets') }}</button>
         </footer>
     </b-modal>
   </div>
@@ -268,7 +267,7 @@
 <script>
 import AddressBlock from '@/components/AddressBlock'
 import Config from '@/config'
-
+import i18n from '../locales'
 export default {
   data () {
     return {
@@ -369,7 +368,8 @@ export default {
             );
           }
           let
-            result = await this.$eth.isSuccess(txHash) ? 'Success targets creation' : 'Failed targets creation';
+            result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.targets-creation.success') :
+                            i18n.t('lang.tx.targets-creation.fail');
 
           alert(result); // Replace it to notify
           this.newTargetLoading = false;
@@ -387,11 +387,11 @@ export default {
         if (row.name == "LibreCash") ABI = Config.bounty.bank.targets.token.abi;
         else if (row.name == "ComplexBank") ABI = Config.bounty.bank.targets.bank.abi;
         else if (row.name == "ComplexExchanger") ABI = Config.bounty.exchanger.targets.exchanger.abi;
-        else ABI = "ABI not fount for this type of target";
+        else ABI = i18n.t('lang.bounty.no-abi');
         return ABI;
     },
     showABI (row) {
-      this.abiTitle = 'Contract ABI';
+      this.abiTitle = i18n.t('lang.bounty.abi-title');
       this.abiData = JSON.stringify(this.getABI(row));
       this.abiShown = true;
     },
@@ -405,7 +405,7 @@ export default {
     name: "_${name}",
     jsonInterface: ${ABI}
 });`;
-        this.abiTitle = 'Mist import script';
+        this.abiTitle = i18n.t('lang.bounty.mist-title');
         this.abiShown = true;
     },
     async updateClaimed () {
@@ -473,7 +473,8 @@ export default {
         let txHash = (type == 'bank') ? await this.$libre.bounty.bank.withdrawPayments() :
                                         await this.$libre.bounty.exchanger.withdrawPayments();
         let
-          result = await this.$eth.isSuccess(txHash) ? 'Success withdraw transaction' : 'Failed withdraw transaction';
+          result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.withdraw.success') :
+                            i18n.t('lang.tx.withdraw.fail');
 
         alert(result); // Replace it to notify
         this.updateClaimed();
@@ -492,7 +493,8 @@ export default {
         let 
           txHash = await row.bountyContract.claim(row.address);
         let
-          result = await this.$eth.isSuccess(txHash) ? 'Success claim transaction' : 'Failed claim transaction';
+          result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.claim.success') :
+                            i18n.t('lang.tx.claim.fail');
 
         alert(result); // Replace it to notify
         this.updateClaimed();
@@ -509,7 +511,8 @@ export default {
         let 
           txHash = await row.bountyContract.suicideTarget(row.id);
         let
-          result = await this.$eth.isSuccess(txHash) ? 'Success destruct transaction' : 'Failed destruct transaction';
+          result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.destruct.success') :
+                            i18n.t('lang.tx.destruct.fail');
 
         alert(result); // Replace it to notify
         this.tableLoading = false;
@@ -531,7 +534,7 @@ export default {
       this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(Config.bounty.exchanger.address[this.network]));
     },
     async getDeadlines () {
-      this.bank.deadline = this.$eth.toDateString( +await this.$libre.bounty.bank.deadline());
+      this.bank.deadline = this.$eth.toDateString(+await this.$libre.bounty.bank.deadline());
       this.exchanger.deadline = this.$eth.toDateString(+await this.$libre.bounty.exchanger.deadline());
     },
     async loadTargets (e) {

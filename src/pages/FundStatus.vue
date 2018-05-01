@@ -7,14 +7,14 @@
         <div class="column is-6">
           <div class="card bm--card-equal-height">
             <header class="card-header">
-              <p class="card-header-title">Overall stats</p>
+              <p class="card-header-title">{{ $t('lang.fund-status.overall-stats') }}</p>
             </header>
             <div class="card-content">
               <div class="content">
                 <div class="level">
                   <div class="level-item level-left">
                     <div class="tags has-addons is-large">
-                      <span class="tag is-md">Minimum change:</span>
+                      <span class="tag is-md">{{ $t('lang.fund-status.minimum-change') }}:</span>
                       <span class="tag is-success is-md">{{ minCoin.name }}</span>
                       <span class="tag is-info is-md">{{ minCoin.change24h.toLocaleString()}} USD</span>
                     </div>
@@ -24,7 +24,7 @@
                 <div class="level">  
                   <div class="level-item level-left">
                     <div class="tags has-addons is-md">
-                      <span class="tag is-md">Maximum change:</span>
+                      <span class="tag is-md">{{ $t('lang.fund-status.maximum-change') }}:</span>
                       <span class="tag is-success is-md">{{ maxCoin.name }}</span>
                       <span class="tag is-info is-md">{{ maxCoin.change24h.toLocaleString()}} USD</span>
                     </div>
@@ -34,7 +34,7 @@
                 <div class="level"> 
                   <div class="level-item level-left">
                     <div class="tags has-addons is-md">
-                      <span class="tag is-md">Total change (24h):</span>
+                      <span class="tag is-md">{{ $t('lang.fund-status.total-change') }}:</span>
                       <span class="tag is-info is-md">{{ allChange24h.toLocaleString()}} USD</span>
                     </div>
                   </div>
@@ -60,10 +60,10 @@
     <div class="container table-padding">
     <div class="card">
       <header class="card-header">
-        <p class="card-header-title">LibreBank Fund Assests</p>
+        <p class="card-header-title">{{ $t('lang.fund-status.fund-assets') }}</p>
       </header>
       <div class="card-content">
-        <h2 class="has-text-centered">THIS IS A SAMPLE DATA</h2>
+        <h2 class="has-text-centered">{{ $t('lang.fund-status.sample-data') }}</h2>
         <status-coins :tableData='coinsData' />
       </div>
     </div>
@@ -84,11 +84,12 @@
 
 </style> 
 <script>
-  import StatusCoins from "@/components/StatusCoins";
-  import Vue from "vue";
-  import Config from "@/config";
+  import StatusCoins from '@/components/StatusCoins'
+  import Vue from 'vue'
+  import Config from "@/config"
+  import i18n from '../locales'
   import PieChart from '@/components/PieChart'
-
+  import axios from 'axios'
   export default {
     data() {
       return {

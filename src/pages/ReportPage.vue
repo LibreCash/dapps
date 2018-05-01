@@ -5,11 +5,11 @@
           <div class="icon">
             <i class="fas fa-arrow-left" size="is-small"></i>
           </div>
-          <div>Back</div>
+          <div>{{ $t('lang.common.back') }}</div>
         </router-link>
         <div class="level"></div>
         <div class="level">
-          <section v-if="!reportData.length" class="level-item ">Incorrect report number</section>
+          <section v-if="!reportData.length" class="level-item">{{ $t('lang.reports.incorrect') }}</section>
           <section v-if="reportData.length" class="level-item footer-resp">
 			<b-table
 			 :data="reportData"
@@ -36,6 +36,7 @@
 
 <script>
 import Config from '@/config'
+import i18n from '../locales'
 export default {
   data () {
     return {
@@ -71,29 +72,29 @@ export default {
 		let report = await this.getReport(i);
 
 		this.reportData.push({
-			name:'Type',
-			data:report.tp
+			name: i18n.t('lang.reports.type-row'),
+			data: report.tp
 		},
 		{
-			name:'Asset',
-			data:report.asset,
+			name: i18n.t('lang.reports.asset-row'),
+			data: report.asset,
 		},
 		{
-			name:'From',
-			data:report.from,
+			name: i18n.t('lang.reports.from-row'),
+			data: report.from,
 			type:'address'
 		},
 		{
-			name: 'Value',
+			name: i18n.t('lang.reports.value-row'),
 			data: report.txAm,
 		},
 		{
-			name:'To',
-			data:report.to,
-			type:'address'
+			name: i18n.t('lang.reports.to-row'),
+			data: report.to,
+			type: 'address'
 		},
 		{
-			name:'Description',
+			name: i18n.t('lang.reports.description-row'),
 			data: report.descr,
 		}
 		)
