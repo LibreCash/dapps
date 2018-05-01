@@ -24,7 +24,7 @@
                   <p>{{ $t('lang.loans.loans-creation') }}</p>
               </div>
               <div class="message-body">
-                <b-field horizontal label="Type" >
+                <b-field horizontal :label="$t('lang.loans.type')" >
                   <b-select :placeholder="$t('lang.common.select-type')" v-model="selectedType">
                     <option v-for="(key, type) in typeLoans" v-bind:value="key">
                       {{ type }}

@@ -56,16 +56,16 @@
           :responsive="true">
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column :label="$t('lang.loans.holder-row')" centered v-if="props.row.holder == '-'">
-                not set
+                {{ $t('lang.common.not-set') }}
             </b-table-column>
             <b-table-column :label="$t('lang.loans.holder-row')" centered v-else>
-              <a :href="$libre.addressToLink(props.row.holder)" target="_blank" class="is-text-overflow">address</a>
+              <a :href="$libre.addressToLink(props.row.holder)" target="_blank" class="is-text-overflow">{{ $t('lang.common.address') }}</a>
             </b-table-column>
             <b-table-column :label="$t('lang.loans.recipient-row')" centered v-if="props.row.recipient == '-'">
-                not set
+                {{ $t('lang.common.not-set') }}
             </b-table-column>
             <b-table-column :label="$t('lang.loans.recipient-row')" centered v-else>
-              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank" class="is-text-overflow">address</a>
+              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank" class="is-text-overflow">{{ $t('lang.common.address') }}</a>
             </b-table-column>
             <b-table-column :label="$t('lang.loans.date-row')" centered>
               {{ props.row.timestamp }}

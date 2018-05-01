@@ -46,7 +46,7 @@ export default {
 
       this.emissionStatus.push({
         type: 'input',
-        name: 'Contract address',
+        name: i18n.t('lang.common.contract-address'),
         data: Vue.config.libre.bank.address
       })
 

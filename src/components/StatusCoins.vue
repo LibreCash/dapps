@@ -23,7 +23,7 @@
         <b-table-column :label="$t('lang.common.amount-usd')" centered>
           {{ props.row.balanceUSD }}
         </b-table-column>
-        <b-table-column :label="$t('lang.fund-status.change-usd')" centered>
+        <b-table-column :label="$t('lang.status.change-usd')" centered>
           {{ props.row.change24h }}
         </b-table-column>
       </template>

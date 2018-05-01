@@ -38,7 +38,7 @@
         </div>
         <section class="allMain">
           <div class="h2-contain">
-            <h2 class="subtitle">{{ $route.name }}</h2>
+            <h2 class="subtitle">{{ $t(`lang.tabs.${$route.meta.locale}`) }}</h2>
           </div>
           <div class="level"></div>
           <router-view/>

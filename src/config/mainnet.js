@@ -1,3 +1,5 @@
+import i18n from '../locales'
+
 module.exports = {
   network: 'main',
   addressToLink: address => `https://etherscan.io/address/${address}`,
@@ -53,80 +55,80 @@ module.exports = {
         process: data => data
       },
       {
-        name: 'Buy Rate',
+        name: i18n.t('lang.status.buy-rate'),
         getter: 'buyRate',
         process: data => `${data / 1000} LIBRE/ETH`
       },
       {
-        name: 'Sell Rate',
+        name: i18n.t('lang.status.sell-rate'),
         getter: 'sellRate',
         process: data => `${data / 1000} LIBRE/ETH`
       },
       {
-        name: 'Buy Fee',
+        name: i18n.t('lang.status.buy-fee'),
         getter: 'buyFee',
         process: data => `${data / 100} %`
       },
       {
-        name: 'Sell Fee',
+        name: i18n.t('lang.status.sell-fee'),
         getter: 'sellFee',
         process: data => `${data / 100} %`
       },
       {
-        name: 'Oracle Count',
+        name: i18n.t('lang.status.oracle-count'),
         getter: 'oracleCount',
         process: data => +data
       },
       {
-        name: 'Request price',
+        name: i18n.t('lang.status.request-price'),
         getter: 'requestPrice',
         process: data => `${data / 10 ** 18} ETH`
       },
       {
-        name: 'State',
+        name: i18n.t('lang.status.state'),
         getter: 'getState',
         process: data => [
-          'Locked',
-          'Processing Orders',
-          'Wait Oracles',
-          'Calculate Rates',
-          'Request Rates'
+          i18n.t('lang.status.state-locked'),
+          i18n.t('lang.status.state-processing-orders'),
+          i18n.t('lang.status.state-wait-oracles'),
+          i18n.t('lang.status.state-calc-rates'),
+          i18n.t('lang.status.state-request-rates')
         ][data]
       },
       {
-        name: 'Request time',
+        name: i18n.t('lang.status.request-time'),
         getter: 'requestTime',
         process: data => (+data > 0) ? (new Date(data * 1000)).toLocaleString() : '-'
       },
       {
-        name: 'Calc time',
+        name: i18n.t('lang.status.calc-time'),
         getter: 'calcTime',
         process: data => (+data > 0) ? (new Date(data * 1000)).toLocaleString() : '-'
       },
       {
-        name: 'Oracle timeout',
+        name: i18n.t('lang.status.oracle-timeout'),
         getter: 'oracleTimeout',
         process: data => `${+data} sec`
       },
       {
-        name: 'Oracle actual',
+        name: i18n.t('lang.status.oracle-actual'),
         getter: 'oracleActual',
         process: data => `${+data} sec`
       },
       {
-        name: 'Rate period',
+        name: i18n.t('lang.status.rate-period'),
         getter: 'ratePeriod',
         process: data => `${+data} sec`
       },
       {
         type: 'input',
-        name: 'Owner',
+        name: i18n.t('lang.status.owner'),
         getter: 'owner',
         process: data => data
       },
       {
         type: 'input',
-        name: 'Scheduler',
+        name: i18n.t('lang.status.scheduler'),
         getter: 'scheduler',
         process: data => data
       }

@@ -201,7 +201,8 @@
         "create-action": "Creating new deposit",
         "created": "New deposit created",
         "returned": "Deposit returned",
-        "income": "Income"
+        "income": "Income",
+        "description": "Description"
     },
     "faucet": {
         "get-tokens": "Get tokens",
@@ -211,7 +212,7 @@
         "tokens-sent": "Tokens are sent",
         "error-sending": "Error sending token transaction"
     },
-    "fund-status": {
+    "status": {
         "overall-stats": "Overall stats",
         "minimum-change": "Minimum change",
         "maximum-change": "Maximum change",
@@ -219,7 +220,26 @@
         "change-usd": "Change 24h (USD)",
         "fund-assets": "LibreBank Fund Assets",
         "sample-data": "THIS IS A SAMPLE DATA",
-        "fund-structure": "Fund Structure"
+        "fund-structure": "Fund Structure",
+        "buy-rate": "Buy rate",
+        "sell-rate": "Sell rate",
+        "buy-fee": "Buy fee",
+        "sell-fee": "Sell fee",
+        "request-price": "Request price",
+        "state": "State",
+        "request-time": "Request time",
+        "calc-time": "Calc time",
+        "oracle-timeout": "Oracle timeout",
+        "oracle-actual": "Oracle actual",
+        "rate-period": "Rate period",
+        "owner": "Owner",
+        "scheduler": "Scheduler",
+        "state-locked": "Locked",
+        "state-processing-orders": "Processing Orders",
+        "state-wait-oracles": "Wait Oracles",
+        "state-calc-rates": "Calculate Rates",
+        "state-request-rates": "Request Rates",
+        "total": "Total:"
     },
     "loans": {
         "take": "Take",
@@ -237,6 +257,8 @@
         "status-row": "Status",
         "date-row": "Date",
         "actions-row": "Actions",
+        "amount-row": "Amount",
+        "type": "Type",
         "ethactions1": "It consists of two transactions:",
         "ethactions2": "- authorize the transfer tokens",
         "ethactions3": "- take offer transaction",

@@ -84,7 +84,7 @@ export default {
         cancel: false
       },
       approve: {
-        address: Vue.config.ligre.loans.address,
+        address: Vue.config.libre.loans.address,
         amount: ''
       },
       isUpdateRatesActive: false,
