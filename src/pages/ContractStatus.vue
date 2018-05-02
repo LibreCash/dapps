@@ -16,8 +16,8 @@
                 <b-table-column field="name" :label="$t('lang.common.parameter')">
                   {{ props.row.name }}
                 </b-table-column>
-                <b-table-column :label="$t('lang.common.value')" centered >
-                <span class="is-text-overflow">{{ props.row.data }}</span>
+                <b-table-column :label="$t('lang.common.value')" centered>
+                    <span class="is-text-overflow">{{ props.row.data }}</span>
                 </b-table-column>
               </template>
             </b-table>
