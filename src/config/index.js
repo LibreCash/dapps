@@ -9,6 +9,13 @@ export default class Config {
   constructor(config) {
     Object.assign(this, config)
 
+    this.structs = {
+      report:{
+        timestamp: 0,
+        reportText: 1
+      }
+    },
+
     // common configs
     this.balance = {
       coins: [

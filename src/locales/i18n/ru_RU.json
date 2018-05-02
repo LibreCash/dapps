@@ -1,4 +1,7 @@
 {
+    "common": {
+        "exchanger-balance": "Баланс контракта (Libre)"
+    },
     "tabs": {
         "reports": "Отчеты",
         "fundStatus": "Статус фонда",
