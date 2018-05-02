@@ -1,30 +1,19 @@
 <template>
   <div>
-      <div class="table-padding">
-        <div class="level">
-          <div class="level-left">          
-            <div class="message is-dark">
-              <div class="message-header">
+      <div class="table-padding">      
+            <div class="card">
+              <div class="card-content">
                 <p>{{ $t('lang.common.your-information') }}</p>
-              </div>
-              <div class="message-body">
                 <address-block></address-block>
                 <p>{{ $t('lang.common.allowed') }}: {{ allowed }} Libre</p>
                 <p>ETH: {{ balanceETH }} ETH</p>
                 <p>Libre: {{ balanceLibre }} Libre</p>
               </div>
-            </div>
-          </div>
         </div>
-
+        <div class="level"></div>
         <div class="columns">
-          <div class="column is-three-fifths is-offset-one-fifth">
-            <div class="message">
-              <div class="message-header">
-                  <p>{{ $t('lang.loans.loans-creation') }}</p>
-              </div>
-              <div class="message-body">
-                <b-field horizontal :label="$t('lang.loans.type')" >
+          <div class="column">
+                <b-field horizontal label="Type" >
                   <b-select :placeholder="$t('lang.common.select-type')" v-model="selectedType">
                     <option v-for="(key, type) in typeLoans" v-bind:value="key">
                       {{ type }}
@@ -59,8 +48,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
     <div class="level"></div>
   </div>
 </template>

@@ -16,7 +16,8 @@
                   {{ props.row.name }}
                 </b-table-column>
                 <b-table-column :label="$t('lang.common.value')" centered>
-                    <span class="is-text-overflow">{{ props.row.data }}</span>
+                    <a v-if="props.row.type == 'address'" :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
+                    <span v-else class="is-text-overflow">{{ props.row.data }}</span>
                 </b-table-column>
               </template>
             </b-table>
@@ -42,7 +43,7 @@ export default {
         status = this.config.bank.status
 
       this.emissionStatus.push({
-        type: 'input',
+        type: 'address',
         name: i18n.t('lang.common.contract-address'),
         data: this.config.bank.address
       })
@@ -56,7 +57,7 @@ export default {
           this.emissionStatus.push({
             type: item.type,
             name: item.name,
-            data: status[i].process(dataBank[i])
+            data: item.type == 'address' ? (this.$eth.isZeroAddress(dataBank[i]) ? '-' : dataBank[i]) : status[i].process(dataBank[i])
           })
         }
       })

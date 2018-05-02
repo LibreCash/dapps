@@ -15,10 +15,10 @@
           :loading="isLoading"
           :mobile-cards="true">
           <template slot-scope="props">
-            <b-table-column>
+            <b-table-column :label="$t('lang.common.parameter')">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column centered class="flex">
+            <b-table-column centered class="flex" :label="$t('lang.common.value')">
               <a  v-if="props.row.type == 'input'" :href="$libre.addressToLink(props.row.data)" target="_blank" class="is-text-overflow">{{props.row.data}}</a>
               <span v-else>{{ props.row.data }}</span>
             </b-table-column>
