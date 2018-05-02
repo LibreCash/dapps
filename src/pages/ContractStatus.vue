@@ -1,7 +1,6 @@
 /* eslint-disable-one-var */
 <template>
-      <div class="level">
-        <div class="level-item">
+      <div class="container">
             <b-table
               class="centered"
               :data="emissionStatus"
@@ -21,7 +20,6 @@
                 </b-table-column>
               </template>
             </b-table>
-        </div>
         <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
       </div> 
 </template>
