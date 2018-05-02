@@ -15,7 +15,8 @@
         "bounty": "Баунти-программа"
     },
     "titles": {
-        "reports": "Отчет - LibreBank",
+        "reports": "Отчеты - LibreBank",
+        "report": "Отчет - LibreBank",
         "fundStatus": "Статус фонда - LibreBank",
         "contractStatus": "Статус контракта - LibreBank",
         "dao": "ДАО - LibreBank",
@@ -108,7 +109,8 @@
             "blocked": "Заблокирован",
             "used": "Взят",
             "completed": "Завершен"
-        }
+        },
+        "exchanger-balance": "Баланс контракта (Libre)"
     },
     "contracts": {
         "liberty": "Токен Liberty",

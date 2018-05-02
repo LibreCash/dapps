@@ -21,14 +21,14 @@ var locales = ['en', 'ru']
  */
 export default new VueI18n({
     locales,
-	locale: locales[+localStorage.getItem("locale") || 0],
-	messages: {
+    locale: locales[+localStorage.getItem("locale") || 0],
+    messages: {
         locales,
-		en: {
-			lang: en
-		},
-		ru: {
-			lang: ru
-		}
-	}
+        en: {
+            lang: en
+        },
+        ru: {
+            lang: ru
+        }
+    }
 })

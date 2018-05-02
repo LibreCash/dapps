@@ -66,7 +66,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import AddressBlock from '@/components/AddressBlock'
 import i18n from '../locales'
 export default {
@@ -161,7 +160,7 @@ export default {
 
     async updateData() {
       this.myAddress = window.web3.eth.defaultAccount;
-      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, Vue.config.libre.loans.address));
+      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, this.config.loans.address));
       try {
         this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.myAddress));
       } catch (err) {
@@ -171,7 +170,7 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Vue.config.libre.loans.address);
+      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address);
       let _waiting = i18n.t('lang.common.tips.waiting'),
           _sending = i18n.t('lang.common.tips.sending'),
           _success = i18n.t('lang.common.success-low'),
@@ -181,7 +180,7 @@ export default {
       let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
-        let txHash = await this.$libre.token.approve(Vue.config.libre.loans.address, amount);
+        let txHash = await this.$libre.token.approve(this.config.loans.address, amount);
         this.setMessage('warning', [disclaimer, `${action} - ${_sending}`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [disclaimer, `${action} - ${_success}`]);

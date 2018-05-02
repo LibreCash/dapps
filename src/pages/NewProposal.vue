@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import i18n from '../locales'
 export default {
   data () {
@@ -230,7 +229,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Vue.config.libre.dao.address;
+      this.daoAddress = this.config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.getTokensCount();
       this.startValidDataTimer();

@@ -1,18 +1,16 @@
 <template>
     <div class="table-padding">
-      <div class="level">
-        <div class="card">
-          <div class="card-content">
-            <address-block></address-block>
-          </div>
+      <div class="card level">
+        <div class="card-content">
+          <address-block></address-block>
         </div>
       </div>
-      <div class="level">
       <b-message :type="msg.type">{{ msg.text }}</b-message>
-      </div>
       <div class="level">
-        <button class="button is-primary" v-bind:class="{'is-loading':isLoading}"
+        <div class="flex level-item">
+            <button class="button is-primary is-large" v-bind:class="{'is-loading':isLoading}"
             @click="getTokens()" :disabled="isDisabled">{{ $t('lang.faucet.get-tokens') }}</button>
+        </div>
       </div>
     </div>
 </template>

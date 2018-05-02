@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import i18n from '../locales'
 export default {
   data () {
@@ -84,7 +83,7 @@ export default {
         cancel: false
       },
       approve: {
-        address: Vue.config.libre.loans.address,
+        address: this.config.loans.address,
         amount: ''
       },
       isUpdateRatesActive: false,
@@ -176,7 +175,7 @@ export default {
       this.isLoading = false
     },
 
-    async waitMessage(ready, all, price) {
+    waitMessage(ready, all, price) {
       let action = i18n.t('lang.loans.auth-action');
       let _success = i18n.t('lang.common.success-low');
       
@@ -288,7 +287,7 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Vue.config.libre.deposit.address);
+      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.deposit.address);
       let _waiting = i18n.t('lang.common.tips.waiting'),
           _sending = i18n.t('lang.common.tips.sending'),
           _success = i18n.t('lang.common.success-low'),
@@ -298,7 +297,7 @@ export default {
       let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
-        let txHash = await this.$libre.token.approve(Vue.config.libre.deposit.address, amount);
+        let txHash = await this.$libre.token.approve(this.config.deposit.address, amount);
         this.setMessage('warning', [disclaimer, `${action} - ${_sending}`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [disclaimer, `${action} - ${_success}`]);

@@ -109,7 +109,8 @@
             "blocked": "Blocked",
             "used": "Used",
             "completed": "Completed"
-        }
+        },
+        "exchanger-balance": "Contract balance (Libre)"
     },
     "contracts": {
         "liberty": "Liberty token",
