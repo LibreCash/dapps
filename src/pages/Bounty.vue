@@ -15,7 +15,7 @@
                 {{ $t('lang.common.current-time') }}: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}
               </div>
             </div>
-          </div>          
+          </div>
         </div>
         <div class="columns">
           <div class="column is-6">
@@ -153,7 +153,7 @@
                 <b-tooltip :label="$t('lang.bounty.update-info-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="update(props.row)"><i class="fas fa-sync"></i></button>
                 </b-tooltip>
-            </b-table-column>            
+            </b-table-column>
             <b-table-column :label="$t('lang.bounty.actions-row')" centered>
                 <b-tooltip :label="$t('lang.bounty.claim-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="claim(props.row)" :disabled="
@@ -221,8 +221,11 @@
             </b-tab-item>
         </b-tabs>
       </section>
-      <footer class="modal-card-foot">
-          <button class="button" type="button" @click="termsShown = false">{{ $t('lang.common.close') }}</button>
+      <footer class="modal-card-foot level">
+        <div class="level-item">
+            <button class="button" type="button" @click="termsShown = false">{{ $t('lang.common.close') }}</button>
+        </div>
+          
       </footer>
     </b-modal>
     <!-- new targets modal -->
@@ -244,21 +247,12 @@
                 <b-input v-model="targetWithdraw"></b-input>
             </b-field>
         </section>
-        <footer class="modal-card-foot">
-            <button class="button" type="button" @click="newTargetsShown = false">{{ $t('lang.common.close') }}</button>
-            <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}"
-              :disabled="!(
-                isValidFee(buyFee) &&
-                isValidFee(sellFee) &&
-                (
-                  newTargetsType == 'bank' ||
-                  (
-                    newTargetsType == 'exchanger' &&
-                    isInteger(targetDeadline) &&
-                    isAddress(targetWithdraw)
-                  )
-                )
-              )">{{ $t('lang.bounty.create-targets') }}</button>
+        <footer class="modal-card-foot level">
+            <div class="level-item">
+                <button class="button" type="button" @click="newTargetsShown = false">{{ $t('lang.common.close') }}</button>
+                <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}"
+              :disabled="!canCreateTarger">{{ $t('lang.bounty.create-targets') }}</button>
+            </div>
         </footer>
     </b-modal>
   </div>
@@ -303,6 +297,14 @@ export default {
         deadlineUnix: 0,
         deadline: ''
       }
+    }
+  },
+  computed: {
+    canCreateTarger() {
+        return (this.isValidFee(this.buyFee) && this.isValidFee(this.sellFee) &&
+                ((this.newTargetsType == 'bank' && this.bank.deadlineUnix > this.curBlockchainTime) ||
+                  (this.newTargetsType == 'exchanger' && this.isInteger(this.targetDeadline) &&
+                    this.isAddress(this.targetWithdraw) && this.exchanger.deadlineUnix > this.curBlockchainTime)))
     }
   },
   methods: {
