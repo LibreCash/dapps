@@ -44,13 +44,13 @@
                     <div class="control">
                       <b-taglist attached>
                           <b-tag>{{ $t('lang.common.claimed') }}</b-tag>
-                          <b-tag type="is-info">{{ bank.claimed ? 'yes' : 'no' }}</b-tag>
+                          <b-tag type="is-info">{{ bank.claimed ? $t('lang.common.yes') : $t('lang.common.no') }}</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
                       <b-taglist attached>
                           <b-tag>{{ $t('lang.common.payment') }}</b-tag>
-                          <b-tag type="is-info">{{ bank.payment == 0 ? 'nothing' : bank.payment + 'ETH' }}</b-tag>
+                          <b-tag type="is-info">{{ bank.payment == 0 ? $t('lang.common.nothing') : bank.payment + 'ETH' }}</b-tag>
                       </b-taglist>
                     </div>
                   </b-field>
@@ -90,13 +90,13 @@
                     <div class="control">
                       <b-taglist attached>
                           <b-tag>{{ $t('lang.common.claimed') }}</b-tag>
-                          <b-tag type="is-info">{{ exchanger.claimed ? 'yes' : 'no' }}</b-tag>
+                          <b-tag type="is-info">{{ exchanger.claimed ? $t('lang.common.yes') : $t('lang.common.no') }}</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
                       <b-taglist attached>
                           <b-tag>{{ $t('lang.common.payment') }}</b-tag>
-                          <b-tag type="is-info">{{ exchanger.payment == 0 ? 'nothing' : exchanger.payment + 'ETH' }}</b-tag>
+                          <b-tag type="is-info">{{ exchanger.payment == 0 ? $t('lang.common.nothing') : exchanger.payment + 'ETH' }}</b-tag>
                       </b-taglist>
                     </div>
                   </b-field>
@@ -204,7 +204,7 @@
                   {{ $t('lang.bounty.term.buy-bigger') }}
               </b-message>
               <b-message :title="$t('lang.bounty.term.much-libre-title')" :closable="false" type="is-info">
-                  {{ $t('lang.bounty.term.much-libre') }}
+                  <span v-html="$t('lang.bounty.term.much-libre')"></span>
               </b-message>
               <b-message :title="$t('lang.bounty.term.overflow-libre-title')" :closable="false" type="is-info">
                   {{ $t('lang.bounty.term.overflow-libre') }}

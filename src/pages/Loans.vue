@@ -56,16 +56,16 @@
           :responsive="true">
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column :label="$t('lang.loans.holder-row')" centered v-if="props.row.holder == '-'">
-                not set
+                {{ $t('lang.common.not-set') }}
             </b-table-column>
             <b-table-column :label="$t('lang.loans.holder-row')" centered v-else>
-              <a :href="$libre.addressToLink(props.row.holder)" target="_blank" class="is-text-overflow">address</a>
+              <a :href="$libre.addressToLink(props.row.holder)" target="_blank" class="is-text-overflow">{{ $t('lang.common.address') }}</a>
             </b-table-column>
             <b-table-column :label="$t('lang.loans.recipient-row')" centered v-if="props.row.recipient == '-'">
-                not set
+                {{ $t('lang.common.not-set') }}
             </b-table-column>
             <b-table-column :label="$t('lang.loans.recipient-row')" centered v-else>
-              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank" class="is-text-overflow">address</a>
+              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank" class="is-text-overflow">{{ $t('lang.common.address') }}</a>
             </b-table-column>
             <b-table-column :label="$t('lang.loans.date-row')" centered>
               {{ props.row.timestamp }}
@@ -94,7 +94,7 @@
         <div class="columns">
           <div class="column is-narrow">
             <b-tooltip :label="$t('lang.common.tooltips.items-on-page')">
-              <b-field>
+              <b-field :label="$t('lang.common.tooltips.items-on-page') + ':'">
                 <b-select v-model="perPage" @input="loadLoans()">
                   <option value="3">3</option>
                   <option value="5">5</option>

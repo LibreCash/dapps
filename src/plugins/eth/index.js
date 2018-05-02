@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import Web3 from 'web3'
 import SolidityCoder from 'web3/lib/solidity/coder'
+import i18n from '../../locales'
 
 export default class ETH {
   static async install (vue, options) {
@@ -37,7 +38,7 @@ export default class ETH {
               networkUse = this.network[0].toUpperCase() + this.network.substring(1)
           
             if (network !== networkUse) {
-              Vue.prototype.$snackbar.open({message: `Please use ${networkUse} network`, indefinite: true})
+              Vue.prototype.$snackbar.open({message: i18n.t('lang.messages.only-network', {network: networkUse}), indefinite: true})
             }
           }
         })
@@ -112,16 +113,16 @@ export default class ETH {
   }
 
   getErrorMsg (error) {
-    const LOCK_WALLET = 'Please, unlock you wallet.',
+    const LOCK_WALLET = i18n.t('lang.messages.pls-unlock'),
           METAMASK_REJECT_MESSAGE = 'User denied transaction signature.',
           METAMASK_REJECT_FIREFOX = 'cancelTransaction';
 
     if (!this.metamask)
-      return 'Please, install MetaMask for use it.'
+      return i18n.t('lang.messages.install-metamask');
 
     if (error.message) {
       if (error.message.includes(METAMASK_REJECT_MESSAGE) || error.message.includes(METAMASK_REJECT_FIREFOX))
-        return 'Transaction was rejected by user'
+        return i18n.t('lang.messages.user-rejected');
       if (error.message.includes('Unknown address'))
         return LOCK_WALLET
     } else {

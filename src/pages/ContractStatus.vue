@@ -44,7 +44,7 @@ export default {
 
       this.emissionStatus.push({
         type: 'address',
-        name: 'Contract address',
+        name: i18n.t('lang.common.contract-address'),
         data: this.config.bank.address
       })
 

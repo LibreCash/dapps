@@ -7,14 +7,14 @@
         <div class="column is-6">
           <div class="card bm--card-equal-height">
             <header class="card-header">
-              <p class="card-header-title">{{ $t('lang.fund-status.overall-stats') }}</p>
+              <p class="card-header-title">{{ $t('lang.status.overall-stats') }}</p>
             </header>
             <div class="card-content">
               <div class="content">
                 <div class="level">
                   <div class="level-item level-left">
                     <div class="tags has-addons is-large">
-                      <span class="tag is-md">{{ $t('lang.fund-status.minimum-change') }}:</span>
+                      <span class="tag is-md">{{ $t('lang.status.minimum-change') }}:</span>
                       <span class="tag is-success is-md">{{ minCoin.name }}</span>
                       <span class="tag is-info is-md">{{ minCoin.change24h.toLocaleString()}} USD</span>
                     </div>
@@ -24,7 +24,7 @@
                 <div class="level">  
                   <div class="level-item level-left">
                     <div class="tags has-addons is-md">
-                      <span class="tag is-md">{{ $t('lang.fund-status.maximum-change') }}:</span>
+                      <span class="tag is-md">{{ $t('lang.status.maximum-change') }}:</span>
                       <span class="tag is-success is-md">{{ maxCoin.name }}</span>
                       <span class="tag is-info is-md">{{ maxCoin.change24h.toLocaleString()}} USD</span>
                     </div>
@@ -34,7 +34,7 @@
                 <div class="level"> 
                   <div class="level-item level-left">
                     <div class="tags has-addons is-md">
-                      <span class="tag is-md">{{ $t('lang.fund-status.total-change') }}:</span>
+                      <span class="tag is-md">{{ $t('lang.status.total-change') }}:</span>
                       <span class="tag is-info is-md">{{ allChange24h.toLocaleString()}} USD</span>
                     </div>
                   </div>
@@ -46,7 +46,7 @@
         <div class="column is-6">
           <div class="card bm--card-equal-height">
             <header class="card-header">
-              <p class="card-header-title">Overall stats</p>
+              <p class="card-header-title">{{ $t('lang.status.overall-stats') }}</p>
             </header>
              <div class="card-content">
               <div class="content chart">
@@ -60,10 +60,10 @@
     <div class="container table-padding">
     <div class="card">
       <header class="card-header">
-        <p class="card-header-title">{{ $t('lang.fund-status.fund-assets') }}</p>
+        <p class="card-header-title">{{ $t('lang.status.fund-assets') }}</p>
       </header>
       <div class="card-content">
-        <h2 class="has-text-centered">{{ $t('lang.fund-status.sample-data') }}</h2>
+        <h2 class="has-text-centered">{{ $t('lang.status.sample-data') }}</h2>
         <status-coins :tableData='coinsData' />
       </div>
     </div>
@@ -180,7 +180,7 @@
           }
 
           this.coinsData.push({
-            name: "Total:",
+            name: i18n.t('lang.status.total'),
             balanceUSD: this.allBalances.toLocaleString(),
             change24h: this.allChange24h.toLocaleString()
           });

@@ -85,7 +85,7 @@
                   {{ $t('lang.dao.create-proposal') }}
                 </button>
                 <b-tag v-if="!validTokens">{{ $t('lang.dao.not-enough-tokens') }}</b-tag>
-                <b-tag v-if="!validPeriod">{{ $t('lang.dao.debating-period-1') }} {{ $libre.proposalParams.minTime / 60 / 60 }} {{ $t('lang.dao.debating-period-2') }})</b-tag>
+                <b-tag v-if="!validPeriod">{{ $t('lang.dao.debating-period-1') }} {{ $libre.proposalParams.minTime / 60 / 60 }} {{ $t('lang.dao.debating-period-2') }}</b-tag>
             </p>
         </b-field>
       </div>

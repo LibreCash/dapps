@@ -117,7 +117,7 @@ export default {
             loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId));
             this.loan = loan;
 
-          if (loan.status == 'active') {
+          if (loan.status == i18n.t('lang.common.statuses.active')) {
             this.takeEnable = true;
             this.claimEnable = this.returnEnable = false;
 
@@ -137,7 +137,7 @@ export default {
               i18n.t('lang.loans.message1-4'), // - rate calculation
               i18n.t('lang.loans.message1-5')  // 2. Available amount of collateral.
             ].concat(ETHActions));
-          } else if (loan.status == 'used') {
+          } else if (loan.status == i18n.t('lang.common.statuses.used')) {
             this.takeEnable = this.cancelEnable = false;
             
             if (loan.holder === this.$eth.yourAccount)
@@ -155,7 +155,7 @@ export default {
             {name: i18n.t('lang.loans.holder-row'), data: loan.holder, type: 'input'}
           )
 
-          if (loan.status != 'active') {
+          if (loan.status != i18n.t('lang.common.statuses.active')) {
             this.loanData.push({name: i18n.t('lang.loans.recipient-row'), data: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient, type: this.$eth.isZeroAddress(loan.recipient)? '':'input'})
             this.loanData.push({name: i18n.t('lang.loans.take-row'), data: new Date(loan.timestamp * 1000).toLocaleString()})
             this.loanData.push({name: i18n.t('lang.loans.return-row'), data: new Date((loan.timestamp + loan.period) * 1000).toLocaleString()})
@@ -164,9 +164,9 @@ export default {
           }
 
           this.loanData.push(
-            {name: i18n.t('lang.loans.amount-row'), data: this.$eth.fromWei(loan.amount)},
-            {name: i18n.t('lang.loans.margin-row'), data: this.$eth.fromWei(loan.margin)},
-            {name: i18n.t('lang.loans.refund-row'), data: this.$eth.fromWei(loan.refund)},
+            {name: i18n.t('lang.loans.amount-row'), data: this.$eth.fromWei(loan.amount) + " " + this.$route.params.type},
+            {name: i18n.t('lang.loans.margin-row'), data: this.$eth.fromWei(loan.margin) + " " + this.$route.params.type},
+            {name: i18n.t('lang.loans.refund-row'), data: this.$eth.fromWei(loan.refund) + " " + this.$route.params.type},
             {name: i18n.t('lang.loans.status-row'), data: loan.status}
           )
       } catch (err) {
@@ -175,8 +175,27 @@ export default {
       this.isLoading = false
     },
 
-    waitOracles() {
+    waitMessage(ready, all, price) {
+      let action = i18n.t('lang.loans.auth-action');
+      let _success = i18n.t('lang.common.success-low');
+      
+      let disclaimer = `${i18n.t('lang.loans.act-disclaimer')} ${this.$eth.fromWei(price)} ETH)`,
+          secondAction = i18n.t('lang.loans.act-2nd-action'); // 2. Rate calculation
+
+      this.setMessage('success', [
+        action,
+        `${disclaimer} - ${_success}`,
+        i18n.t('lang.loans.pls-wait-oracles'), // Please wait while we receive responses from oracles. It may take about 10 minutes...
+        '',
+        secondAction,
+        all == 0 ? '' : i18n.t('lang.loans.oracle-data', {ready: ready, all: all})
+      ]);
+    },
+
+    async waitOracles() {
       let libre = this.$libre;
+      let allOracles = +await libre.bank.oracleCount();
+      let price = +await this.$libre.bank.requestPrice();
       return new Promise((resolve, reject) => {
         var i = 1
         var checkInterval = setInterval(async function () {
@@ -184,8 +203,10 @@ export default {
             clearInterval(checkInterval)
             resolve();
           }
+          let readyOracles = +await libre.bank.readyOracles();
+          await this.waitMessage(readyOracles, allOracles, price);
           i++
-          if (i > 50) {
+          if (i > 500) {
             clearInterval(checkInterval)
             reject('timeout')
           }
@@ -196,7 +217,7 @@ export default {
     async actualizeRates() {
       let txHash;
       let bankState = this.$libre.bankState[+await this.$libre.bank.getState()];
-      let action = 'Getting current exchange rate:';
+      let action = i18n.t('lang.loans.auth-action');
       let price = +await this.$libre.bank.requestPrice();
       let _waiting = i18n.t('lang.common.tips.waiting'),
           _sending = i18n.t('lang.common.tips.sending'),
@@ -219,13 +240,7 @@ export default {
         }
 
         if (bankState == 'WAIT_ORACLES') {
-          this.setMessage('success', [
-            action,
-            `${disclaimer} - ${_success}`,
-            i18n.t('lang.loans.pls-wait-oracles'), // Please wait while we receive responses from oracles. It may take about 10 minutes...
-            '',
-            secondAction
-          ]);
+          await this.waitMessage(0, 0, price);
           await this.waitOracles()
           bankState = this.$libre.bankState[+await this.$libre.bank.getState()];
         }
@@ -301,11 +316,13 @@ export default {
             _success = i18n.t('lang.common.success-low'),
             _fail = i18n.t('lang.common.transaction-failed-low');
         let value = 0;
-        this.btnloading[action] = true
+        this.btnloading[action] = true;
         if (action === 'takeLoan' || action == 'claim') {
-          if (!(await this.actualizeRates()))
+          if (!(await this.actualizeRates())) {
+            this.btnloading[action] = false;
+            console.log("error")
             return
-
+          }
           this.loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId));
 
           if (this.loanType == 'Libre' && action == 'takeLoan')
@@ -332,8 +349,8 @@ export default {
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
-        console.log(msg)
-        this.$libre.notify(msg,'is-danger');
+        this.setMessage('danger', [msg]);
+        this.$libre.notify(msg, 'is-danger');
       }
       this.btnloading[action] = false
     }

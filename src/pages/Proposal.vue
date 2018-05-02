@@ -27,7 +27,7 @@
             <b-table-column :label="$t('lang.dao.name-row')">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column :label="$t('lang.dao.status-row')" centered>
+            <b-table-column :label="$t('lang.dao.value-row')" centered>
               {{ props.row.value }}
             </b-table-column>
           </template>
@@ -152,7 +152,7 @@ export default {
           })
 
           this.proposalData.push({
-            name: i18n.t('lang.dao.status-row') + ':',
+            name: i18n.t('lang.dao.status-row'),
             value: this.$libre.proposalStatuses[+this.proposal.status].text
           })
 
@@ -167,7 +167,8 @@ export default {
             let amount = this.proposal.amount;
             if (this.currentProposal["type"]) {
               if ((this.currentProposal["type"] == '%')) amount = `${this.proposal.amount / 100} %`;
-              if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ? 'YES' : 'NO');
+              if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ?
+                                  i18n.t('lang.common.yes') : i18n.t('lang.common.no'));
             }
                           
             this.proposalData.push({

@@ -35,9 +35,9 @@ export default class Libre {
     }
 
     this.loansStatus = [
-      'active',
-      'used',
-      'completed'
+      i18n.t('lang.common.statuses.active'),
+      i18n.t('lang.common.statuses.used'),
+      i18n.t('lang.common.statuses.completed')
     ]
 
     this.proposalParams = {
@@ -155,7 +155,7 @@ export default class Libre {
         text: i18n.t('lang.proposal-types.set-lock'),
         key: 'SET_LOCK',
         lock: i18n.t('lang.proposal-types.lock'),
-        _amount: i18n.t('lang.proposal-types.period'),
+        _amount: i18n.t('lang.proposal-types.lock'),
         type: 'bool'
       },
       {
@@ -165,20 +165,20 @@ export default class Libre {
       {
         text: i18n.t('lang.proposal-types.change-arbitrator'),
         key: 'CHANGE_ARBITRATOR',
-        benef: 'New Arbitrator Address:'
+        benef: i18n.t('lang.proposal-types.new-arbitrator-address')
       }
     ]
 
     this.proposalStatuses = [{
-        text: 'ACTIVE',
+        text: i18n.t('lang.common.statuses.active'),
         number: 0
       },
       {
-        text: 'FINISHED',
+        text: i18n.t('lang.common.statuses.finished'),
         number: 1
       },
       {
-        text: 'BLOCKED',
+        text: i18n.t('lang.common.statuses.blocked'),
         number: 2
       }
     ]

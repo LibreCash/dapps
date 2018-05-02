@@ -53,7 +53,7 @@
         "current-time": "Current time",
         "date": "Date",
         "deadline": "Deadline",
-        "deadlined": "deadlined",
+        "deadlined": "outdated",
         "deadline-low": "deadline",
         "description": "Description",
         "details": "Details",
@@ -65,6 +65,8 @@
         "loading-dots": "loading...",
         "loading-info-dots": "Loading information...",
         "max-amount": "Max amount",
+        "no": "no",
+        "nothing": "nothing",
         "not-set": "not set",
         "no-metamask": "No metamask / not logged in",
         "outdated": "outdated",
@@ -77,6 +79,7 @@
         "please-select-action": "Please select an action",
         "please-wait-for-sending": "Please wait, there is a sending to the network:",
         "recipient": "Recipient",
+        "seconds-short": "sec",
         "set-time": "Set time...",
         "submit": "Submit",
         "success-low": "success",
@@ -89,6 +92,7 @@
         "update-allowance": "Update Allowance",
         "value": "Value",
         "votes": "Votes",
+        "yes": "yes",
         "your-address": "Your address",
         "your-information": "Your information",
         "withdraw": "Withdraw",
@@ -99,7 +103,14 @@
         "tooltips": {
             "items-on-page": "Items on page"
         },
-        "exchanger-balance": "Contract balance"
+        "statuses": {
+            "active": "Active",
+            "finished": "Finished",
+            "blocked": "Blocked",
+            "used": "Used",
+            "completed": "Completed"
+        },
+        "exchanger-balance": "Contract balance (Libre)"
     },
     "contracts": {
         "liberty": "Liberty token",
@@ -175,12 +186,13 @@
         "not-enough-tokens": "not enough tokens to create proposal",
         "debating-period-1": "too short debating period (min",
         "debating-period-2": "hours)",
-        "name-row": "Name",
-        "status-row": "Status",
+        "name-row": "Parameter",
+        "status-row": "Status:",
         "type-row": "Type:",
         "voting-row": "Voting:",
         "deadline-row": "Deadline:",
-        "now-row": "Now:"
+        "now-row": "Now:",
+        "value-row": "Value"
     },
     "deposit": {
         "create-plan": "Create plan",
@@ -204,7 +216,8 @@
         "create-action": "Creating new deposit",
         "created": "New deposit created",
         "returned": "Deposit returned",
-        "income": "Income"
+        "income": "Income",
+        "description": "Description"
     },
     "faucet": {
         "get-tokens": "Get tokens",
@@ -214,7 +227,7 @@
         "tokens-sent": "Tokens are sent",
         "error-sending": "Error sending token transaction"
     },
-    "fund-status": {
+    "status": {
         "overall-stats": "Overall stats",
         "minimum-change": "Minimum change",
         "maximum-change": "Maximum change",
@@ -222,7 +235,27 @@
         "change-usd": "Change 24h (USD)",
         "fund-assets": "LibreBank Fund Assets",
         "sample-data": "THIS IS A SAMPLE DATA",
-        "fund-structure": "Fund Structure"
+        "fund-structure": "Fund Structure",
+        "buy-rate": "Buy rate",
+        "sell-rate": "Sell rate",
+        "buy-fee": "Buy fee",
+        "sell-fee": "Sell fee",
+        "request-price": "Request price",
+        "state": "State",
+        "request-time": "Request time",
+        "calc-time": "Calc time",
+        "oracle-timeout": "Oracle timeout",
+        "oracle-actual": "Oracle actual",
+        "rate-period": "Rate period",
+        "owner": "Owner",
+        "scheduler": "Scheduler",
+        "state-locked": "Locked",
+        "state-processing-orders": "Processing Orders",
+        "state-wait-oracles": "Wait Oracles",
+        "state-calc-rates": "Calculate Rates",
+        "state-request-rates": "Request Rates",
+        "total": "Total:",
+        "oracle-count": "Oracle count"
     },
     "loans": {
         "take": "Take",
@@ -240,6 +273,8 @@
         "status-row": "Status",
         "date-row": "Date",
         "actions-row": "Actions",
+        "amount-row": "Amount",
+        "type": "Type",
         "ethactions1": "It consists of two transactions:",
         "ethactions2": "- authorize the transfer tokens",
         "ethactions3": "- take offer transaction",
@@ -250,7 +285,7 @@
         "message1-5": "2. Available amount of collateral.",
         "act-disclaimer": "1. Requesting rates (cost",
         "act-2nd-action": "2. Rate calculation",
-        "pls-wait-oracles": "'Please wait while we receive responses from oracles. It may take about 10 minutes...'",
+        "pls-wait-oracles": "Please wait while we receive responses from oracles. It may take about 10 minutes...",
         "new-offer": "New offer",
         "create-offer": "Create offer",
         "create-offer-transation": "Create offer transaction",
@@ -267,7 +302,9 @@
         "you-can": "You can create an offer",
         "message2-1": "When creating the offer, you will need to make two transactions:",
         "message2-2": "1. Authorize the transfer of",
-        "message2-3": "2. Create Offer Transaction"
+        "message2-3": "2. Create Offer Transaction",
+        "auth-action": "Getting current exchange rate:",
+        "oracle-data": "ready: {ready}, all: {all}"
     },
     "tx": {
         "vote": { "fail": "Vote tx failed", "success": "Vote tx ok" },
@@ -290,9 +327,9 @@
         "delete-oracle": "Delete Oracle",
         "set-scheduler": "Set Scheduler",
         "withdraw-balance": "Withdraw Balance",
-        "new-oracle-timeout": "New Oracle Timeout",
-        "new-oracle-actual-time": "New Oracle Actual Time",
-        "new-rate-period": "New Rate Period",
+        "new-oracle-timeout": "Change Oracle Timeout",
+        "new-oracle-actual-time": "Change Oracle Actual Time",
+        "new-rate-period": "Change Rate Period",
         "set-lock": "Set Lock",
         "claim-ownership": "Claim Ownership",
         "change-arbitrator": "Change Arbitrator",
@@ -311,5 +348,11 @@
         "lock": "Lock:",
         "pause": "Pause",
         "new-arbitrator-address": "New Arbitrator Address"
+    },
+    "messages": {
+        "install-metamask": "Please install MetaMask to use it.",
+        "user-rejected": "Transaction was rejected by user",
+        "pls-unlock": "Please unlock you wallet.",
+        "only-network": "Please use {network} network"
     }
 }
