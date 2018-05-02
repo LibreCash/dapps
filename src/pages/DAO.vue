@@ -4,35 +4,39 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div class="flex">DAO Contract: 
+                <div class="flex">{{ $t('lang.contracts.dao') }}: 
                   <a :href="$libre.addressToLink(daoAddress)" target="_blank" class="is-text-overflow">{{daoAddress}}</a></div>
-                <div class="flex">Liberty Token: 
+                <div class="flex">{{ $t('lang.contracts.liberty') }}: 
                   <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow">{{libertyAddress}}</a>
                 </div>
-                <div> Current time: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
-                <div>Token count: {{ tokensCount }} LBRS</div>
-                <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / Math.pow(10, 18) }} LBRS</div>
-                <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / Math.pow(10, 18) }} LBRS</div>
-                <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
+                <div>{{ $t('lang.common.current-time') }}: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+                <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
+                <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / Math.pow(10, 18) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-count') }}: {{ $libre.proposalParams.quorum / Math.pow(10, 18) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-deadline') }}: {{ $libre.proposalParams.minTime }}</div>
             </div>
         </div>
         <div class="level"></div>
         <nav class="level">
           <div class="level-item has-text-centered" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">
             <div>
-              <p class="heading">Create</p>
+              <p class="heading">{{ $t('lang.common.create') }}</p>
               <p>
-                <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">New Proposal</router-link>
+                <router-link :to="{ path: '/dao/new_proposal' }" class="button is-primary">{{ $t('lang.dao.new-proposal') }}</router-link>
               </p>
             </div>
           </div>
           <div class="level-item has-text-centered">
             <div>
-              <p class="heading">Proposal type</p>
+              <p class="heading">{{ $t('lang.dao.proposal-type') }}</p>
               <p>
                 <b-field>
-                  <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">ALL</b-radio-button>
-                  <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">Active</b-radio-button>
+                  <b-radio-button v-model="filter" native-value="filterALL" type="is-success" @input="loadProposals()">
+                    {{ $t('lang.common.all') }}
+                  </b-radio-button>
+                  <b-radio-button v-model="filter" native-value="filterActive" type="is-success" @input="loadProposals()">
+                    {{ $t('lang.common.active') }}
+                  </b-radio-button>
                 </b-field>
               </p>
             </div>
@@ -53,42 +57,42 @@
           :mobile-cards="true"
           :responsive="true">
           <template slot-scope="props" v-if="!props.row.tempHide">
-            <b-table-column field="report.type" label='Type' centered>
-              <p>{{ props.row.loading ? 'loading...' : props.row.type }}</p>
-              <p v-if="props.row.status == 'FINISHED'" class="tag is-success is-rounded">
-                Finished
+            <b-table-column field="report.type" :label="$t('lang.common.type')" centered>
+              <p>{{ props.row.loading ? $t('lang.common.loading-dots') : props.row.type }}</p>
+              <p v-if="props.row.status == $t('lang.common.statuses.finished')" class="tag is-success is-rounded">
+                {{ $t('lang.dao.finished') }}
               </p>
-              <p v-if="props.row.status == 'BLOCKED'" class="tag is-danger is-rounded">
-                Blocked
+              <p v-if="props.row.status == $t('lang.common.statuses.blocked')" class="tag is-danger is-rounded">
+                {{ $t('lang.dao.blocked') }}
               </p>
             </b-table-column>
-            <b-table-column label='Recipient' centered v-if="props.row.recipient == '-'">
-                not set
+            <b-table-column :label="$t('lang.common.recipient')" centered v-if="props.row.recipient == '-'">
+                {{ $t('lang.common.not-set') }}
             </b-table-column>
-            <b-table-column label='Recipient' centered v-else>
-              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank">address</a>
+            <b-table-column :label="$t('lang.common.recipient')" centered v-else>
+              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank">{{ $t('lang.common.address') }}</a>
             </b-table-column>
-            <b-table-column field="report.amount" label='Amount' centered>
+            <b-table-column field="report.amount" :label="$t('lang.common.amount')" centered>
               {{ props.row.amount }}
             </b-table-column>
-            <b-table-column field="report.buffer" label='Buffer' centered>
+            <b-table-column field="report.buffer" :label="$t('lang.common.buffer')" centered>
               {{ props.row.buffer }}
             </b-table-column>
-            <b-table-column label='Description' centered>
+            <b-table-column :label="$t('lang.common.description')" centered>
               {{ props.row.description }}
             </b-table-column>
-            <b-table-column label='Votes' centered>
+            <b-table-column :label="$t('lang.common.votes')" centered>
               {{ props.row.yea }} / {{ props.row.nay }}
             </b-table-column>
-             <b-table-column label='Deadline' centered>
+             <b-table-column :label="$t('lang.common.deadline')" centered>
               <p>{{ props.row.deadline }}</p>
               <p v-if="props.row.deadlineUnix <= curBlockchainTime" class="tag is-warning is-rounded">
-                outdated
+                {{ $t('lang.common.outdated') }}
               </p>
             </b-table-column>
-            <b-table-column label='Actions' centered>
+            <b-table-column :label="$t('lang.common.actions')" centered>
               <!-- details button -->
-              <b-tooltip label="Details" type="is-dark" position="is-bottom">
+              <b-tooltip :label="$t('lang.common.details')" type="is-dark" position="is-bottom">
                 <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button" class="button"><i class="fas fa-id-card"></i></router-link>
               </b-tooltip>
               <!-- vote buttons -->
@@ -97,10 +101,10 @@
                           !props.row.loading &&
                           (tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
-                <b-tooltip label="Yea" type="is-dark" position="is-bottom">
+                <b-tooltip :label="$t('lang.dao.yea')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="vote(props.row, true)"><i class="fas fa-thumbs-up"></i></button>
                 </b-tooltip>
-                <b-tooltip label="Nay" type="is-dark" position="is-bottom">
+                <b-tooltip :label="$t('lang.dao.nay')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="vote(props.row, false)"><i class="fas fa-thumbs-down"></i></button>
                 </b-tooltip>
               </span>
@@ -110,18 +114,18 @@
                               !props.row.loading &&
                               (props.row.yea > props.row.nay) &&
                               (props.row.yea + props.row.nay >= $libre.proposalParams.quorum / Math.pow(10, 18))">
-                <b-tooltip label="Execute" type="is-dark" position="is-bottom">
+                <b-tooltip :label="$t('lang.common.execute')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="execute(props.row)"><i class="fas fa-play"></i></button>
                 </b-tooltip>
               </span>
               <span v-else-if="props.row.loading">
-                loading
+                {{ $t('lang.common.loading') }}
               </span>
               <!-- block button -->
               <span v-if="isOwner &&
                           (props.row.status === $libre.proposalStatuses[0].text) &&
                           !props.row.loading">
-                <b-tooltip label="Block as owner" type="is-dark" position="is-bottom">
+                <b-tooltip :label="$t('lang.dao.block')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="block(props.row)"><i class="fas fa-ban"></i></button>
                 </b-tooltip>
               </span>
@@ -129,14 +133,11 @@
           </template>
         </b-table>
       </div>
-    </section>
   </div>
 </template>
 
-
-
 <script>
-import Config from '@/config'
+import i18n from '../locales'
 import AddressBlock from '@/components/AddressBlock'
 
 export default {
@@ -241,12 +242,12 @@ export default {
       try {
         let 
           txHash = await this.$libre.dao.vote(id, support),
-          message = (await this.$eth.isSuccess(txHash)) ? 'vote tx ok' : 'vote tx failed'
-        this.$snackbar.open(message)
-      }catch(err) {
+          message = (await this.$eth.isSuccess(txHash)) ? i18n.t('lang.tx.vote.success') : i18n.t('lang.tx.vote.fail')
+        this.$libre.notify(message)
+      } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg, 'is-danger');
       }
 
       try {
@@ -257,7 +258,7 @@ export default {
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg, 'is-danger');
       }
       row.loading = false
     
@@ -268,14 +269,14 @@ export default {
       try {
       let 
         txHash = await this.$libre.dao.blockingProposal(row.id),
-        message = (await this.$eth.isSuccess(txHash)) ? 'block tx ok' : 'block tx failed'
-        this.$snackbar.open(message);
+        message = (await this.$eth.isSuccess(txHash)) ? i18n.t('lang.tx.block.success') : i18n.t('lang.tx.block.fail')
+        this.$libre.notify(message);
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       row.loading = false
     },
@@ -288,14 +289,14 @@ export default {
       
       try {
         let txHash = await this.$libre.dao.executeProposal(id),
-            message = (await this.$eth.isSuccess(txHash)) ? 'Execute proposal successful' : 'Execute proposal failed'
-        this.$snackbar.open(message)
+            message = (await this.$eth.isSuccess(txHash)) ? i18n.t('lang.tx.execute.success') : i18n.t('lang.tx.execute.fail')
+        this.$libre.notify(message);
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       row.loading = false
@@ -341,7 +342,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Config.dao.address[this.$eth.network];
+      this.daoAddress = this.config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       this.libertyAddress = this.$libre.libertyAddress;
       this.contractOwner = await this.$libre.dao.owner();

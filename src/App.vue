@@ -13,20 +13,32 @@
                   </router-link>
                 </div>
                 <ul class="MenuLeft">
-                  <li v-for="route in $router.options.routes" :key="route.path">
-                    <router-link :to="route.path" v-if="route.enabled">
-                          <div class="icon">
-                            <i :class="route.icon"></i>
-                          </div>
-                          <span>{{route.name }}</span>
+                  <li v-for="route in $router.options.routes" :key="route.path" v-if="route.enabled">
+                    <router-link :to="route.path">
+                      <div class="icon">
+                        <i :class="route.icon"></i>
+                      </div>
+                      <span>{{ $t(`lang.tabs.${route.meta.locale}`) }}</span>
                     </router-link>
+                  </li>
+                  <li class="level">
+                    <b-field class="level-item">
+                      <b-select v-model="locale">
+                        <option
+                          v-for="(locale, index) in $i18n.messages.locales"
+                          :value="index"
+                          :key="index">
+                          {{ locale }}
+                        </option>
+                      </b-select>
+                    </b-field>
                   </li>
                 </ul>
             </div>
         </div>
         <section class="allMain">
           <div class="h2-contain">
-            <h2 class="subtitle">{{ $route.name }}</h2>
+            <h2 class="subtitle">{{ $t(`lang.tabs.${$route.meta.locale}`) }}</h2>
           </div>
           <div class="level"></div>
           <router-view/>
@@ -34,10 +46,17 @@
     </div>
 </template>
 <script>
+import Vue from 'vue'
+import i18n from './locales'
+
+console.log(i18n.messages.locales);
+console.log(i18n.locale)
+console.log(i18n.messages.locales.indexOf(i18n.locale))
 export default {
   name: "navbar",
   data() {
     return {
+      locale: i18n.messages.locales.indexOf(i18n.locale),
       navIsActive: true
     };
   },
@@ -45,10 +64,26 @@ export default {
     toggleMenu: function() {
       this.navIsActive = !this.navIsActive;
     }
+  },
+  watch: {
+    locale: function (newVal) {
+      i18n.locale = i18n.messages.locales[+newVal];
+      localStorage.setItem("locale", newVal);
+    }
   }
 };
 </script>
 <style>
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700&subset=latin-ext');
+/* Read this: https://github.com/jgthms/bulma/issues/218 */
+.bm--card-equal-height {
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+}
+.bm--card-equal-height .card-footer {
+   margin-top: auto;
+}
 .centered {
   vertical-align:middle
 }
@@ -130,13 +165,13 @@ export default {
 .MenuLeft {
   margin-top: 75px;
 }
-.MenuLeft li a {
+.MenuLeft li a, .MenuLeft li .lang-selector {
   color: #ffffff;
   font-size: 20px;
   display: block;
   padding: 20px 10px 20px 40px;
   border-left: 4px solid transparent;
-}
+},
 .MenuLeft li a.router-link-exact-active {
   border-left: 4px solid #fcc14a;
 }
@@ -194,6 +229,9 @@ export default {
   .hamburger {
     display: none;
   }
+  .table-padding {
+    padding: 0 40px;
+  }
 }
 @media only screen and (max-width: 991px) {
   .main {
@@ -243,9 +281,7 @@ export default {
     padding: 2px 0;
   }
 }
-.table-padding {
-  padding: 0 40px;
-}
+
 input.address {
   width: 100%;
   text-align: inherit;
@@ -265,5 +301,8 @@ input.address {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   margin-top: 60px;
+}
+td.flex {
+    justify-content: center;
 }
 </style>

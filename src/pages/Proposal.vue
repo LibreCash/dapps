@@ -4,15 +4,15 @@
       <div class="table-padding">
         <div class="card">
           <div class="card-content">
-            <div>Token count: {{ tokensCount }} LBRS</div>
-            <div>Min token count to create/vote: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
-            <div>Min vote count to execute proposal: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
-            <div>Min deadline period in seconds: {{ $libre.proposalParams.minTime }}</div>
+            <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
+            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
+            <div>{{ $t('lang.dao.min-count') }}: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
+            <div>{{ $t('lang.dao.min-deadline') }}: {{ $libre.proposalParams.minTime }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
               <div class="icon">
                 <i class="fas fa-arrow-left" size="is-small"></i>
               </div>
-              <div>Back</div>
+              <div>{{ $t('lang.common.back') }}</div>
             </router-link>
           </div>
         </div>
@@ -24,10 +24,10 @@
           :loading="isLoading"
           :mobile-cards="true">
           <template slot-scope="props">
-            <b-table-column label='Name'>
+            <b-table-column :label="$t('lang.dao.name-row')">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column label='Status' centered>
+            <b-table-column :label="$t('lang.dao.value-row')" centered>
               {{ props.row.value }}
             </b-table-column>
           </template>
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import Config from '@/config'
+import i18n from '../locales'
 export default {
   data () {
     return {
@@ -147,12 +147,12 @@ export default {
           this.currentProposal = this.typeProposals[this.proposal.type]
           
           this.proposalData.push({
-            name: 'Type:',
+            name: i18n.t('lang.dao.type-row'),
             value: this.currentProposal.text
           })
 
           this.proposalData.push({
-            name: 'Status:',
+            name: i18n.t('lang.dao.status-row'),
             value: this.$libre.proposalStatuses[+this.proposal.status].text
           })
 
@@ -167,7 +167,8 @@ export default {
             let amount = this.proposal.amount;
             if (this.currentProposal["type"]) {
               if ((this.currentProposal["type"] == '%')) amount = `${this.proposal.amount / 100} %`;
-              if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ? 'YES' : 'NO');
+              if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ?
+                                  i18n.t('lang.common.yes') : i18n.t('lang.common.no'));
             }
                           
             this.proposalData.push({
@@ -197,10 +198,10 @@ export default {
           this.deadline = this.votes.deadline;
 
           this.proposalData.push(
-            {name: 'Voting:', value: `${this.votes.yea}/${this.votes.nay}`},
-            {name: 'Deadline:', value: new Date(this.votes.deadline * 1000).toLocaleString()},
-            {name: 'Now:', data: 'now', rawValue: 0, value: 0},
-            {name: 'Description:', value: this.proposal.description}
+            {name: i18n.t('lang.dao.voting-row'), value: `${this.votes.yea}/${this.votes.nay}`},
+            {name: i18n.t('lang.dao.deadline-row'), value: new Date(this.votes.deadline * 1000).toLocaleString()},
+            {name: i18n.t('lang.dao.now-row'), data: 'now', rawValue: 0, value: 0},
+            {name: i18n.t('lang.dao.description-row'), value: this.proposal.description}
           )
           await this.updateBlockTime();
           this.updateEnabledButtons();
@@ -218,14 +219,14 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(this.proposalId, support);
           
-        this.$snackbar.open(await this.$eth.isSuccess(txHash) ? 'Success voting transaction' : 'Failed voting transaction')
+        this.$libre.notify(await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.vote.success') : i18n.t('lang.tx.vote.fail'));
         await this.$libre.updateProposal(this.proposalId)
         this.loadProposal()
         
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
     },
 
@@ -240,14 +241,14 @@ export default {
         let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Proposal executed successfully.');
+          this.$libre.notify(i18n.t('lang.tx.execute.success'));
         } else {
-          this.$snackbar.open('Failed on proposal executions');
+          this.$libre.notify(i18n.t('lang.tx.execute.fail'));
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg, 'is-danger');
       }
       
       this.loadingExecute = false;
@@ -261,14 +262,14 @@ export default {
         let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open('Proposal blocked.');
+          this.$libre.notify(i18n.t('lang.tx.block.success'));
         } else {
-          this.$snackbar.open('Proposal not blocked.');
+          this.$libre.notify(i18n.t('lang.tx.block.fail'));
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
       this.loadingBlock = false;
       this.loadProposal();
@@ -278,7 +279,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = Config.dao.address[this.$eth.network];
+      this.daoAddress = this.config.dao.address;
       this.defaultAddress = window.web3.eth.defaultAccount;
       await this.checkOwner();
       await this.getTokensCount();

@@ -1,33 +1,31 @@
 <template>
-		<div class="table-padding">
-			<div class="level">
-        <div class="card">
-          <div class="card-content">
-            <address-block></address-block>
-          </div>
+    <div class="table-padding">
+      <div class="card level">
+        <div class="card-content">
+          <address-block></address-block>
         </div>
-			</div>
-			<div class="level">
-			<b-message :type="msg.type" style="white-space: wrap;">{{ msg.text }}</b-message>
-			</div>
-			<div class="level">
-			  <button class="button is-primary" v-bind:class="{'is-loading':isLoading}"
-            @click="getTokens()" :disabled="isDisabled">Get Tokens</button>
-			</div>
-		</div>
+      </div>
+      <b-message :type="msg.type">{{ msg.text }}</b-message>
+      <div class="level">
+        <div class="flex level-item">
+            <button class="button is-primary is-large" v-bind:class="{'is-loading':isLoading}"
+            @click="getTokens()" :disabled="isDisabled">{{ $t('lang.faucet.get-tokens') }}</button>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
 import AddressBlock from "@/components/AddressBlock";
-
+import i18n from '../locales'
 export default {
   data() {
     return {
-      balanceLiberty: "loading...",
+      balanceLiberty: i18n.t('lang.common.loading-dots'),
       isLoading: false,
       msg: {
         type: "is-info",
-        text: "Loading information..."
+        text: i18n.t('lang.common.loading-info-dots')
       },
       isDisabled: true
     };
@@ -35,9 +33,7 @@ export default {
 
   methods: {
     async loadLiberty() {
-      this.balanceLiberty = this.$libre
-
-        .toToken(
+      this.balanceLiberty = this.$libre.toToken(
           +await this.$libre.liberty.balanceOf(
             this.$eth._web3.eth.defaultAccount
           )
@@ -53,18 +49,18 @@ export default {
 
       if (!isGot && balance > 2000 && this.$eth._web3.eth.defaultAccount) {
         this.isDisabled = false;
-        this.msg.text = "You can get LBRS.";
+        this.msg.text = i18n.t('lang.faucet.yes-you-can');
       } else if (!this.$eth._web3.eth.defaultAccount) {
         this.msg = {
           type: "is-danger",
-          text: "No metamask / not logged in"
+          text: i18n.t('lang.common.no-metamask')
         };
       } else {
         this.msg = {
           type: "is-danger",
           text: isGot
-            ? "Tokens have already been sent to the address"
-            : "Not enough tokens on the faucet"
+            ? i18n.t('lang.faucet.already-sent')
+            : i18n.t('lang.faucet.not-enough')
         };
       }
     },
@@ -76,18 +72,16 @@ export default {
         let txHash = await this.$libre.faucet.get();
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open("Tokens sent");
+          this.$libre.notify(i18n.t('lang.faucet.tokens-sent'));
 
           this.loadLiberty();
         } else {
-          this.$snackbar.open("Error sending token transaction");
+          this.$libre.notify(i18n.t('lang.faucet.error-sending'));
         }
       } catch (err) {
         let msg = this.$eth.getErrorMsg(err);
-
         console.log(msg);
-
-        this.$snackbar.open(msg);
+        this.$libre.notify(msg,'is-danger');
       }
 
       this.isLoading = false;

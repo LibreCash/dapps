@@ -2,16 +2,16 @@
     <div>
         <section v-if="!unknownData">
             <div class="flex">
-                <p>Your address:</p>
+                <p>{{ $t('lang.common.your-address') }}: </p>
                 <a :href="$libre.addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
             </div>
             <div>
-                Balances: {{ balance }} Libre, {{ libertyBalance }} LBRS
+                {{ $t('lang.common.balances') }}: {{ balance }} Libre, {{ libertyBalance }} LBRS
             </div>
         </section>
         <section v-else>
             <div>
-                No metamask / not logged in
+                {{ $t('lang.common.no-metamask') }}
             </div>
         </section>
     </div>

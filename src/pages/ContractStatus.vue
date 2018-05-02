@@ -1,8 +1,6 @@
 /* eslint-disable-one-var */
 <template>
-      <div class="cards">
-        <div class="card-content">
-          <div id="status-bank">
+      <div class="container">
             <b-table
               class="centered"
               :data="emissionStatus"
@@ -14,22 +12,21 @@
               :pagination-simple="false"
               :mobile-cards="true">
               <template slot-scope="props">
-                <b-table-column field="name" label='Parameter'>
+                <b-table-column field="name" :label="$t('lang.common.parameter')">
                   {{ props.row.name }}
                 </b-table-column>
-                <b-table-column label='Value' centered >
-                <span class="is-text-overflow">{{ props.row.data }}</span>
+                <b-table-column :label="$t('lang.common.value')" centered>
+                    <a v-if="props.row.type == 'address'" :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
+                    <span v-else class="is-text-overflow">{{ props.row.data }}</span>
                 </b-table-column>
               </template>
             </b-table>
-          </div>
-        </div>
         <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
       </div> 
 </template>
 
 <script>
-import Config from '@/config'
+import i18n from '../locales'
 export default {
   data () {
     return {
@@ -43,30 +40,36 @@ export default {
 
       var
         exchanger = this.$libre.bank,
-        status = Config.bank.status
+        status = this.config.bank.status
 
       this.emissionStatus.push({
-        type: 'input',
-        name: 'Contract address',
-        data: Config.bank.address[this.$eth.network]
+        type: 'address',
+        name: i18n.t('lang.common.contract-address'),
+        data: this.config.bank.address
       })
 
-      let dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error')))
-      let totalSupply = await this.$libre.token.totalSupply().catch(e => 'error')
-      status.forEach((item,i)=>{
+      let 
+        dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error'))),
+        tokenBalance = await this.$libre.token.balanceOf(this.config.bank.address).catch(e=>'error'),
+        totalSupply = await this.$libre.token.totalSupply().catch(e => 'error')
+      status.forEach((item, i) => {
         if(dataBank[i] !== 'error') {
           this.emissionStatus.push({
             type: item.type,
             name: item.name,
-            data: status[i].process(dataBank[i])
+            data: item.type == 'address' ? (this.$eth.isZeroAddress(dataBank[i]) ? '-' : dataBank[i]) : status[i].process(dataBank[i])
           })
         }
       })
 
       this.emissionStatus.push({
-        name: 'Total Supply',
+        name: i18n.t('lang.common.total-supply'),
         data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
+      },{
+        name: i18n.t('lang.common.exchanger-balance'),
+        data: tokenBalance !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       })
+
 
       this.isLoading = false
     },
