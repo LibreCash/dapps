@@ -359,12 +359,12 @@ export default {
             result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.targets-creation.success') :
                             i18n.t('lang.tx.targets-creation.fail');
 
-          alert(result); // Replace it to notify
+          this.$libre.notify(result);
           this.newTargetLoading = false;
           this.newTargetsShown = false;
           this.loadTargets();
         } catch(err) {
-          alert(this.$eth.getErrorMsg(err));
+          this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
           this.newTargetLoading = false;
           this.newTargetsShown = false;
           this.loadTargets();
@@ -410,11 +410,11 @@ export default {
         let
           result = await this.$eth.isSuccess(txHash) ? 'Success unclaim transaction' : 'Failed unclaim transaction';
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.updateClaimed();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.updateClaimed();
         this.tableLoading = false;
       }
@@ -427,11 +427,11 @@ export default {
         let
           result = await this.$eth.isSuccess(txHash) ? 'Success unclaim transaction' : 'Failed unclaim transaction';
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.updateClaimed();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.updateClaimed();
         this.tableLoading = false;
       }
@@ -445,11 +445,11 @@ export default {
         let
           result = await this.$eth.isSuccess(txHash) ? 'Success hack transaction' : 'Failed hack transaction';
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.loadTargets();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.loadTargets();
         this.tableLoading = false;
       }
@@ -464,12 +464,12 @@ export default {
           result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.withdraw.success') :
                             i18n.t('lang.tx.withdraw.fail');
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.updateClaimed();
         this.getBounties();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.updateClaimed();
         this.getBounties();
         this.tableLoading = false;
@@ -484,11 +484,11 @@ export default {
           result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.claim.success') :
                             i18n.t('lang.tx.claim.fail');
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.updateClaimed();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.updateClaimed();
         this.tableLoading = false;
       }
@@ -502,11 +502,11 @@ export default {
           result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.destruct.success') :
                             i18n.t('lang.tx.destruct.fail');
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.tableLoading = false;
         this.loadTargets();
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.tableLoading = false;
         this.loadTargets();
       }
@@ -518,12 +518,14 @@ export default {
       this.updateClaimed();
     },
     async getBounties () {
-      this.bank.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.bank.address[this.network]));
-      this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.exchanger.address[this.network]));
+      this.bank.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.bank.address));
+      this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.exchanger.address));
     },
     async getDeadlines () {
-      this.bank.deadline = this.$eth.toDateString(+await this.$libre.bounty.bank.deadline());
-      this.exchanger.deadline = this.$eth.toDateString(+await this.$libre.bounty.exchanger.deadline());
+      this.bank.deadlineUnix = +await this.$libre.bounty.bank.deadline();
+      this.bank.deadline = this.$eth.toDateString(this.bank.deadlineUnix);
+      this.exchanger.deadlineUnix = +await this.$libre.bounty.exchanger.deadline();
+      this.exchanger.deadline = this.$eth.toDateString(this.exchanger.deadlineUnix);
     },
     async loadTargets (e) {
       this.searchData = [];
@@ -600,10 +602,9 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.network = this.$eth.network;
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.bountyBankAddress = this.config.bounty.bank.address[this.network];
-      this.bountyExchangerAddress = this.config.bounty.exchanger.address[this.network];
+      this.bountyBankAddress = this.config.bounty.bank.address;
+      this.bountyExchangerAddress = this.config.bounty.exchanger.address;
       this.startUpdatingTime();
       this.getBounties(); // no await, start async
       this.getDeadlines();

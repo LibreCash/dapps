@@ -83,7 +83,7 @@
             <p class="control">
               <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}"
                   @click="newDeposit(planSelected.id)"
-                  :disabled="!isInteger(amount) || +amount < planSelected.minAmount">{{ $t('lang.deposit.new-deposit') }}</button>
+                  :disabled="!newDepositEnable">{{ $t('lang.deposit.new-deposit') }}</button>
             </p>
           </b-field>
         </div>
@@ -160,12 +160,18 @@ export default {
       msg: {
         type: 'is-info',
         notes: [i18n.t('lang.deposit.tip-select-plan')]
-      }
+      },
+      balance: 0
     }
   },
   computed: {
     claimEnable() {
         return this.selected && this.selected.deadline.search(i18n.t('lang.common.outdated')) > 0
+    },
+    newDepositEnable() {
+        return +this.amount >= 0 && 
+               +this.amount > this.planSelected.minAmount &&
+               +this.amount <= this.balance
     }
   },
   methods: {
@@ -174,10 +180,6 @@ export default {
         type: `is-${type}`,
         notes: notes
       }
-    },
-
-    isInteger(number) {
-      return +number >= 0
     },
 
     async createPlan() {
@@ -330,6 +332,10 @@ export default {
         this.setMessage("warning", [i18n.t('lang.deposit.over-amount-disclaimer')]);
       else
         this.setMessage("info", [`${i18n.t('lang.deposit.income')}: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`]);
+    },
+
+    async getBalance() {
+        this.balance = this.$libre.toToken(await this.$libre.token.balanceOf(window.web3.eth.defaultAccount))
     }
   },
 
@@ -340,6 +346,7 @@ export default {
       this.checkOwner();
       this.pushPlans();
       this.updateMyDeposit();
+      this.getBalance();
     } catch (err) {
       console.log(err)
     }
