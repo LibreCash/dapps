@@ -253,7 +253,8 @@
         "state-wait-oracles": "Wait Oracles",
         "state-calc-rates": "Calculate Rates",
         "state-request-rates": "Request Rates",
-        "total": "Total:"
+        "total": "Total:",
+        "oracle-count": "Oracle count"
     },
     "loans": {
         "take": "Take",
@@ -300,7 +301,9 @@
         "you-can": "You can create an offer",
         "message2-1": "When creating the offer, you will need to make two transactions:",
         "message2-2": "1. Authorize the transfer of",
-        "message2-3": "2. Create Offer Transaction"
+        "message2-3": "2. Create Offer Transaction",
+        "auth-action": "Getting current exchange rate:",
+        "oracle-data": "ready: {ready}, all: {all}"
     },
     "tx": {
         "vote": { "fail": "Vote tx failed", "success": "Vote tx ok" },
