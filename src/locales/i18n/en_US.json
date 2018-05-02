@@ -102,6 +102,13 @@
         },
         "tooltips": {
             "items-on-page": "Items on page"
+        },
+        "statuses": {
+            "active": "Active",
+            "finished": "Finished",
+            "blocked": "Blocked",
+            "used": "Used",
+            "completed": "Completed"
         }
     },
     "contracts": {
@@ -179,11 +186,12 @@
         "debating-period-1": "too short debating period (min",
         "debating-period-2": "hours)",
         "name-row": "Parameter",
-        "status-row": "Value",
+        "status-row": "Status:",
         "type-row": "Type:",
         "voting-row": "Voting:",
         "deadline-row": "Deadline:",
-        "now-row": "Now:"
+        "now-row": "Now:",
+        "value-row": "Value"
     },
     "deposit": {
         "create-plan": "Create plan",

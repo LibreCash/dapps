@@ -35,9 +35,9 @@ export default class Libre {
     }
 
     this.loansStatus = [
-      'active',
-      'used',
-      'completed'
+      i18n.t('lang.common.statuses.active'),
+      i18n.t('lang.common.statuses.used'),
+      i18n.t('lang.common.statuses.completed')
     ]
 
     this.proposalParams = {
@@ -170,15 +170,15 @@ export default class Libre {
     ]
 
     this.proposalStatuses = [{
-        text: 'ACTIVE',
+        text: i18n.t('lang.common.statuses.active'),
         number: 0
       },
       {
-        text: 'FINISHED',
+        text: i18n.t('lang.common.statuses.finished'),
         number: 1
       },
       {
-        text: 'BLOCKED',
+        text: i18n.t('lang.common.statuses.blocked'),
         number: 2
       }
     ]

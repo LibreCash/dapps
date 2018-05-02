@@ -101,6 +101,13 @@
         },
         "tooltips": {
             "items-on-page": "Элементов на странице"
+        },
+        "statuses": {
+            "active": "Активен",
+            "finished": "Выполнен",
+            "blocked": "Заблокирован",
+            "used": "Взят",
+            "completed": "Завершен"
         }
     },
     "contracts": {
@@ -178,11 +185,12 @@
         "debating-period-1": "слишком короткий период обсуждения (мин.",
         "debating-period-2": "часов)",
         "name-row": "Параметр",
-        "status-row": "Значение",
+        "status-row": "Статус:",
         "type-row": "Тип:",
         "voting-row": "Голоса:",
         "deadline-row": "Срок жизни:",
-        "now-row": "Сейчас:"
+        "now-row": "Сейчас:",
+        "value-row": "Значение"
     },
     "deposit": {
         "create-plan": "Создать план",

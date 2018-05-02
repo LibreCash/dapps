@@ -59,10 +59,10 @@
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column field="report.type" :label="$t('lang.common.type')" centered>
               <p>{{ props.row.loading ? $t('lang.common.loading-dots') : props.row.type }}</p>
-              <p v-if="props.row.status == 'FINISHED'" class="tag is-success is-rounded">
+              <p v-if="props.row.status == $t('lang.common.statuses.finished')" class="tag is-success is-rounded">
                 {{ $t('lang.dao.finished') }}
               </p>
-              <p v-if="props.row.status == 'BLOCKED'" class="tag is-danger is-rounded">
+              <p v-if="props.row.status == $t('lang.common.statuses.blocked')" class="tag is-danger is-rounded">
                 {{ $t('lang.dao.blocked') }}
               </p>
             </b-table-column>
