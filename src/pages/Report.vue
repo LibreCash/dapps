@@ -68,16 +68,12 @@ import i18n from '../locales'
 export default {
   data () {
     return {
-      curReport: {},
       reportText: '',
       owner: false,
-      reportNumber: 0,
-      rawData: [],
       searchData: [],
       isLoading: false,
       currentPage: 1,
       perPage: 5,
-      isReportModalActive: false
     }
   },
   methods: {

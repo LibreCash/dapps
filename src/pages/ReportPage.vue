@@ -10,20 +10,20 @@
         <div class="level"></div>
         <div class="level">
           <section v-if="!reportData.length" class="level-item">{{ $t('lang.reports.incorrect') }}</section>
-          <section v-if="reportData.length" class="level-item footer-resp">
-			<b-table
-			 :data="reportData"
-			 :bordered="false"
-			 :striped="true"
-			 :narrowed="false"
-			 :loading="isLoading"
-			 :mobile-cards="true">
-			<template slot-scope="props">
-            <b-table-column v-if="props.row.data">
+          <section v-else class="level-item footer-resp">
+            <b-table
+             :data="reportData"
+             :bordered="false"
+             :striped="true"
+             :narrowed="false"
+             :loading="isLoading"
+             :mobile-cards="true">
+            <template slot-scope="props">
+            <b-table-column v-if="props.row.data" :label="$t('lang.common.parameter')">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column centered class="flex" v-if="props.row.data">
-              <a  v-if="props.row.type == 'address'" :href="$libre.addressToLink(props.row.data)" target="_blank" class="is-text-overflow">{{props.row.data}}</a>
+            <b-table-column v-if="props.row.data" :label="$t('lang.common.value')" centered>
+              <div v-if="props.row.type == 'address'" class="flex"><a :href="$libre.addressToLink(props.row.data)" target="_blank" class="is-text-overflow">{{props.row.data}}</a></div>
               <span v-else>{{ props.row.data }}</span>
             </b-table-column>
           </template>

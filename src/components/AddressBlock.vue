@@ -2,7 +2,7 @@
     <div>
         <section v-if="!unknownData">
             <div class="flex">
-                <p>{{ $t('lang.common.your-address') }}:</p>
+                <p>{{ $t('lang.common.your-address') }}: </p>
                 <a :href="$libre.addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
             </div>
             <div>

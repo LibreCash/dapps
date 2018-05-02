@@ -5,7 +5,7 @@
           <div class="column">
             <div class="card bm--card-equal-height">
               <div class="card-content">
-                <address-block>one</address-block>
+                <address-block />
               </div>
             </div>
           </div>
@@ -15,7 +15,7 @@
                 {{ $t('lang.common.current-time') }}: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}
               </div>
             </div>
-          </div>          
+          </div>
         </div>
         <div class="columns">
           <div class="column is-6">
@@ -114,15 +114,15 @@
 
         <b-table
           v-if="searchData.length > 0"
-          :data="isEmpty ? [] : searchData"
-          :bordered="isBordered"
-          :striped="isStriped"
-          :narrowed="isNarrowed"
+          :data="searchData"
+          :bordered="false"
+          :striped="true"
+          :narrowed="false"
           :loading="tableLoading"
-          :mobile-cards="hasMobileCards"
-          :responsive="isResponsive"
+          :mobile-cards="true"
+          :responsive="true"
           :paginated="true"
-          :per-page="perPage"
+          :per-page="10"
           :pagination-simple="false">
           <template slot-scope="props" v-if="!props.row.tempHide">
             <b-table-column label='Address' centered v-if="props.row.address == '-'">
@@ -153,7 +153,7 @@
                 <b-tooltip :label="$t('lang.bounty.update-info-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="update(props.row)"><i class="fas fa-sync"></i></button>
                 </b-tooltip>
-            </b-table-column>            
+            </b-table-column>
             <b-table-column :label="$t('lang.bounty.actions-row')" centered>
                 <b-tooltip :label="$t('lang.bounty.claim-row')" type="is-dark" position="is-bottom">
                     <button class="button" v-on:click="claim(props.row)" :disabled="
@@ -221,8 +221,11 @@
             </b-tab-item>
         </b-tabs>
       </section>
-      <footer class="modal-card-foot">
-          <button class="button" type="button" @click="termsShown = false">{{ $t('lang.common.close') }}</button>
+      <footer class="modal-card-foot level">
+        <div class="level-item">
+            <button class="button" type="button" @click="termsShown = false">{{ $t('lang.common.close') }}</button>
+        </div>
+          
       </footer>
     </b-modal>
     <!-- new targets modal -->
@@ -244,21 +247,12 @@
                 <b-input v-model="targetWithdraw"></b-input>
             </b-field>
         </section>
-        <footer class="modal-card-foot">
-            <button class="button" type="button" @click="newTargetsShown = false">{{ $t('lang.common.close') }}</button>
-            <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}"
-              :disabled="!(
-                isValidFee(buyFee) &&
-                isValidFee(sellFee) &&
-                (
-                  newTargetsType == 'bank' ||
-                  (
-                    newTargetsType == 'exchanger' &&
-                    isInteger(targetDeadline) &&
-                    isAddress(targetWithdraw)
-                  )
-                )
-              )">{{ $t('lang.bounty.create-targets') }}</button>
+        <footer class="modal-card-foot level">
+            <div class="level-item">
+                <button class="button" type="button" @click="newTargetsShown = false">{{ $t('lang.common.close') }}</button>
+                <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}"
+              :disabled="!canCreateTarger">{{ $t('lang.bounty.create-targets') }}</button>
+            </div>
         </footer>
     </b-modal>
   </div>
@@ -266,7 +260,6 @@
 
 <script>
 import AddressBlock from '@/components/AddressBlock'
-import Config from '@/config'
 import i18n from '../locales'
 export default {
   data () {
@@ -282,23 +275,12 @@ export default {
       sellFee: 0,
       buyFee: 0,
       newTargetLoading: false,
-      isEmpty: false,
-      isBordered: false,
-      isStriped: true,
-      isNarrowed: false,
       tableLoading: false,
-      hasMobileCards: true,
-      isResponsive: true,
-      perPage: 10,
       curBlockchainTime: 0,
       bountyBankAddress: '',
       bountyExchangerAddress: '',
       searchData: [],
       defaultAddress: '',
-      isActive: true,
-      isUsed: false,
-      isCompleted: false,
-      isMine: false,
       targetCount: 0,
       curBlockchainTime: 0,
       bank: {
@@ -315,6 +297,14 @@ export default {
         deadlineUnix: 0,
         deadline: ''
       }
+    }
+  },
+  computed: {
+    canCreateTarger() {
+        return (this.isValidFee(this.buyFee) && this.isValidFee(this.sellFee) &&
+                ((this.newTargetsType == 'bank' && this.bank.deadlineUnix > this.curBlockchainTime) ||
+                  (this.newTargetsType == 'exchanger' && this.isInteger(this.targetDeadline) &&
+                    this.isAddress(this.targetWithdraw) && this.exchanger.deadlineUnix > this.curBlockchainTime)))
     }
   },
   methods: {
@@ -371,12 +361,12 @@ export default {
             result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.targets-creation.success') :
                             i18n.t('lang.tx.targets-creation.fail');
 
-          alert(result); // Replace it to notify
+          this.$libre.notify(result);
           this.newTargetLoading = false;
           this.newTargetsShown = false;
           this.loadTargets();
         } catch(err) {
-          alert(this.$eth.getErrorMsg(err));
+          this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
           this.newTargetLoading = false;
           this.newTargetsShown = false;
           this.loadTargets();
@@ -384,9 +374,9 @@ export default {
     },
     getABI (row) {
         let ABI;
-        if (row.name == "LibreCash") ABI = Config.bounty.bank.targets.token.abi;
-        else if (row.name == "ComplexBank") ABI = Config.bounty.bank.targets.bank.abi;
-        else if (row.name == "ComplexExchanger") ABI = Config.bounty.exchanger.targets.exchanger.abi;
+        if (row.name == "LibreCash") ABI = this.config.bounty.bank.targets.token.abi;
+        else if (row.name == "ComplexBank") ABI = this.config.bounty.bank.targets.bank.abi;
+        else if (row.name == "ComplexExchanger") ABI = this.config.bounty.exchanger.targets.exchanger.abi;
         else ABI = i18n.t('lang.bounty.no-abi');
         return ABI;
     },
@@ -422,11 +412,11 @@ export default {
         let
           result = await this.$eth.isSuccess(txHash) ? 'Success unclaim transaction' : 'Failed unclaim transaction';
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.updateClaimed();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.updateClaimed();
         this.tableLoading = false;
       }
@@ -439,11 +429,11 @@ export default {
         let
           result = await this.$eth.isSuccess(txHash) ? 'Success unclaim transaction' : 'Failed unclaim transaction';
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.updateClaimed();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.updateClaimed();
         this.tableLoading = false;
       }
@@ -457,11 +447,11 @@ export default {
         let
           result = await this.$eth.isSuccess(txHash) ? 'Success hack transaction' : 'Failed hack transaction';
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.loadTargets();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.loadTargets();
         this.tableLoading = false;
       }
@@ -476,12 +466,12 @@ export default {
           result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.withdraw.success') :
                             i18n.t('lang.tx.withdraw.fail');
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.updateClaimed();
         this.getBounties();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.updateClaimed();
         this.getBounties();
         this.tableLoading = false;
@@ -496,11 +486,11 @@ export default {
           result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.claim.success') :
                             i18n.t('lang.tx.claim.fail');
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.updateClaimed();
         this.tableLoading = false;
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.updateClaimed();
         this.tableLoading = false;
       }
@@ -514,11 +504,11 @@ export default {
           result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.destruct.success') :
                             i18n.t('lang.tx.destruct.fail');
 
-        alert(result); // Replace it to notify
+        this.$libre.notify(result);
         this.tableLoading = false;
         this.loadTargets();
       } catch(err) {
-        alert(this.$eth.getErrorMsg(err));
+        this.$libre.notify(this.$eth.getErrorMsg(err),'is-danger');
         this.tableLoading = false;
         this.loadTargets();
       }
@@ -530,12 +520,14 @@ export default {
       this.updateClaimed();
     },
     async getBounties () {
-      this.bank.bounty = this.$libre.toToken(await this.$eth.getBalance(Config.bounty.bank.address[this.network]));
-      this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(Config.bounty.exchanger.address[this.network]));
+      this.bank.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.bank.address));
+      this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.exchanger.address));
     },
     async getDeadlines () {
-      this.bank.deadline = this.$eth.toDateString(+await this.$libre.bounty.bank.deadline());
-      this.exchanger.deadline = this.$eth.toDateString(+await this.$libre.bounty.exchanger.deadline());
+      this.bank.deadlineUnix = +await this.$libre.bounty.bank.deadline();
+      this.bank.deadline = this.$eth.toDateString(this.bank.deadlineUnix);
+      this.exchanger.deadlineUnix = +await this.$libre.bounty.exchanger.deadline();
+      this.exchanger.deadline = this.$eth.toDateString(this.exchanger.deadlineUnix);
     },
     async loadTargets (e) {
       this.searchData = [];
@@ -557,7 +549,7 @@ export default {
               type: target.type,
               name: '...',
               contract: this.$libre.getContract(
-                target.type == 'bank' ? Config.bounty.bank.targets.bank.abi : Config.bounty.exchanger.targets.exchanger.abi,
+                target.type == 'bank' ? this.config.bounty.bank.targets.bank.abi : this.config.bounty.exchanger.targets.exchanger.abi,
                 target.address
               ),
               hacked: false,
@@ -569,10 +561,10 @@ export default {
               this.searchData[searchDataLength - 1].name = _name;
               // "ComplexBank" -> deafult, see upper
               if (_name == "LibreCash") {
-                this.searchData[searchDataLength - 1].contract = this.$libre.getContract(Config.bounty.bank.targets.token.abi, target.address);
+                this.searchData[searchDataLength - 1].contract = this.$libre.getContract(this.config.bounty.bank.targets.token.abi, target.address);
               }
               if (_name == "ComplexExchanger") {
-                this.searchData[searchDataLength - 1].contract = this.$libre.getContract(Config.bounty.exchanger.targets.exchanger.abi, target.address);
+                this.searchData[searchDataLength - 1].contract = this.$libre.getContract(this.config.bounty.exchanger.targets.exchanger.abi, target.address);
               }            
           });
           this.searchData[searchDataLength - 1].contract.checkInvariant(this.defaultAddress).then((notHacked) => {
@@ -612,10 +604,9 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.network = this.$eth.network;
       this.defaultAddress = window.web3.eth.defaultAccount;
-      this.bountyBankAddress = Config.bounty.bank.address[this.network];
-      this.bountyExchangerAddress = Config.bounty.exchanger.address[this.network];
+      this.bountyBankAddress = this.config.bounty.bank.address;
+      this.bountyExchangerAddress = this.config.bounty.exchanger.address;
       this.startUpdatingTime();
       this.getBounties(); // no await, start async
       this.getDeadlines();

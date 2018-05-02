@@ -98,7 +98,8 @@
         },
         "tooltips": {
             "items-on-page": "Items on page"
-        }
+        },
+        "exchanger-balance": "Contract balance"
     },
     "contracts": {
         "liberty": "Liberty token",
@@ -310,6 +311,5 @@
         "lock": "Lock:",
         "pause": "Pause",
         "new-arbitrator-address": "New Arbitrator Address"
-
     }
 }

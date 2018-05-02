@@ -83,7 +83,7 @@
             <p class="control">
               <button v-bind:class="{'button is-primary':true, 'is-loading':newDepositLoading}"
                   @click="newDeposit(planSelected.id)"
-                  :disabled="!isInteger(amount) || +amount < planSelected.minAmount">{{ $t('lang.deposit.new-deposit') }}</button>
+                  :disabled="!newDepositEnable">{{ $t('lang.deposit.new-deposit') }}</button>
             </p>
           </b-field>
         </div>
@@ -122,7 +122,7 @@
         <div class="level"></div>
         <button v-bind:class="{'button field is-danger':true, 'is-loading':isClaimLoading}"
                 @click="claimDeposit(selected)"
-                :disabled="!selected" v-if="myDepositData.length > 0">
+                :disabled="!claimEnable" v-if="myDepositData.length > 0">
             {{ $t('lang.deposit.claim-deposit') }}
         </button>
       </div>
@@ -132,13 +132,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import AddressBlock from '@/components/AddressBlock'
 import i18n from '../locales'
 export default {
   data () {
     return {
-      deposit: Vue.config.libre.deposit.address,
+      deposit: this.config.deposit.address,
       isLoading: false,
       newPlanLoading: false,
       owner: false,
@@ -161,7 +160,18 @@ export default {
       msg: {
         type: 'is-info',
         notes: [i18n.t('lang.deposit.tip-select-plan')]
-      }
+      },
+      balance: 0
+    }
+  },
+  computed: {
+    claimEnable() {
+        return this.selected && this.selected.deadline.search(i18n.t('lang.common.outdated')) > 0
+    },
+    newDepositEnable() {
+        return +this.amount >= 0 && 
+               +this.amount > this.planSelected.minAmount &&
+               +this.amount <= this.balance
     }
   },
   methods: {
@@ -170,10 +180,6 @@ export default {
         type: `is-${type}`,
         notes: notes
       }
-    },
-
-    isInteger(number) {
-      return +number >= 0
     },
 
     async createPlan() {
@@ -195,7 +201,7 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, Vue.config.libre.deposit.address);
+      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.deposit.address);
       let _waiting = i18n.t('lang.common.tips.waiting'),
           _sending = i18n.t('lang.common.tips.sending'),
           _success = i18n.t('lang.common.success-low'),
@@ -205,7 +211,7 @@ export default {
       let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
-        let txHash = await this.$libre.token.approve(Vue.config.libre.deposit.address, amount);
+        let txHash = await this.$libre.token.approve(this.config.deposit.address, amount);
         this.setMessage('warning', [disclaimer, `${action} - ${_sending}`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [disclaimer, `${action} - ${_success}`]);
@@ -326,6 +332,10 @@ export default {
         this.setMessage("warning", [i18n.t('lang.deposit.over-amount-disclaimer')]);
       else
         this.setMessage("info", [`${i18n.t('lang.deposit.income')}: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`]);
+    },
+
+    async getBalance() {
+        this.balance = this.$libre.toToken(await this.$libre.token.balanceOf(window.web3.eth.defaultAccount))
     }
   },
 
@@ -336,6 +346,7 @@ export default {
       this.checkOwner();
       this.pushPlans();
       this.updateMyDeposit();
+      this.getBalance();
     } catch (err) {
       console.log(err)
     }

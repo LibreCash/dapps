@@ -229,6 +229,9 @@ export default {
   .hamburger {
     display: none;
   }
+  .table-padding {
+    padding: 0 40px;
+  }
 }
 @media only screen and (max-width: 991px) {
   .main {
@@ -278,9 +281,7 @@ export default {
     padding: 2px 0;
   }
 }
-.table-padding {
-  padding: 0 40px;
-}
+
 input.address {
   width: 100%;
   text-align: inherit;
