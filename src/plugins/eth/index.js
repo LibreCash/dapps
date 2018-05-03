@@ -82,11 +82,11 @@ export default class ETH {
 
   // WIP
   async getReceipt (txHash) {
-    var that = this
+    const txTimeout = 10 * 60 * 1000; // 10 minutes
+    let beginTime = +new Date();
     return new Promise((resolve, reject) => {
-      var i = 1
-      var checkInterval = setInterval(function () {
-        that._web3.eth.getTransactionReceipt(txHash, (err, receipt) => {
+      var checkInterval = setInterval(() => {
+        this._web3.eth.getTransactionReceipt(txHash, (err, receipt) => {
           if (err) {
             clearInterval(checkInterval)
             reject(err)
@@ -95,10 +95,9 @@ export default class ETH {
             resolve(receipt)
           }
         })
-        i++
-        if (i > 50) {
+        if (+new Date() - beginTime > txTimeout) {
           clearInterval(checkInterval)
-          reject('timeout')
+          reject(i18n.t('lang.common.timeout'))
         }
       }, 3000)
     })

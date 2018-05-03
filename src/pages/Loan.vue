@@ -193,22 +193,22 @@ export default {
     },
 
     async waitOracles() {
+      const oracleTimeout = 11 * 60 * 1000; // 11 minutes
       let libre = this.$libre;
       let allOracles = +await libre.bank.oracleCount();
       let price = +await this.$libre.bank.requestPrice();
+      let beginTime = +new Date();
       return new Promise((resolve, reject) => {
-        var i = 1
-        var checkInterval = setInterval(async function () {
+        var checkInterval = setInterval(async () => {
           if (libre.bankState[+await libre.bank.getState()] != 'WAIT_ORACLES') {
             clearInterval(checkInterval)
             resolve();
           }
           let readyOracles = +await libre.bank.readyOracles();
           await this.waitMessage(readyOracles, allOracles, price);
-          i++
-          if (i > 500) {
+          if (+new Date() - beginTime > oracleTimeout) {
             clearInterval(checkInterval)
-            reject('timeout')
+            reject(i18n.t('lang.common.timeout'));
           }
         }, 3000)
       })

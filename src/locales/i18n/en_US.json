@@ -83,6 +83,7 @@
         "set-time": "Set time...",
         "submit": "Submit",
         "success-low": "success",
+        "timeout": "Timeout",
         "to": "To",
         "token-count": "Token count",
         "total-supply": "Total supply",
@@ -304,7 +305,7 @@
         "message2-2": "1. Authorize the transfer of",
         "message2-3": "2. Create Offer Transaction",
         "auth-action": "Getting current exchange rate:",
-        "oracle-data": "ready: {ready}, all: {all}"
+        "oracle-data": "{ready} / {all} oracles have sent data"
     },
     "tx": {
         "vote": { "fail": "Vote tx failed", "success": "Vote tx ok" },
