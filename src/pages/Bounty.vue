@@ -221,11 +221,8 @@
             </b-tab-item>
         </b-tabs>
       </section>
-      <footer class="modal-card-foot level">
-        <div class="level-item">
-            <button class="button" type="button" @click="termsShown = false">{{ $t('lang.common.close') }}</button>
-        </div>
-          
+      <footer class="modal-card-foot flex">
+        <button class="button" type="button" @click="termsShown = false">{{ $t('lang.common.close') }}</button>
       </footer>
     </b-modal>
     <!-- new targets modal -->
@@ -247,12 +244,10 @@
                 <b-input v-model="targetWithdraw"></b-input>
             </b-field>
         </section>
-        <footer class="modal-card-foot level">
-            <div class="level-item">
-                <button class="button" type="button" @click="newTargetsShown = false">{{ $t('lang.common.close') }}</button>
-                <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}"
+        <footer class="modal-card-foot flex">
+            <button class="button" type="button" @click="newTargetsShown = false">{{ $t('lang.common.close') }}</button>
+            <button class="button is-primary" @click="createTargets" :class="{'is-loading' : newTargetLoading}"
               :disabled="!canCreateTarger">{{ $t('lang.bounty.create-targets') }}</button>
-            </div>
         </footer>
     </b-modal>
   </div>

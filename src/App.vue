@@ -302,7 +302,7 @@ input.address {
   color: #2c3e50;
   margin-top: 60px;
 }
-td.flex {
+td.flex, footer.modal-card-foot.flex {
     justify-content: center;
 }
 </style>
