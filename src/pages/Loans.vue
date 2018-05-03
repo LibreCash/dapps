@@ -115,7 +115,6 @@
                 :total="loansCount"
                 :current.sync="vpage"
                 :simple="false"
-                :order="is-centered"
                 :rounded="true"
                 :per-page="perPage">
             </b-pagination>
