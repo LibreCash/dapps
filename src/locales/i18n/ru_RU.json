@@ -206,7 +206,8 @@
         "period": "Период, с",
         "new-deposit": "Новый депозит",
         "my-deposits": "Мои депозиты",
-        "start-time": "Время начала",
+        "start-time": "Дата вклада",
+        "end-time": "Конец вклада",
         "amount-libre": "Количество, Libre",
         "margin-libre": "Прибыль, Libre",
         "claim-deposit": "Запросить депозит",
@@ -222,7 +223,8 @@
         "returned": "Депозит возвращен",
         "income": "Прибыль",
         "description": "Описание",
-        "contract-available-balance": "Свободный баланс контракта"
+        "contract-available-balance": "Доступный баланс контракта",
+        "ended": "завершен"
     },
     "faucet": {
         "get-tokens": "Получить токены",
