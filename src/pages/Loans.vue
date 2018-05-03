@@ -5,7 +5,7 @@
             <div class="card-content">
                 <address-block/>
                 <div class="flex">{{ $t('lang.contracts.loans') }}: <a class="address is-text-overflow" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
-                <div>{{ $t('lang.common.current-time') }}: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+                <div>{{ $t('lang.common.current-time') }}: {{ $d(curBlockchainTime * 1000, 'long+') }}</div>
             </div>
         </div>
         <div class="level"></div>
@@ -68,7 +68,7 @@
               <a :href="$libre.addressToLink(props.row.recipient)" target="_blank" class="is-text-overflow">{{ $t('lang.common.address') }}</a>
             </b-table-column>
             <b-table-column :label="$t('lang.loans.date-row')" centered>
-              {{ props.row.timestamp }}
+              {{ $d(props.row.timestampUnix * 1000, 'long+') }}
             </b-table-column>
             <b-table-column :label="$t('lang.loans.period-row')" centered>
               {{ props.row.period }}
@@ -194,7 +194,6 @@ export default {
               holder: loan.holder,
               recipient: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient,
               timestampUnix: loan.timestamp,
-              timestamp: new Date(loan.timestamp * 1000).toLocaleString(),
               period: this.$libre.periodToString(loan.period),
               amount: this.$eth.fromWei(loan.amount),
               margin: this.$eth.fromWei(loan.margin),

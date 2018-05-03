@@ -5,7 +5,7 @@
           <div class="card-content">
             <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
             <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
-            <div>{{ $t('lang.dao.min-deadline') }}: {{ $libre.proposalParams.minTime }}</div>
+            <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
                 <div class="icon">
                   <i class="fas fa-arrow-left" size="is-small"></i>

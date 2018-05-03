@@ -138,10 +138,6 @@ export default class ETH {
     return solidityTimestamp * 1000
   }
 
-  toDateString (solitityTimestamp) {
-    return +solitityTimestamp > 0 ? new Date(+solitityTimestamp * 1000).toDateString() : '-'
-  }
-
   async isSuccess (hash) {
     console.log(`Check transaction success: ${hash}`)
     let tx = await this.getReceipt(hash)

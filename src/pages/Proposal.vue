@@ -7,7 +7,7 @@
             <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
             <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
             <div>{{ $t('lang.dao.min-count') }}: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
-            <div>{{ $t('lang.dao.min-deadline') }}: {{ $libre.proposalParams.minTime }}</div>
+            <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
               <div class="icon">
                 <i class="fas fa-arrow-left" size="is-small"></i>
@@ -92,7 +92,7 @@ export default {
       this.updatingTicker = setInterval(() => {
         if (this.proposalData.find(item => item.data === "now")) {
           this.proposalData.find(item => item.data === "now").rawValue++;
-          this.proposalData.find(item => item.data === "now").value = new Date(this.getNow() * 1000).toLocaleString();
+          this.proposalData.find(item => item.data === "now").value = i18n.d(this.getNow() * 1000, 'long+');
           this.updateEnabledButtons();
         }
       }, 1000);
@@ -199,7 +199,7 @@ export default {
 
           this.proposalData.push(
             {name: i18n.t('lang.dao.voting-row'), value: `${this.votes.yea}/${this.votes.nay}`},
-            {name: i18n.t('lang.dao.deadline-row'), value: new Date(this.votes.deadline * 1000).toLocaleString()},
+            {name: i18n.t('lang.dao.deadline-row'), value: i18n.d(this.votes.deadline * 1000, 'long+')},
             {name: i18n.t('lang.dao.now-row'), data: 'now', rawValue: 0, value: 0},
             {name: i18n.t('lang.dao.description-row'), value: this.proposal.description}
           )

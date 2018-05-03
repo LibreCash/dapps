@@ -12,7 +12,7 @@
           <div class="column">
             <div class="card bm--card-equal-height">
               <div class="card-content">
-                {{ $t('lang.common.current-time') }}: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}
+                {{ $t('lang.common.current-time') }}: {{ $d(curBlockchainTime * 1000, 'long+') }}
               </div>
             </div>
           </div>
@@ -38,7 +38,7 @@
                     <div class="control">
                       <b-taglist attached>
                           <b-tag>{{ $t('lang.common.deadline-low') }}</b-tag>
-                          <b-tag type="is-info">{{ bank.deadlineUnix == 0 ? '...' : bank.deadline }}</b-tag>
+                          <b-tag type="is-info">{{ bank.deadlineUnix == 0 ? '...' : $d(bank.deadlineUnix * 1000, 'short') }}</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
@@ -84,7 +84,7 @@
                     <div class="control">
                       <b-taglist attached>
                           <b-tag>{{ $t('lang.common.deadline-low') }}</b-tag>
-                          <b-tag type="is-info">{{ exchanger.deadlineUnix == 0 ? '...' : exchanger.deadline }}</b-tag>
+                          <b-tag type="is-info">{{ exchanger.deadlineUnix == 0 ? '...' : $d(exchanger.deadlineUnix * 1000, 'short') }}</b-tag>
                       </b-taglist>
                     </div>
                     <div class="control">
@@ -282,15 +282,13 @@ export default {
         claimed: false,
         payment: 0,
         bounty: '...',
-        deadlineUnix: 0,
-        deadline: ''
+        deadlineUnix: 0
       },
       exchanger: {
         claimed: false,
         payment: 0,
         bounty: '...',
-        deadlineUnix: 0,
-        deadline: ''
+        deadlineUnix: 0
       }
     }
   },
@@ -520,9 +518,7 @@ export default {
     },
     async getDeadlines () {
       this.bank.deadlineUnix = +await this.$libre.bounty.bank.deadline();
-      this.bank.deadline = this.$eth.toDateString(this.bank.deadlineUnix);
       this.exchanger.deadlineUnix = +await this.$libre.bounty.exchanger.deadline();
-      this.exchanger.deadline = this.$eth.toDateString(this.exchanger.deadlineUnix);
     },
     async loadTargets (e) {
       this.searchData = [];

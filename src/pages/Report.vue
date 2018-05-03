@@ -97,9 +97,6 @@ export default {
       this.isLoading = false
     },
     async loadReports () {
-      //this.rawData.push({date: new Date().toLocaleString(), report: '{"tp": "wow", "asset":"libre","from":"0x","to":"0x","descr":"i","txAm":"lll"}'})
-      //this.rawData.push({date: new Date().toLocaleString(), report: "For testing purposes 2"})
-
       this.isLoading = true
       try {
         let j = await this.getCount();
@@ -124,7 +121,7 @@ export default {
           // if json parser error got use report text as is
           result = {descr: raw[0], nojson: true}
       }
-      result.date = this.$eth.toDateString(raw[1])
+      result.date = +raw[1] == 0 ? '-' : i18n.d(raw[1] * 1000, 'short');
       result.id = i
       return result
     },

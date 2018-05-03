@@ -22,7 +22,7 @@
             <b-table-column v-if="props.row.data" :label="$t('lang.common.parameter')">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column v-if="props.row.data" :label="$t('lang.common.value')" centered>
+            <b-table-column v-if="props.row.data" :label="$t('lang.reports.value-row')" centered>
               <div v-if="props.row.type == 'address'" class="flex"><a :href="$libre.addressToLink(props.row.data)" target="_blank" class="is-text-overflow">{{props.row.data}}</a></div>
               <span v-else>{{ props.row.data }}</span>
             </b-table-column>
@@ -62,7 +62,7 @@ export default {
           // if json parser error got use report text as is
           result = {descr: raw[0], nojson: true}
       }
-	  result.date = this.$eth.toDateString(raw[1])
+	  result.date = +raw[1] == 0 ? '-' : i18n.d(raw[1] * 1000, 'long');
 	  console.log(result)
       return result
 	},
@@ -72,6 +72,10 @@ export default {
 		let report = await this.getReport(i);
 
 		this.reportData.push({
+			name: i18n.t('lang.reports.time-row'),
+			data: report.date
+		},
+		{
 			name: i18n.t('lang.reports.type-row'),
 			data: report.tp
 		},

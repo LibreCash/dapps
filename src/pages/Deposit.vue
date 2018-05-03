@@ -170,8 +170,8 @@ export default {
     },
     newDepositEnable() {
         return +this.amount >= 0 && 
-               +this.amount > this.planSelected.minAmount &&
-               +this.amount <= this.balance
+               +this.amount >= this.planSelected.minAmount &&
+               +this.amount < this.balance
     }
   },
   methods: {
@@ -304,13 +304,13 @@ export default {
             now = new Date();
 
         if (now < deadline)
-          deadline = `${deadline.toLocaleString()} (${this.$libre.periodToString(Math.floor((deadline - now)/1000))})`
+          deadline = `${i18n.d(deadline, 'long+')} (${this.$libre.periodToString(Math.floor((deadline - now)/1000))})`
         else
-          deadline = `${dealine.toLocaleString()} (${i18n.t('lang.common.outdated')})`
+          deadline = `${i18n.d(deadline, 'long+')} (${i18n.t('lang.common.outdated')})`
 
         this.myDepositData.push({
           id: i,
-          timestamp: new Date(deposit.timestamp * 1000).toLocaleString(),
+          timestamp: i18n.d(deposit.timestamp * 1000, 'long+'),
           deadline: deadline,
           amount: this.$libre.toToken(deposit.amount),
           margin: this.$libre.toToken(deposit.margin),

@@ -17,6 +17,38 @@ Vue.use(VueI18n);
 var locales = ['en', 'ru']
 
 /**
+ * Datetime formats
+ */
+const dateTimeFormats = {
+    'en': {
+      short: {
+        year: 'numeric', month: 'short', day: 'numeric'
+      },
+      long: {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: 'numeric'
+      },
+      "long+": {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', second: 'numeric'
+      }
+    },
+    'ru': {
+      short: {
+        year: 'numeric', month: 'short', day: 'numeric'
+      },
+      long: {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: 'numeric'
+      },
+      "long+": {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', second: 'numeric'
+      }
+    }
+  }
+
+/**
  * Export
  */
 export default new VueI18n({
@@ -30,5 +62,6 @@ export default new VueI18n({
         ru: {
             lang: ru
         }
-    }
+    },
+    dateTimeFormats
 })

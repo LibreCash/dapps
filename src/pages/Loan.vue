@@ -157,10 +157,10 @@ export default {
 
           if (loan.status != i18n.t('lang.common.statuses.active')) {
             this.loanData.push({name: i18n.t('lang.loans.recipient-row'), data: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient, type: this.$eth.isZeroAddress(loan.recipient)? '':'input'})
-            this.loanData.push({name: i18n.t('lang.loans.take-row'), data: new Date(loan.timestamp * 1000).toLocaleString()})
-            this.loanData.push({name: i18n.t('lang.loans.return-row'), data: new Date((loan.timestamp + loan.period) * 1000).toLocaleString()})
+            this.loanData.push({name: i18n.t('lang.loans.take-row'), data: i18n.d(loan.timestamp * 1000, 'long+')});
+            this.loanData.push({name: i18n.t('lang.loans.return-row'), data: i18n.d((loan.timestamp + loan.period) * 1000, 'long+')});
           } else {
-            this.loanData.push({name: i18n.t('lang.loans.period-row'), data: this.$libre.periodToString(loan.period)})
+            this.loanData.push({name: i18n.t('lang.loans.period-row'), data: this.$libre.periodToString(loan.period)});
           }
 
           this.loanData.push(

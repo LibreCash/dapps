@@ -98,12 +98,12 @@ module.exports = {
       {
         name: i18n.t('lang.status.request-time'),
         getter: 'requestTime',
-        process: data => (+data > 0) ? (new Date(data * 1000)).toLocaleString() : '-'
+        process: data => (+data > 0) ? i18n.d(data * 1000, 'long') : '-'
       },
       {
         name: i18n.t('lang.status.calc-time'),
         getter: 'calcTime',
-        process: data => (+data > 0) ? (new Date(data * 1000)).toLocaleString() : '-'
+        process: data => (+data > 0) ? i18n.d(data * 1000, 'long') : '-'
       },
       {
         name: i18n.t('lang.status.oracle-timeout'),

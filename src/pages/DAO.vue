@@ -9,11 +9,11 @@
                 <div class="flex">{{ $t('lang.contracts.liberty') }}: 
                   <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow">{{libertyAddress}}</a>
                 </div>
-                <div>{{ $t('lang.common.current-time') }}: {{ new Date(curBlockchainTime * 1000).toLocaleString() }}</div>
+                <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
                 <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
                 <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / Math.pow(10, 18) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-count') }}: {{ $libre.proposalParams.quorum / Math.pow(10, 18) }} LBRS</div>
-                <div>{{ $t('lang.dao.min-deadline') }}: {{ $libre.proposalParams.minTime }}</div>
+                <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             </div>
         </div>
         <div class="level"></div>
@@ -85,7 +85,7 @@
               {{ props.row.yea }} / {{ props.row.nay }}
             </b-table-column>
              <b-table-column :label="$t('lang.common.deadline')" centered>
-              <p>{{ props.row.deadline }}</p>
+              <p>{{ $d(props.row.deadlineUnix * 1000, 'long+') }}</p>
               <p v-if="props.row.deadlineUnix <= curBlockchainTime" class="tag is-warning is-rounded">
                 {{ $t('lang.common.outdated') }}
               </p>
@@ -176,7 +176,6 @@ export default {
             yea: vote.yea,
             nay: vote.nay,
             deadlineUnix: vote.deadline,
-            deadline: new Date(vote.deadline * 1000).toLocaleString(),
             description: proposal.description,
             loading: false,
             updateTimer: null,
