@@ -87,6 +87,35 @@ export default {
 .centered {
   vertical-align:middle
 }
+
+@media screen and (max-width: 768px) {
+
+.flex-mobile {
+  display: flex;
+}
+table.has-mobile-cards {
+  display:flex
+}
+table.has-mobile-cards tbody {
+  max-width: 100%;
+  width: 100%;
+}
+table.has-mobile-cards .text-wrap {
+  white-space:normal;
+  word-wrap: break-word;
+  text-align: left;
+  word-break:break-all;
+}
+
+table.has-mobile-cards .flex-wrap {
+  flex-wrap:wrap;
+}
+}
+
+.table-container {
+  max-width: 100%;
+}
+
 .flex {
   display: flex;
 }

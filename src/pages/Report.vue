@@ -10,9 +10,9 @@
           </b-field>
           <a class="button is-info" v-on:click="newReport" :class="{'is-loading': isLoading}">{{ $t('lang.common.submit') }}</a>
         </section>
-        <div class="level">
+        <div class="level table-padding">
           <section v-if="searchData.length == 0" class="level-item">{{ $t('lang.reports.no-reports') }}</section>
-          <section v-if="searchData.length > 0" class="level-item footer-resp">
+          <section v-if="searchData.length > 0" class="level-item">
             <b-table
               class="table-container"
               :data="searchData"
@@ -29,7 +29,7 @@
                 <b-table-column :label="$t('lang.common.date')" centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column :label="$t('lang.common.description')" class="truncated" centered :colspan="props.row.nojson ? 6 : 0">
+                <b-table-column :label="$t('lang.common.description')" class="flex-mobile text-wrap flex-wrap" centered :colspan="props.row.nojson ? 6 : 0">
                   {{ props.row.descr }}
                 </b-table-column>
                 <b-table-column :label="$t('lang.common.type')" centered v-if="!props.row.nojson">
@@ -47,21 +47,6 @@
         </div>
     </div>
 </template>
-<style>
-.footer-resp {
-  max-width: 100%;
-}
-.top-padding-1 {
-  padding-top: 1em;
-}
-.truncated {
-    white-space: nowrap;
-    max-width: 400px;
-    overflow: hidden;
-    padding: 5px;
-    text-overflow: ellipsis;
-}
-</style>
 <script>
 import Config from '@/config'
 import i18n from '../locales'

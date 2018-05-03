@@ -18,9 +18,11 @@
             <b-table-column :label="$t('lang.common.parameter')">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column centered class="flex" :label="$t('lang.common.value')">
-              <a  v-if="props.row.type == 'input'" :href="$libre.addressToLink(props.row.data)" target="_blank" class="is-text-overflow">{{props.row.data}}</a>
-              <span v-else>{{ props.row.data }}</span>
+            <td v-if="props.row.data && props.row.type == 'input'" :data-label="$t('lang.common.value-row')" class="flex-mobile">
+              <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
+            </td>
+            <b-table-column v-if="props.row.type != 'input'" centered class="flex" :label="$t('lang.common.value')">
+              {{ props.row.data }}
             </b-table-column>
           </template>
         </b-table>

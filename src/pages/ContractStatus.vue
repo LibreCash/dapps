@@ -1,6 +1,6 @@
 /* eslint-disable-one-var */
 <template>
-      <div class="container">
+      <div class="container table-padding max-width">
             <b-table
               class="centered"
               :data="emissionStatus"
@@ -15,9 +15,11 @@
                 <b-table-column field="name" :label="$t('lang.common.parameter')">
                   {{ props.row.name }}
                 </b-table-column>
-                <b-table-column :label="$t('lang.common.value-row')" centered>
-                    <a v-if="props.row.type == 'address'" :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
-                    <span v-else class="is-text-overflow">{{ props.row.data }}</span>
+                <td v-if="props.row.type == 'address'" :data-label="$t('lang.common.value-row')" class="flex">
+                  <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
+                </td> 
+                <b-table-column v-else :label="$t('lang.common.value-row')">
+                    <span>{{ props.row.data }}</span>
                 </b-table-column>
               </template>
             </b-table>
@@ -56,6 +58,7 @@ export default {
         if(dataBank[i] !== 'error') {
           this.emissionStatus.push({
             type: item.type,
+            renderHtml:true,
             name: item.name,
             data: item.type == 'address' ?
               (this.$eth.isZeroAddress(dataBank[i]) ? '-' : dataBank[i]) : status[i].process(dataBank[i])
@@ -65,9 +68,11 @@ export default {
 
       this.emissionStatus.push({
         name: i18n.t('lang.common.total-supply'),
+        renderHtml:true,
         data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       },{
         name: i18n.t('lang.common.exchanger-balance'),
+        renderHtml:true,
         data: tokenBalance !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       })
 

@@ -8,9 +8,9 @@
           <div>{{ $t('lang.common.back') }}</div>
         </router-link>
         <div class="level"></div>
-        <div class="level">
-          <section v-if="!reportData.length" class="level-item">{{ $t('lang.reports.incorrect') }}</section>
-          <section v-else class="level-item footer-resp">
+        <div class="container table-padding">
+          <section v-if="!reportData.length" class="">{{ $t('lang.reports.incorrect') }}</section>
+          <section v-else class="">
             <b-table
              :data="reportData"
              :bordered="false"
@@ -19,12 +19,14 @@
              :loading="isLoading"
              :mobile-cards="true">
             <template slot-scope="props">
-            <b-table-column v-if="props.row.data" :label="$t('lang.common.parameter')">
+            <b-table-column v-if="props.row.data" :label="$t('lang.common.parameter')" :class="hidden-mobile">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column v-if="props.row.data" :label="$t('lang.reports.value-row')" centered>
-              <div v-if="props.row.type == 'address'" class="flex"><a :href="$libre.addressToLink(props.row.data)" target="_blank" class="is-text-overflow">{{props.row.data}}</a></div>
-              <span v-else>{{ props.row.data }}</span>
+            <td v-if="props.row.data && props.row.type == 'address'" :data-label="$t('lang.common.value-row')" class="flex-mobile">
+                  <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
+            </td> 
+            <b-table-column v-if="props.row.data && props.row.type != 'address'" :label="$t('lang.reports.value-row')" centered class="flex-mobile flex-wrap text-wrap">
+              {{ props.row.data }}
             </b-table-column>
           </template>
         </b-table>
@@ -33,6 +35,8 @@
     </div>
     </div>
 </template>
+<style>
+</style>
 
 <script>
 import Config from '@/config'
