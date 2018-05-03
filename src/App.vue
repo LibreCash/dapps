@@ -49,9 +49,6 @@
 import Vue from 'vue'
 import i18n from './locales'
 
-console.log(i18n.messages.locales);
-console.log(i18n.locale)
-console.log(i18n.messages.locales.indexOf(i18n.locale))
 export default {
   name: "navbar",
   data() {
@@ -88,6 +85,11 @@ export default {
   vertical-align:middle
 }
 
+.flex-centered {
+  justify-content: center;
+  text-align:center;
+}
+
 @media screen and (max-width: 768px) {
 
 .flex-mobile {
@@ -110,15 +112,7 @@ table.has-mobile-cards .text-wrap {
 table.has-mobile-cards .flex-wrap {
   flex-wrap:wrap;
 }
-}
 
-.table-container {
-  max-width: 100%;
-}
-
-.flex {
-  display: flex;
-}
 .is-text-overflow {
     flex: 1;
     overflow: auto;
@@ -127,6 +121,16 @@ table.has-mobile-cards .flex-wrap {
 
 .is-text-overflow::-webkit-scrollbar { 
     display: none; 
+}
+
+}
+
+.table-container {
+  max-width: 100%;
+}
+
+.flex {
+  display: flex;
 }
 
 .h2-contain > .subtitle {
@@ -310,14 +314,6 @@ table.has-mobile-cards .flex-wrap {
     padding: 2px 0;
   }
 }
-
-input.address {
-  width: 100%;
-  text-align: inherit;
-  border: 0;
-  background: transparent;
-  font-size: inherit;
-}
 .chart-height {
   min-height: 200px;
 }
@@ -325,7 +321,6 @@ input.address {
   justify-content: center;
 }
 #app {
-  font-family: "GothamProRegular", "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;

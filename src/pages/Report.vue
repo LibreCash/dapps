@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
         <section v-if="owner" class="table-padding">
           <b-field>
             <b-input
@@ -10,11 +10,10 @@
           </b-field>
           <a class="button is-info" v-on:click="newReport" :class="{'is-loading': isLoading}">{{ $t('lang.common.submit') }}</a>
         </section>
-        <div class="level table-padding">
+        <div class="level">
           <section v-if="searchData.length == 0" class="level-item">{{ $t('lang.reports.no-reports') }}</section>
           <section v-if="searchData.length > 0" class="level-item">
             <b-table
-              class="table-container"
               :data="searchData"
               :bordered="false"
               :striped="true"
@@ -29,7 +28,7 @@
                 <b-table-column :label="$t('lang.common.date')" centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column :label="$t('lang.common.description')" class="flex-mobile text-wrap flex-wrap" centered :colspan="props.row.nojson ? 6 : 0">
+                <b-table-column :label="$t('lang.common.description')" class="flex-mobile text-wrap flex-wrap flex-centered" centered :colspan="props.row.nojson ? 6 : 0">
                   {{ props.row.descr }}
                 </b-table-column>
                 <b-table-column :label="$t('lang.common.type')" centered v-if="!props.row.nojson">

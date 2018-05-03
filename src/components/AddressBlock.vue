@@ -1,9 +1,9 @@
 <template>
     <div>
         <section v-if="!unknownData">
-            <div class="flex">
+            <div class="flex-mobile">
                 <p>{{ $t('lang.common.your-address') }}: </p>
-                <a :href="$libre.addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
+                <a :href="$libre.addressToLink(defaultAddress)" class="is-text-overflow flex-centered">{{defaultAddress}}</a>
             </div>
             <div>
                 {{ $t('lang.common.balances') }}: {{ balance }} Libre, {{ libertyBalance }} LBRS

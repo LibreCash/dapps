@@ -19,10 +19,10 @@
              :loading="isLoading"
              :mobile-cards="true">
             <template slot-scope="props">
-            <b-table-column v-if="props.row.data" :label="$t('lang.common.parameter')" :class="hidden-mobile">
+            <b-table-column v-if="props.row.data" :label="$t('lang.common.parameter')" class="hidden-mobile">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <td v-if="props.row.data && props.row.type == 'address'" :data-label="$t('lang.common.value-row')" class="flex-mobile">
+            <td v-if="props.row.data && props.row.type == 'address'" :data-label="$t('lang.common.value-row')" class="flex-mobile flex-centered">
                   <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
             </td> 
             <b-table-column v-if="props.row.data && props.row.type != 'address'" :label="$t('lang.reports.value-row')" centered class="flex-mobile flex-wrap text-wrap">

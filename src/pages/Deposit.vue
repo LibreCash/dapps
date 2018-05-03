@@ -5,7 +5,7 @@
             <div class="card-content">
                 <address-block/>
                 <div>{{ $t('lang.common.max-amount') }}: {{ needAmount }} Libre</div>
-                <div class="flex">{{ $t('lang.contracts.deposit') }}: <a class="address is-text-overflow" :href="$libre.addressToLink(deposit)">{{ deposit }}</a></div>
+                <div class="flex-mobile  flex-centered">{{ $t('lang.contracts.deposit') }}: <a class="is-text-overflow" :href="$libre.addressToLink(deposit)">{{ deposit }}</a></div>
                 <div>{{ $t('lang.deposit.contract-available-balance') }}: {{ depositAvailable }} Libre</div>
             </div>
         </div>
@@ -106,8 +106,12 @@
             <b-table-column :label="$t('lang.deposit.start-time')" centered>
               {{ props.row.timestamp }}
             </b-table-column>
-            <b-table-column :label="$t('lang.common.deadline')" centered>
-              {{ props.row.deadline }}
+            <b-table-column :label="$t('lang.deposit.end-time')" centered>
+              <p>{{ props.row.deadline }}</p>
+              <p>
+                <b-tag type="is-warning" v-if="props.row.ended">{{ $t('lang.deposit.ended') }}</b-tag>
+                <b-tag type="is-info" v-if="!props.row.ended">{{ props.row.period }}</b-tag>
+              </p>
             </b-table-column>
             <b-table-column :label="$t('lang.deposit.amount-libre')" centered>
               {{ props.row.amount }}
@@ -168,7 +172,7 @@ export default {
   },
   computed: {
     claimEnable() {
-        return this.selected && this.selected.deadline.search(i18n.t('lang.common.outdated')) > 0
+        return this.selected && this.selected.ended
     },
     newDepositEnable() {
         return +this.amount >= 0 && 
@@ -296,29 +300,30 @@ export default {
       this.myDepositData = []
       this.isloadingDeposit = true;
 
-      let 
-        count = +await this.$libre.deposit.myDepositLength(),
-        i;
-
-      for(i = 0; i < count;i++) {
-        let 
-          deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(window.web3.eth.defaultAccount,i));
+      let count = +await this.$libre.deposit.myDepositLength();
+      for (let i=0; i < count; i++) {
+        let deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(window.web3.eth.defaultAccount, i));
 
         if (deposit.timestamp == 0) 
           continue
 
-        let deadline = new Date(deposit.deadline * 1000),
-            now = new Date();
+        let now = new Date(),
+          deadline = new Date(deposit.deadline * 1000),
+          ended = false,
+          period = 0;
 
         if (now < deadline)
-          deadline = `${i18n.d(deadline, 'long+')} (${this.$libre.periodToString(Math.floor((deadline - now)/1000))})`
-        else
-          deadline = `${i18n.d(deadline, 'long+')} (${i18n.t('lang.common.outdated')})`
+          period = this.$libre.periodToString(Math.floor((deadline - now)/1000));
+        else {
+          ended = true;
+        }
 
         this.myDepositData.push({
           id: i,
           timestamp: i18n.d(deposit.timestamp * 1000, 'long+'),
-          deadline: deadline,
+          deadline: i18n.d(deadline, 'long+'),
+          ended: ended,
+          period: period,
           amount: this.$libre.toToken(deposit.amount),
           margin: this.$libre.toToken(deposit.margin),
           plan: deposit.plan

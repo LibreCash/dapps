@@ -206,7 +206,8 @@
         "period": "Period, sec",
         "new-deposit": "New deposit",
         "my-deposits": "My deposits",
-        "start-time": "Start time",
+        "start-time": "Deposit created",
+        "end-time": "Deposit ends",
         "amount-libre": "Amount, Libre",
         "margin-libre": "Margin, Libre",
         "claim-deposit": "Claim deposit",
@@ -222,7 +223,8 @@
         "returned": "Deposit returned",
         "income": "Income",
         "description": "Description",
-        "contract-available-balance": "Unused contract balance"
+        "contract-available-balance": "Unused contract balance",
+        "ended": "ended"
     },
     "faucet": {
         "get-tokens": "Get tokens",
