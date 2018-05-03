@@ -216,11 +216,13 @@
         "authorize-disclaimer": "Authorize the transfer of",
         "low-amount-disclaimer": "Amount is less than min amount in the selected plan",
         "over-amount-disclaimer": "Amount is bigger than max amount",
+        "over-possibilities": "The contract doesn't have enough funds to hold the deposit",
         "create-action": "Creating new deposit",
         "created": "New deposit created",
         "returned": "Deposit returned",
         "income": "Income",
-        "description": "Description"
+        "description": "Description",
+        "contract-available-balance": "Unused contract balance"
     },
     "faucet": {
         "get-tokens": "Get tokens",

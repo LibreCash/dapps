@@ -216,11 +216,13 @@
         "authorize-disclaimer": "Разрешите передачу",
         "low-amount-disclaimer": "Сумма менее минимальной для данного плана",
         "over-amount-disclaimer": "Сумма больше максимальной",
+        "over-possibilities": "На контракте недостаточно средств для ожидаемой выплаты по депозиту",
         "create-action": "Создание нового депозита",
         "created": "Новый депозит создан",
         "returned": "Депозит возвращен",
         "income": "Прибыль",
-        "description": "Описание"
+        "description": "Описание",
+        "contract-available-balance": "Свободный баланс контракта"
     },
     "faucet": {
         "get-tokens": "Получить токены",
