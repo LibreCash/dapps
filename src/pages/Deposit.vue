@@ -6,6 +6,7 @@
                 <address-block/>
                 <div>{{ $t('lang.common.max-amount') }}: {{ needAmount }} Libre</div>
                 <div class="flex">{{ $t('lang.contracts.deposit') }}: <a class="address is-text-overflow" :href="$libre.addressToLink(deposit)">{{ deposit }}</a></div>
+                <div>{{ $t('lang.deposit.contract-available-balance') }}: {{ depositAvailable }} Libre</div>
             </div>
         </div>
         <div v-if="owner">
@@ -14,7 +15,7 @@
             <div slot="trigger" slot-scope="props" class="card-header">
               <p class="card-header-title">{{ $t('lang.deposit.create-plan') }}</p>
               <a class="card-header-icon">
-                <b-icon :icon="props.open ? 'caret-down' : 'caret-up'" icon-pack="fas"></b-icon>
+              0  <b-icon :icon="props.open ? 'caret-down' : 'caret-up'" icon-pack="fas"></b-icon>
               </a>
             </div>
             <div class="card-content">
@@ -161,7 +162,8 @@ export default {
         type: 'is-info',
         notes: [i18n.t('lang.deposit.tip-select-plan')]
       },
-      balance: 0
+      balance: 0,
+      depositAvailable: 0
     }
   },
   computed: {
@@ -235,7 +237,7 @@ export default {
           _fail = i18n.t('lang.common.transaction-failed-low');
 
         this.setMessage('warning', [`${action} - ${_waiting}`]);
-        let txHash = await this.$libre.deposit.createDeposit(this.$libre.fromToken(this.amount),id);
+        let txHash = await this.$libre.deposit.createDeposit(this.$libre.fromToken(this.amount), id);
         this.setMessage('warning', [`${action} - ${_sending}`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [`${action} - ${_success}`]);
@@ -252,6 +254,7 @@ export default {
         this.msg.notes.push(msg);
       }
       this.newDepositLoading = false;
+      this.getBalances();
     },
 
     async claimDeposit(selectObject) {
@@ -289,7 +292,8 @@ export default {
     },
 
     async updateMyDeposit() {
-      this.needAmount = this.$libre.toToken(await this.$libre.deposit.needAmount());
+      await this.getBalances()
+      this.myDepositData = []
       this.isloadingDeposit = true;
 
       let 
@@ -333,12 +337,16 @@ export default {
         this.setMessage("warning", [i18n.t('lang.deposit.low-amount-disclaimer')]);
       else if (amount > this.needAmount)
         this.setMessage("warning", [i18n.t('lang.deposit.over-amount-disclaimer')]);
+      else if (await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id) / 10 ** 18 > this.depositAvailable)
+        this.setMessage("warning", [i18n.t('lang.deposit.over-possibilities')]);
       else
         this.setMessage("info", [`${i18n.t('lang.deposit.income')}: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`]);
     },
 
-    async getBalance() {
-        this.balance = this.$libre.toToken(await this.$libre.token.balanceOf(window.web3.eth.defaultAccount))
+    async getBalances() {
+        this.balance = this.$libre.toToken(await this.$libre.token.balanceOf(window.web3.eth.defaultAccount));
+        this.depositAvailable = this.$libre.toToken(await this.$libre.deposit.availableTokens());
+        this.needAmount = this.$libre.toToken(await this.$libre.deposit.needAmount());
     }
   },
 
@@ -349,7 +357,6 @@ export default {
       this.checkOwner();
       this.pushPlans();
       this.updateMyDeposit();
-      this.getBalance();
     } catch (err) {
       console.log(err)
     }

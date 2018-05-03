@@ -108,12 +108,13 @@
               </b-field>
             </b-tooltip>
           </div>
-          <div class="column">
-            <b-pagination
+          <div class="level">
+            <b-pagination class="level-item"
                 v-if="loansCount > perPage"
                 @change="loadLoans"
                 :total="loansCount"
                 :current.sync="vpage"
+                order="is-centered"
                 :simple="false"
                 :rounded="true"
                 :per-page="perPage">
