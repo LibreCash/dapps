@@ -255,7 +255,6 @@
 
 <script>
 import AddressBlock from '@/components/AddressBlock'
-import i18n from '../locales'
 export default {
   data () {
     return {
@@ -351,8 +350,8 @@ export default {
             );
           }
           let
-            result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.targets-creation.success') :
-                            i18n.t('lang.tx.targets-creation.fail');
+            result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.targets-creation.success') :
+                            this.$t('lang.tx.targets-creation.fail');
 
           this.$libre.notify(result);
           this.newTargetLoading = false;
@@ -370,11 +369,11 @@ export default {
         if (row.name == "LibreCash") ABI = this.config.bounty.bank.targets.token.abi;
         else if (row.name == "ComplexBank") ABI = this.config.bounty.bank.targets.bank.abi;
         else if (row.name == "ComplexExchanger") ABI = this.config.bounty.exchanger.targets.exchanger.abi;
-        else ABI = i18n.t('lang.bounty.no-abi');
+        else ABI = this.$t('lang.bounty.no-abi');
         return ABI;
     },
     showABI (row) {
-      this.abiTitle = i18n.t('lang.bounty.abi-title');
+      this.abiTitle = this.$t('lang.bounty.abi-title');
       this.abiData = JSON.stringify(this.getABI(row));
       this.abiShown = true;
     },
@@ -388,7 +387,7 @@ export default {
     name: "_${name}",
     jsonInterface: ${ABI}
 });`;
-        this.abiTitle = i18n.t('lang.bounty.mist-title');
+        this.abiTitle = this.$t('lang.bounty.mist-title');
         this.abiShown = true;
     },
     async updateClaimed () {
@@ -456,8 +455,8 @@ export default {
         let txHash = (type == 'bank') ? await this.$libre.bounty.bank.withdrawPayments() :
                                         await this.$libre.bounty.exchanger.withdrawPayments();
         let
-          result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.withdraw.success') :
-                            i18n.t('lang.tx.withdraw.fail');
+          result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.withdraw.success') :
+                            this.$t('lang.tx.withdraw.fail');
 
         this.$libre.notify(result);
         this.updateClaimed();
@@ -476,8 +475,8 @@ export default {
         let 
           txHash = await row.bountyContract.claim(row.address);
         let
-          result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.claim.success') :
-                            i18n.t('lang.tx.claim.fail');
+          result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.claim.success') :
+                            this.$t('lang.tx.claim.fail');
 
         this.$libre.notify(result);
         this.updateClaimed();
@@ -494,8 +493,8 @@ export default {
         let 
           txHash = await row.bountyContract.suicideTarget(row.id);
         let
-          result = await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.destruct.success') :
-                            i18n.t('lang.tx.destruct.fail');
+          result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.destruct.success') :
+                            this.$t('lang.tx.destruct.fail');
 
         this.$libre.notify(result);
         this.tableLoading = false;
