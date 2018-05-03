@@ -1,14 +1,20 @@
 <template>
   <div>
       <div class="table-padding">      
-            <div class="card">
-              <div class="card-content">
+        <div class="card">
+            <div class="card-content">
                 <p>{{ $t('lang.common.your-information') }}</p>
                 <address-block></address-block>
                 <p>{{ $t('lang.common.allowed') }}: {{ allowed }} Libre</p>
                 <p>ETH: {{ balanceETH }} ETH</p>
                 <p>Libre: {{ balanceLibre }} Libre</p>
-              </div>
+                <router-link :to="{ path: '/loans' }" class="button">
+                    <div class="icon">
+                        <i class="fas fa-arrow-left" size="is-small"></i>
+                    </div>
+                    <div>{{ $t('lang.common.back') }}</div>
+                </router-link>
+            </div>
         </div>
         <div class="level"></div>
         <div class="columns">
@@ -29,9 +35,23 @@
                 <b-field horizontal :label="$t('lang.loans.margin-row')" :type="isInteger(margin) ? '' : 'is-danger'">
                   <b-input v-model="margin" placeholder="0"></b-input>
                 </b-field>
-                <b-field horizontal :label="$t('lang.loans.period-row')" :type="isDebatingPeriod() ? '' : 'is-danger'">
-                  <b-datepicker :placeholder="$t('lang.common.click-to-select')" v-model="debatingPeriod" icon="calendar" icon-pack="fas"></b-datepicker>
-                  <b-timepicker :placeholder="$t('lang.common.set-time')" icon="clock" v-model="debatingTime" icon-pack="fas"></b-timepicker>
+                <b-field horizontal :label="$t('lang.loans.period-row')">
+                    <b-field :type="isDebatingPeriod() ? '' : 'is-danger'">
+                        <b-datepicker 
+                            :placeholder="$t('lang.common.click-to-select')"
+                            v-model="debatingPeriod"
+                            icon="calendar"
+                            icon-pack="fas"
+                            expanded></b-datepicker>
+                    </b-field>
+                    <b-field :type="isDebatingPeriod() ? '' : 'is-danger'">
+                        <b-timepicker 
+                            :placeholder="$t('lang.common.set-time')"
+                            icon="clock"
+                            v-model="debatingTime"
+                            icon-pack="fas"
+                            expanded></b-timepicker>
+                    </b-field>
                 </b-field>
                 <b-field><b-message :type="msg.type" v-if="msg.notes.length != 0">
                   <p v-for="note in msg.notes">
@@ -116,11 +136,9 @@ export default {
     validData() {
       let valid = true
 
-      if (!this.isValidAmount(this.amount))
-        valid = false
-      else if (!this.isInteger(this.margin))
-        valid = false
-      else if (!this.isDebatingPeriod())
+      if (!this.isValidAmount(this.amount) || 
+          !this.isInteger(this.margin) ||
+          !this.isDebatingPeriod())
         valid = false
 
       this.button.disabled = !valid
@@ -202,7 +220,7 @@ export default {
         switch(this.selectedType) {
           case this.$libre.loansType.Libre:
             console.log("createLoan",this.allowed, this.amount)
-            if (this.allowed < this.amount && !(await this.approveLibre(this.amount))) {
+            if (this.allowed < this.amount && !(await this.approveLibre(this.$libre.fromToken(this.amount)))) {
               return
             }
             this.setMessage('info', [
