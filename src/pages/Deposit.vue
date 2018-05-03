@@ -290,12 +290,15 @@ export default {
 
     async updateMyDeposit() {
       this.needAmount = this.$libre.toToken(await this.$libre.deposit.needAmount());
-      this.myDepositData = []
       this.isloadingDeposit = true;
 
-      let count = +await this.$libre.deposit.myDepositCount();
-      for(let i=0; i < count;i++) {
-        let deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(window.web3.eth.defaultAccount,i));
+      let 
+        count = +await this.$libre.deposit.myDepositLength(),
+        i;
+
+      for(i = 0; i < count;i++) {
+        let 
+          deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(window.web3.eth.defaultAccount,i));
 
         if (deposit.timestamp == 0) 
           continue
