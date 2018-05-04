@@ -90,6 +90,13 @@ export default {
   text-align:center;
 }
 
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+
 .text-wrap > span {
   white-space:normal;
   word-wrap: break-word;
@@ -104,6 +111,9 @@ export default {
 }
 
 @media screen and (max-width: 768px) {
+#app {
+  margin-top:0;
+}
 
 .flex-mobile {
   display: flex;
@@ -333,12 +343,7 @@ table.has-mobile-cards .flex-wrap {
 .b-table > div.level {
   justify-content: center;
 }
-#app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 td.flex, footer.modal-card-foot.flex {
     justify-content: center;
 }
