@@ -6,7 +6,7 @@ import i18n from '../../locales'
 
 export default class ETH {
   static async install (vue, options) {
-    const eth = new ETH();
+    const eth = new ETH()
     Object.defineProperty(Vue.prototype, '$eth', {
       get () { return eth }
     })
@@ -29,11 +29,11 @@ export default class ETH {
           if (error) Vue.prototype.$snackbar.open({message: error, indefinite: true})
           else {
             let network = {
-              '1': 'Main',
-              '2': 'Modern',
-              '3': 'Ropsten',
-              '4': 'Rinkeby',
-              '42': 'Kovan'
+                '1': 'Main',
+                '2': 'Modern',
+                '3': 'Ropsten',
+                '4': 'Rinkeby',
+                '42': 'Kovan'
             }[result],
               networkUse = this.network[0].toUpperCase() + this.network.substring(1)
           
@@ -139,7 +139,7 @@ export default class ETH {
 
     if (error.message) return error.message
     if (error.msg) return error.msg
-    return error;
+    return error
   }
 
   toTimestamp (solidityTimestamp) {
@@ -148,9 +148,9 @@ export default class ETH {
 
   async isSuccess (hash) {
     console.log(`Check transaction success: ${hash}`)
-    let tx = await this.getReceipt(hash)
+    let tx = (await this.getReceipt(hash)).status
     console.log(`Tx success ? ${tx.status === "0x1"}`)
-    return tx.status === "0x1"
+    return tx.status === '0x1'
   }
 
   getBlockNumber () {

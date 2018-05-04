@@ -2,7 +2,6 @@
 <template>
   <div class="container table-padding max-width">
     <b-table
-      class="centered"
       :data="emissionStatus"
       :bordered="false"
       :striped="true"

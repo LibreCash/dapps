@@ -1,7 +1,7 @@
 import i18n from '../locales'
 
 module.exports = {
-  network: 'main',
+  network: 'Main',
   addressToLink: address => `https://etherscan.io/address/${address}`,
   routes: ['Contract Status','Faucet','Fund Status'],
   report: {

@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div class="flex-mobile  ">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
+                <div class="flex-mobile">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow eth-address" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
                 <div>{{ $t('lang.common.current-time') }}: {{ $d(curBlockchainTime * 1000, 'long+') }}</div>
             </div>
         </div>
