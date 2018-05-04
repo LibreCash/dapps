@@ -77,7 +77,14 @@ export default class Libre {
       'deadline': 3
     }
 
-    this.typeProposals = [{
+    this.contractNames = {
+      token: 'LibreCash',
+      bank: 'ComplexBank',
+      exchanger: 'ComplexExchanger'
+    }
+
+    this.typeProposals = [
+      {
         text: i18n.t('lang.proposal-types.custom'),
         key: 'UNIVERSAL',
         benef: i18n.t('lang.proposal-types.beneficiary'),
@@ -169,7 +176,8 @@ export default class Libre {
       }
     ]
 
-    this.proposalStatuses = [{
+    this.proposalStatuses = [
+      {
         text: i18n.t('lang.common.statuses.active'),
         number: 0
       },
