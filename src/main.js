@@ -11,7 +11,7 @@ import Config from './config'
 
 Vue.config.productionTip = false
 
-Vue.use(Config, {build: 'dao'})
+Vue.use(Config, { build: 'dao' })
 Vue.use(ETH, {})
 Vue.use(Libre, {})
 

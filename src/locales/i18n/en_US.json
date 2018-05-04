@@ -315,13 +315,34 @@
         "oracle-data": "{ready} / {all} oracles have sent data"
     },
     "tx": {
-        "vote": { "fail": "Vote tx failed", "success": "Vote tx ok" },
-        "block": { "fail": "Block tx failed", "success": "Block tx ok" },
-        "execute": { "fail": "Execute tx failed", "success": "Execute tx ok" },
-        "withdraw": { "fail": "Withdraw tx failed", "success": "Withdraw tx ok" },
-        "claim": { "fail": "Claim tx failed", "success": "Claim tx ok" },
-        "destruct": { "fail": "Destruct tx failed", "success": "Destruct tx ok" },
-        "targets-creation": { "fail": "Targets creation tx failed", "success": "Targets creation tx ok" }
+        "vote": {
+            "fail": "Vote tx failed",
+            "success": "Vote tx ok"
+        },
+        "block": {
+            "fail": "Block tx failed",
+            "success": "Block tx ok"
+        },
+        "execute": {
+            "fail": "Execute tx failed",
+            "success": "Execute tx ok"
+        },
+        "withdraw": {
+            "fail": "Withdraw tx failed",
+            "success": "Withdraw tx ok"
+        },
+        "claim": {
+            "fail": "Claim tx failed",
+            "success": "Claim tx ok"
+        },
+        "destruct": {
+            "fail": "Destruct tx failed",
+            "success": "Destruct tx ok"
+        },
+        "targets-creation": {
+            "fail": "Targets creation tx failed",
+            "success": "Targets creation tx ok"
+        }
     },
     "proposal-types": {
         "custom": "Custom",
