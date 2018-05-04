@@ -5,7 +5,7 @@
             <div class="card-content">
                 <address-block/>
                 <div>{{ $t('lang.common.max-amount') }}: {{ needAmount }} Libre</div>
-                <div class="flex-mobile  flex-centered">{{ $t('lang.contracts.deposit') }}: <a class="is-text-overflow" :href="$libre.addressToLink(deposit)">{{ deposit }}</a></div>
+                <div class="flex-mobile">{{ $t('lang.contracts.deposit') }}: <a class="is-text-overflow" :href="$libre.addressToLink(deposit)">{{ deposit }}</a></div>
                 <div>{{ $t('lang.deposit.contract-available-balance') }}: {{ depositAvailable }} Libre</div>
             </div>
         </div>

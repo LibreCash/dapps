@@ -27,7 +27,7 @@
                 <b-table-column :label="$t('lang.common.date')" centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column :label="$t('lang.common.description')" class="flex-mobile text-wrap flex-wrap flex-centered" centered :colspan="props.row.nojson ? 3 : 0">
+                <b-table-column :label="$t('lang.common.description')" class="flex-mobile text-wrap flex-wrap" centered :colspan="props.row.nojson ? 3 : 0">
                   {{ props.row.descr }}
                 </b-table-column>
                 <b-table-column :label="$t('lang.common.type')" centered v-if="!props.row.nojson">

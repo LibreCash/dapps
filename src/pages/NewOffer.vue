@@ -17,7 +17,6 @@
             </div>
         </div>
         <div class="level"></div>
-        <div class="columns">
           <div class="column">
                 <b-field horizontal label="Type" >
                   <b-select :placeholder="$t('lang.common.select-type')" v-model="selectedType">
@@ -67,7 +66,6 @@
                 </div>
               </div>
             </div>
-          </div>
     <div class="level"></div>
   </div>
 </template>

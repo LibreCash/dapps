@@ -27,7 +27,7 @@
               </header>
               <div class="card-content">
                 <div class="content">
-                  <p class="flex-mobile  flex-centered">{{ $t('lang.contracts.bounty') }}: <a :href="this.$libre.addressToLink(bountyBankAddress)" class="is-text-overflow">{{ bountyBankAddress }}</a></p>
+                  <p class="flex-mobile breakall">{{ $t('lang.contracts.bounty') }}: <a :href="this.$libre.addressToLink(bountyBankAddress)" class="is-text-overflow">{{ bountyBankAddress }}</a></p>
                   <b-field grouped group-multiline>
                     <div class="control">
                       <b-taglist attached>
@@ -73,7 +73,7 @@
               </header>
               <div class="card-content">
                 <div class="content">
-                  <p class="flex-mobile">{{ $t('lang.contracts.bounty') }}: <a :href="this.$libre.addressToLink(bountyExchangerAddress)" class="is-text-overflow flex-centered">{{bountyExchangerAddress }}</a></p>
+                  <p class="flex-mobile breakall">{{ $t('lang.contracts.bounty') }}: <a :href="this.$libre.addressToLink(bountyExchangerAddress)" class="is-text-overflow ">{{bountyExchangerAddress }}</a></p>
                   <b-field grouped group-multiline>
                     <div class="control">
                       <b-taglist attached>

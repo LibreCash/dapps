@@ -89,6 +89,13 @@ export default {
   justify-content: center;
   text-align:center;
 }
+.card-footer-item { 
+  text-align: center;
+}
+
+.breakall {
+    word-break: break-all
+}
 
 #app {
   -webkit-font-smoothing: antialiased;

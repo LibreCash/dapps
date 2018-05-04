@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div class="flex-mobile  flex-centered">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
+                <div class="flex-mobile  ">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
                 <div>{{ $t('lang.common.current-time') }}: {{ $d(curBlockchainTime * 1000, 'long+') }}</div>
             </div>
         </div>
@@ -59,13 +59,13 @@
                 {{ $t('lang.common.not-set') }}
             </b-table-column>
             <b-table-column :label="$t('lang.loans.holder-row')" centered v-else>
-              <a :href="$libre.addressToLink(props.row.holder)" target="_blank" class="is-text-overflow flex-centered">{{ $t('lang.common.address') }}</a>
+              <a :href="$libre.addressToLink(props.row.holder)" target="_blank" class="is-text-overflow ">{{ $t('lang.common.address') }}</a>
             </b-table-column>
             <b-table-column :label="$t('lang.loans.recipient-row')" centered v-if="props.row.recipient == '-'">
                 {{ $t('lang.common.not-set') }}
             </b-table-column>
             <b-table-column :label="$t('lang.loans.recipient-row')" centered v-else>
-              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank" class="is-text-overflow flex-centered">{{ $t('lang.common.address') }}</a>
+              <a :href="$libre.addressToLink(props.row.recipient)" target="_blank" class="is-text-overflow ">{{ $t('lang.common.address') }}</a>
             </b-table-column>
             <b-table-column :label="$t('lang.loans.date-row')" centered>
               {{ $d(props.row.timestampUnix * 1000, 'long+') }}

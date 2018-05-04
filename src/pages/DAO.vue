@@ -5,9 +5,9 @@
             <div class="card-content">
                 <address-block/>
                 <div class="flex-mobile">{{ $t('lang.contracts.dao') }}: 
-                  <a :href="$libre.addressToLink(daoAddress)" target="_blank" class="is-text-overflow flex-centered">{{daoAddress}}</a></div>
+                  <a :href="$libre.addressToLink(daoAddress)" target="_blank" class="is-text-overflow ">{{daoAddress}}</a></div>
                 <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
-                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow flex-centered">{{libertyAddress}}</a>
+                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow ">{{libertyAddress}}</a>
                 </div>
                 <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
                 <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
