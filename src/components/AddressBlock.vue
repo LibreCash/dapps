@@ -1,9 +1,9 @@
 <template>
     <div>
-        <section v-if="this.defaultAddress">
+        <section v-if="this.$eth.yourAccount">
             <div class="flex-mobile">
                 <p>{{ $t('lang.common.your-address') }}: </p>
-                <a :href="$libre.addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
+                <a :href="$libre.addressToLink(this.$eth.yourAccount)" class="is-text-overflow">{{this.$eth.yourAccount}}</a>
             </div>
             <div>
                 {{ $t('lang.common.balances') }}: {{ balances.libre }} Libre, {{ balances.lbrs }} LBRS
@@ -30,16 +30,13 @@ export default {
 
   async created() {
     try{
-        if(! window.web3.eth.defaultAccount ) {
             await this.$eth.accountPromise;
             await this.$libre.initPromise;
-        }
 
-        this.defaultAddress = window.web3.eth.defaultAccount;
 
-        let balances = {
-            libre:this.$libre.toToken(await this.$libre.token.balanceOf(this.defaultAddress)),
-            lbrs:this.libertyBalance = this.$libre.toToken(await this.$libre.liberty.balanceOf(this.defaultAddress))
+        this.balances = {
+            libre:this.$libre.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount)),
+            lbrs:this.libertyBalance = this.$libre.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount))
         }
             
     } catch(err) {

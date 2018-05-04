@@ -48,7 +48,7 @@ export default class ETH {
       }
       web3.SolidityCoder = SolidityCoder
 
-      this.accountPromise = this.loadAccounts();
+      this.accountPromise = this.loadAccounts()
     } catch (err) {
       console.log(err)
     }
@@ -58,8 +58,8 @@ export default class ETH {
     return new Promise((resolve, reject) => {
       this._web3 = window.web3
       this._web3.eth.getAccounts((err, accounts) => {
-        this._web3.eth.defaultAccount = accounts[0];
-        this.yourAccount = accounts[0];
+        this._web3.eth.defaultAccount = accounts[0]
+        this.yourAccount = accounts[0]
 
         var account = this.yourAccount
         setInterval(function () {

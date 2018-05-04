@@ -67,11 +67,9 @@ export default {
 
       this.emissionStatus.push({
         name: this.$t('lang.common.total-supply'),
-        renderHtml:true,
         data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       },{
         name: this.$t('lang.common.exchanger-balance'),
-        renderHtml:true,
         data: tokenBalance !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       })
 

@@ -5,20 +5,20 @@
             <div class="card-content">
                 <address-block/>
                 <div class="flex-mobile">{{ $t('lang.contracts.dao') }}: 
-                  <a :href="$libre.addressToLink(daoAddress)" target="_blank" class="is-text-overflow ">{{daoAddress}}</a></div>
+                  <a :href="$libre.addressToLink(this.contracts.dao)" target="_blank" class="is-text-overflow ">{{this.contracts.dao}}</a></div>
                 <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
-                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow ">{{libertyAddress}}</a>
+                  <a :href="$libre.addressToLink(this.contracts.lbrs)" target="_blank" class="is-text-overflow ">{{this.contracts.lbrs}}</a>
                 </div>
                 <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
                 <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
-                <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / Math.pow(10, 18) }} LBRS</div>
-                <div>{{ $t('lang.dao.min-count') }}: {{ $libre.proposalParams.quorum / Math.pow(10, 18) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-to-vote') }}: {{ this.$libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-count') }}: {{ this.$libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             </div>
         </div>
         <div class="level"></div>
         <nav class="level">
-          <div class="level-item has-text-centered" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">
+          <div class="level-item has-text-centered" v-if="tokensCount >= $libre.toToken($libre.proposalParams.minBalance)">
             <div>
               <p class="heading">{{ $t('lang.common.create') }}</p>
               <p>
@@ -140,19 +140,19 @@
 import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
-    return {
-      daoAddress: '',
-      libertyAddress: '',
+    return {  
+      contracts:{
+        dao:null,
+        lbrs:null,
+      },
       tableData: [],
       isLoading: false,
-      defaultAddress: '',
-      tokensCount: '',
+      tokensCount:null,
       filter: "filterALL",
       currentPage: 1,
       perPage: 5,
       curBlockchainTime: 0,
-      isOwner: false,
-      contractOwner: null
+      isOwner: false
     }
   },
   methods: {
@@ -223,11 +223,6 @@ export default {
           clearInterval(loginChecker)
         }
       }, 1000)
-    },
-
-    async getTokensCount () {
-      await this.$libre.promiseLibre;
-      this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
     },
 
     async vote (row, support) {
@@ -303,6 +298,10 @@ export default {
       this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
     },
 
+    async getTokensCount () {
+      this.tokensCount = this.$libre.toToken(+await this.$libre.liberty.balanceOf(this.$eth.defaultAddress),this.$libre.consts.DECIMALS)
+    },
+
     startUpdatingTime() {
       this.curBlockchainTime = 0
       this.updatingTicker = setInterval(() => {
@@ -339,11 +338,12 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = this.config.dao.address;
-      this.defaultAddress = window.web3.eth.defaultAccount;
-      this.libertyAddress = this.$libre.libertyAddress;
-      this.contractOwner = await this.$libre.dao.owner();
-      this.isOwner = (this.contractOwner === this.$eth.yourAccount);
+
+      this.contracts = {
+        dao:this.config.dao.address,
+        lbrs:await this.$libre.dao.sharesTokenAddress(),
+      }
+      this.isOwner = (await this.$libre.dao.owner() === this.$eth.yourAccount);
 
       this.loadProposals();
       this.getTokensCount();
