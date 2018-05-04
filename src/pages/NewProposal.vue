@@ -100,7 +100,6 @@ export default {
     return {
       proposalData: [],
       daoAddress: '',
-      defaultAddress: '',
       tokensCount: '',
       beneficiary: '',
       amount: '',
@@ -156,7 +155,7 @@ export default {
   methods: {
     async getTokensCount () {
        await this.$libre.promiseLibre;
-       this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
+       this.tokensCount = +await this.$libre.liberty.balanceOf(this.$eth.yourAccount) / 10 ** this.$libre.consts.DECIMALS;
     },
 
     getType(fieldValid) {
@@ -229,7 +228,6 @@ export default {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
       this.daoAddress = this.config.dao.address;
-      this.defaultAddress = window.web3.eth.defaultAccount;
       this.getTokensCount();
       this.startValidDataTimer();
       this.selectedType = this.typeProposals[0];

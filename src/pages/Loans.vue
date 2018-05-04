@@ -136,7 +136,6 @@ export default {
       curBlockchainTime: 0,
       loansAddress: '',
       searchData: [],
-      defaultAddress: '',
       pages: [1],
       vpage: 1,
       ethType: 'ETH',
@@ -152,7 +151,6 @@ export default {
   },
   methods: {
     async loadLoans (e) {
-      this.defaultAddress = window.web3.eth.defaultAccount;
       this.loansAddress = this.config.loans.address;
       this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {

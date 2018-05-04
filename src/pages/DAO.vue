@@ -299,7 +299,7 @@ export default {
     },
 
     async getTokensCount () {
-      this.tokensCount = this.$libre.toToken(+await this.$libre.liberty.balanceOf(this.$eth.defaultAddress),this.$libre.consts.DECIMALS)
+      this.tokensCount = this.$libre.toToken(+await this.$libre.liberty.balanceOf(this.$eth.yourAccount),this.$libre.consts.DECIMALS)
     },
 
     startUpdatingTime() {

@@ -128,7 +128,7 @@ export default {
 
     async getTokensCount () {
       await this.$libre.promiseLibre;
-      this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
+      this.tokensCount = +await this.$libre.liberty.balanceOf(this.$eth.yourAccount) / 10 ** this.$libre.consts.DECIMALS;
     },
 
     async loadProposal () {
@@ -277,7 +277,6 @@ export default {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
       this.daoAddress = this.config.dao.address;
-      this.defaultAddress = window.web3.eth.defaultAccount;
       await this.checkOwner();
       await this.getTokensCount();
       await this.loadProposal();

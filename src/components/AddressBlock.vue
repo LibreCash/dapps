@@ -23,8 +23,7 @@ export default {
             balances: {
                 libre:0,
                 lbrs:0
-            },
-            defaultAddress:null
+            }
         }
   },
 

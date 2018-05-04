@@ -274,7 +274,6 @@ export default {
       bountyBankAddress: '',
       bountyExchangerAddress: '',
       searchData: [],
-      defaultAddress: '',
       bank: {
         claimed: false,
         payment: 0,
@@ -316,7 +315,7 @@ export default {
       this.buyFee = 2.5;
       this.sellFee = 2.5;
       this.targetDeadline = 600;
-      this.targetWithdraw = this.defaultAddress;
+      this.targetWithdraw = this.$eth.yourAccount;
       this.newTargetsType = 'exchanger';
       this.newTargetsShown = true;
     },
@@ -382,10 +381,10 @@ export default {
       this.abiShown = true;
     },
     async updateClaimed () {
-      this.bank.claimed = await this.$libre.bounty.bank.claimed();
-      this.bank.payment = +await this.$libre.bounty.bank.payments(this.defaultAddress) / 10**18;
-      this.exchanger.claimed = await this.$libre.bounty.exchanger.claimed();
-      this.exchanger.payment = +await this.$libre.bounty.exchanger.payments(this.defaultAddress) / 10**18;
+      this.bank.claimed = +await this.$libre.bounty.bank.claimed();
+      this.bank.payment = +await this.$libre.bounty.bank.payments(this.$eth.yourAccount) / 10**18;
+      this.exchanger.claimed = +await this.$libre.bounty.exchanger.claimed();
+      this.exchanger.payment = +await this.$libre.bounty.exchanger.payments(this.$eth.yourAccount) / 10**18;
     },
     async testEraseBankClaim () {
       try {
@@ -480,7 +479,7 @@ export default {
       this.loadTargets();
     },
     update (row) {
-      row.contract.checkInvariant(this.defaultAddress).then((notHacked) => {
+      row.contract.checkInvariant(this.$eth.yourAccount).then((notHacked) => {
         row.hacked = !notHacked;
       });
       this.updateClaimed();
@@ -532,7 +531,7 @@ export default {
                   this.$libre.getContract(this.config.bounty.exchanger.targets.exchanger.abi, target.address);
               }            
           });
-          this.searchData[searchDataLength - 1].contract.checkInvariant(this.defaultAddress).then((notHacked) => {
+          this.searchData[searchDataLength - 1].contract.checkInvariant(this.$eth.yourAccount).then((notHacked) => {
             this.searchData[searchDataLength - 1].hacked = !notHacked;
           });
         }
@@ -567,7 +566,6 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.defaultAddress = window.web3.eth.defaultAccount;
       this.bountyBankAddress = this.config.bounty.bank.address;
       this.bountyExchangerAddress = this.config.bounty.exchanger.address;
       this.startUpdatingTime();
