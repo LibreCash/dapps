@@ -107,8 +107,16 @@ export default class ETH {
     return this._web3 !== null
   }
 
-  isAddress (addr) {
-    return this._web3.utils.isAddress(addr)
+  isInteger (number) {
+    return +number >= 0
+  }
+
+  isValidFee (number) {
+    return this.isInteger(number) && +number <= 70;
+  }
+
+  isAddress (address) {
+    return this._web3.isAddress(address)
   }
 
   getErrorMsg (error) {

@@ -127,6 +127,8 @@
         "new-targets": "New targets",
         "terms": "Bounty terms",
         "new-targets-for": "New targets for",
+        "new-targets-for-bank": "bank bounty program",
+        "new-targets-for-exchanger": "exchanger bounty program",
         "create-targets": "Create targets",
         "address-row": "Address",
         "name-row": "Name",

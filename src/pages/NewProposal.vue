@@ -118,7 +118,7 @@ export default {
   },
   computed: {
     validBenef() {
-        return !this.selectedType['benef'] || web3.isAddress(this.beneficiary)
+        return !this.selectedType['benef'] || this.$eth.isAddress(this.beneficiary)
     },
 
     validAmount() {

@@ -127,6 +127,8 @@
         "new-targets": "Новые цели",
         "terms": "Условия программы",
         "new-targets-for": "Новые цели для",
+        "new-targets-for-bank": "баунти-программы банка",
+        "new-targets-for-exchanger": "баунти-программы обменника",
         "create-targets": "Создать цели",
         "address-row": "Адрес",
         "name-row": "Имя",
