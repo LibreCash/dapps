@@ -5,8 +5,8 @@
         <div class="card">
           <div class="card-content">
             <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
-            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / 10 ** 18 }} LBRS</div>
-            <div>{{ $t('lang.dao.min-count') }}: {{ $libre.proposalParams.quorum / 10 ** 18 }} LBRS</div>
+            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
+            <div>{{ $t('lang.dao.min-count') }}: {{ $libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
             <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
               <div class="icon">
@@ -110,7 +110,7 @@ export default {
       this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < this.getNow() * 1000 && 
           this.isActive &&
           (this.votes.yea > this.votes.nay) &&
-          (this.votes.yea + this.votes.nay >= this.$libre.proposalParams.quorum / 10 ** 18);
+          (this.votes.yea + this.votes.nay >= this.$libre.toToken(this.$libre.proposalParams.quorum));
       this.enableBlock = this.contractOwner && this.isActive;
     },
 
@@ -132,7 +132,7 @@ export default {
     },
 
     async loadProposal () {
-      this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
+      this.loggedIn = (this.$eth.yourAccount != undefined);
       const 
         struct = this.$libre.proposalStruct
     

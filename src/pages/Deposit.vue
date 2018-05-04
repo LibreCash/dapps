@@ -318,7 +318,7 @@ export default {
 
             let count = +await this.$libre.deposit.myDepositLength();
             for (let i=0; i < count; i++) {
-                let deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(window.web3.eth.defaultAccount, i));
+                let deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(this.$eth.yourAccount, i));
 
                 if (deposit.timestamp == 0) 
                     continue
@@ -358,7 +358,7 @@ export default {
                 this.setMessage("warning", [this.$t('lang.deposit.low-amount-disclaimer')]);
             else if (amount > this.needAmount)
                 this.setMessage("warning", [this.$t('lang.deposit.over-amount-disclaimer')]);
-            else if (await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id) / 10 ** 18 > this.depositAvailable)
+            else if (this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id)) > this.depositAvailable)
                 this.setMessage("warning", [this.$t('lang.deposit.over-possibilities')]);
             else
                 this.setMessage("info", [`${this.$t('lang.deposit.income')}: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`]);

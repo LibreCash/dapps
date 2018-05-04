@@ -81,7 +81,7 @@ module.exports = {
       {
         name: i18n.t('lang.status.request-price'),
         getter: 'requestPrice',
-        process: data => `${data / 10 ** 18} ETH`
+        process: data => `${this.$libre.toToken(data)} ETH`
       },
       {
         name: i18n.t('lang.status.state'),

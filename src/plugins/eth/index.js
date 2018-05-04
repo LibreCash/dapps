@@ -13,7 +13,6 @@ export default class ETH {
   }
 
   constructor () {
-    this._web3 = null
     this.yourAccount = null
     this.metamask = false
     this.network = Vue.config.libre.network
@@ -28,13 +27,14 @@ export default class ETH {
         web3.version.getNetwork((error, result) => {
           if (error) Vue.prototype.$snackbar.open({message: error, indefinite: true})
           else {
-            let network = {
+            let
+              network = {
                 '1': 'Main',
                 '2': 'Modern',
                 '3': 'Ropsten',
                 '4': 'Rinkeby',
                 '42': 'Kovan'
-            }[result],
+              }[result],
               networkUse = this.network[0].toUpperCase() + this.network.substring(1)
           
             if (network !== networkUse) {
@@ -44,7 +44,7 @@ export default class ETH {
         })
       } else {
         window.web3 = new Web3(new Web3.providers.HttpProvider(Vue.config.libre.provider))
-        console.log('No web3? You should consider trying MetaMask!')
+        console.log(i18n.t('lang.common.no-web3'))
       }
       web3.SolidityCoder = SolidityCoder
 
@@ -56,14 +56,12 @@ export default class ETH {
 
   async loadAccounts () {
     return new Promise((resolve, reject) => {
-      this._web3 = window.web3
-      this._web3.eth.getAccounts((err, accounts) => {
-        this._web3.eth.defaultAccount = accounts[0]
+      window.web3.eth.getAccounts((err, accounts) => {
+        window.web3.eth.defaultAccount = accounts[0]
         this.yourAccount = accounts[0]
 
-        var account = this.yourAccount
-        setInterval(function () {
-          if (web3.eth.accounts[0] !== account)
+        setInterval(() => {
+          if (web3.eth.accounts[0] !== this.yourAccount)
             location.reload()
         }, 1000)
         resolve()
@@ -80,13 +78,12 @@ export default class ETH {
     })
   }
 
-  // WIP
   async getReceipt (txHash) {
     const txTimeout = 10 * 60 * 1000; // 10 minutes
     let beginTime = +new Date();
     return new Promise((resolve, reject) => {
       var checkInterval = setInterval(() => {
-        this._web3.eth.getTransactionReceipt(txHash, (err, receipt) => {
+        window.web3.eth.getTransactionReceipt(txHash, (err, receipt) => {
           if (err) {
             clearInterval(checkInterval)
             reject(err)
@@ -103,20 +100,12 @@ export default class ETH {
     })
   }
 
-  isLoaded () {
-    return this._web3 !== null
-  }
-
   isInteger (number) {
     return +number >= 0
   }
 
-  isValidFee (number) {
-    return this.isInteger(number) && +number <= 70;
-  }
-
   isAddress (address) {
-    return this._web3.isAddress(address)
+    return window.web3.isAddress(address)
   }
 
   getErrorMsg (error) {
@@ -124,17 +113,21 @@ export default class ETH {
           METAMASK_REJECT_MESSAGE = 'User denied transaction signature.',
           METAMASK_REJECT_FIREFOX = 'cancelTransaction';
 
-    if (!this.metamask)
+    if (!this.metamask) {
       return i18n.t('lang.messages.install-metamask');
+    }
 
     if (error.message) {
-      if (error.message.includes(METAMASK_REJECT_MESSAGE) || error.message.includes(METAMASK_REJECT_FIREFOX))
+      if (error.message.includes(METAMASK_REJECT_MESSAGE) || error.message.includes(METAMASK_REJECT_FIREFOX)) {
         return i18n.t('lang.messages.user-rejected');
-      if (error.message.includes('Unknown address'))
+      }
+      if (error.message.includes('Unknown address')) {
         return LOCK_WALLET
+      }
     } else {
-      if (error.includes('invalid address'))
+      if (error.includes('invalid address')) {
         return LOCK_WALLET
+      }
     }
 
     if (error.message) return error.message
@@ -147,15 +140,15 @@ export default class ETH {
   }
 
   async isSuccess (hash) {
-    console.log(`Check transaction success: ${hash}`)
+    console.log(`Checking transaction success: ${hash}`)
     let tx = (await this.getReceipt(hash)).status
-    console.log(`Tx success ? ${tx.status === "0x1"}`)
+    console.log(`Tx success ? ${tx.status === '0x1'}`)
     return tx.status === '0x1'
   }
 
   getBlockNumber () {
     return new Promise((resolve, reject) => {
-      this._web3.eth.getBlockNumber((err, blockNumber) => {
+      window.web3.eth.getBlockNumber((err, blockNumber) => {
         err ? reject(err) : resolve(blockNumber)
       })
     })
@@ -163,35 +156,18 @@ export default class ETH {
 
   getBalance (address) {
     return new Promise((resolve, reject) => {
-      this._web3.eth.getBalance(address, (err, balance) => {
+      window.web3.eth.getBalance(address, (err, balance) => {
         err ? reject(err) : resolve(balance)
       })
     })
   }
 
-  getConfirmations (txHash) {
-    return new Promise((resolve, reject) => {
-      this.getBlockNumber()
-      .then(blockNumber => {
-        this._web3.eth.getTransactionReceipt(txHash, (err, receipt) => {
-          if (err) reject(err)
-          else if (receipt !== null) resolve(blockNumber - receipt.blockNumber)
-          else resolve(0)
-        })
-      })
-    })
-  }
-
-  sum (first, second) {
-    return this._web3.toBigNumber(first).add(second)
-  }
-
   fromWei (amount) {
-    return this._web3.fromWei(amount)
+    return window.web3.fromWei(amount)
   }
 
   toWei (amount, units) {
-    return this._web3.toWei(amount, units)
+    return window.web3.toWei(amount, units)
   }
 
   isZeroAddress (address) {

@@ -67,6 +67,7 @@
         "max-amount": "Max amount",
         "no": "no",
         "nothing": "nothing",
+        "no-web3": "No web3? You should consider trying MetaMask!",
         "not-set": "not set",
         "no-metamask": "No metamask / not logged in",
         "outdated": "outdated",

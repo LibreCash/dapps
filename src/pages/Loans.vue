@@ -231,7 +231,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.canCreate = this.$eth._web3.eth.defaultAccount != undefined;
+      this.canCreate = this.$eth.yourAddress != undefined;
       this.startUpdatingTime();
       this.loadLoans()
     } catch (err) {

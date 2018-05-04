@@ -30,14 +30,14 @@ export default class Config {
           name: 'ETH',
           address: '0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a',
           request: address => `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=NYWQ3JWMICSEVBIPHXWJNW6WQBNQEEZ94P`,
-          process: data => data.result / 10 ** 18,
+          process: data => data / 10 ** 18,
           href: address => `https://etherscan.io/address/${address}`
         },
         {
           name: 'BCH',
           address: '19hZx234vNtLazfx5J2bxHsiWEmeYE8a7k',
           request: address => `https://blockdozer.com/insight-api/addr/${address}/balance`,
-          process: data => data / 10 ** 8,
+          process: data => data / 10 ** 18,
           href: address => `https://bitinfocharts.com/bitcoin%20cash/address/${address}`
         },
         {

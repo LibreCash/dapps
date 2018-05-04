@@ -291,7 +291,7 @@ export default {
   computed: {
     canCreateTarget () {
       return (
-        this.$eth.isValidFee(this.buyFee) && this.$eth.isValidFee(this.sellFee) &&
+        this.$libre.isValidFee(this.buyFee) && this.$libre.isValidFee(this.sellFee) &&
         (
           (this.newTargetsType == 'bank' && this.bank.deadlineUnix > this.curBlockchainTime) ||
           (
@@ -382,15 +382,15 @@ export default {
     },
     async updateClaimed () {
       this.bank.claimed = +await this.$libre.bounty.bank.claimed();
-      this.bank.payment = +await this.$libre.bounty.bank.payments(this.$eth.yourAccount) / 10**18;
+      this.bank.payment = this.$libre.toToken(+await this.$libre.bounty.bank.payments(this.$eth.yourAccount));
       this.exchanger.claimed = +await this.$libre.bounty.exchanger.claimed();
-      this.exchanger.payment = +await this.$libre.bounty.exchanger.payments(this.$eth.yourAccount) / 10**18;
+      this.exchanger.payment = this.$libre.toToken(+await this.$libre.bounty.exchanger.payments(this.$eth.yourAccount));
     },
+    // next are test methods for test methods
     async testEraseBankClaim () {
       try {
         this.tableLoading = true;
-        let 
-          txHash = await this.$libre.bounty.bank.eraseClaim();
+        let txHash = await this.$libre.bounty.bank.eraseClaim();
         let
           result = await this.$eth.isSuccess(txHash) ? 'Success unclaim transaction' : 'Failed unclaim transaction';
 
@@ -465,10 +465,8 @@ export default {
     async destruct (row) {
       try {
         this.tableLoading = true;
-        let 
-          txHash = await row.bountyContract.suicideTarget(row.id);
-        let
-          result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.destruct.success') :
+        let txHash = await row.bountyContract.suicideTarget(row.id);
+        let result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.destruct.success') :
                             this.$t('lang.tx.destruct.fail');
 
         this.$libre.notify(result);

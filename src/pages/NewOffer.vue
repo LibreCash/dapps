@@ -161,14 +161,14 @@ export default {
     },
 
     async updateData() {
-      this.myAddress = window.web3.eth.defaultAccount;
+      this.myAddress = this7$eth.yourAccount;
       this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, this.config.loans.address));
       try {
         this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.myAddress));
       } catch (err) {
         this.balanceETH = err;
       }
-      this.balanceLibre = this.$libre.toToken(await this.$libre.token.balanceOf(window.web3.eth.defaultAccount));
+      this.balanceLibre = this.$libre.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount));
     },
 
     async approveLibre(amount) {

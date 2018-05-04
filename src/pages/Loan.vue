@@ -148,7 +148,7 @@ export default {
             this.returnEnable = true;
         }
 
-        this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
+        this.loggedIn = (this.$eth.yourAccount != undefined);
 
         this.loanData.push(
           {name: this.$t('lang.loans.type-row'), data: this.$route.params.type},

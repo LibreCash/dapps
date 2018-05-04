@@ -34,7 +34,7 @@ export default {
     async loadLiberty() {
       this.balanceLiberty = this.$libre.toToken(
           +await this.$libre.liberty.balanceOf(
-            this.$eth._web3.eth.defaultAccount
+            this.$eth.yourAccount
           )
         )
         .toLocaleString();
@@ -43,13 +43,13 @@ export default {
           +await this.$libre.faucet.tokenBalance()
         ),
         isGot = await this.$libre.faucet.tokensSent(
-          this.$eth._web3.eth.defaultAccount
+          this.$eth.yourAccount
         );
 
-      if (!isGot && balance > 2000 && this.$eth._web3.eth.defaultAccount) {
+      if (!isGot && balance > 2000 && this.$eth.yourAccount) {
         this.isDisabled = false;
         this.msg.text = this.$t('lang.faucet.yes-you-can');
-      } else if (!this.$eth._web3.eth.defaultAccount) {
+      } else if (!this.$eth.yourAccount) {
         this.msg = {
           type: "is-danger",
           text: this.$t('lang.common.no-metamask')

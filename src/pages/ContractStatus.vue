@@ -48,12 +48,12 @@ export default {
         data: this.config.bank.address
       })
 
-      let 
+      let
         dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error'))),
         tokenBalance = await this.$libre.token.balanceOf(this.config.bank.address).catch(e => 'error'),
         totalSupply = await this.$libre.token.totalSupply().catch(e => 'error');
       status.forEach((item, i) => {
-        if(dataBank[i] !== 'error') {
+        if (dataBank[i] !== 'error') {
           this.emissionStatus.push({
             type: item.type,
             name: item.name,
