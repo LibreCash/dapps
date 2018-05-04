@@ -77,12 +77,13 @@ export default {
         } else {
           this.$libre.notify(this.$t('lang.faucet.error-sending'));
         }
+        this.isDisabled = true;
       } catch (err) {
         let msg = this.$eth.getErrorMsg(err);
         console.log(msg);
         this.$libre.notify(msg,'is-danger');
       }
-
+      
       this.isLoading = false;
     }
   },
