@@ -11,18 +11,16 @@ import Config from './config'
 
 Vue.config.productionTip = false
 
-Vue.use(Config, {build: 'dao'})
+Vue.use(Config, { build: 'dao' })
 Vue.use(ETH, {})
 Vue.use(Libre, {})
 
 router.options.routes.forEach(route => {
-  if (Vue.config.libre.routes.includes(route.name))
-    route.enabled = true
-  else route.enabled = false
+  route.enabled = Vue.config.libre.routes.includes(route.name)
 })
 
 router.beforeEach((to, from, next) => {
-  document.title = i18n.t(`lang.titles.${to.meta.locale}`);
+  document.title = i18n.t(`lang.titles.${to.meta.locale}`)
   next()
 })
 
