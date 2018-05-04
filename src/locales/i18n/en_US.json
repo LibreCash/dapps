@@ -171,7 +171,8 @@
         "from-row": "From",
         "to-row": "To",
         "value-row": "Value",
-        "description-row": "Description"
+        "description-row": "Description",
+        "invalid-data": "Invalid data"
     },
     "dao": {
         "min-to-vote": "Min token count to create/vote",

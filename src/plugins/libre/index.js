@@ -290,6 +290,20 @@ export default class Libre {
     }
   }
 
+  async getReport (i) {
+    let raw = await this.report.reports(i)
+    let result
+    try {
+      result = JSON.parse(raw[0])
+    } catch (err) {
+      // if json parser error - use report text as is
+      result = {descr: raw[0], nojson: true}
+    }
+    result.date = +raw[1] === 0 ? '-' : i18n.d(raw[1] * 1000, 'short')
+    result.id = i
+    return result
+  }
+
   toToken (contractNumber, decimals = this.consts.DECIMALS) {
     return +contractNumber / 10 ** decimals
   }

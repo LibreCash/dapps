@@ -1,30 +1,30 @@
 /* eslint-disable-one-var */
 <template>
-      <div class="container table-padding max-width">
-            <b-table
-              class="centered"
-              :data="emissionStatus"
-              :bordered="false"
-              :striped="true"
-              :narrowed="false"
-              :loading="false"
-              :paginated="false"
-              :pagination-simple="false"
-              :mobile-cards="true">
-              <template slot-scope="props">
-                <b-table-column field="name" :label="$t('lang.common.parameter')">
-                  {{ props.row.name }}
-                </b-table-column>
-                <td v-if="props.row.type == 'address'" :data-label="$t('lang.common.value-row')" class="flex-mobile">
-                  <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
-                </td> 
-                <b-table-column v-else :label="$t('lang.common.value-row')">
-                    <span>{{ props.row.data }}</span>
-                </b-table-column>
-              </template>
-            </b-table>
-        <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
-      </div> 
+  <div class="container table-padding max-width">
+    <b-table
+      class="centered"
+      :data="emissionStatus"
+      :bordered="false"
+      :striped="true"
+      :narrowed="false"
+      :loading="false"
+      :paginated="false"
+      :pagination-simple="false"
+      :mobile-cards="true">
+      <template slot-scope="props">
+        <b-table-column field="name" :label="$t('lang.common.parameter')">
+          {{ props.row.name }}
+        </b-table-column>
+        <td v-if="props.row.type == 'address'" :data-label="$t('lang.common.value-row')" class="flex-mobile">
+          <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
+        </td> 
+        <b-table-column v-else :label="$t('lang.common.value-row')">
+          <span>{{ props.row.data }}</span>
+        </b-table-column>
+      </template>
+    </b-table>
+    <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
+  </div> 
 </template>
 
 <script>
@@ -51,28 +51,25 @@ export default {
 
       let 
         dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error'))),
-        tokenBalance = await this.$libre.token.balanceOf(this.config.bank.address).catch(e=>'error'),
+        tokenBalance = await this.$libre.token.balanceOf(this.config.bank.address).catch(e => 'error'),
         totalSupply = await this.$libre.token.totalSupply().catch(e => 'error');
       status.forEach((item, i) => {
         if(dataBank[i] !== 'error') {
           this.emissionStatus.push({
             type: item.type,
-            renderHtml:true,
             name: item.name,
             data: item.type == 'address' ?
               (this.$eth.isZeroAddress(dataBank[i]) ? '-' : dataBank[i]) : status[i].process(dataBank[i])
           })
         }
-      })
-
+      });
       this.emissionStatus.push({
         name: this.$t('lang.common.total-supply'),
         data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
-      },{
+      }, {
         name: this.$t('lang.common.exchanger-balance'),
         data: tokenBalance !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
-      })
-
+      });
 
       this.isLoading = false
     },
