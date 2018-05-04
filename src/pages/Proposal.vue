@@ -58,7 +58,6 @@
 </template>
 
 <script>
-import i18n from '../locales'
 export default {
   data () {
     return {
@@ -92,7 +91,7 @@ export default {
       this.updatingTicker = setInterval(() => {
         if (this.proposalData.find(item => item.data === "now")) {
           this.proposalData.find(item => item.data === "now").rawValue++;
-          this.proposalData.find(item => item.data === "now").value = i18n.d(this.getNow() * 1000, 'long+');
+          this.proposalData.find(item => item.data === "now").value = this.$d(this.getNow() * 1000, 'long+');
           this.updateEnabledButtons();
         }
       }, 1000);
@@ -141,71 +140,69 @@ export default {
       this.isLoading = true
 
       try {
-          this.proposal = await this.$libre.updateProposal(this.$route.params.id),
-          this.votes = this.proposal.vote;
+        this.proposal = await this.$libre.updateProposal(this.$route.params.id),
+        this.votes = this.proposal.vote;
 
-          this.currentProposal = this.typeProposals[this.proposal.type]
-          
+        this.currentProposal = this.typeProposals[this.proposal.type]
+        
+        this.proposalData.push({
+          name: this.$t('lang.dao.type-row'),
+          value: this.currentProposal.text
+        })
+
+        this.proposalData.push({
+          name: this.$t('lang.dao.status-row'),
+          value: this.$libre.proposalStatuses[+this.proposal.status].text
+        })
+
+        // Refactor it 
+        if (this.currentProposal["benef"])
           this.proposalData.push({
-            name: i18n.t('lang.dao.type-row'),
-            value: this.currentProposal.text
+            name: this.currentProposal["benef"], 
+            value: this.$eth.isZeroAddress(this.proposal.recipient) ? '-' : this.proposal.recipient
           })
-
+        
+        if (this.currentProposal["amount"] || this.currentProposal["_amount"]) {
+          let amount = this.proposal.amount;
+          if (this.currentProposal["type"]) {
+            if ((this.currentProposal["type"] == '%')) amount = `${this.proposal.amount / 100} %`;
+            if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ?
+                                this.$t('lang.common.yes') : this.$t('lang.common.no'));
+          }
+                        
           this.proposalData.push({
-            name: i18n.t('lang.dao.status-row'),
-            value: this.$libre.proposalStatuses[+this.proposal.status].text
+            name: this.currentProposal["amount"] || this.currentProposal["_amount"], 
+            value: amount
+          });
+        }
+        
+        if (this.currentProposal["buf"]) {
+          let buffer = (this.currentProposal["type"] && this.currentProposal["type"] == '%') ?
+                        `${this.proposal.buffer / 100} %` : this.proposal.buffer;
+          this.proposalData.push({
+            name: this.currentProposal["buf"], 
+            value: buffer
+          });
+        }
+
+        if (this.currentProposal["code"]) {
+          let byteString = this.$libre.bytecodeToString(this.proposal.recipient, this.proposal.bytecode);
+          this.proposalData.push({
+            name: this.currentProposal["code"], 
+            value: byteString.length == 0 ? this.proposal.bytecode : byteString
           })
+        }
 
-          // Refactor it 
-          if (this.currentProposal["benef"])
-            this.proposalData.push({
-              name: this.currentProposal["benef"], 
-              value: this.$eth.isZeroAddress(this.proposal.recipient) ? '-' : this.proposal.recipient
-            })
-          
-          if (this.currentProposal["amount"] || this.currentProposal["_amount"]) {
-            let amount = this.proposal.amount;
-            if (this.currentProposal["type"]) {
-              if ((this.currentProposal["type"] == '%')) amount = `${this.proposal.amount / 100} %`;
-              if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ?
-                                  i18n.t('lang.common.yes') : i18n.t('lang.common.no'));
-            }
-                          
-            this.proposalData.push({
-              name: this.currentProposal["amount"] || this.currentProposal["_amount"], 
-              value: amount
-            });
-          }
-          
-          if (this.currentProposal["buf"]) {
-            let buffer = (this.currentProposal["type"] && this.currentProposal["type"] == '%') ?
-                          `${this.proposal.buffer / 100} %` : this.proposal.buffer;
-            this.proposalData.push({
-              name: this.currentProposal["buf"], 
-              value: buffer
-            });
-          }
+        this.deadline = this.votes.deadline;
 
-          if (this.currentProposal["code"]) {
-            let byteString = this.$libre.bytecodeToString(this.proposal.recipient, this.proposal.bytecode);
-            this.proposalData.push({
-              name: this.currentProposal["code"], 
-              value: byteString.length == 0 ? this.proposal.bytecode : byteString
-            })
-          }
-            
-          
-          this.deadline = this.votes.deadline;
-
-          this.proposalData.push(
-            {name: i18n.t('lang.dao.voting-row'), value: `${this.votes.yea}/${this.votes.nay}`},
-            {name: i18n.t('lang.dao.deadline-row'), value: i18n.d(this.votes.deadline * 1000, 'long+')},
-            {name: i18n.t('lang.dao.now-row'), data: 'now', rawValue: 0, value: 0},
-            {name: i18n.t('lang.dao.description-row'), value: this.proposal.description}
-          )
-          await this.updateBlockTime();
-          this.updateEnabledButtons();
-
+        this.proposalData.push(
+          {name: this.$t('lang.dao.voting-row'), value: `${this.votes.yea}/${this.votes.nay}`},
+          {name: this.$t('lang.dao.deadline-row'), value: this.$d(this.votes.deadline * 1000, 'long+')},
+          {name: this.$t('lang.dao.now-row'), data: 'now', rawValue: 0, value: 0},
+          {name: this.$t('lang.dao.description-row'), value: this.proposal.description}
+        )
+        await this.updateBlockTime();
+        this.updateEnabledButtons();
       } catch (err) {
         console.log(err)
       }
@@ -219,13 +216,13 @@ export default {
         let 
           txHash = await this.$libre.dao.vote(this.proposalId, support);
           
-        this.$libre.notify(await this.$eth.isSuccess(txHash) ? i18n.t('lang.tx.vote.success') : i18n.t('lang.tx.vote.fail'));
-        await this.$libre.updateProposal(this.proposalId)
-        this.loadProposal()
-        
+        this.$libre.notify(await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.vote.success') :
+                                                              this.$t('lang.tx.vote.fail'));
+        await this.$libre.updateProposal(this.proposalId);
+        this.loadProposal();
       } catch(err) {
-        let msg = this.$eth.getErrorMsg(err)
-        console.log(msg)
+        let msg = this.$eth.getErrorMsg(err);
+        console.log(msg);
         this.$libre.notify(msg,'is-danger');
       }
     },
@@ -241,9 +238,9 @@ export default {
         let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$libre.notify(i18n.t('lang.tx.execute.success'));
+          this.$libre.notify(this.$t('lang.tx.execute.success'));
         } else {
-          this.$libre.notify(i18n.t('lang.tx.execute.fail'));
+          this.$libre.notify(this.$t('lang.tx.execute.fail'));
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
@@ -262,9 +259,9 @@ export default {
         let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$libre.notify(i18n.t('lang.tx.block.success'));
+          this.$libre.notify(this.$t('lang.tx.block.success'));
         } else {
-          this.$libre.notify(i18n.t('lang.tx.block.fail'));
+          this.$libre.notify(this.$t('lang.tx.block.fail'));
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)

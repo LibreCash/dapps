@@ -167,6 +167,7 @@
         "type-row": "Тип",
         "asset-row": "Актив",
         "from-row": "Отправитель",
+        "to-row": "Получатель",
         "value-row": "Значение",
         "description-row": "Описание"
     },

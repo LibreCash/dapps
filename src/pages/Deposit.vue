@@ -138,7 +138,6 @@
 
 <script>
 import AddressBlock from '@/components/AddressBlock'
-import i18n from '../locales'
 export default {
   data () {
     return {
@@ -164,7 +163,7 @@ export default {
       needAmount: '',
       msg: {
         type: 'is-info',
-        notes: [i18n.t('lang.deposit.tip-select-plan')]
+        notes: [this.$t('lang.deposit.tip-select-plan')]
       },
       balance: 0,
       depositAvailable: 0
@@ -193,9 +192,9 @@ export default {
         this.newPlanLoading = true;
         let txHash = await this.$libre.deposit.createPlan(this.newPlan.period,this.newPlan.percent * this.$libre.consts.REVERSE_PERCENT,this.$libre.fromToken(this.newPlan.minAmount),this.newPlan.description);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$libre.notify(i18n.t('lang.deposit.tip-plan-created'));
+          this.$libre.notify(this.$t('lang.deposit.tip-plan-created'));
         } else {
-          this.$libre.notify(i18n.t('lang.common.transaction-failed'));
+          this.$libre.notify(this.$t('lang.common.transaction-failed'));
         }
         this.pushPlans(true);
         this.newPlanLoading = false;
@@ -208,12 +207,12 @@ export default {
 
     async approveLibre(amount) {
       let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.deposit.address);
-      let _waiting = i18n.t('lang.common.tips.waiting'),
-          _sending = i18n.t('lang.common.tips.sending'),
-          _success = i18n.t('lang.common.success-low'),
-          _fail = i18n.t('lang.common.transaction-failed-low');
-      let disclaimer = i18n.t('lang.deposit.available-disclaimer'),
-          authDisclaimer = i18n.t('lang.deposit.authorize-disclaimer');
+      let _waiting = this.$t('lang.common.tips.waiting'),
+          _sending = this.$t('lang.common.tips.sending'),
+          _success = this.$t('lang.common.success-low'),
+          _fail = this.$t('lang.common.transaction-failed-low');
+      let disclaimer = this.$t('lang.deposit.available-disclaimer'),
+          authDisclaimer = this.$t('lang.deposit.authorize-disclaimer');
       let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
@@ -234,22 +233,22 @@ export default {
       try {
         if (!(await this.approveLibre(this.$libre.fromToken(this.amount))))
           return
-        let action = i18n.t('lang.deposit.create-action');
-        let _waiting = i18n.t('lang.common.tips.waiting'),
-          _sending = i18n.t('lang.common.tips.sending'),
-          _success = i18n.t('lang.common.success-low'),
-          _fail = i18n.t('lang.common.transaction-failed-low');
+        let action = this.$t('lang.deposit.create-action');
+        let _waiting = this.$t('lang.common.tips.waiting'),
+          _sending = this.$t('lang.common.tips.sending'),
+          _success = this.$t('lang.common.success-low'),
+          _fail = this.$t('lang.common.transaction-failed-low');
 
         this.setMessage('warning', [`${action} - ${_waiting}`]);
         let txHash = await this.$libre.deposit.createDeposit(this.$libre.fromToken(this.amount), id);
         this.setMessage('warning', [`${action} - ${_sending}`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.setMessage('success', [`${action} - ${_success}`]);
-          this.$libre.notify(i18n.t('lang.deposit.created'));
+          this.$libre.notify(this.$t('lang.deposit.created'));
           this.updateMyDeposit()
         } else {
           this.setMessage('danger', [`${action} - ${_fail}`]);
-          this.$libre.notify(i18n.t('lang.common.transaction-failed'));
+          this.$libre.notify(this.$t('lang.common.transaction-failed'));
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
@@ -267,10 +266,10 @@ export default {
       try {
         let txHash = await this.$libre.deposit.claimDeposit(selectObject.id);
         if (await this.$eth.isSuccess(txHash)) {
-          this.$snackbar.open(i18n.t('lang.deposit.returned'));
+          this.$snackbar.open(this.$t('lang.deposit.returned'));
           this.updateMyDeposit()
         } else {
-          this.$libre.notify(i18n.t('lang.common.transaction-failed'));
+          this.$libre.notify(this.$t('lang.common.transaction-failed'));
         }
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
@@ -320,8 +319,8 @@ export default {
 
         this.myDepositData.push({
           id: i,
-          timestamp: i18n.d(deposit.timestamp * 1000, 'long+'),
-          deadline: i18n.d(deadline, 'long+'),
+          timestamp: this.$d(deposit.timestamp * 1000, 'long+'),
+          deadline: this.$d(deadline, 'long+'),
           ended: ended,
           period: period,
           amount: this.$libre.toToken(deposit.amount),
@@ -339,13 +338,13 @@ export default {
 
     async calcProfit(amount, id) {
       if (amount < this.planSelected.minAmount)
-        this.setMessage("warning", [i18n.t('lang.deposit.low-amount-disclaimer')]);
+        this.setMessage("warning", [this.$t('lang.deposit.low-amount-disclaimer')]);
       else if (amount > this.needAmount)
-        this.setMessage("warning", [i18n.t('lang.deposit.over-amount-disclaimer')]);
+        this.setMessage("warning", [this.$t('lang.deposit.over-amount-disclaimer')]);
       else if (await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id) / 10 ** 18 > this.depositAvailable)
-        this.setMessage("warning", [i18n.t('lang.deposit.over-possibilities')]);
+        this.setMessage("warning", [this.$t('lang.deposit.over-possibilities')]);
       else
-        this.setMessage("info", [`${i18n.t('lang.deposit.income')}: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`]);
+        this.setMessage("info", [`${this.$t('lang.deposit.income')}: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`]);
     },
 
     async getBalances() {

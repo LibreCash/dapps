@@ -90,6 +90,19 @@ export default {
   text-align:center;
 }
 
+.text-wrap > span {
+  white-space:normal;
+  word-wrap: break-word;
+  text-align: left;
+  word-break:break-all;
+}
+
+
+.max-width {
+  max-width:100% !important;
+  width:100% !important;
+}
+
 @media screen and (max-width: 768px) {
 
 .flex-mobile {

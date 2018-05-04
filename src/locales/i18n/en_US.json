@@ -167,6 +167,7 @@
         "type-row": "Type",
         "asset-row": "Asset",
         "from-row": "From",
+        "to-row": "To",
         "value-row": "Value",
         "description-row": "Description"
     },

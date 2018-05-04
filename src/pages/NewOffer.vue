@@ -74,7 +74,6 @@
 
 <script>
 import AddressBlock from '@/components/AddressBlock'
-import i18n from '../locales'
 export default {
   data () {
     return {
@@ -84,8 +83,8 @@ export default {
       margin: '',
       debatingPeriod: new Date(),
       debatingTime: new Date(),
-      button: {name: i18n.t('lang.loans.create-offer'), disabled: true},
-      buttonAllowance: {name: i18n.t('lang.common.update-allowance'), disabled: true},
+      button: {name: this.$t('lang.loans.create-offer'), disabled: true},
+      buttonAllowance: {name: this.$t('lang.common.update-allowance'), disabled: true},
       typeLoans: this.$libre.loansType,
       selectedType: 0,
       allowed: 0,
@@ -144,15 +143,15 @@ export default {
       this.button.disabled = !valid
 
       if (this.button.disabled)
-        this.setMessage('danger', [i18n.t('lang.common.please-enter-correct-info')]);
+        this.setMessage('danger', [this.$t('lang.common.please-enter-correct-info')]);
       else if (this.selectedType == this.$libre.loansType.Libre && this.allowed < this.amount) {
         this.setMessage('warning', [
-          i18n.t('lang.loans.message2-1'), // When creating the offer, you will need to make two transactions:
-          `${i18n.t('lang.loans.message2-2')} ${this.amount} Libre`, // 1. Authorize the transfer of
-          i18n.t('lang.loans.message2-3') // 2. Create Offer Transaction
+          this.$t('lang.loans.message2-1'), // When creating the offer, you will need to make two transactions:
+          `${this.$t('lang.loans.message2-2')} ${this.amount} Libre`, // 1. Authorize the transfer of
+          this.$t('lang.loans.message2-3') // 2. Create Offer Transaction
         ]);
       } else
-        this.setMessage('info', [i18n.t('lang.loans.you-can')]);
+        this.setMessage('info', [this.$t('lang.loans.you-can')]);
     },
 
     async allAvailable() {
@@ -176,12 +175,12 @@ export default {
 
     async approveLibre(amount) {
       let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address);
-      let _waiting = i18n.t('lang.common.tips.waiting'),
-          _sending = i18n.t('lang.common.tips.sending'),
-          _success = i18n.t('lang.common.success-low'),
-          _fail = i18n.t('lang.common.transaction-failed-low');
-      let disclaimer = i18n.t('lang.deposit.available-disclaimer'),
-          authDisclaimer = i18n.t('lang.deposit.authorize-disclaimer');
+      let _waiting = this.$t('lang.common.tips.waiting'),
+          _sending = this.$t('lang.common.tips.sending'),
+          _success = this.$t('lang.common.success-low'),
+          _fail = this.$t('lang.common.transaction-failed-low');
+      let disclaimer = this.$t('lang.deposit.available-disclaimer'),
+          authDisclaimer = this.$t('lang.deposit.authorize-disclaimer');
       let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
@@ -198,11 +197,11 @@ export default {
     },
 
     async createLoan() {
-      let _waiting = i18n.t('lang.common.tips.waiting'),
-          _sending = i18n.t('lang.common.tips.sending'),
-          _success = i18n.t('lang.common.success-low'),
-          _fail = i18n.t('lang.common.transaction-failed-low');
-      let action = i18n.t('lang.loans.create-offer-transaction');
+      let _waiting = this.$t('lang.common.tips.waiting'),
+          _sending = this.$t('lang.common.tips.sending'),
+          _success = this.$t('lang.common.success-low'),
+          _fail = this.$t('lang.common.transaction-failed-low');
+      let action = this.$t('lang.loans.create-offer-transaction');
       let
         txHash,
         now = new Date(),
@@ -213,7 +212,7 @@ export default {
       if (this.margin == '')
         this.margin = 0
 
-      this.button = {name: i18n.t('lang.common.pending-dots'), disabled: true}
+      this.button = {name: this.$t('lang.common.pending-dots'), disabled: true}
       this.isLoadingButton = true
 
       try {
@@ -224,7 +223,7 @@ export default {
               return
             }
             this.setMessage('info', [
-              i18n.t('lang.common.please-confirm-sending'),
+              this.$t('lang.common.please-confirm-sending'),
               `${action} - ${_waiting}`
             ]);
             txHash = await this.$libre.loans.giveLibre(
@@ -233,13 +232,13 @@ export default {
               this.$libre.fromToken(+this.margin)
             )
             this.setMessage('info', [
-              i18n.t('lang.common.please-wait-for-sending'),
+              this.$t('lang.common.please-wait-for-sending'),
               `${action} - ${_sending}`
             ]);
             break;
           case this.$libre.loansType.ETH:
             this.setMessage('info', [
-              i18n.t('lang.common.please-confirm-sending'),
+              this.$t('lang.common.please-confirm-sending'),
               `${action} - ${_waiting}`
             ])
             txHash = await this.$libre.loans.giveEth(
@@ -249,7 +248,7 @@ export default {
               { value: +this.$eth.toWei(this.amount, 'ether') }
             )
             this.setMessage('info', [
-              i18n.t('lang.common.please-wait-for-sending'),
+              this.$t('lang.common.please-wait-for-sending'),
               `${action} - ${_sending}`
             ])
             break;
@@ -258,9 +257,9 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/loans')
         } else {
-          this.$libre.notify(i18n.t('lang.common.creating-error'));
+          this.$libre.notify(this.$t('lang.common.creating-error'));
           this.setMessage('danger', [
-            i18n.t('lang.common.ended-with-error'),
+            this.$t('lang.common.ended-with-error'),
             action
           ]);
         }
@@ -269,11 +268,11 @@ export default {
         let msg = this.$eth.getErrorMsg(err);
         this.$libre.notify(msg, 'is-danger');
         this.setMessage('danger', [
-          `${i18n.t('lang.common.ended-with-error')}:`,
+          `${this.$t('lang.common.ended-with-error')}:`,
           msg
         ]);
       }
-      this.button = {name: i18n.t('lang.loans.create-offer'), disabled: false}
+      this.button = {name: this.$t('lang.loans.create-offer'), disabled: false}
       this.isLoadingButton = false
     }
   },

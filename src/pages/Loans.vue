@@ -127,7 +127,6 @@
 
 <script>
 import AddressBlock from '@/components/AddressBlock'
-//import i18n from '../locales' // not used yet
 export default {
   data () {
     return {

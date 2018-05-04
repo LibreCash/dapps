@@ -4,9 +4,9 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div class="flex">{{ $t('lang.contracts.dao') }}: 
+                <div class="flex-mobile">{{ $t('lang.contracts.dao') }}: 
                   <a :href="$libre.addressToLink(daoAddress)" target="_blank" class="is-text-overflow flex-centered">{{daoAddress}}</a></div>
-                <div class="flex">{{ $t('lang.contracts.liberty') }}: 
+                <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
                   <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow flex-centered">{{libertyAddress}}</a>
                 </div>
                 <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
@@ -137,9 +137,7 @@
 </template>
 
 <script>
-import i18n from '../locales'
 import AddressBlock from '@/components/AddressBlock'
-
 export default {
   data () {
     return {
@@ -241,7 +239,7 @@ export default {
       try {
         let 
           txHash = await this.$libre.dao.vote(id, support),
-          message = (await this.$eth.isSuccess(txHash)) ? i18n.t('lang.tx.vote.success') : i18n.t('lang.tx.vote.fail')
+          message = (await this.$eth.isSuccess(txHash)) ? this.$t('lang.tx.vote.success') : this.$t('lang.tx.vote.fail')
         this.$libre.notify(message)
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
@@ -268,7 +266,7 @@ export default {
       try {
       let 
         txHash = await this.$libre.dao.blockingProposal(row.id),
-        message = (await this.$eth.isSuccess(txHash)) ? i18n.t('lang.tx.block.success') : i18n.t('lang.tx.block.fail')
+        message = (await this.$eth.isSuccess(txHash)) ? this.$t('lang.tx.block.success') : this.$t('lang.tx.block.fail')
         this.$libre.notify(message);
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
@@ -288,7 +286,7 @@ export default {
       
       try {
         let txHash = await this.$libre.dao.executeProposal(id),
-            message = (await this.$eth.isSuccess(txHash)) ? i18n.t('lang.tx.execute.success') : i18n.t('lang.tx.execute.fail')
+            message = (await this.$eth.isSuccess(txHash)) ? this.$t('lang.tx.execute.success') : this.$t('lang.tx.execute.fail')
         this.$libre.notify(message);
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck

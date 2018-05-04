@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-        <section v-if="owner" class="table-padding">
+  <div class="table-padding max-width">
+        <section v-if="owner">
           <b-field>
             <b-input
               v-model="reportText"
@@ -10,9 +10,8 @@
           </b-field>
           <a class="button is-info" v-on:click="newReport" :class="{'is-loading': isLoading}">{{ $t('lang.common.submit') }}</a>
         </section>
-        <div class="level">
-          <section v-if="searchData.length == 0" class="level-item">{{ $t('lang.reports.no-reports') }}</section>
-          <section v-if="searchData.length > 0" class="level-item">
+          <section v-if="searchData.length == 0">{{ $t('lang.reports.no-reports') }}</section>
+          <section v-if="searchData.length > 0">
             <b-table
               :data="searchData"
               :bordered="false"
@@ -28,7 +27,7 @@
                 <b-table-column :label="$t('lang.common.date')" centered>
                   {{ props.row.date }}
                 </b-table-column>
-                <b-table-column :label="$t('lang.common.description')" class="flex-mobile text-wrap flex-wrap flex-centered" centered :colspan="props.row.nojson ? 6 : 0">
+                <b-table-column :label="$t('lang.common.description')" class="flex-mobile text-wrap flex-wrap flex-centered" centered :colspan="props.row.nojson ? 3 : 0">
                   {{ props.row.descr }}
                 </b-table-column>
                 <b-table-column :label="$t('lang.common.type')" centered v-if="!props.row.nojson">
@@ -37,18 +36,16 @@
                 <b-table-column :label="$t('lang.common.asset')" centered v-if="!props.row.nojson">
                   {{ props.row.asset }}
                 </b-table-column>
-                <b-table-column :label="$t('lang.common.actions')" centered v-if="!props.row.nojson">
+                <b-table-column :label="$t('lang.common.actions')" centered>
                   <router-link class="button" :to="{name: 'Report Page', params: { id: props.row.id }}" tag="button"><i class="fas fa-id-card"></i></router-link>
                 </b-table-column>
               </template>
             </b-table>
           </section>
         </div>
-    </div>
 </template>
 <script>
 import Config from '@/config'
-import i18n from '../locales'
 export default {
   data () {
     return {
@@ -71,7 +68,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           await this.loadReports();
         } else {
-          this.$libre.notify(i18n.t('lang.reports.create-error'));
+          this.$libre.notify(this.$t('lang.reports.create-error'));
         }
       } catch (err) {
         console.log(err);
@@ -105,7 +102,7 @@ export default {
           // if json parser error got use report text as is
           result = {descr: raw[0], nojson: true}
       }
-      result.date = +raw[1] == 0 ? '-' : i18n.d(raw[1] * 1000, 'short');
+      result.date = +raw[1] == 0 ? '-' : this.$d(raw[1] * 1000, 'short');
       result.id = i
       return result
     },

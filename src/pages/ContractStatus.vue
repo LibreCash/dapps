@@ -15,7 +15,7 @@
                 <b-table-column field="name" :label="$t('lang.common.parameter')">
                   {{ props.row.name }}
                 </b-table-column>
-                <td v-if="props.row.type == 'address'" :data-label="$t('lang.common.value-row')" class="flex">
+                <td v-if="props.row.type == 'address'" :data-label="$t('lang.common.value-row')" class="flex-mobile">
                   <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
                 </td> 
                 <b-table-column v-else :label="$t('lang.common.value-row')">
@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import i18n from '../locales'
 export default {
   data () {
     return {
@@ -46,7 +45,7 @@ export default {
 
       this.emissionStatus.push({
         type: 'address',
-        name: i18n.t('lang.common.contract-address'),
+        name: this.$t('lang.common.contract-address'),
         data: this.config.bank.address
       })
 
@@ -67,11 +66,11 @@ export default {
       })
 
       this.emissionStatus.push({
-        name: i18n.t('lang.common.total-supply'),
+        name: this.$t('lang.common.total-supply'),
         renderHtml:true,
         data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       },{
-        name: i18n.t('lang.common.exchanger-balance'),
+        name: this.$t('lang.common.exchanger-balance'),
         renderHtml:true,
         data: tokenBalance !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
       })

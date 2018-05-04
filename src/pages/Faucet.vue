@@ -17,15 +17,14 @@
 
 <script>
 import AddressBlock from "@/components/AddressBlock";
-import i18n from '../locales'
 export default {
   data() {
     return {
-      balanceLiberty: i18n.t('lang.common.loading-dots'),
+      balanceLiberty: this.$t('lang.common.loading-dots'),
       isLoading: false,
       msg: {
         type: "is-info",
-        text: i18n.t('lang.common.loading-info-dots')
+        text: this.$t('lang.common.loading-info-dots')
       },
       isDisabled: true
     };
@@ -49,18 +48,18 @@ export default {
 
       if (!isGot && balance > 2000 && this.$eth._web3.eth.defaultAccount) {
         this.isDisabled = false;
-        this.msg.text = i18n.t('lang.faucet.yes-you-can');
+        this.msg.text = this.$t('lang.faucet.yes-you-can');
       } else if (!this.$eth._web3.eth.defaultAccount) {
         this.msg = {
           type: "is-danger",
-          text: i18n.t('lang.common.no-metamask')
+          text: this.$t('lang.common.no-metamask')
         };
       } else {
         this.msg = {
           type: "is-danger",
           text: isGot
-            ? i18n.t('lang.faucet.already-sent')
-            : i18n.t('lang.faucet.not-enough')
+            ? this.$t('lang.faucet.already-sent')
+            : this.$t('lang.faucet.not-enough')
         };
       }
     },
@@ -72,11 +71,11 @@ export default {
         let txHash = await this.$libre.faucet.get();
 
         if (await this.$eth.isSuccess(txHash)) {
-          this.$libre.notify(i18n.t('lang.faucet.tokens-sent'));
+          this.$libre.notify(this.$t('lang.faucet.tokens-sent'));
 
           this.loadLiberty();
         } else {
-          this.$libre.notify(i18n.t('lang.faucet.error-sending'));
+          this.$libre.notify(this.$t('lang.faucet.error-sending'));
         }
       } catch (err) {
         let msg = this.$eth.getErrorMsg(err);

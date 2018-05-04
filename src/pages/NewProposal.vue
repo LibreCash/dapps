@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import i18n from '../locales'
 export default {
   data () {
     return {
@@ -205,7 +204,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/dao')
         } else {
-          this.$libre.notify(i18n.t('lang.dao.create-error'));
+          this.$libre.notify(this.$t('lang.dao.create-error'));
         }
       }
       catch(err) {

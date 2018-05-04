@@ -73,19 +73,14 @@
 </template>
 
 <style>
-.chartjs-size-monitor  {
+.chartjs-size-monitor {
   height: 100%;
   max-height: 300px;
   max-width: 100%;
 }
-.max-width {
-  max-width:100%;
-}
-
 </style> 
 <script>
   import StatusCoins from '@/components/StatusCoins'
-  import i18n from '../locales'
   import PieChart from '@/components/PieChart'
   import axios from 'axios'
   export default {
@@ -180,7 +175,7 @@
           }
 
           this.coinsData.push({
-            name: i18n.t('lang.status.total'),
+            name: this.$t('lang.status.total'),
             balanceUSD: this.allBalances.toLocaleString(),
             change24h: this.allChange24h.toLocaleString()
           });
