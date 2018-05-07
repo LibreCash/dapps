@@ -79,13 +79,21 @@ export default {
 .bm--card-equal-height .card-footer {
    margin-top: auto;
 }
-
+p.card-header-title {
+  text-align: center;
+  justify-content: center;
+}
 .card-footer-item { 
   text-align: center;
+  justify-content: center;
 }
 
 .breakall {
     word-break: break-all
+}
+
+.card-content > .content {
+  text-align: center;
 }
 
 #app {
