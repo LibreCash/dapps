@@ -1,6 +1,6 @@
 <template>
     <div>
-        <section v-if="this.$eth.yourAccount">
+        <section v-show="this.$eth.yourAccount">
             <div class="flex-mobile">
                 <p>{{ $t('lang.common.your-address') }}: </p>
                 <a :href="$libre.addressToLink(this.$eth.yourAccount)" class="is-text-overflow">{{ $eth.yourAccount }}</a>
@@ -9,7 +9,7 @@
                 {{ $t('lang.common.balances') }}: {{ balances.libre }} Libre, {{ balances.lbrs }} LBRS
             </div>
         </section>
-        <section v-else>
+        <section v-show="!this.$eth.yourAccount">
             <div>
                 {{ $t('lang.common.no-metamask') }}
             </div>

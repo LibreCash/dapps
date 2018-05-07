@@ -129,7 +129,7 @@
             {{ $t('lang.common.not-set') }}
           </b-table-column>
           <b-table-column :label="$t('lang.bounty.address-row')" centered v-else>
-            <a :href="'https://rinkeby.etherscan.io/address/'+props.row.address">{{ $t('lang.common.address') }}</a>
+            <a :href="$libre.addressToLink(props.row.address)">{{ $t('lang.common.address') }}</a>
           </b-table-column>
 
           <b-table-column :label="$t('lang.bounty.name-row')" centered>

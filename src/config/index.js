@@ -37,7 +37,7 @@ export default class Config {
           name: 'BCH',
           address: '19hZx234vNtLazfx5J2bxHsiWEmeYE8a7k',
           request: address => `https://blockdozer.com/insight-api/addr/${address}/balance`,
-          process: data => data / 10 ** 18,
+          process: data => data / 10 ** 8,
           href: address => `https://bitinfocharts.com/bitcoin%20cash/address/${address}`
         },
         {

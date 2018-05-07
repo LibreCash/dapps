@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div class="flex-mobile">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow eth-address" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
+                <div class="flex-mobile">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow eth-address" :href="$libre.addressToLink(config.loans.address)">{{config.loans.address}}</a></div>
                 <div>{{ $t('lang.common.current-time') }}: {{ $d(curBlockchainTime * 1000, 'long+') }}</div>
             </div>
         </div>
@@ -113,7 +113,7 @@
                 v-if="loansCount > perPage"
                 @change="loadLoans"
                 :total="loansCount"
-                :current.sync="vpage"
+                :current.sync="currentPage"
                 order="is-centered"
                 :simple="false"
                 :rounded="true"
@@ -132,12 +132,8 @@ export default {
     return {
       tableLoading: false,
       currentPage: 1,
-      perPage: 5,
-      curBlockchainTime: 0,
-      loansAddress: '',
       searchData: [],
       pages: [1],
-      vpage: 1,
       ethType: 'ETH',
       isActive: true,
       isUsed: false,
@@ -151,7 +147,6 @@ export default {
   },
   methods: {
     async loadLoans (e) {
-      this.loansAddress = this.config.loans.address;
       this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         return;
@@ -231,7 +226,7 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.canCreate = this.$eth.yourAddress != undefined;
+      this.canCreate = this.$eth.yourAccount != undefined;
       this.startUpdatingTime();
       this.loadLoans()
     } catch (err) {
