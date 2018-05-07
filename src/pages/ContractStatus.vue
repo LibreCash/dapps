@@ -37,7 +37,6 @@ export default {
   methods: {
     async getStatusBank () {
       this.isLoading = true
-
       var
         exchanger = this.$libre.bank,
         status = this.config.bank.status
@@ -47,7 +46,6 @@ export default {
         name: this.$t('lang.common.contract-address'),
         data: this.config.bank.address
       })
-
       let
         dataBank = await Promise.all(status.map(obj => exchanger[obj.getter]().catch(e => 'error'))),
         tokenBalance = await this.$libre.token.balanceOf(this.config.bank.address).catch(e => 'error'),
