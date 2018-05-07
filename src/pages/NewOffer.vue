@@ -1,13 +1,11 @@
 <template>
   <div>
-      <div class="table-padding">      
+      <div class="table-padding">
         <div class="card">
             <div class="card-content">
                 <p>{{ $t('lang.common.your-information') }}</p>
                 <address-block></address-block>
                 <p>{{ $t('lang.common.allowed') }}: {{ allowed }} Libre</p>
-                <p>ETH: {{ balanceETH }} ETH</p>
-                <p>Libre: {{ balanceLibre }} Libre</p>
                 <router-link :to="{ path: '/loans' }" class="button">
                     <div class="icon">
                         <i class="fas fa-arrow-left" size="is-small"></i>
@@ -20,12 +18,12 @@
           <div class="column">
                 <b-field horizontal label="Type" >
                   <b-select :placeholder="$t('lang.common.select-type')" v-model="selectedType">
-                    <option v-for="(key, type) in typeLoans" v-bind:value="key">
+                    <option v-for="(key, type) in $libre.loansType" v-bind:value="key">
                       {{ type }}
                     </option>
                   </b-select>
                 </b-field>
-                <b-field horizontal :label="$t('lang.common.amount') + ', ' + Object.keys(typeLoans)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
+                <b-field horizontal :label="$t('lang.common.amount') + ', ' + Object.keys($libre.loansType)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
                   <b-input v-model="amount" placeholder="0"></b-input>
                   <p class="control">
                     <button class="button is-primary" @click="allAvailable()">{{ $t('lang.common.all-available') }}</button>
@@ -59,7 +57,7 @@
                 </b-message></b-field>
                 <div class="level">
                   <div class="level-item">
-                    <button class="button is-primary is-large" v-bind:class="{'is-loading': isLoadingButton}" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
+                    <button class="button is-primary is-large" v-bind:class="{'is-loading': button.isLoading}" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
                       {{ button.name }}
                     </button>
                   </div>
@@ -75,27 +73,23 @@ import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
     return {
-      daoAddress: '',
-      recipient: '',
       amount: '',
       margin: '',
       debatingPeriod: new Date(),
       debatingTime: new Date(),
-      button: {name: this.$t('lang.loans.create-offer'), disabled: true},
-      buttonAllowance: {name: this.$t('lang.common.update-allowance'), disabled: true},
-      typeLoans: this.$libre.loansType,
+      button: {
+        name: this.$t('lang.loans.create-offer'),
+        disabled: true,
+        isLoading: false
+      },
       selectedType: 0,
       allowed: 0,
       balanceETH: 0,
       balanceLibre: 0,
-      myAddress: '',
-      isOpen: false,
-      isOfferOpen: true,
       msg: {
         type: 'is-danger',
         notes: []
-      },
-      isLoadingButton: false
+      }
     }
   },
   methods: {
@@ -161,10 +155,9 @@ export default {
     },
 
     async updateData() {
-      this.myAddress = this7$eth.yourAccount;
-      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, this.config.loans.address));
+      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address));
       try {
-        this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.myAddress));
+        this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.$eth.yourAccount));
       } catch (err) {
         this.balanceETH = err;
       }
@@ -210,8 +203,8 @@ export default {
       if (this.margin == '')
         this.margin = 0
 
-      this.button = {name: this.$t('lang.common.pending-dots'), disabled: true}
-      this.isLoadingButton = true
+      this.button.disabled = true
+      this.button.isLoading = true
 
       try {
         switch(this.selectedType) {
@@ -270,15 +263,14 @@ export default {
           msg
         ]);
       }
-      this.button = {name: this.$t('lang.loans.create-offer'), disabled: false}
-      this.isLoadingButton = false
+      this.button.disabled = false
+      this.button.isLoading = false
     }
   },
   async created () {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = this.$eth.daoAddress;
       this.updateData()
     } catch (err) {
       console.log(err)

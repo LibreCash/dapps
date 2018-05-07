@@ -21,7 +21,7 @@
             <td v-if="props.row.data && props.row.type == 'input'" :data-label="$t('lang.common.value-row')" class="flex-mobile">
               <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
             </td>
-            <b-table-column v-if="props.row.type != 'input'" centered class="flex-mobile" :label="$t('lang.common.value')">
+            <b-table-column v-if="props.row.type != 'input'" class="flex-mobile" :label="$t('lang.common.value')">
               {{ props.row.data }}
             </b-table-column>
           </template>
