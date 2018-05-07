@@ -2,7 +2,7 @@
     <div>
         <section v-show="this.$eth.yourAccount">
             <div class="flex-mobile">
-                <p>{{ $t('lang.common.your-address') }}: </p>
+                <span>{{ $t('lang.common.your-address') }}:</span>
                 <a :href="$libre.addressToLink(this.$eth.yourAccount)" class="is-text-overflow">{{ $eth.yourAccount }}</a>
             </div>
             <div>
