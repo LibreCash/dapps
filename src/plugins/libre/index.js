@@ -241,7 +241,7 @@ export default class Libre {
   }
 
   isValidFee (number) {
-    return this.isInteger(number) && +number <= 70
+    return (+number >= 0) && (+number <= 70)
   }
 
   getContract (abi, address) {
