@@ -141,9 +141,12 @@ export default class ETH {
 
   async isSuccess (hash) {
     console.log(`Checking transaction success: ${hash}`)
-    let tx = (await this.getReceipt(hash)).status
-    console.log(`Tx success ? ${tx.status === '0x1'}`)
-    return tx.status === '0x1'
+    let 
+      status = (await this.getReceipt(hash)).status,
+      isSuccess = status === '0x1'
+      
+    console.log(`Tx success ? ${isSuccess}`)
+    return isSuccess
   }
 
   getBlockNumber () {
