@@ -329,8 +329,11 @@ export default {
             return
         }
 
+        if (action == 'return' && this.loanType == 'ETH')
+            value = this.loan.refund
+
         this.setMessage('warning', [`${action} tx - ${_waiting}`]);
-        let txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId, {value: value}));
+        let txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId, {value}));
         this.setMessage('warning', [`${action} tx - ${_sending}`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.$libre.notify(`${action} tx - ${_success}`);
