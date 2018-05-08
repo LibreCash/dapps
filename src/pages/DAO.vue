@@ -5,12 +5,11 @@
             <div class="card-content">
                 <address-block/>
                 <div class="flex-mobile">{{ $t('lang.contracts.dao') }}: 
-                  <a :href="$libre.addressToLink(this.contracts.dao)" target="_blank" class="is-text-overflow ">{{this.contracts.dao}}</a></div>
+                  <a :href="$libre.addressToLink(contracts.dao)" target="_blank" class="is-text-overflow ">{{contracts.dao}}</a></div>
                 <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
-                  <a :href="$libre.addressToLink(this.contracts.lbrs)" target="_blank" class="is-text-overflow ">{{this.contracts.lbrs}}</a>
+                  <a :href="$libre.addressToLink(contracts.lbrs)" target="_blank" class="is-text-overflow ">{{contracts.lbrs}}</a>
                 </div>
                 <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
-                <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
                 <div>{{ $t('lang.dao.min-to-vote') }}: {{ this.$libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-count') }}: {{ this.$libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>

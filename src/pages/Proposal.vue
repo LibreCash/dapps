@@ -49,12 +49,12 @@
                 <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="fas fa-thumbs-down"></i></button>
             </div>
             <div class="level-item has-text-centered">
-                <button v-bind:class="{'button is-medium is-info':true, 'is-loading': loadingExecute}" @click="execute()" :disabled="!enableExecute"><i class="fas fa-play"></i></button>
+                <button class="button is-medium is-info" :class="{'is-loading': loadingExecute}" @click="execute()" :disabled="!enableExecute"><i class="fas fa-play"></i></button>
             </div>
             <div class="level-item has-text-centered">
-                <button v-bind:class="{'button is-medium is-danger':true, 'is-loading': loadingBlock}" @click="block()" :disabled="!enableBlock">
+                <button class="button is-medium is-danger" :class="{'is-loading': loadingBlock}" @click="block()" :disabled="!enableBlock">
                       <i class="fas fa-ban"></i>
-                    </button>
+                </button>
             </div>
         </div>
         </div>
@@ -68,20 +68,11 @@ import AddressBlock from "@/components/AddressBlock";
 export default {
   data () {
     return {
-      daoAddress: '',
-      proposalId: this.$route.params.id,
-      reportText: '',
-      owner: false,
       proposalData: [],
       isLoading: false,
-      isPaginated: true,
-      isPaginationSimple: false,
-      loggedIn: false,
-      typeProposals: this.$libre.typeProposals,
       currentProposal: '',
       enableVote: false,
       contractOwner: false,
-      deadline: '',
       enableExecute: false,
       enableBlock: false,
       loadingExecute: false,
@@ -130,11 +121,10 @@ export default {
 
     async getTokensCount () {
       await this.$libre.promiseLibre;
-      this.tokensCount = +await this.$libre.liberty.balanceOf(this.$eth.yourAccount) / 10 ** this.$libre.consts.DECIMALS;
+      this.tokensCount = this.$libre.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount));
     },
 
     async loadProposal () {
-      this.loggedIn = (this.$eth.yourAccount != undefined);
       const 
         struct = this.$libre.proposalStruct
     
@@ -145,7 +135,7 @@ export default {
         this.proposal = await this.$libre.updateProposal(this.$route.params.id),
         this.votes = this.proposal.vote;
 
-        this.currentProposal = this.typeProposals[this.proposal.type]
+        this.currentProposal = this.$libre.typeProposals[this.proposal.type]
         
         this.proposalData.push({
           name: this.$t('lang.dao.type-row'),
@@ -195,8 +185,6 @@ export default {
           })
         }
 
-        this.deadline = this.votes.deadline;
-
         this.proposalData.push(
           {name: this.$t('lang.dao.voting-row'), value: `${this.votes.yea}/${this.votes.nay}`},
           {name: this.$t('lang.dao.deadline-row'), value: this.$d(this.votes.deadline * 1000, 'long+')},
@@ -215,11 +203,11 @@ export default {
 
       try {
         let 
-          txHash = await this.$libre.dao.vote(this.proposalId, support);
+          txHash = await this.$libre.dao.vote(this.$route.params.id, support);
           
         this.$libre.notify(await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.vote.success') :
                                                               this.$t('lang.tx.vote.fail'));
-        await this.$libre.updateProposal(this.proposalId);
+        await this.$libre.updateProposal(this.$route.params.id);
         this.loadProposal();
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err);
@@ -277,11 +265,10 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = this.config.dao.address;
       await this.checkOwner();
       await this.getTokensCount();
       await this.loadProposal();
-      this.selectedType = this.typeProposals[0];
+      this.selectedType = this.$libre.typeProposals[0];
       this.startUpdatingTime();
     } catch (err) {
       console.log(err)

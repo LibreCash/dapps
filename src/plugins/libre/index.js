@@ -357,12 +357,11 @@ export default class Libre {
 
   async updateProposals (callEach) {
     try {
-      let length = await this.dao.prsLength()
-
-      if (length <= this.proposals.length) return
+      let length = await this.dao.prsLength();
 
       for (let i = length - 1; i >= 0; --i) {
-        await this.updateProposal(i)
+        if (!this.proposals[i]) // if array have empty elements
+            await this.updateProposal(i)
         if (callEach) callEach(i)
       }
     } catch (err) {
