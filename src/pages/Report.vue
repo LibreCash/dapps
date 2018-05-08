@@ -7,13 +7,53 @@
     </div>
     <div class="level"></div>
     <section v-if="owner">
-      <b-field :type="validateForm() ? '' : 'is-danger'">
-        <b-input v-model="reportText" type="textarea" :placeholder="$t('lang.reports.write')"></b-input>
-      </b-field>
-      <button class="button is-info" v-on:click="newReport" :class="{'is-loading': isLoading}" :disabled="!validateForm()">
-        {{ $t('lang.common.submit') }}
-      </button>
+      <div class="level"></div>
+      <b-collapse class="card" :open="false">
+        <div slot="trigger" slot-scope="props" class="card-header">
+          <p class="card-header-title">{{ $t('lang.reports.create') }}</p>
+          <a class="card-header-icon"><b-icon :icon="props.open ? 'caret-down' : 'caret-up'" icon-pack="fas"></b-icon>
+          </a>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            <b-field horizontal :label="$t('lang.reports.type-row')">
+              <b-field :type="reportNew.tp !== '' ? '' : 'is-danger'">
+                <b-input v-model="reportNew.tp"></b-input>
+              </b-field>
+            </b-field>
+            <b-field horizontal :label="$t('lang.reports.description-row')">
+              <b-field :type="reportNew.descr !== '' ? '' : 'is-danger'">
+                <b-input v-model="reportNew.descr"></b-input>
+              </b-field>
+            </b-field>
+            <b-field horizontal :label="$t('lang.reports.asset-row')">
+              <b-field :type="reportNew.asset !== '' ? '' : 'is-danger'">
+                <b-input v-model="reportNew.asset" placeholder="ETH"></b-input>
+              </b-field>
+            </b-field>
+            <b-field horizontal :label="$t('lang.reports.from-row')">
+              <b-field :type="(reportNew.from === '') || ($eth.isAddress(reportNew.from)) ? '' : 'is-danger'">
+                <b-input v-model="reportNew.from"></b-input>
+              </b-field>
+            </b-field>
+            <b-field horizontal :label="$t('lang.reports.to-row')">
+              <b-field :type="(reportNew.to === '') || ($eth.isAddress(reportNew.to)) ? '' : 'is-danger'">
+                <b-input v-model="reportNew.to"></b-input>
+              </b-field>
+            </b-field>
+            <b-field horizontal :label="$t('lang.reports.value-row')">
+              <b-field>
+                <b-input v-model="reportNew.txAm"></b-input>
+              </b-field>
+            </b-field>
+            <button class="button is-info" v-on:click="newReport" :class="{'is-loading': isLoading}" :disabled="!validateForm()">
+              {{ $t('lang.common.submit') }}
+            </button>
+          </div>
+        </div>
+      </b-collapse>
     </section>
+    <div class="level"></div>
     <section v-if="searchData.length == 0 && !isLoading">
       {{ $t('lang.reports.no-reports') }}
     </section>
@@ -54,34 +94,30 @@ import Config from '@/config'
 export default {
   data () {
     return {
-      reportText: 
-`{
-  "tp": "type",
-  "descr": "Description",
-  "asset": "ETH",
-  "from": "",
-  "to": "",
-  "txAm": "-"
-}`,
       owner: false,
       searchData: [],
       isLoading: true,
       perPage: 5,
+      reportNew: {
+        tp: '',
+        descr: '',
+        asset: 'ETH',
+        from: '',
+        to: '',
+        txAm: ''
+      }
     }
   },
   methods: {
     validateForm () {
       try {
-        let json = JSON.parse(this.reportText);
-        let {tp, descr, asset, from, to, txAm} = json;
-        if (tp == undefined || tp == '') throw false;
-        if (descr == undefined || descr == '') throw false;
-        if (asset == undefined || asset == '') throw false;
-        if (from != "" && !this.$eth.isAddress(from)) throw false;
-        if (to != "" && !this.$eth.isAddress(to)) throw false;
-        if (txAm == undefined) throw false;
+        if (!this.reportNew.tp || !this.reportNew.descr || !this.reportNew.asset ||
+            !(this.reportNew.from === "" || this.$eth.isAddress(this.reportNew.from)) ||
+            !(this.reportNew.to === "" || this.$eth.isAddress(this.reportNew.to))) {
+              throw false;
+            }
 
-        return JSON.stringify({tp, descr, asset, from, to, txAm});
+        return JSON.stringify(this.reportNew);
       } catch(err) {
         return false;
       }
@@ -91,7 +127,7 @@ export default {
       try {
         let json = this.validateForm();
         if (!json) throw this.$t('lang.reports.invalid-data');
-        let txHash = await this.$libre.report.addNewReport(this.reportText);
+        let txHash = await this.$libre.report.addNewReport(json);
         
         if (await this.$eth.isSuccess(txHash)) {
           await this.loadReports();
@@ -128,6 +164,7 @@ export default {
       await this.$libre.initPromise;
       this.loadReports();
       this.checkOwner();
+      this.reportNew.from = this.reportNew.to = this.$eth.yourAccount;
     } catch (err) {
       console.log(err)
     }

@@ -63,6 +63,10 @@ export default {
           data: report.tp
         },
         {
+          name: this.$t("lang.reports.description-row"),
+          data: report.descr
+        },
+        {
           name: this.$t("lang.reports.asset-row"),
           data: report.asset
         },
@@ -72,17 +76,13 @@ export default {
           type: "address"
         },
         {
-          name: this.$t("lang.reports.value-row"),
-          data: report.txAm
-        },
-        {
           name: this.$t("lang.reports.to-row"),
           data: report.to,
           type: "address"
         },
         {
-          name: this.$t("lang.reports.description-row"),
-          data: report.descr
+          name: this.$t("lang.reports.value-row"),
+          data: report.txAm
         }
       );
       return;
