@@ -57,7 +57,7 @@
         </div>
       </div>
     </div>
-    <div class="container table-padding">
+    <div class="container table-padding max-width">
     <div class="card">
       <header class="card-header">
         <p class="card-header-title">{{ $t('lang.status.fund-assets') }}</p>

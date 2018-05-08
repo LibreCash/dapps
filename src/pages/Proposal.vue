@@ -4,10 +4,12 @@
       <div class="table-padding">
         <div class="card">
           <div class="card-content">
-            <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
+            <address-block></address-block>
+            <div> {{$t('lang.dao.now-row')}}  {{ now }}</div>
             <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
             <div>{{ $t('lang.dao.min-count') }}: {{ $libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
             <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
+            <div class="level"></div>
             <router-link :to="{ path: '/dao' }" class="button">
               <div class="icon">
                 <i class="fas fa-arrow-left" size="is-small"></i>
@@ -16,7 +18,8 @@
             </router-link>
           </div>
         </div>
-         
+        <div class="level"></div>
+          <div class="card-content table-padding"> 
         <b-table :data="proposalData"
           :bordered="false"
           :striped="true"
@@ -27,37 +30,41 @@
             <b-table-column :label="$t('lang.dao.name-row')">
               <strong>{{ props.row.name }}</strong>
             </b-table-column>
-            <b-table-column :label="$t('lang.dao.value-row')" centered>
+            <td v-if="$eth.isAddress(props.row.value)" :data-label="$t('lang.common.value-row')" class="flex-mobile">
+              <a :href="$libre.addressToLink(props.row.value)" class="is-text-overflow">{{ props.row.value }}</a>
+            </td>
+            <b-table-column v-else :label="$t('lang.dao.value-row')" >
               {{ props.row.value }}
             </b-table-column>
           </template>
         </b-table>
+        </div>
+
         <div class="level"></div>
-        <div class="level is-mobile" v-if="loggedIn">
-          <div class="level-item has-text-centered">
-            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="fas fa-thumbs-up"></i></button>
-          </div>
-          <div class="level-item has-text-centered">
-            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="fas fa-thumbs-down"></i></button>
-          </div>
-          <div class="level-item has-text-centered">
-            <button v-bind:class="{'button is-medium is-info':true, 'is-loading': loadingExecute}"
-              @click="execute()" :disabled="!enableExecute"><i class="fas fa-play"></i></button>
-          </div>
-          <div class="level-item has-text-centered">
-            <button v-bind:class="{'button is-medium is-danger':true, 'is-loading': loadingBlock}"
-                @click="block()"
-                :disabled="!enableBlock">
-              <i class="fas fa-ban"></i>
-            </button>
-          </div>
+        <div class="level is-mobile">
+            <div class="level-item has-text-centered">
+                <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="fas fa-thumbs-up"></i></button>
+            </div>
+            <div class="level-item has-text-centered">
+                <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="fas fa-thumbs-down"></i></button>
+            </div>
+            <div class="level-item has-text-centered">
+                <button v-bind:class="{'button is-medium is-info':true, 'is-loading': loadingExecute}" @click="execute()" :disabled="!enableExecute"><i class="fas fa-play"></i></button>
+            </div>
+            <div class="level-item has-text-centered">
+                <button v-bind:class="{'button is-medium is-danger':true, 'is-loading': loadingBlock}" @click="block()" :disabled="!enableBlock">
+                      <i class="fas fa-ban"></i>
+                    </button>
+            </div>
+        </div>
         </div>
         <div class="level"></div>
-      </div>
+        <div class="level"></div>
     </div>
 </template>
 
 <script>
+import AddressBlock from "@/components/AddressBlock";
 export default {
   data () {
     return {
@@ -79,43 +86,38 @@ export default {
       enableBlock: false,
       loadingExecute: false,
       loadingBlock: false,
-      tokensCount: ''
+      tokensCount: '',
+      now:''
     }
   },
   methods: {
     async updateBlockTime() {
-       this.proposalData.find(item => item.data === "now").rawValue = (+(await this.$eth.getLatestBlockTime()));
+       this.now = this.$d(await this.$eth.getLatestBlockTime() * 1000, 'long+');
     },
 
     startUpdatingTime() {
-      this.updatingTicker = setInterval(() => {
-        if (this.proposalData.find(item => item.data === "now")) {
-          this.proposalData.find(item => item.data === "now").rawValue++;
-          this.proposalData.find(item => item.data === "now").value = this.$d(this.getNow() * 1000, 'long+');
-          this.updateEnabledButtons();
-        }
-      }, 1000);
       this.updatingBlockData = setInterval(() => {
         this.updateBlockTime()
       }, 10 * 60 * 1000 /* 10 minutes */);
+
+      this.updatingTicker = setInterval(async () => {
+          await this.updateEnabledButtons()
+      }, 1000);
+      
     },
 
-    updateEnabledButtons () {
+    async updateEnabledButtons () {
       this.isActive = +this.proposal.status === this.$libre.proposalStatuses[0].number;
-      this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > this.getNow() * 1000 &&
+      this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > await this.$eth.getLatestBlockTime() * 1000 &&
                       !this.votes.voted &&
                       this.tokensCount >= this.$libre.proposalParams.minBalance / Math.pow(10, 18) &&
                       this.isActive;
 
-      this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < this.getNow() * 1000 && 
+      this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < await this.$eth.getLatestBlockTime() * 1000 && 
           this.isActive &&
           (this.votes.yea > this.votes.nay) &&
           (this.votes.yea + this.votes.nay >= this.$libre.toToken(this.$libre.proposalParams.quorum));
       this.enableBlock = this.contractOwner && this.isActive;
-    },
-
-    getNow() {
-      return this.proposalData.find(item => item.data === "now").rawValue;
     },
 
     clearTimers() {
@@ -198,7 +200,6 @@ export default {
         this.proposalData.push(
           {name: this.$t('lang.dao.voting-row'), value: `${this.votes.yea}/${this.votes.nay}`},
           {name: this.$t('lang.dao.deadline-row'), value: this.$d(this.votes.deadline * 1000, 'long+')},
-          {name: this.$t('lang.dao.now-row'), data: 'now', rawValue: 0, value: 0},
           {name: this.$t('lang.dao.description-row'), value: this.proposal.description}
         )
         await this.updateBlockTime();
@@ -288,12 +289,10 @@ export default {
   },
   destroyed () {
     this.clearTimers();
+  },
+
+  components: {
+    AddressBlock
   }
 }
 </script>
-
-<style>
-button.is-success {
-  float: right;
-}
-</style>

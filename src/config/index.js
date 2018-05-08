@@ -56,7 +56,7 @@ export default class Config {
         },
         {
           name: 'ZEN',
-          address: 'znaULW3nSEiuiMVa2P9WKXH6mxp4GpVvmpS',
+          address: 'zngqrJBzt7nxnrcfvtL1AVKEujq8FVU2uHR',
           request: address => `https://explorer.zensystem.io/insight-api-zen/addr/${address}/?noTxList=1`,
           process: data => data.balance,
           href: address => `http://explorer.zenmine.pro/insight/address/${address}`

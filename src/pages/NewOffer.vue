@@ -6,6 +6,7 @@
                 <p>{{ $t('lang.common.your-information') }}</p>
                 <address-block></address-block>
                 <p>{{ $t('lang.common.allowed') }}: {{ allowed }} Libre</p>
+                <p>ETH: {{balanceETH}}</p>
                 <router-link :to="{ path: '/loans' }" class="button">
                     <div class="icon">
                         <i class="fas fa-arrow-left" size="is-small"></i>
@@ -248,7 +249,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/loans')
         } else {
-          this.$libre.notify(this.$t('lang.common.creating-error'));
+          this.$libre.notify(this.$t('lang.loans.creating-error'));
           this.setMessage('danger', [
             this.$t('lang.common.ended-with-error'),
             action
