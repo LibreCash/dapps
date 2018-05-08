@@ -382,9 +382,9 @@ export default {
     },
     async updateClaimed () {
       this.bank.claimed = +await this.$libre.bounty.bank.claimed();
-      this.bank.payment = this.$libre.toToken(+await this.$libre.bounty.bank.payments(this.$eth.yourAccount));
+      this.bank.payment = this.$eth.toToken(+await this.$libre.bounty.bank.payments(this.$eth.yourAccount));
       this.exchanger.claimed = +await this.$libre.bounty.exchanger.claimed();
-      this.exchanger.payment = this.$libre.toToken(+await this.$libre.bounty.exchanger.payments(this.$eth.yourAccount));
+      this.exchanger.payment = this.$eth.toToken(+await this.$libre.bounty.exchanger.payments(this.$eth.yourAccount));
     },
     // next are test methods for test methods
     async testEraseBankClaim () {
@@ -483,8 +483,8 @@ export default {
       this.updateClaimed();
     },
     async getBounties () {
-      this.bank.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.bank.address));
-      this.exchanger.bounty = this.$libre.toToken(await this.$eth.getBalance(this.config.bounty.exchanger.address));
+      this.bank.bounty = this.$eth.toToken(await this.$eth.getBalance(this.config.bounty.bank.address));
+      this.exchanger.bounty = this.$eth.toToken(await this.$eth.getBalance(this.config.bounty.exchanger.address));
     },
     async getDeadlines () {
       this.bank.deadlineUnix = +await this.$libre.bounty.bank.deadline();

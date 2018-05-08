@@ -288,7 +288,7 @@ export default {
           _fail = this.$t('lang.common.transaction-failed-low');
       let disclaimer = this.$t('lang.deposit.available-disclaimer'),
           authDisclaimer = this.$t('lang.deposit.authorize-disclaimer');
-      let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
+      let action = `1. ${authDisclaimer} ${this.$eth.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
         let txHash = await this.$libre.token.approve(this.config.loans.address, amount);

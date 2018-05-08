@@ -62,10 +62,10 @@ export default {
       });
       this.emissionStatus.push({
         name: this.$t('lang.common.total-supply'),
-        data: totalSupply !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
+        data: totalSupply !== 'error' ? `${this.$eth.toToken(totalSupply)} LIBRE` : '-'
       }, {
         name: this.$t('lang.common.exchanger-balance'),
-        data: tokenBalance !== 'error' ? `${this.$libre.toToken(totalSupply)} LIBRE` : '-'
+        data: tokenBalance !== 'error' ? `${this.$eth.toToken(totalSupply)} LIBRE` : '-'
       });
 
       this.isLoading = false

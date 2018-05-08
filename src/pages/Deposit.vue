@@ -193,7 +193,7 @@ export default {
             this.plans.isCreating = true;
 
             try {
-                let txHash = await this.$libre.deposit.createPlan(this.newPlan.period,this.newPlan.percent * this.$libre.consts.REVERSE_PERCENT,this.$libre.fromToken(this.newPlan.minAmount),this.newPlan.description);
+                let txHash = await this.$libre.deposit.createPlan(this.newPlan.period,this.newPlan.percent * this.$libre.consts.REVERSE_PERCENT,this.$eth.fromToken(this.newPlan.minAmount),this.newPlan.description);
 
                 if (await this.$eth.isSuccess(txHash)) {
                     this.$libre.notify(this.$t('lang.deposit.tip-plan-created'));
@@ -219,7 +219,7 @@ export default {
                 _fail = this.$t('lang.common.transaction-failed-low'),
                 disclaimer = this.$t('lang.deposit.available-disclaimer'),
                 authDisclaimer = this.$t('lang.deposit.authorize-disclaimer'),
-                action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
+                action = `1. ${authDisclaimer} ${this.$eth.toToken(amount)} Libre`;
             
             if (allowance < amount) {
                 this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
@@ -240,7 +240,7 @@ export default {
             this.deposit.isCreating = true;
 
             try {
-                if (!(await this.approveLibre(this.$libre.fromToken(this.amount))))
+                if (!(await this.approveLibre(this.$eth.fromToken(this.amount))))
                   return
                 let action = this.$t('lang.deposit.create-action'),
                     _waiting = this.$t('lang.common.tips.waiting'),
@@ -249,7 +249,7 @@ export default {
                     _fail = this.$t('lang.common.transaction-failed-low');
 
                 this.setMessage('warning', [`${action} - ${_waiting}`]);
-                let txHash = await this.$libre.deposit.createDeposit(this.$libre.fromToken(this.amount), id);
+                let txHash = await this.$libre.deposit.createDeposit(this.$eth.fromToken(this.amount), id);
                 this.setMessage('warning', [`${action} - ${_sending}`]);
 
                 if (await this.$eth.isSuccess(txHash)) {
@@ -304,7 +304,7 @@ export default {
                     description: plan.description,
                     percent: plan.percent / this.$libre.consts.REVERSE_PERCENT,
                     period: this.$libre.periodToString(plan.period),
-                    minAmount: this.$libre.toToken(plan.minAmount)
+                    minAmount: this.$eth.toToken(plan.minAmount)
                 })
             })
 
@@ -340,8 +340,8 @@ export default {
                     deadline: this.$d(deadline, 'long+'),
                     ended: ended,
                     period: period,
-                    amount: this.$libre.toToken(deposit.amount),
-                    margin: this.$libre.toToken(deposit.margin),
+                    amount: this.$eth.toToken(deposit.amount),
+                    margin: this.$eth.toToken(deposit.margin),
                     plan: deposit.plan
                 })
             }
@@ -358,16 +358,16 @@ export default {
                 this.setMessage("warning", [this.$t('lang.deposit.low-amount-disclaimer')]);
             else if (amount > this.needAmount)
                 this.setMessage("warning", [this.$t('lang.deposit.over-amount-disclaimer')]);
-            else if (this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id)) > this.depositAvailable)
+            else if (this.$eth.toToken(await this.$libre.deposit.calcProfit(this.$eth.fromToken(amount), id)) > this.depositAvailable)
                 this.setMessage("warning", [this.$t('lang.deposit.over-possibilities')]);
             else
-                this.setMessage("info", [`${this.$t('lang.deposit.income')}: ${this.$libre.toToken(await this.$libre.deposit.calcProfit(this.$libre.fromToken(amount), id))} Libre`]);
+                this.setMessage("info", [`${this.$t('lang.deposit.income')}: ${this.$eth.toToken(await this.$libre.deposit.calcProfit(this.$eth.fromToken(amount), id))} Libre`]);
         },
 
         async getBalances() {
-            this.balance = this.$libre.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount));
-            this.depositAvailable = this.$libre.toToken(await this.$libre.deposit.availableTokens());
-            this.needAmount = this.$libre.toToken(await this.$libre.deposit.needAmount());
+            this.balance = this.$eth.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount));
+            this.depositAvailable = this.$eth.toToken(await this.$libre.deposit.availableTokens());
+            this.needAmount = this.$eth.toToken(await this.$libre.deposit.needAmount());
         }
     },
 

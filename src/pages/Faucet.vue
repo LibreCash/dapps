@@ -33,14 +33,14 @@ export default {
 
   methods: {
     async loadLiberty() {
-      this.balanceLiberty = this.$libre.toToken(
+      this.balanceLiberty = this.$eth.toToken(
           +await this.$libre.liberty.balanceOf(
             this.$eth.yourAccount
           )
         )
         .toLocaleString();
 
-      let balance = this.$libre.toToken(
+      let balance = this.$eth.toToken(
           +await this.$libre.faucet.tokenBalance()
         ),
         isGot = await this.$libre.faucet.tokensSent(

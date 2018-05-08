@@ -6,8 +6,8 @@
           <div class="card-content">
             <address-block/>
             <div> {{$t('lang.dao.now-row')}}  {{ $d(now,'long+') }}</div>
-            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
-            <div>{{ $t('lang.dao.min-count') }}: {{ $libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
+            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
+            <div>{{ $t('lang.dao.min-count') }}: {{ $eth.toToken($libre.proposalParams.quorum) }} LBRS</div>
             <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             <div class="level"></div>
             <router-link :to="{ path: '/dao' }" class="button">
@@ -101,13 +101,13 @@ methods: {
         this.isActive = +this.proposal.status === this.$libre.proposalStatuses[0].number;
         this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > this.now &&
                         !this.votes.voted &&
-                        this.tokensCount >= this.$libre.toToken(this.$libre.proposalParams.minBalance) &&
+                        this.tokensCount >= this.$eth.toToken(this.$libre.proposalParams.minBalance) &&
                         this.isActive;
 
         this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < this.now && 
             this.isActive &&
             (this.votes.yea > this.votes.nay) &&
-            (this.votes.yea + this.votes.nay >= this.$libre.toToken(this.$libre.proposalParams.quorum));
+            (this.votes.yea + this.votes.nay >= this.$eth.toToken(this.$libre.proposalParams.quorum));
         this.enableBlock = this.contractOwner && this.isActive;
     },
 
@@ -121,7 +121,7 @@ methods: {
 
     async getTokensCount () {
         await this.$libre.promiseLibre;
-        this.tokensCount = this.$libre.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount));
+        this.tokensCount = this.$eth.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount));
     },
 
     async loadProposal () {

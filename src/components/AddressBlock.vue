@@ -32,8 +32,8 @@ export default {
         await this.$eth.accountPromise;
         await this.$libre.initPromise;
         this.balances = {
-            libre: this.$libre.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount)),
-            lbrs: this.libertyBalance = this.$libre.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount))
+            libre: this.$eth.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount)),
+            lbrs: this.libertyBalance = this.$eth.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount))
         } 
     } catch(err) {
         console.log(err);

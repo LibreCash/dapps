@@ -30,7 +30,7 @@
                     <button class="button is-primary" @click="allAvailable()">{{ $t('lang.common.all-available') }}</button>
                   </p>
                 </b-field>
-                <b-field horizontal :label="$t('lang.loans.margin-row')" :type="isInteger(margin) ? '' : 'is-danger'">
+                <b-field horizontal :label="$t('lang.loans.margin-row')" :type="$eth.isInteger(margin) ? '' : 'is-danger'">
                   <b-input v-model="margin" placeholder="0"></b-input>
                 </b-field>
                 <b-field horizontal :label="$t('lang.loans.period-row')">
@@ -58,7 +58,7 @@
                 </b-message></b-field>
                 <div class="level">
                   <div class="level-item">
-                    <button class="button is-primary is-large" v-bind:class="{'is-loading': button.isLoading}" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
+                    <button class="button is-primary is-large" v-bind:class="{'is-loading': button.isLoading}" v-on:click="createLoan()" :disabled="button.disabled">
                       {{ button.name }}
                     </button>
                   </div>
@@ -101,12 +101,8 @@ export default {
       }
     },
 
-    isInteger(number) {
-      return +number >= 0
-    },
-
     isValidAmount(number) {
-      return this.isInteger(number) && number > 0 && (
+      return this.$eth.isInteger(number) && number > 0 && (
         (this.selectedType == this.$libre.loansType.Libre && number <= this.balanceLibre ) ||
         (this.selectedType == this.$libre.loansType.ETH && number < this.balanceETH) /* '<' not '<=' cause tx fee */
       )
@@ -129,7 +125,7 @@ export default {
       let valid = true
 
       if (!this.isValidAmount(this.amount) || 
-          !this.isInteger(this.margin) ||
+          !this.$eth.isInteger(this.margin) ||
           !this.isDebatingPeriod())
         valid = false
 
@@ -156,13 +152,13 @@ export default {
     },
 
     async updateData() {
-      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address));
+      this.allowed = this.$eth.toToken(await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address));
       try {
         this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.$eth.yourAccount));
       } catch (err) {
         this.balanceETH = err;
       }
-      this.balanceLibre = this.$libre.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount));
+      this.balanceLibre = this.$eth.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount));
     },
 
     async approveLibre(amount) {
@@ -173,7 +169,7 @@ export default {
           _fail = this.$t('lang.common.transaction-failed-low');
       let disclaimer = this.$t('lang.deposit.available-disclaimer'),
           authDisclaimer = this.$t('lang.deposit.authorize-disclaimer');
-      let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
+      let action = `1. ${authDisclaimer} ${this.$eth.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
         let txHash = await this.$libre.token.approve(this.config.loans.address, amount);
@@ -211,7 +207,7 @@ export default {
         switch(this.selectedType) {
           case this.$libre.loansType.Libre:
             console.log("createLoan",this.allowed, this.amount)
-            if (this.allowed < this.amount && !(await this.approveLibre(this.$libre.fromToken(this.amount)))) {
+            if (this.allowed < this.amount && !(await this.approveLibre(this.$eth.fromToken(this.amount)))) {
               return
             }
             this.setMessage('info', [
@@ -220,8 +216,8 @@ export default {
             ]);
             txHash = await this.$libre.loans.giveLibre(
               debatingPeriodInSeconds,
-              this.$libre.fromToken(+this.amount),
-              this.$libre.fromToken(+this.margin)
+              this.$eth.fromToken(+this.amount),
+              this.$eth.fromToken(+this.margin)
             )
             this.setMessage('info', [
               this.$t('lang.common.please-wait-for-sending'),

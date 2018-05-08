@@ -4,7 +4,7 @@
         <div class="card">
           <div class="card-content">
             <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
-            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
+            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
             <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
                 <div class="icon">
@@ -148,12 +148,12 @@ export default {
     },
 
     validTokens() {
-        return this.tokensCount >= this.$libre.toToken(this.$libre.proposalParams.minBalance)
+        return this.tokensCount >= this.$eth.toToken(this.$libre.proposalParams.minBalance)
     }
   },
   methods: {
     async getTokensCount () {
-       this.tokensCount = this.$libre.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount));
+       this.tokensCount = this.$eth.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount));
     },
 
     getType(fieldValid) {

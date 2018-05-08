@@ -176,4 +176,12 @@ export default class ETH {
   isZeroAddress (address) {
     return address === '0x0000000000000000000000000000000000000000'
   }
+
+  toToken (amount, decimals = 18) {
+    return +amount / 10 ** decimals
+  }
+
+  fromToken(amount, decimals = 18) {
+    retrun +amount * 10 ** decimals
+  }
 }

@@ -299,14 +299,6 @@ export default class Libre {
     return result
   }
 
-  toToken (amount, decimals = this.consts.DECIMALS) {
-    return +amount / 10 ** decimals
-  }
-
-  fromToken (amount, decimals = this.consts.DECIMALS) {
-    return +amount * 10 ** decimals
-  }
-
   periodToString (seconds) {
     var years = Math.floor(seconds / (60 * 60 * 24 * 365))
     seconds -= years * 60 * 60 * 24 * 365

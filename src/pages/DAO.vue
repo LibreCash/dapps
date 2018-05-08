@@ -10,14 +10,14 @@
                   <a :href="$libre.addressToLink(contracts.lbrs)" target="_blank" class="is-text-overflow ">{{contracts.lbrs}}</a>
                 </div>
                 <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
-                <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
-                <div>{{ $t('lang.dao.min-count') }}: {{ $libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-count') }}: {{ $eth.toToken($libre.proposalParams.quorum) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             </div>
         </div>
         <div class="level"></div>
         <nav class="level">
-          <div class="level-item has-text-centered" v-if="tokensCount >= $libre.toToken($libre.proposalParams.minBalance)">
+          <div class="level-item has-text-centered" v-if="tokensCount >= $eth.toToken($libre.proposalParams.minBalance)">
             <div>
               <p class="heading">{{ $t('lang.common.create') }}</p>
               <p>
@@ -98,7 +98,7 @@
               <span v-if="!props.row.votingData.voted &&
                           (props.row.deadlineUnix > curBlockchainTime) &&
                           !props.row.loading &&
-                          (tokensCount >= $libre.toToken($libre.proposalParams.minBalance)) &&
+                          (tokensCount >= $eth.toToken($libre.proposalParams.minBalance)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip :label="$t('lang.dao.yea')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="vote(props.row, true)"><i class="fas fa-thumbs-up"></i></button>
@@ -112,7 +112,7 @@
                               (props.row.status === $libre.proposalStatuses[0].text) &&
                               !props.row.loading &&
                               (props.row.yea > props.row.nay) &&
-                              (props.row.yea + props.row.nay >= $libre.toToken($libre.proposalParams.quorum))">
+                              (props.row.yea + props.row.nay >= $eth.toToken($libre.proposalParams.quorum))">
                 <b-tooltip :label="$t('lang.common.execute')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="execute(props.row)"><i class="fas fa-play"></i></button>
                 </b-tooltip>
@@ -298,7 +298,7 @@ export default {
     },
 
     async getTokensCount () {
-      this.tokensCount = this.$libre.toToken(+await this.$libre.liberty.balanceOf(this.$eth.yourAccount),this.$libre.consts.DECIMALS)
+      this.tokensCount = this.$eth.toToken(+await this.$libre.liberty.balanceOf(this.$eth.yourAccount),this.$libre.consts.DECIMALS)
     },
 
     startUpdatingTime() {
