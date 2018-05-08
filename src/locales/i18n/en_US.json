@@ -120,7 +120,9 @@
         "dao": "DAO contract",
         "deposit": "Deposit contract",
         "loans": "Loans contract",
-        "bounty": "Bounty contract"
+        "bounty": "Bounty contract",
+        "reports": "Reports contract",
+        "faucet": "Faucet contract"
     },
     "bounty": {
         "bank-program": "Bank Bounty",

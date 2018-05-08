@@ -3,6 +3,7 @@
       <div class="card level">
         <div class="card-content">
           <address-block></address-block>
+          <div class="flex-mobile">{{ $t('lang.contracts.faucet') }}: <a class="is-text-overflow" :href="$libre.addressToLink(config.faucet.address)">{{ config.faucet.address }}</a></div>
         </div>
       </div>
       <b-message :type="msg.type">{{ msg.text }}</b-message>

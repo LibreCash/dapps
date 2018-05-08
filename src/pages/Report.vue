@@ -1,5 +1,11 @@
 <template>
   <div class="table-padding max-width">
+    <div class="card">
+      <div class="card-content">
+        <div class="flex-mobile">{{ $t('lang.contracts.reports') }}: <a class="is-text-overflow" :href="$libre.addressToLink(config.report.address)">{{ config.report.address }}</a></div>
+      </div>
+    </div>
+    <div class="level"></div>
     <section v-if="owner">
       <b-field :type="validateForm() ? '' : 'is-danger'">
         <b-input v-model="reportText" type="textarea" :placeholder="$t('lang.reports.write')"></b-input>
