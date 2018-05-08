@@ -70,8 +70,6 @@ export default {
 
       this.isLoading = false
     },
-
-    
   },
   async created () {
     try {

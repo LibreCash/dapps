@@ -65,6 +65,9 @@ export default {
       i18n.locale = i18n.messages.locales[+newVal];
       localStorage.setItem("locale", newVal);
     }
+  },
+  async created () {
+    await this.$store.dispatch('startUpdating', this.$eth.getLatestBlockTime)
   }
 };
 </script>
