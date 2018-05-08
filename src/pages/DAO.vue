@@ -10,8 +10,8 @@
                   <a :href="$libre.addressToLink(contracts.lbrs)" target="_blank" class="is-text-overflow ">{{contracts.lbrs}}</a>
                 </div>
                 <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
-                <div>{{ $t('lang.dao.min-to-vote') }}: {{ this.$libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
-                <div>{{ $t('lang.dao.min-count') }}: {{ this.$libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-count') }}: {{ $libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             </div>
         </div>
@@ -98,7 +98,7 @@
               <span v-if="!props.row.votingData.voted &&
                           (props.row.deadlineUnix > curBlockchainTime) &&
                           !props.row.loading &&
-                          (tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)) &&
+                          (tokensCount >= $libre.toToken($libre.proposalParams.minBalance)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip :label="$t('lang.dao.yea')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="vote(props.row, true)"><i class="fas fa-thumbs-up"></i></button>
@@ -112,7 +112,7 @@
                               (props.row.status === $libre.proposalStatuses[0].text) &&
                               !props.row.loading &&
                               (props.row.yea > props.row.nay) &&
-                              (props.row.yea + props.row.nay >= $libre.proposalParams.quorum / Math.pow(10, 18))">
+                              (props.row.yea + props.row.nay >= $libre.toToken($libre.proposalParams.quorum))">
                 <b-tooltip :label="$t('lang.common.execute')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="execute(props.row)"><i class="fas fa-play"></i></button>
                 </b-tooltip>
