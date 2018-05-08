@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-content">
             <address-block></address-block>
-            <div> {{$t('lang.dao.now-row')}}  {{ this.now }}</div>
+            <div> {{$t('lang.dao.now-row')}}  {{ now }}</div>
             <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.toToken($libre.proposalParams.minBalance) }} LBRS</div>
             <div>{{ $t('lang.dao.min-count') }}: {{ $libre.toToken($libre.proposalParams.quorum) }} LBRS</div>
             <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
@@ -96,31 +96,28 @@ export default {
     },
 
     startUpdatingTime() {
-      this.updatingTicker = setInterval(() => {
-          this.now = this.$d(this.getNow() * 1000, 'long+')
-          this.updateEnabledButtons()
-      }, 1000);
       this.updatingBlockData = setInterval(() => {
         this.updateBlockTime()
       }, 10 * 60 * 1000 /* 10 minutes */);
+
+      this.updatingTicker = setInterval(async () => {
+          await this.updateEnabledButtons()
+      }, 1000);
+      
     },
 
-    updateEnabledButtons () {
+    async updateEnabledButtons () {
       this.isActive = +this.proposal.status === this.$libre.proposalStatuses[0].number;
-      this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > this.getNow() * 1000 &&
+      this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > await this.$eth.getLatestBlockTime() * 1000 &&
                       !this.votes.voted &&
                       this.tokensCount >= this.$libre.proposalParams.minBalance / Math.pow(10, 18) &&
                       this.isActive;
 
-      this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < this.getNow() * 1000 && 
+      this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < await this.$eth.getLatestBlockTime() * 1000 && 
           this.isActive &&
           (this.votes.yea > this.votes.nay) &&
           (this.votes.yea + this.votes.nay >= this.$libre.toToken(this.$libre.proposalParams.quorum));
       this.enableBlock = this.contractOwner && this.isActive;
-    },
-
-    getNow() {
-      return this.proposalData.find(item => item.data === "now").rawValue;
     },
 
     clearTimers() {
