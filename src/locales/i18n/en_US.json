@@ -173,7 +173,8 @@
         "to-row": "To",
         "value-row": "Value",
         "description-row": "Description",
-        "invalid-data": "Invalid data"
+        "invalid-data": "Invalid data",
+        "create": "Create report"
     },
     "dao": {
         "min-to-vote": "Min token count to create/vote",
