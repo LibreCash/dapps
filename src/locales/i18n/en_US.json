@@ -67,6 +67,7 @@
         "max-amount": "Max amount",
         "no": "no",
         "nothing": "nothing",
+        "no-web3": "No web3? You should consider trying MetaMask!",
         "not-set": "not set",
         "no-metamask": "No metamask / not logged in",
         "outdated": "outdated",
@@ -96,7 +97,6 @@
         "votes": "Votes",
         "yes": "yes",
         "your-address": "Your address",
-        "your-information": "Your information",
         "withdraw": "Withdraw",
         "tips": {
             "waiting": "waiting for confirmations...",
@@ -119,7 +119,9 @@
         "dao": "DAO contract",
         "deposit": "Deposit contract",
         "loans": "Loans contract",
-        "bounty": "Bounty contract"
+        "bounty": "Bounty contract",
+        "reports": "Reports contract",
+        "faucet": "Faucet contract"
     },
     "bounty": {
         "bank-program": "Bank Bounty",
@@ -127,6 +129,8 @@
         "new-targets": "New targets",
         "terms": "Bounty terms",
         "new-targets-for": "New targets for",
+        "new-targets-for-bank": "bank bounty program",
+        "new-targets-for-exchanger": "exchanger bounty program",
         "create-targets": "Create targets",
         "address-row": "Address",
         "name-row": "Name",
@@ -169,7 +173,9 @@
         "from-row": "From",
         "to-row": "To",
         "value-row": "Value",
-        "description-row": "Description"
+        "description-row": "Description",
+        "invalid-data": "Invalid data",
+        "create": "Create report"
     },
     "dao": {
         "min-to-vote": "Min token count to create/vote",
@@ -225,7 +231,9 @@
         "income": "Income",
         "description": "Description",
         "contract-available-balance": "Unused contract balance",
-        "ended": "ended"
+        "ended": "ended",
+        "not-enough-balance": "Not enough Libre on balance",
+        "please-valid-sum": "Please input valid amount"
     },
     "faucet": {
         "get-tokens": "Get tokens",
@@ -275,7 +283,7 @@
         "recipient-row": "Recipient",
         "take-row": "Take",
         "return-row": "Return",
-        "period-row": "Period",
+        "period-row": "Period, days",
         "margin-row": "Margin",
         "refund-row": "Refund",
         "status-row": "Status",
@@ -315,13 +323,34 @@
         "oracle-data": "{ready} / {all} oracles have sent data"
     },
     "tx": {
-        "vote": { "fail": "Vote tx failed", "success": "Vote tx ok" },
-        "block": { "fail": "Block tx failed", "success": "Block tx ok" },
-        "execute": { "fail": "Execute tx failed", "success": "Execute tx ok" },
-        "withdraw": { "fail": "Withdraw tx failed", "success": "Withdraw tx ok" },
-        "claim": { "fail": "Claim tx failed", "success": "Claim tx ok" },
-        "destruct": { "fail": "Destruct tx failed", "success": "Destruct tx ok" },
-        "targets-creation": { "fail": "Targets creation tx failed", "success": "Targets creation tx ok" }
+        "vote": {
+            "fail": "Vote tx failed",
+            "success": "Vote tx ok"
+        },
+        "block": {
+            "fail": "Block tx failed",
+            "success": "Block tx ok"
+        },
+        "execute": {
+            "fail": "Execute tx failed",
+            "success": "Execute tx ok"
+        },
+        "withdraw": {
+            "fail": "Withdraw tx failed",
+            "success": "Withdraw tx ok"
+        },
+        "claim": {
+            "fail": "Claim tx failed",
+            "success": "Claim tx ok"
+        },
+        "destruct": {
+            "fail": "Destruct tx failed",
+            "success": "Destruct tx ok"
+        },
+        "targets-creation": {
+            "fail": "Targets creation tx failed",
+            "success": "Targets creation tx ok"
+        }
     },
     "proposal-types": {
         "custom": "Custom",

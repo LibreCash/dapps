@@ -1,13 +1,10 @@
 <template>
   <div>
-      <div class="table-padding">      
+      <div class="table-padding">
         <div class="card">
             <div class="card-content">
-                <p>{{ $t('lang.common.your-information') }}</p>
                 <address-block></address-block>
                 <p>{{ $t('lang.common.allowed') }}: {{ allowed }} Libre</p>
-                <p>ETH: {{ balanceETH }} ETH</p>
-                <p>Libre: {{ balanceLibre }} Libre</p>
                 <router-link :to="{ path: '/loans' }" class="button">
                     <div class="icon">
                         <i class="fas fa-arrow-left" size="is-small"></i>
@@ -18,48 +15,39 @@
         </div>
         <div class="level"></div>
           <div class="column">
-                <b-field horizontal label="Type" >
+                <b-field horizontal  :label="$t('lang.common.type')" >
                   <b-select :placeholder="$t('lang.common.select-type')" v-model="selectedType">
-                    <option v-for="(key, type) in typeLoans" v-bind:value="key">
+                    <option v-for="(key, type) in $libre.loansType" v-bind:value="key">
                       {{ type }}
                     </option>
                   </b-select>
                 </b-field>
-                <b-field horizontal :label="$t('lang.common.amount') + ', ' + Object.keys(typeLoans)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
-                  <b-input v-model="amount" placeholder="0"></b-input>
+                <b-field horizontal :label="$t('lang.common.amount') + ', ' + Object.keys($libre.loansType)[selectedType]">
+                  <b-field :type="isValidAmount ? '' : 'is-danger'">
+                    <b-input v-model="amount" placeholder="0" expanded></b-input>
+                  </b-field>
                   <p class="control">
                     <button class="button is-primary" @click="allAvailable()">{{ $t('lang.common.all-available') }}</button>
                   </p>
                 </b-field>
-                <b-field horizontal :label="$t('lang.loans.margin-row')" :type="isInteger(margin) ? '' : 'is-danger'">
+                <b-field horizontal :label="$t('lang.loans.margin-row')" :type="$eth.isInteger(margin) ? '' : 'is-danger'">
                   <b-input v-model="margin" placeholder="0"></b-input>
                 </b-field>
                 <b-field horizontal :label="$t('lang.loans.period-row')">
-                    <b-field :type="isDebatingPeriod() ? '' : 'is-danger'">
-                        <b-datepicker 
-                            :placeholder="$t('lang.common.click-to-select')"
-                            v-model="debatingPeriod"
-                            icon="calendar"
-                            icon-pack="fas"
-                            expanded></b-datepicker>
-                    </b-field>
-                    <b-field :type="isDebatingPeriod() ? '' : 'is-danger'">
-                        <b-timepicker 
-                            :placeholder="$t('lang.common.set-time')"
-                            icon="clock"
-                            v-model="debatingTime"
-                            icon-pack="fas"
-                            expanded></b-timepicker>
-                    </b-field>
+                  <b-field :type="+period > 0 ? '' : 'is-danger'" :message="periodToString">
+                    <b-input v-model="period" placeholder="0"></b-input>
+                  </b-field>
                 </b-field>
-                <b-field><b-message :type="msg.type" v-if="msg.notes.length != 0">
-                  <p v-for="note in msg.notes">
-                    {{ note }}
-                  </p>
-                </b-message></b-field>
+                <b-field>
+                  <b-message :type="msg.type" v-if="msg.notes.length != 0">
+                    <p v-for="note in msg.notes">
+                      {{ note }}
+                    </p>
+                  </b-message>
+                </b-field>
                 <div class="level">
                   <div class="level-item">
-                    <button class="button is-primary is-large" v-bind:class="{'is-loading': isLoadingButton}" v-on:click="createLoan()" v-model="button" :disabled="button.disabled">
+                    <button class="button is-primary is-large" v-bind:class="{'is-loading': button.isLoading}" v-on:click="createLoan()" :disabled="button.disabled">
                       {{ button.name }}
                     </button>
                   </div>
@@ -75,27 +63,33 @@ import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
     return {
-      daoAddress: '',
-      recipient: '',
       amount: '',
       margin: '',
-      debatingPeriod: new Date(),
-      debatingTime: new Date(),
-      button: {name: this.$t('lang.loans.create-offer'), disabled: true},
-      buttonAllowance: {name: this.$t('lang.common.update-allowance'), disabled: true},
-      typeLoans: this.$libre.loansType,
+      period: '',
+      button: {
+        name: this.$t('lang.loans.create-offer'),
+        disabled: true,
+        isLoading: false
+      },
       selectedType: 0,
       allowed: 0,
-      balanceETH: 0,
-      balanceLibre: 0,
-      myAddress: '',
-      isOpen: false,
-      isOfferOpen: true,
       msg: {
         type: 'is-danger',
         notes: []
-      },
-      isLoadingButton: false
+      }
+    }
+  },
+  computed: {
+    periodToString() {
+      let daysInSeconds = this.$eth.isInteger(this.period) ? parseInt(+this.period) * 24 * 60 * 60 : 0;
+      return this.$libre.periodToString(daysInSeconds).slice(0,-9);
+    },
+    
+    isValidAmount() {
+      return this.$eth.isInteger(this.amount) && +this.amount > 0 && (
+        (this.selectedType == this.$libre.loansType.Libre && this.amount <= this.$store.state.balances.libre) ||
+        (this.selectedType == this.$libre.loansType.ETH && this.amount < this.$store.state.balances.eth) /* '<' not '<=' cause tx fee */
+      )
     }
   },
   methods: {
@@ -106,36 +100,12 @@ export default {
       }
     },
 
-    isInteger(number) {
-      return +number >= 0
-    },
-
-    isValidAmount(number) {
-      return this.isInteger(number) && number > 0 && (
-        (this.selectedType == this.$libre.loansType.Libre && number <= this.balanceLibre ) ||
-        (this.selectedType == this.$libre.loansType.ETH && number < this.balanceETH) /* '<' not '<=' cause tx fee */
-      )
-    },
-
-    isDebatingPeriod() {
-      if (this.debatingEnd) 
-        return false
-
-      let 
-        now = Date.now(),
-        debatingEnd = new Date(this.debatingPeriod)
-      // Refactor it  
-      debatingEnd.setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes())
-
-      return (debatingEnd - now) > 0
-    },
-
     validData() {
       let valid = true
 
-      if (!this.isValidAmount(this.amount) || 
-          !this.isInteger(this.margin) ||
-          !this.isDebatingPeriod())
+      if (!this.isValidAmount || 
+          !this.$eth.isInteger(this.margin) ||
+          +this.period <= 0)
         valid = false
 
       this.button.disabled = !valid
@@ -154,32 +124,33 @@ export default {
 
     async allAvailable() {
       if (this.selectedType == this.$libre.loansType.ETH) {
-        this.amount = this.balanceETH;
+        this.amount = this.$store.state.balances.eth;
       } else {
-        this.amount = this.balanceLibre;
+        this.amount = this.$store.state.balances.libre;
       }
     },
 
     async updateData() {
-      this.myAddress = window.web3.eth.defaultAccount;
-      this.allowed = this.$libre.toToken(await this.$libre.token.allowance(this.myAddress, this.config.loans.address));
-      try {
-        this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.myAddress));
-      } catch (err) {
-        this.balanceETH = err;
-      }
-      this.balanceLibre = this.$libre.toToken(await this.$libre.token.balanceOf(window.web3.eth.defaultAccount));
+      this.allowed = this.$eth.toToken(await this.$libre.token.allowance(this.$store.state.address, this.config.loans.address));
+      this.$store.dispatch('updateBalances', {
+          libre: this.$libre.token.balanceOf,
+          lbrs: this.$libre.liberty.balanceOf,
+          eth: this.$eth.getBalance,
+          ethConverter: this.$eth.fromWei,
+          tokenConverter: this.$eth.toToken,
+          address: this.$eth.loadAccounts
+      })
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address);
+      let allowance = +await this.$libre.token.allowance(this.$store.state.address, this.config.loans.address);
       let _waiting = this.$t('lang.common.tips.waiting'),
           _sending = this.$t('lang.common.tips.sending'),
           _success = this.$t('lang.common.success-low'),
           _fail = this.$t('lang.common.transaction-failed-low');
       let disclaimer = this.$t('lang.deposit.available-disclaimer'),
           authDisclaimer = this.$t('lang.deposit.authorize-disclaimer');
-      let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
+      let action = `1. ${authDisclaimer} ${this.$eth.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
         let txHash = await this.$libre.token.approve(this.config.loans.address, amount);
@@ -202,22 +173,19 @@ export default {
       let action = this.$t('lang.loans.create-offer-transaction');
       let
         txHash,
-        now = new Date(),
-        debatingEnd = (new Date(this.debatingPeriod))
-          .setHours(this.debatingTime.getHours(), this.debatingTime.getMinutes()),
-        debatingPeriodInSeconds = Math.round((debatingEnd - now) / 1000);
+        debatingPeriodInSeconds = parseInt(this.period) * 24 * 60 * 60;
 
       if (this.margin == '')
         this.margin = 0
 
-      this.button = {name: this.$t('lang.common.pending-dots'), disabled: true}
-      this.isLoadingButton = true
+      this.button.disabled = true
+      this.button.isLoading = true
 
       try {
         switch(this.selectedType) {
           case this.$libre.loansType.Libre:
             console.log("createLoan",this.allowed, this.amount)
-            if (this.allowed < this.amount && !(await this.approveLibre(this.$libre.fromToken(this.amount)))) {
+            if (this.allowed < this.amount && !(await this.approveLibre(this.$eth.fromToken(this.amount)))) {
               return
             }
             this.setMessage('info', [
@@ -226,8 +194,8 @@ export default {
             ]);
             txHash = await this.$libre.loans.giveLibre(
               debatingPeriodInSeconds,
-              this.$libre.fromToken(+this.amount),
-              this.$libre.fromToken(+this.margin)
+              this.$eth.fromToken(+this.amount),
+              this.$eth.fromToken(+this.margin)
             )
             this.setMessage('info', [
               this.$t('lang.common.please-wait-for-sending'),
@@ -255,7 +223,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/loans')
         } else {
-          this.$libre.notify(this.$t('lang.common.creating-error'));
+          this.$libre.notify(this.$t('lang.loans.creating-error'),'is-info');
           this.setMessage('danger', [
             this.$t('lang.common.ended-with-error'),
             action
@@ -270,15 +238,14 @@ export default {
           msg
         ]);
       }
-      this.button = {name: this.$t('lang.loans.create-offer'), disabled: false}
-      this.isLoadingButton = false
+      this.button.disabled = false
+      this.button.isLoading = false
     }
   },
   async created () {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = this.$eth.daoAddress;
       this.updateData()
     } catch (err) {
       console.log(err)
@@ -286,8 +253,7 @@ export default {
   },
   watch: {
     amount: function() {this.validData()},
-    debatingPeriod: function() {this.validData()},
-    debatingTime: function() {this.validData()},
+    period: function() {this.validData()},
     margin: function() {this.validData()},
     selectedType: function() {
       this.amount = this.margin = '';

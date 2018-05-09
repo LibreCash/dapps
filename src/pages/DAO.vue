@@ -5,20 +5,19 @@
             <div class="card-content">
                 <address-block/>
                 <div class="flex-mobile">{{ $t('lang.contracts.dao') }}: 
-                  <a :href="$libre.addressToLink(daoAddress)" target="_blank" class="is-text-overflow ">{{daoAddress}}</a></div>
-                <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
-                  <a :href="$libre.addressToLink(libertyAddress)" target="_blank" class="is-text-overflow ">{{libertyAddress}}</a>
+                  <a :href="$libre.addressToLink(contracts.dao)" target="_blank" class="is-text-overflow ">{{contracts.dao}}</a>
                 </div>
-                <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
-                <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
-                <div>{{ $t('lang.dao.min-to-vote') }}: {{ $libre.proposalParams.minBalance / Math.pow(10, 18) }} LBRS</div>
-                <div>{{ $t('lang.dao.min-count') }}: {{ $libre.proposalParams.quorum / Math.pow(10, 18) }} LBRS</div>
+                <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
+                  <a :href="$libre.addressToLink(contracts.lbrs)" target="_blank" class="is-text-overflow ">{{contracts.lbrs}}</a>
+                </div>
+                <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
+                <div>{{ $t('lang.dao.min-count') }}: {{ $eth.toToken($libre.proposalParams.quorum) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             </div>
         </div>
         <div class="level"></div>
         <nav class="level">
-          <div class="level-item has-text-centered" v-if="tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)">
+          <div class="level-item has-text-centered" v-if="$store.state.balances.lbrs >= $eth.toToken($libre.proposalParams.minBalance)">
             <div>
               <p class="heading">{{ $t('lang.common.create') }}</p>
               <p>
@@ -85,8 +84,8 @@
               {{ props.row.yea }} / {{ props.row.nay }}
             </b-table-column>
              <b-table-column :label="$t('lang.common.deadline')" centered>
-              <p>{{ $d(props.row.deadlineUnix * 1000, 'long+') }}</p>
-              <p v-if="props.row.deadlineUnix <= curBlockchainTime" class="tag is-warning is-rounded">
+              <p>{{ $d(props.row.deadlineUnix, 'long+') }}</p>
+              <p v-if="props.row.deadlineUnix <= $store.state.time" class="tag is-warning is-rounded">
                 {{ $t('lang.common.outdated') }}
               </p>
             </b-table-column>
@@ -97,9 +96,9 @@
               </b-tooltip>
               <!-- vote buttons -->
               <span v-if="!props.row.votingData.voted &&
-                          (props.row.deadlineUnix > curBlockchainTime) &&
+                          (props.row.deadlineUnix > $store.state.time) &&
                           !props.row.loading &&
-                          (tokensCount >= $libre.proposalParams.minBalance / Math.pow(10, 18)) &&
+                          ($store.state.balances.lbrs >= $eth.toToken($libre.proposalParams.minBalance)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip :label="$t('lang.dao.yea')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="vote(props.row, true)"><i class="fas fa-thumbs-up"></i></button>
@@ -109,11 +108,11 @@
                 </b-tooltip>
               </span>
               <!-- execute button -->
-              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
+              <span v-else-if="props.row.deadlineUnix <= $store.state.time &&
                               (props.row.status === $libre.proposalStatuses[0].text) &&
                               !props.row.loading &&
                               (props.row.yea > props.row.nay) &&
-                              (props.row.yea + props.row.nay >= $libre.proposalParams.quorum / Math.pow(10, 18))">
+                              (props.row.yea + props.row.nay >= $eth.toToken($libre.proposalParams.quorum))">
                 <b-tooltip :label="$t('lang.common.execute')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="execute(props.row)"><i class="fas fa-play"></i></button>
                 </b-tooltip>
@@ -140,19 +139,17 @@
 import AddressBlock from '@/components/AddressBlock'
 export default {
   data () {
-    return {
-      daoAddress: '',
-      libertyAddress: '',
+    return {  
+      contracts:{
+        dao: null,
+        lbrs: null,
+      },
       tableData: [],
       isLoading: false,
-      defaultAddress: '',
-      tokensCount: '',
       filter: "filterALL",
       currentPage: 1,
       perPage: 5,
-      curBlockchainTime: 0,
-      isOwner: false,
-      contractOwner: null
+      isOwner: false
     }
   },
   methods: {
@@ -173,10 +170,9 @@ export default {
             votingData: vote,
             yea: vote.yea,
             nay: vote.nay,
-            deadlineUnix: vote.deadline,
+            deadlineUnix: this.$eth.toTimestamp(vote.deadline),
             description: proposal.description,
             loading: false,
-            updateTimer: null,
             status: this.$libre.proposalStatuses[+proposal.status].text
         })
       }
@@ -191,15 +187,12 @@ export default {
     },
 
     async loadProposals () {
-      await this.updateBlockTime();
-
-      this.clearTimers();
       this.tableData = []
       this.isLoading = true
 
       await this.$libre.updateProposals(this.addProposal);
       if (this.tableData.length == 0) {
-        for(let i = this.$libre.proposals.length-1; i >=0; i--)
+        for(let i = this.$libre.proposals.length - 1; i >= 0; i--)
           this.addProposal(i)
       }
 
@@ -217,17 +210,11 @@ export default {
 
       this.isLoading = false
 
-      this.startUpdatingTime()
       var loginChecker = setInterval(() => {
-        if (this.$eth.yourAccount != null) {
+        if (this.$store.state.address != null) {
           clearInterval(loginChecker)
         }
       }, 1000)
-    },
-
-    async getTokensCount () {
-      await this.$libre.promiseLibre;
-      this.tokensCount = +await this.$libre.liberty.balanceOf(this.defaultAddress) / 10 ** this.$libre.consts.DECIMALS;
     },
 
     async vote (row, support) {
@@ -237,10 +224,12 @@ export default {
 
       row.loading = true
       try {
-        let 
-          txHash = await this.$libre.dao.vote(id, support),
-          message = (await this.$eth.isSuccess(txHash)) ? this.$t('lang.tx.vote.success') : this.$t('lang.tx.vote.fail')
-        this.$libre.notify(message)
+        let txHash = await this.$libre.dao.vote(id, support);
+
+        if (await this.$eth.isSuccess(txHash))
+          this.$libre.notify(this.$t('lang.tx.vote.success'));
+        else
+          this.$libre.notify(this.$t('lang.tx.vote.fail'),'is-info')
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
@@ -264,16 +253,18 @@ export default {
       row.loading = true
 
       try {
-      let 
-        txHash = await this.$libre.dao.blockingProposal(row.id),
-        message = (await this.$eth.isSuccess(txHash)) ? this.$t('lang.tx.block.success') : this.$t('lang.tx.block.fail')
-        this.$libre.notify(message);
+        let txHash = await this.$libre.dao.blockingProposal(row.id);
+        
+        if (await this.$eth.isSuccess(txHash))
+          this.$libre.notify(this.$t('lang.tx.block.success'));
+        else
+          this.$libre.notify(this.$t('lang.tx.block.fail'),'is-info');
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$libre.notify(msg,'is-danger');
+        this.$libre.notify(msg, 'is-danger');
       }
       row.loading = false
     },
@@ -285,9 +276,12 @@ export default {
         id = row.id
       
       try {
-        let txHash = await this.$libre.dao.executeProposal(id),
-            message = (await this.$eth.isSuccess(txHash)) ? this.$t('lang.tx.execute.success') : this.$t('lang.tx.execute.fail')
-        this.$libre.notify(message);
+        let txHash = await this.$libre.dao.executeProposal(id);
+
+        if (await this.$eth.isSuccess(txHash))
+          this.$libre.notify(this.$t('lang.tx.execute.success'));
+        else
+          this.$libre.notify(this.$t('lang.tx.execute.fail'),'is-info');
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
@@ -299,54 +293,24 @@ export default {
       row.loading = false
     },
 
-    async updateBlockTime() {
-      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
-    },
-
-    startUpdatingTime() {
-      this.curBlockchainTime = 0
-      this.updatingTicker = setInterval(() => {
-        this.curBlockchainTime++
-      }, 1000)
-      this.updatingBlockData = setInterval(() => {
-        this.updateBlockTime()
-      }, 10 * 60 * 1000 /* 10 minutes */)
-      this.updateBlockTime()
-      this.numProposals = -1
-      this.updateTableData = setInterval(async () => {
-        var numProposals = +(await this.$libre.dao.numProposals());
-        if (this.numProposals === -1) {
-          this.numProposals = numProposals
-        }
-      }, 60 * 1000)
-    },
-
     clearTimers() {
       this.tableData.forEach(element => {
         clearInterval(element.updateTimer)
       })
-
-      let intervals = [
-        this.updatingTicker,
-        this.updatingBlockData,
-        this.updateTableData
-      ]
-
-      intervals.forEach((interval) => clearInterval(interval))
     }
   },
   async created () {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.daoAddress = this.config.dao.address;
-      this.defaultAddress = window.web3.eth.defaultAccount;
-      this.libertyAddress = this.$libre.libertyAddress;
-      this.contractOwner = await this.$libre.dao.owner();
-      this.isOwner = (this.contractOwner === this.$eth.yourAccount);
+
+      this.contracts = {
+        dao: this.config.dao.address,
+        lbrs: await this.$libre.dao.sharesTokenAddress(),
+      }
+      this.isOwner = (await this.$libre.dao.owner() === this.$store.state.address);
 
       this.loadProposals();
-      this.getTokensCount();
     } catch (err) {
       console.log(err)
     }

@@ -1,15 +1,18 @@
 <template>
     <div>
-        <section v-if="!unknownData">
+        <section v-show="$store.state.address">
             <div class="flex-mobile">
-                <p>{{ $t('lang.common.your-address') }}: </p>
-                <a :href="$libre.addressToLink(defaultAddress)" class="is-text-overflow">{{defaultAddress}}</a>
+                <span>{{ $t('lang.common.your-address') }}:</span>
+                <a :href="$libre.addressToLink($store.state.address)" class="is-text-overflow">{{ $store.state.address }}</a>
             </div>
             <div>
-                {{ $t('lang.common.balances') }}: {{ balance }} Libre, {{ libertyBalance }} LBRS
+                {{ $t('lang.common.balances') }}: {{ $store.state.balances.eth }} ETH, {{ $store.state.balances.libre }} Libre, {{ $store.state.balances.lbrs }} LBRS
+            </div>
+            <div v-if="!hideTime">
+                {{ $t('lang.common.current-time') }}: {{ $store.state.time == 0 ? '' : $d($store.state.time, 'long+') }}
             </div>
         </section>
-        <section v-else>
+        <section v-show="!$store.state.address">
             <div>
                 {{ $t('lang.common.no-metamask') }}
             </div>
@@ -18,32 +21,29 @@
 </template>
 <script>
 export default {
+    props: ['hideCurrentTime'],
     data() {
         return {
-            unknownData: false,
-            defaultAddress: 'Unknown',
-            balance: 0,
-            libertyBalance:0
+            hideTime: this.hideCurrentTime
         }
-  },
+    },
 
-  async created() {
-    try{
-        await this.$eth.accountPromise;
-        await this.$libre.initPromise;
-        this.defaultAddress = window.web3.eth.defaultAccount;
-        if (this.defaultAddress == undefined) {
-            this.unknownData = true;
-            this.balance = "Unknown"
-            this.defaultAddress = "Unknown"
-            this.libertyBalance = "Unknown"
-        } else {
-            this.balance = this.$libre.toToken(await this.$libre.token.balanceOf(this.defaultAddress))
-            this.libertyBalance = this.$libre.toToken(await this.$libre.liberty.balanceOf(this.defaultAddress))
+    async created() {
+        try {
+            await this.$eth.accountPromise;
+            await this.$libre.initPromise;
+
+            this.$store.dispatch('updateBalances', {
+                libre: this.$libre.token.balanceOf,
+                lbrs: this.$libre.liberty.balanceOf,
+                eth: this.$eth.getBalance,
+                ethConverter: this.$eth.fromWei,
+                tokenConverter: this.$eth.toToken,
+                address: this.$eth.loadAccounts
+            })
+        } catch(err) {
+            console.log(err);
         }
-    } catch(err) {
-        console.log(err);
     }
-  }
 }
 </script>

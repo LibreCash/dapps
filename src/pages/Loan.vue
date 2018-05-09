@@ -21,13 +21,13 @@
             <td v-if="props.row.data && props.row.type == 'input'" :data-label="$t('lang.common.value-row')" class="flex-mobile">
               <a :href="$libre.addressToLink(props.row.data)" class="is-text-overflow">{{ props.row.data }}</a>
             </td>
-            <b-table-column v-if="props.row.type != 'input'" centered class="flex-mobile" :label="$t('lang.common.value')">
+            <b-table-column v-if="props.row.type != 'input'" class="flex-mobile" :label="$t('lang.common.value')">
               {{ props.row.data }}
             </b-table-column>
           </template>
         </b-table>
         <div class="level"></div>
-        <b-field v-if="takeEnable || returnEnable || claimEnable || cancelEnable">
+        <b-field v-if="btn.takeLoan.enable || btn.return.enable || btn.claim.enable || btn.cancel.enable">
           <b-message :type="msg.type">
             <p v-for="note in msg.notes">
               {{ note }}
@@ -36,23 +36,23 @@
         </b-field>
         <div class="level"></div>
         <div class="level has-text-centered">
-          <div class="level-item" v-if="takeEnable">
-            <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.takeLoan}" v-on:click="loanAction('takeLoan')">
+          <div class="level-item" v-if="btn.takeLoan.enable">
+            <button class="button is-success is-medium" v-bind:class="{'is-loading': btn.takeLoan.isLoading}" v-on:click="loanAction('takeLoan')">
               {{ $t('lang.loans.take') }}
             </button>
           </div>
-          <div class="level-item" v-if="returnEnable">
-            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.return}" v-on:click="loanAction('return')">
+          <div class="level-item" v-if="btn.return.enable">
+            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btn.return.isLoading}" v-on:click="loanAction('return')">
               {{ $t('lang.loans.return') }}
             </button>
           </div>
-          <div class="level-item" v-if="claimEnable">
-            <button class="button is-success is-medium" v-bind:class="{'is-loading': btnloading.claim}" v-on:click="loanAction('claim')">
+          <div class="level-item" v-if="btn.claim.enable">
+            <button class="button is-success is-medium" v-bind:class="{'is-loading': btn.claim.isLoading}" v-on:click="loanAction('claim')">
               {{ $t('lang.loans.claim') }}
             </button>
           </div>
-          <div class="level-item" v-if="cancelEnable">
-            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btnloading.cancel}" v-on:click="loanAction('cancel')">
+          <div class="level-item" v-if="btn.cancel.enable">
+            <button class="button is-danger is-medium" v-bind:class="{'is-loading': btn.cancel.isLoading}" v-on:click="loanAction('cancel')">
               {{ $t('lang.common.cancel') }}
             </button>
           </div>
@@ -71,23 +71,24 @@ export default {
       loan: {},
       loanData: [],
       isLoading: false,
-      takeEnable: false,
-      returnEnable: false,
-      claimEnable: false,
-      cancelEnable: false,
-      loggedIn: false,
-      isAllowanceActive: false,
-      btnloading: {
-        takeLoan: false,
-        return: false,
-        claim: false,
-        cancel: false
+      btn: {
+        takeLoan: {
+            enable: false,
+            isLoading: false
+        },
+        return: {
+            enable: false,
+            isLoading: false
+        },
+        claim: {
+            enable: false,
+            isLoading: false
+        },
+        cancel: {
+            enable: false,
+            isLoading: false
+        }
       },
-      approve: {
-        address: this.config.loans.address,
-        amount: ''
-      },
-      isUpdateRatesActive: false,
       msg: {
         type: 'is-info',
         notes: [this.$t('lang.common.please-select-action')]
@@ -107,23 +108,17 @@ export default {
       this.isLoading = true
 
       try {
-        this.takeEnable = this.claimEnable = this.cancelEnable = this.returnEnable = false
-        this.btnloading = {
-          takeLoan: false,
-          return: false,
-          claim: false,
-          cancel: false
-        }
-        let 
-          loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId));
-          this.loan = loan;
+        this.btn.takeLoan.enable = this.btn.claim.enable = this.btn.cancel.enable = this.btn.return.enable = false;
+        this.btn.takeLoan.isLoading = this.btn.return.isLoading = this.btn.claim.isLoading = this.btn.cancel.isLoading = false;
 
-        if (loan.status == this.$t('lang.common.statuses.active')) {
-          this.takeEnable = true;
-          this.claimEnable = this.returnEnable = false;
+        this.loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId));
 
-          if (loan.holder === this.$eth.yourAccount)
-            this.cancelEnable = true;
+        if (this.loan.status == this.$t('lang.common.statuses.active')) {
+          this.btn.takeLoan.enable = true;
+          this.btn.claim.enable = this.btn.return.enable = false;
+
+          if (this.loan.holder === this.$store.state.address)
+            this.btn.cancel.enable = true;
 
           let ETHActions = (this.loanType == 'ETH') ? [
             this.$t('lang.loans.ethactions1'), // It consists of two transactions:
@@ -138,37 +133,35 @@ export default {
             this.$t('lang.loans.message1-4'), // - rate calculation
             this.$t('lang.loans.message1-5')  // 2. Available amount of collateral.
           ].concat(ETHActions));
-        } else if (loan.status == this.$t('lang.common.statuses.used')) {
-          this.takeEnable = this.cancelEnable = false;
+        } else if (this.loan.status == this.$t('lang.common.statuses.used')) {
+          this.btn.takeLoan.enable = this.btn.cancel.enable = false;
           
-          if (loan.holder === this.$eth.yourAccount)
-            this.claimEnable = true;
+          if (this.loan.holder === this.$store.state.address)
+            this.btn.claim.enable = true;
 
-          if (loan.recipient === this.$eth.yourAccount)
-            this.returnEnable = true;
+          if (this.loan.recipient === this.$store.state.address)
+            this.btn.return.enable = true;
         }
-
-        this.loggedIn = (this.$eth._web3.eth.defaultAccount != undefined);
 
         this.loanData.push(
           {name: this.$t('lang.loans.type-row'), data: this.$route.params.type},
           {name: this.$t('lang.loans.id-row'), data: +this.$route.params.id},
-          {name: this.$t('lang.loans.holder-row'), data: loan.holder, type: 'input'}
+          {name: this.$t('lang.loans.holder-row'), data: this.loan.holder, type: 'input'}
         )
 
-        if (loan.status != this.$t('lang.common.statuses.active')) {
-          this.loanData.push({name: this.$t('lang.loans.recipient-row'), data: this.$eth.isZeroAddress(loan.recipient) ? '-' : loan.recipient, type: this.$eth.isZeroAddress(loan.recipient)? '':'input'})
-          this.loanData.push({name: this.$t('lang.loans.take-row'), data: this.$d(loan.timestamp * 1000, 'long+')});
-          this.loanData.push({name: this.$t('lang.loans.return-row'), data: this.$d((loan.timestamp + loan.period) * 1000, 'long+')});
+        if (this.loan.status != this.$t('lang.common.statuses.active')) {
+          this.loanData.push({name: this.$t('lang.loans.recipient-row'), data: this.$eth.isZeroAddress(this.loan.recipient) ? '-' : this.loan.recipient, type: this.$eth.isZeroAddress(this.loan.recipient)? '':'input'})
+          this.loanData.push({name: this.$t('lang.loans.take-row'), data: this.$d(this.loan.timestamp * 1000, 'long+')});
+          this.loanData.push({name: this.$t('lang.loans.return-row'), data: this.$d((this.loan.timestamp + this.loan.period) * 1000, 'long+')});
         } else {
-          this.loanData.push({name: this.$t('lang.loans.period-row'), data: this.$libre.periodToString(loan.period)});
+          this.loanData.push({name: this.$t('lang.loans.period-row'), data: this.$libre.periodToString(this.loan.period)});
         }
 
         this.loanData.push(
-          {name: this.$t('lang.loans.amount-row'), data: this.$eth.fromWei(loan.amount) + " " + this.$route.params.type},
-          {name: this.$t('lang.loans.margin-row'), data: this.$eth.fromWei(loan.margin) + " " + this.$route.params.type},
-          {name: this.$t('lang.loans.refund-row'), data: this.$eth.fromWei(loan.refund) + " " + this.$route.params.type},
-          {name: this.$t('lang.loans.status-row'), data: loan.status}
+          {name: this.$t('lang.loans.amount-row'), data: this.$eth.fromWei(this.loan.amount) + " " + this.$route.params.type},
+          {name: this.$t('lang.loans.margin-row'), data: this.$eth.fromWei(this.loan.margin) + " " + this.$route.params.type},
+          {name: this.$t('lang.loans.refund-row'), data: this.$eth.fromWei(this.loan.refund) + " " + this.$route.params.type},
+          {name: this.$t('lang.loans.status-row'), data: this.loan.status}
         )
       } catch (err) {
         console.log(err)
@@ -189,7 +182,7 @@ export default {
         this.$t('lang.loans.pls-wait-oracles'), // Please wait while we receive responses from oracles. It may take about 10 minutes...
         '',
         secondAction,
-        all == 0 ? '' : this.$t('lang.loans.oracle-data', {ready: ready, all: all})
+        all == 0 ? '' : this.$t('lang.loans.oracle-data', {ready, all})
       ]);
     },
 
@@ -197,7 +190,7 @@ export default {
       const oracleTimeout = 11 * 60 * 1000; // 11 minutes
       let libre = this.$libre;
       let allOracles = +await libre.bank.oracleCount();
-      let price = +await this.$libre.bank.requestPrice();
+      let price = +await libre.bank.requestPrice();
       let beginTime = +new Date();
       return new Promise((resolve, reject) => {
         var checkInterval = setInterval(async () => {
@@ -288,14 +281,14 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address);
+      let allowance = +await this.$libre.token.allowance(this.$store.state.address, this.config.loans.address);
       let _waiting = this.$t('lang.common.tips.waiting'),
           _sending = this.$t('lang.common.tips.sending'),
           _success = this.$t('lang.common.success-low'),
           _fail = this.$t('lang.common.transaction-failed-low');
       let disclaimer = this.$t('lang.deposit.available-disclaimer'),
           authDisclaimer = this.$t('lang.deposit.authorize-disclaimer');
-      let action = `1. ${authDisclaimer} ${this.$libre.toToken(amount)} Libre`;
+      let action = `1. ${authDisclaimer} ${this.$eth.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
         let txHash = await this.$libre.token.approve(this.config.loans.address, amount);
@@ -317,10 +310,10 @@ export default {
             _success = this.$t('lang.common.success-low'),
             _fail = this.$t('lang.common.transaction-failed-low');
         let value = 0;
-        this.btnloading[action] = true;
+        this.btn[action].isLoading = true;
         if (action === 'takeLoan' || action == 'claim') {
           if (!(await this.actualizeRates())) {
-            this.btnloading[action] = false;
+            this.btn[action].isLoading = false;
             console.log("error")
             return
           }
@@ -336,8 +329,11 @@ export default {
             return
         }
 
+        if (action == 'return' && this.loanType == 'ETH')
+            value = this.loan.refund
+
         this.setMessage('warning', [`${action} tx - ${_waiting}`]);
-        let txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId, {value: value}));
+        let txHash = await (this.$libre.loans[`${action}${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId, {value}));
         this.setMessage('warning', [`${action} tx - ${_sending}`]);
         if (await this.$eth.isSuccess(txHash)) {
           this.$libre.notify(`${action} tx - ${_success}`);
@@ -345,7 +341,7 @@ export default {
           this.loadLoan();
         }
         else {
-          this.$libre.notify(`${action} tx - ${_fail}`)
+          this.$libre.notify(`${action} tx - ${_fail}`,'is-info')
           this.setMessage('danger', [`${action} tx - ${_fail}`]);
         }
       } catch(err) {
@@ -353,7 +349,7 @@ export default {
         this.setMessage('danger', [msg]);
         this.$libre.notify(msg, 'is-danger');
       }
-      this.btnloading[action] = false
+      this.btn[action].isLoading = false
     }
   },
 

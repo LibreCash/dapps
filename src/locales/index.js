@@ -13,55 +13,55 @@ import ru from './i18n/ru_RU'
 /**
  * Config
  */
-Vue.use(VueI18n);
+Vue.use(VueI18n)
 var locales = ['en', 'ru']
 
 /**
  * Datetime formats
  */
 const dateTimeFormats = {
-    'en': {
-      short: {
-        year: 'numeric', month: 'short', day: 'numeric'
-      },
-      long: {
-        year: 'numeric', month: 'long', day: 'numeric',
-        hour: 'numeric', minute: 'numeric'
-      },
-      "long+": {
-        year: 'numeric', month: 'long', day: 'numeric',
-        hour: 'numeric', minute: 'numeric', second: 'numeric'
-      }
+  'en': {
+    short: {
+      year: 'numeric', month: 'short', day: 'numeric'
     },
-    'ru': {
-      short: {
-        year: 'numeric', month: 'short', day: 'numeric'
-      },
-      long: {
-        year: 'numeric', month: 'long', day: 'numeric',
-        hour: 'numeric', minute: 'numeric'
-      },
-      "long+": {
-        year: 'numeric', month: 'long', day: 'numeric',
-        hour: 'numeric', minute: 'numeric', second: 'numeric'
-      }
+    'long': {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: 'numeric', minute: 'numeric'
+    },
+    'long+': {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric'
+    }
+  },
+  'ru': {
+    'short': {
+      year: 'numeric', month: 'short', day: 'numeric'
+    },
+    'long': {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: 'numeric', minute: 'numeric'
+    },
+    'long+': {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric'
     }
   }
+}
 
 /**
  * Export
  */
 export default new VueI18n({
+  locales,
+  locale: locales[+localStorage.getItem('locale') || 0],
+  messages: {
     locales,
-    locale: locales[+localStorage.getItem("locale") || 0],
-    messages: {
-        locales,
-        en: {
-            lang: en
-        },
-        ru: {
-            lang: ru
-        }
+    en: {
+      lang: en
     },
-    dateTimeFormats
+    ru: {
+      lang: ru
+    }
+  },
+  dateTimeFormats
 })

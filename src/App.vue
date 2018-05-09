@@ -58,15 +58,16 @@ export default {
     };
   },
   methods: {
-    toggleMenu: function() {
-      this.navIsActive = !this.navIsActive;
-    }
+    toggleMenu: () => this.navIsActive = !this.navIsActive
   },
   watch: {
     locale: function (newVal) {
       i18n.locale = i18n.messages.locales[+newVal];
       localStorage.setItem("locale", newVal);
     }
+  },
+  async created () {
+    await this.$store.dispatch('startUpdating', this.$eth.getLatestBlockTime)
   }
 };
 </script>
@@ -81,20 +82,21 @@ export default {
 .bm--card-equal-height .card-footer {
    margin-top: auto;
 }
-.centered {
-  vertical-align:middle
-}
-
-.flex-centered {
+p.card-header-title {
+  text-align: center;
   justify-content: center;
-  text-align:center;
 }
 .card-footer-item { 
   text-align: center;
+  justify-content: center;
 }
 
 .breakall {
     word-break: break-all
+}
+
+.card-content > .content {
+  text-align: center;
 }
 
 #app {
@@ -111,10 +113,18 @@ export default {
   word-break:break-all;
 }
 
-
 .max-width {
   max-width:100% !important;
   width:100% !important;
+}
+
+.max-height {
+  max-height: 100% !important;
+}
+
+
+.full-height-field > .field-body, .full-height-field .control, button.full-height   {
+  height: 100%
 }
 
 @media screen and (max-width: 768px) {
@@ -125,6 +135,11 @@ export default {
 .flex-mobile {
   display: flex;
 }
+
+.mobile-centered {
+  text-align: center;
+}
+
 table.has-mobile-cards {
   display:flex
 }
@@ -152,7 +167,6 @@ table.has-mobile-cards .flex-wrap {
 .is-text-overflow::-webkit-scrollbar { 
     display: none; 
 }
-
 }
 
 .table-container {
@@ -166,26 +180,7 @@ table.has-mobile-cards .flex-wrap {
 .h2-contain > .subtitle {
   text-align: center;
 }
-.eth-address {
-  font-size: 1em;
-  color: #3498db;
-  font-weight: bold;
-}
-@media screen and (min-device-width: 320px) {
-  .eth-address {
-    font-size: 0.63em;
-  }
-}
-@media screen and (min-device-width: 375px) {
-  .eth-address {
-    font-size: 0.7em;
-  }
-}
-@media screen and (min-device-width: 425px) {
-  .eth-address {
-    font-size: 0.8em;
-  }
-}
+
 .LeftNav {
   width: 340px;
   top: 0;
@@ -213,8 +208,6 @@ table.has-mobile-cards .flex-wrap {
   font-size: 34px;
 }
 .allMain .h2-contain {
-  -webkit-box-shadow: 0px 2px 27px 1px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: 0px 2px 27px 1px rgba(0, 0, 0, 0.25);
   box-shadow: 0px 2px 27px 1px rgba(0, 0, 0, 0.25);
   padding: 30px 60px;
   justify-content: flex-start;
@@ -234,21 +227,14 @@ table.has-mobile-cards .flex-wrap {
   display: block;
   padding: 20px 10px 20px 40px;
   border-left: 4px solid transparent;
-},
+}
 .MenuLeft li a.router-link-exact-active {
   border-left: 4px solid #fcc14a;
 }
 .MenuLeft li a:hover {
   color: #fcc14a;
 }
-.Rectangle {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  background-color: #d8d8d8;
-  display: inline-block;
-  vertical-align: middle;
-}
+
 .MenuLeft li a span {
   display: inline-block;
   vertical-align: middle;
@@ -344,9 +330,7 @@ table.has-mobile-cards .flex-wrap {
     padding: 2px 0;
   }
 }
-.chart-height {
-  min-height: 200px;
-}
+
 .b-table > div.level {
   justify-content: center;
 }

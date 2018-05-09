@@ -4,13 +4,12 @@
         <div class="card">
             <div class="card-content">
                 <address-block/>
-                <div class="flex-mobile  ">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow" :href="$libre.addressToLink(loansAddress)">{{loansAddress}}</a></div>
-                <div>{{ $t('lang.common.current-time') }}: {{ $d(curBlockchainTime * 1000, 'long+') }}</div>
+                <div class="flex-mobile">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow eth-address" :href="$libre.addressToLink(config.loans.address)">{{config.loans.address}}</a></div>
             </div>
         </div>
         <div class="level"></div>
         <nav class="level has-text-centered">
-          <div class="level-item" v-if="canCreate">
+          <div class="level-item" v-if="$store.state.address">
             <div>
               <p class="heading">{{ $t('lang.common.create') }}</p>
               <p><router-link :to="{ path: '/loans/new' }" class="button is-primary">{{ $t('lang.loans.new-offer') }}</router-link></p>
@@ -113,7 +112,7 @@
                 v-if="loansCount > perPage"
                 @change="loadLoans"
                 :total="loansCount"
-                :current.sync="vpage"
+                :current.sync="currentPage"
                 order="is-centered"
                 :simple="false"
                 :rounded="true"
@@ -132,28 +131,19 @@ export default {
     return {
       tableLoading: false,
       currentPage: 1,
-      perPage: 5,
-      curBlockchainTime: 0,
-      loansAddress: '',
       searchData: [],
-      defaultAddress: '',
       pages: [1],
-      vpage: 1,
       ethType: 'ETH',
       isActive: true,
       isUsed: false,
       isCompleted: false,
       isMine: false,
       loansCount: 0,
-      perPage: 10,
-      curBlockchainTime: 0,
-      canCreate: true
+      perPage: 10
     }
   },
   methods: {
     async loadLoans (e) {
-      this.defaultAddress = window.web3.eth.defaultAccount;
-      this.loansAddress = this.config.loans.address;
       this.searchData = [];
       if (!this.isActive && !this.isUsed && !this.isCompleted) {
         return;
@@ -205,43 +195,16 @@ export default {
       }
 
       this.tableLoading = false
-    },
-    async updateBlockTime() {
-      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
-    },
-
-    startUpdatingTime() {
-      this.curBlockchainTime = 0
-      this.updatingTicker = setInterval(() => {
-        this.curBlockchainTime++
-      }, 1000)
-      this.updatingBlockData = setInterval(() => {
-        this.updateBlockTime()
-      }, 10 * 60 * 1000 /* 10 minutes */)
-      this.updateBlockTime()
-    },
-    clearTimers() {
-      let intervals = [
-        this.updatingTicker,
-        this.updatingBlockData,
-      ]
-
-      intervals.forEach((interval) => clearInterval(interval))
     }
   },
   async created () {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.canCreate = this.$eth._web3.eth.defaultAccount != undefined;
-      this.startUpdatingTime();
       this.loadLoans()
     } catch (err) {
       console.log(err)
     }
-  },
-  destroyed () {
-    this.clearTimers();
   },
   components: {
     AddressBlock

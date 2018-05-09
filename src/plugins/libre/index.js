@@ -7,7 +7,7 @@ export default class Libre {
   static install (vue, options) {
     const libre = new Libre()
     Object.defineProperty(Vue.prototype, '$libre', {
-      get() {
+      get () {
         return libre
       }
     })
@@ -64,12 +64,6 @@ export default class Libre {
       'status': 6
     }
 
-    this.proposalStatus = {
-      ACTIVE: 0,
-      FINISHED: 1,
-      BLOCKED: 2
-    }
-
     this.voteStruct = {
       'yea': 0,
       'nay': 1,
@@ -77,7 +71,14 @@ export default class Libre {
       'deadline': 3
     }
 
-    this.typeProposals = [{
+    this.contractNames = {
+      token: 'LibreCash',
+      bank: 'ComplexBank',
+      exchanger: 'ComplexExchanger'
+    }
+
+    this.typeProposals = [
+      {
         text: i18n.t('lang.proposal-types.custom'),
         key: 'UNIVERSAL',
         benef: i18n.t('lang.proposal-types.beneficiary'),
@@ -169,7 +170,8 @@ export default class Libre {
       }
     ]
 
-    this.proposalStatuses = [{
+    this.proposalStatuses = [
+      {
         text: i18n.t('lang.common.statuses.active'),
         number: 0
       },
@@ -212,19 +214,17 @@ export default class Libre {
     this.addressToLink = Vue.config.libre.addressToLink
   }
 
-  async init() {
-    this.web3 = window.web3;
+  async init () {
     let config = Vue.config.libre
 
     if (config.report) this.report = this.getContract(config.report.abi, config.report.address)
     this.bank = this.getContract(config.bank.abi, config.bank.address)
-    var address = await this.bank.tokenAddress()
-    config.token.address = address
+    config.token.address = await this.bank.tokenAddress()
     this.token = this.getContract(config.erc20.abi, config.token.address)
 
     if (config.dao) {
       this.dao = this.getContract(config.dao.abi, config.dao.address)
-      this.libertyAddress = address = await this.dao.sharesTokenAddress()
+      this.libertyAddress = await this.dao.sharesTokenAddress()
       this.liberty = this.getContract(config.erc20.abi, this.libertyAddress)
     }
 
@@ -232,18 +232,21 @@ export default class Libre {
     if (config.deposit) this.deposit = this.getContract(config.deposit.abi, config.deposit.address)
     if (config.faucet) this.faucet = this.getContract(config.faucet.abi, config.faucet.address)
 
-    if (config.bounty) 
+    if (config.bounty) {
       this.bounty = {
         bank: this.getContract(config.bounty.bank.abi, config.bounty.bank.address),
         exchanger: this.getContract(config.bounty.exchanger.abi, config.bounty.exchanger.address)
       }
+    }
+  }
+
+  isValidFee (number) {
+    return (+number >= 0) && (+number <= 70)
   }
 
   getContract (abi, address) {
-    if (!this.decodes)
-      this.decodes = {}
-
-    this.decodes[address] = this.web3.eth.contract(abi).at(address)
+    if (!this.decodes) this.decodes = {}
+    this.decodes[address] = window.web3.eth.contract(abi).at(address)
 
     return new Proxy(this.decodes[address], {
       get: (_contract, name) => function () {
@@ -282,12 +285,18 @@ export default class Libre {
     }
   }
 
-  toToken (contractNumber, decimals = this.consts.DECIMALS) {
-    return +contractNumber / 10 ** decimals
-  }
-
-  fromToken (amount, decimals = this.consts.DECIMALS) {
-    return +amount * 10 ** decimals
+  async getReport (i) {
+    let raw = await this.report.reports(i)
+    let result
+    try {
+      result = JSON.parse(raw[0])
+    } catch (err) {
+      // if json parser error - use report text as is
+      result = {descr: raw[0], nojson: true}
+    }
+    result.date = +raw[1] === 0 ? '-' : i18n.d(raw[1] * 1000, 'short')
+    result.id = i
+    return result
   }
 
   periodToString (seconds) {
@@ -331,7 +340,7 @@ export default class Libre {
     }
   }
 
-  async updateProposal(index) {
+  async updateProposal (index) {
     let proposal = this.getProposalObject(await this.dao.getProposal(index));
     proposal.vote = this.getVotingObject(await this.dao.getVotingData(index));
     this.proposals[index] = proposal
@@ -340,15 +349,12 @@ export default class Libre {
 
   async updateProposals (callEach) {
     try {
-      let length = await this.dao.prsLength()
-
-      if (length <= this.proposals.length)
-        return
+      let length = await this.dao.prsLength();
 
       for (let i = length - 1; i >= 0; --i) {
-        await this.updateProposal(i)
-        if (callEach)
-          callEach(i)
+        if (!this.proposals[i]) // if array have empty elements
+            await this.updateProposal(i)
+        if (callEach) callEach(i)
       }
     } catch (err) {
       console.log(err)
@@ -356,11 +362,9 @@ export default class Libre {
   }
 
   async loadPlans (force = false) {
-    if (this.plans.length > 0 && !force)
-      return
+    if (this.plans.length > 0 && !force) return
 
-    let 
-      count = +await this.deposit.plansCount()
+    let count = +await this.deposit.plansCount()
     
     for (let i = 0; i < count; i++) {
       let
@@ -386,8 +390,7 @@ export default class Libre {
     try {
       let contract = this.decodes[address]
 
-      if (!contract)
-        return ''
+      if (!contract) return ''
 
       hashMethod = bytecode.substring(0, 10)
       params = bytecode.substring(10)
@@ -411,7 +414,9 @@ export default class Libre {
     Vue.prototype.$snackbar.open({
       message,
       type,
-      indefinite: type === 'is-danger',
+      position: 'is-bottom',
+      duration: type == 'is-info' ? 20000 : 10000,
+      indefinite: type == 'is-danger',
       queue: true
     })
   }

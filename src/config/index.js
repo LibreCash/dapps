@@ -30,7 +30,7 @@ export default class Config {
           name: 'ETH',
           address: '0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a',
           request: address => `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=NYWQ3JWMICSEVBIPHXWJNW6WQBNQEEZ94P`,
-          process: data => data.result / 10 ** 18,
+          process: data => (+data.result / 10 ** 18).toFixed(7),
           href: address => `https://etherscan.io/address/${address}`
         },
         {
@@ -56,7 +56,7 @@ export default class Config {
         },
         {
           name: 'ZEN',
-          address: 'znaULW3nSEiuiMVa2P9WKXH6mxp4GpVvmpS',
+          address: 'zngqrJBzt7nxnrcfvtL1AVKEujq8FVU2uHR',
           request: address => `https://explorer.zensystem.io/insight-api-zen/addr/${address}/?noTxList=1`,
           process: data => data.balance,
           href: address => `http://explorer.zenmine.pro/insight/address/${address}`

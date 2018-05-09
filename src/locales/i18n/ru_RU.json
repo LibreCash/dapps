@@ -67,6 +67,7 @@
         "max-amount": "Макс. количество",
         "no": "нет",
         "nothing": "отсутствует",
+        "no-web3": "Отсутствует web3? Попробуйте использовать MetaMask",
         "not-set": "не задано",
         "no-metamask": "Отсутствует metamask / логин",
         "outdated": "просрочено",
@@ -96,7 +97,6 @@
         "votes": "Голоса",
         "yes": "да",
         "your-address": "Ваш адрес",
-        "your-information": "Ваша информация",
         "withdraw": "Вывод",
         "tips": {
             "waiting": "ожидает подтверждения...",
@@ -119,7 +119,9 @@
         "dao": "Контракт ДАО",
         "deposit": "Депозитный контракт",
         "loans": "Долговой контракт",
-        "bounty": "Контракт баунти"
+        "bounty": "Контракт баунти",
+        "reports": "Контракт отчетов",
+        "faucet": "Контракт крана"
     },
     "bounty": {
         "bank-program": "Баунти-программа банка",
@@ -127,6 +129,8 @@
         "new-targets": "Новые цели",
         "terms": "Условия программы",
         "new-targets-for": "Новые цели для",
+        "new-targets-for-bank": "баунти-программы банка",
+        "new-targets-for-exchanger": "баунти-программы обменника",
         "create-targets": "Создать цели",
         "address-row": "Адрес",
         "name-row": "Имя",
@@ -169,7 +173,9 @@
         "from-row": "Отправитель",
         "to-row": "Получатель",
         "value-row": "Значение",
-        "description-row": "Описание"
+        "description-row": "Описание",
+        "invalid-data": "Неправильные данные",
+        "create": "Создать отчет"
     },
     "dao": {
         "min-to-vote": "Минимальное количество токенов для создания/голосования",
@@ -225,7 +231,9 @@
         "income": "Прибыль",
         "description": "Описание",
         "contract-available-balance": "Доступный баланс контракта",
-        "ended": "завершен"
+        "ended": "завершен",
+        "not-enough-balance": "Недостаточно Libre на балансе",
+        "please-valid-sum": "Введите сумму депозита"
     },
     "faucet": {
         "get-tokens": "Получить токены",
@@ -275,7 +283,7 @@
         "recipient-row": "Получатель",
         "take-row": "Взять",
         "return-row": "Вернуть",
-        "period-row": "Период",
+        "period-row": "Период, дней",
         "margin-row": "Прибыль",
         "refund-row": "Возврат",
         "status-row": "Состояние",
