@@ -72,7 +72,7 @@
           </template>
         </b-table>
         <div class="level"></div>
-        <div>
+        <div v-if="$store.state.address">
           <b-field>
             <b-message :type="msg.type" style="white-space: wrap;">
               <p v-for="note in msg.notes">
@@ -92,7 +92,7 @@
         <div class="level"></div>
         <h3 class="subtitle has-text-centered" v-if="deposit.data.length > 0">{{ $t('lang.deposit.my-deposits') }}</h3>
         <b-table
-          v-if="deposit.data.length > 0"
+          v-if="$store.state.address && deposit.data.length > 0"
           :data="deposit.data"
           :bordered="false"
           :striped="true"
@@ -128,7 +128,7 @@
         <div class="level"></div>
         <button v-bind:class="{'button field is-danger':true, 'is-loading':deposit.isClaiming}"
                 @click="claimDeposit(deposit.selected)"
-                :disabled="!claimEnable" v-if="deposit.data.length > 0">
+                :disabled="!claimEnable" v-if="deposit.data.length > 0 && $store.state.address">
             {{ $t('lang.deposit.claim-deposit') }}
         </button>
       </div>

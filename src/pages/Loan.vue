@@ -114,7 +114,7 @@ export default {
         this.loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId));
 
         if (this.loan.status == this.$t('lang.common.statuses.active')) {
-          this.btn.takeLoan.enable = true;
+          this.btn.takeLoan.enable = this.$store.state.address;
           this.btn.claim.enable = this.btn.return.enable = false;
 
           if (this.loan.holder === this.$store.state.address)

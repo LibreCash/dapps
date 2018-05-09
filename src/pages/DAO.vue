@@ -95,7 +95,8 @@
                 <router-link :to="{name: 'DAO Proposal Info', params: { id: props.row.id }}" tag="button" class="button"><i class="fas fa-id-card"></i></router-link>
               </b-tooltip>
               <!-- vote buttons -->
-              <span v-if="!props.row.votingData.voted &&
+              <span v-if="$store.state.address &&
+                          !props.row.votingData.voted &&
                           (props.row.deadlineUnix > $store.state.time) &&
                           !props.row.loading &&
                           ($store.state.balances.lbrs >= $eth.toToken($libre.proposalParams.minBalance)) &&
@@ -108,7 +109,8 @@
                 </b-tooltip>
               </span>
               <!-- execute button -->
-              <span v-else-if="props.row.deadlineUnix <= $store.state.time &&
+              <span v-else-if="$store.state.address &&
+                              props.row.deadlineUnix <= $store.state.time &&
                               (props.row.status === $libre.proposalStatuses[0].text) &&
                               !props.row.loading &&
                               (props.row.yea > props.row.nay) &&

@@ -65,6 +65,7 @@ const store = new Vuex.Store({
       if (!context.state.address) {
         context.commit('setAddress', await updaters.address())
       }
+      if (!context.state.address) return;
       context.commit('setBalances', {
         eth: +updaters.ethConverter(await updaters.eth(context.state.address)),
         libre: updaters.tokenConverter(await updaters.libre(context.state.address)),

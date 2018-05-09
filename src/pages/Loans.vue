@@ -33,7 +33,7 @@
                 <b-switch v-model="isActive" @input="loadLoans()">{{ $t('lang.loans.state-active') }}</b-switch>
                 <b-switch v-model="isUsed" @input="loadLoans()">{{ $t('lang.loans.state-used') }}</b-switch>
                 <b-switch v-model="isCompleted" @input="loadLoans()">{{ $t('lang.loans.state-completed') }}</b-switch>
-                <b-switch v-model="isMine" @input="loadLoans()">{{ $t('lang.loans.state-own') }}</b-switch>
+                <b-switch v-if="$store.state.address" v-model="isMine" @input="loadLoans()">{{ $t('lang.loans.state-own') }}</b-switch>
               </p>
             </div>
           </div>
