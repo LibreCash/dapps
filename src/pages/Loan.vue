@@ -341,7 +341,7 @@ export default {
           this.loadLoan();
         }
         else {
-          this.$libre.notify(`${action} tx - ${_fail}`)
+          this.$libre.notify(`${action} tx - ${_fail}`,'is-info')
           this.setMessage('danger', [`${action} tx - ${_fail}`]);
         }
       } catch(err) {

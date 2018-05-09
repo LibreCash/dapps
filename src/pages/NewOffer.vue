@@ -245,7 +245,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/loans')
         } else {
-          this.$libre.notify(this.$t('lang.loans.creating-error'));
+          this.$libre.notify(this.$t('lang.loans.creating-error'),'is-info');
           this.setMessage('danger', [
             this.$t('lang.common.ended-with-error'),
             action

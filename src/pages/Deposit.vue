@@ -198,7 +198,7 @@ export default {
                 if (await this.$eth.isSuccess(txHash)) {
                     this.$libre.notify(this.$t('lang.deposit.tip-plan-created'));
                 } else {
-                    this.$libre.notify(this.$t('lang.common.transaction-failed'));
+                    this.$libre.notify(this.$t('lang.common.transaction-failed'),'is-info');
                 }
 
                 this.pushPlans(true);
@@ -258,7 +258,7 @@ export default {
                     this.updateMyDeposit()
                 } else {
                     this.setMessage('danger', [`${action} - ${_fail}`]);
-                    this.$libre.notify(this.$t('lang.common.transaction-failed'));
+                    this.$libre.notify(this.$t('lang.common.transaction-failed'),'is-info');
                 }
             } catch(err) {
                 let msg = this.$eth.getErrorMsg(err)
@@ -278,10 +278,10 @@ export default {
             try {
                 let txHash = await this.$libre.deposit.claimDeposit(selectObject.id);
                 if (await this.$eth.isSuccess(txHash)) {
-                    this.$snackbar.open(this.$t('lang.deposit.returned'));
+                    this.$libre.notify(this.$t('lang.deposit.returned'));
                     this.updateMyDeposit()
                 } else {
-                    this.$libre.notify(this.$t('lang.common.transaction-failed'));
+                    this.$libre.notify(this.$t('lang.common.transaction-failed'),'is-info');
                 }
             } catch(err) {
                 let msg = this.$eth.getErrorMsg(err)

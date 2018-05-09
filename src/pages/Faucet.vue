@@ -76,7 +76,7 @@ export default {
 
           this.loadLiberty();
         } else {
-          this.$libre.notify(this.$t('lang.faucet.error-sending'));
+          this.$libre.notify(this.$t('lang.faucet.error-sending'),'is-info');
         }
         this.isDisabled = true;
       } catch (err) {

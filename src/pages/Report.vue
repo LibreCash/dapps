@@ -132,7 +132,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           await this.loadReports();
         } else {
-          this.$libre.notify(this.$t('lang.reports.create-error'));
+          this.$libre.notify(this.$t('lang.reports.create-error'),'is-info');
         }
       } catch (err) {
         console.log(err);

@@ -341,10 +341,12 @@ export default {
             sellFee
           );
         }
-        let result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.targets-creation.success') :
-                          this.$t('lang.tx.targets-creation.fail');
 
-        this.$libre.notify(result);
+        if (await this.$eth.isSuccess(txHash))
+          this.$libre.notify(this.$t('lang.tx.targets-creation.success'));
+        else
+          this.$libre.notify(this.$t('lang.tx.targets-creation.fail'),'is-info');
+
         this.newTargetLoading = false;
         this.newTargetsShown = false;
         this.loadTargets();
@@ -436,10 +438,10 @@ export default {
         this.tableLoading = true;
         let txHash = (type == 'bank') ? await this.$libre.bounty.bank.withdrawPayments() :
                                         await this.$libre.bounty.exchanger.withdrawPayments();
-        let result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.withdraw.success') :
-                            this.$t('lang.tx.withdraw.fail');
-
-        this.$libre.notify(result);
+        if (await this.$eth.isSuccess(txHash))
+          this.$libre.notify(this.$t('lang.tx.withdraw.success'));
+        else
+          this.$libre.notify(this.$t('lang.tx.withdraw.fail'),'is-info');
       } catch(err) {
         this.$libre.notify(this.$eth.getErrorMsg(err), 'is-danger');
       }
@@ -451,10 +453,11 @@ export default {
       try {
         this.tableLoading = true;
         let txHash = await row.bountyContract.claim(row.address);
-        let result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.claim.success') :
-                            this.$t('lang.tx.claim.fail');
 
-        this.$libre.notify(result);
+        if (await this.$eth.isSuccess(txHash))
+          this.$libre.notify(this.$t('lang.tx.claim.success'));
+        else
+          this.$libre.notify(this.$t('lang.tx.claim.fail'),'is-info');
       } catch(err) {
         this.$libre.notify(this.$eth.getErrorMsg(err), 'is-danger');
       }
@@ -465,10 +468,11 @@ export default {
       try {
         this.tableLoading = true;
         let txHash = await row.bountyContract.suicideTarget(row.id);
-        let result = await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.destruct.success') :
-                            this.$t('lang.tx.destruct.fail');
 
-        this.$libre.notify(result);
+        if (await this.$eth.isSuccess(txHash))
+          this.$libre.notify(this.$t('lang.tx.destruct.success'));
+        else
+          this.$libre.notify(this.$t('lang.tx.destruct.fail'),'is-info');
       } catch(err) {
         this.$libre.notify(this.$eth.getErrorMsg(err), 'is-danger');
       }

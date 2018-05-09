@@ -414,7 +414,9 @@ export default class Libre {
     Vue.prototype.$snackbar.open({
       message,
       type,
-      indefinite: type === 'is-danger',
+      position: 'is-bottom',
+      duration: type == 'is-info' ? 20000 : 10000,
+      indefinite: type == 'is-danger',
       queue: true
     })
   }

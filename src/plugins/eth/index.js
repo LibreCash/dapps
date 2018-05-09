@@ -182,6 +182,6 @@ export default class ETH {
   }
 
   fromToken(amount, decimals = 18) {
-    retrun +amount * 10 ** decimals
+    return +amount * 10 ** decimals
   }
 }

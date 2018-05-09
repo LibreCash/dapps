@@ -178,8 +178,10 @@ data () {
         try {
             let txHash = await this.$libre.dao.vote(this.$route.params.id, support);
                 
-            this.$libre.notify(await this.$eth.isSuccess(txHash) ? this.$t('lang.tx.vote.success') :
-                                                                    this.$t('lang.tx.vote.fail'));
+            if (await this.$eth.isSuccess(txHash))
+                this.$libre.notify(this.$t('lang.tx.vote.success'));
+            else
+                this.$libre.notify(this.$t('lang.tx.vote.fail'),'is-info');
             await this.$libre.updateProposal(this.$route.params.id);
             this.loadProposal();
         } catch(err) {
@@ -202,7 +204,7 @@ data () {
             if (await this.$eth.isSuccess(txHash)) {
                 this.$libre.notify(this.$t('lang.tx.execute.success'));
             } else {
-                this.$libre.notify(this.$t('lang.tx.execute.fail'));
+                this.$libre.notify(this.$t('lang.tx.execute.fail'),'is-info');
             }
         } catch(err) {
             let msg = this.$eth.getErrorMsg(err)
@@ -223,7 +225,7 @@ data () {
             if (await this.$eth.isSuccess(txHash)) {
                 this.$libre.notify(this.$t('lang.tx.block.success'));
             } else {
-                this.$libre.notify(this.$t('lang.tx.block.fail'));
+                this.$libre.notify(this.$t('lang.tx.block.fail'),'is-info');
             }
         } catch(err) {
             let msg = this.$eth.getErrorMsg(err)
