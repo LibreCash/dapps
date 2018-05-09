@@ -282,7 +282,7 @@
         "recipient-row": "Получатель",
         "take-row": "Взять",
         "return-row": "Вернуть",
-        "period-row": "Период",
+        "period-row": "Период, дней",
         "margin-row": "Прибыль",
         "refund-row": "Возврат",
         "status-row": "Состояние",

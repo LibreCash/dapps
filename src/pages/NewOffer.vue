@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-content">
                 <p>{{ $t('lang.common.your-information') }}</p>
-                <address-block></address-block>
+                <address-block/>
                 <p>{{ $t('lang.common.allowed') }}: {{ allowed }} Libre</p>
                 <p>ETH: {{balanceETH}}</p>
                 <router-link :to="{ path: '/loans' }" class="button">
@@ -24,8 +24,10 @@
                     </option>
                   </b-select>
                 </b-field>
-                <b-field horizontal :label="$t('lang.common.amount') + ', ' + Object.keys($libre.loansType)[selectedType]" :type="isValidAmount(amount) ? '' : 'is-danger'">
-                  <b-input v-model="amount" placeholder="0"></b-input>
+                <b-field horizontal :label="$t('lang.common.amount') + ', ' + Object.keys($libre.loansType)[selectedType]">
+                  <b-field :type="isValidAmount ? '' : 'is-danger'">
+                    <b-input v-model="amount" placeholder="0" expanded></b-input>
+                  </b-field>
                   <p class="control">
                     <button class="button is-primary" @click="allAvailable()">{{ $t('lang.common.all-available') }}</button>
                   </p>
@@ -34,28 +36,17 @@
                   <b-input v-model="margin" placeholder="0"></b-input>
                 </b-field>
                 <b-field horizontal :label="$t('lang.loans.period-row')">
-                    <b-field :type="isDebatingPeriod() ? '' : 'is-danger'">
-                        <b-datepicker 
-                            :placeholder="$t('lang.common.click-to-select')"
-                            v-model="debatingPeriod"
-                            icon="calendar"
-                            icon-pack="fas"
-                            expanded></b-datepicker>
-                    </b-field>
-                    <b-field :type="isDebatingPeriod() ? '' : 'is-danger'">
-                        <b-timepicker 
-                            :placeholder="$t('lang.common.set-time')"
-                            icon="clock"
-                            v-model="debatingTime"
-                            icon-pack="fas"
-                            expanded></b-timepicker>
-                    </b-field>
+                  <b-field :type="+period > 0 ? '' : 'is-danger'" :message="periodToString">
+                    <b-input v-model="period" placeholder="0"></b-input>
+                  </b-field>
                 </b-field>
-                <b-field><b-message :type="msg.type" v-if="msg.notes.length != 0">
-                  <p v-for="note in msg.notes">
-                    {{ note }}
-                  </p>
-                </b-message></b-field>
+                <b-field>
+                  <b-message :type="msg.type" v-if="msg.notes.length != 0">
+                    <p v-for="note in msg.notes">
+                      {{ note }}
+                    </p>
+                  </b-message>
+                </b-field>
                 <div class="level">
                   <div class="level-item">
                     <button class="button is-primary is-large" v-bind:class="{'is-loading': button.isLoading}" v-on:click="createLoan()" :disabled="button.disabled">
@@ -76,8 +67,7 @@ export default {
     return {
       amount: '',
       margin: '',
-      debatingPeriod: new Date(),
-      debatingTime: new Date(),
+      period: '',
       button: {
         name: this.$t('lang.loans.create-offer'),
         disabled: true,
@@ -93,6 +83,19 @@ export default {
       }
     }
   },
+  computed: {
+    periodToString() {
+      let daysInSeconds = this.$eth.isInteger(this.period) ? parseInt(+this.period) * 24 * 60 * 60 : 0;
+      return this.$libre.periodToString(daysInSeconds).slice(0,-9);
+    },
+    
+    isValidAmount() {
+      return this.$eth.isInteger(this.amount) && +this.amount > 0 && (
+        (this.selectedType == this.$libre.loansType.Libre && this.amount <= this.balanceLibre ) ||
+        (this.selectedType == this.$libre.loansType.ETH && this.amount < this.balanceETH) /* '<' not '<=' cause tx fee */
+      )
+    }
+  },
   methods: {
     setMessage(type, notes) {
       this.msg = {
@@ -101,32 +104,12 @@ export default {
       }
     },
 
-    isValidAmount(number) {
-      return this.$eth.isInteger(number) && number > 0 && (
-        (this.selectedType == this.$libre.loansType.Libre && number <= this.balanceLibre ) ||
-        (this.selectedType == this.$libre.loansType.ETH && number < this.balanceETH) /* '<' not '<=' cause tx fee */
-      )
-    },
-
-    isDebatingPeriod() {
-      if (this.debatingEnd) 
-        return false
-
-      let 
-        now = Date.now(),
-        debatingEnd = new Date(this.debatingPeriod)
-      // Refactor it  
-      debatingEnd.setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes())
-
-      return (debatingEnd - now) > 0
-    },
-
     validData() {
       let valid = true
 
-      if (!this.isValidAmount(this.amount) || 
+      if (!this.isValidAmount || 
           !this.$eth.isInteger(this.margin) ||
-          !this.isDebatingPeriod())
+          +this.period <= 0)
         valid = false
 
       this.button.disabled = !valid
@@ -192,10 +175,7 @@ export default {
       let action = this.$t('lang.loans.create-offer-transaction');
       let
         txHash,
-        now = new Date(),
-        debatingEnd = (new Date(this.debatingPeriod))
-          .setHours(this.debatingTime.getHours(), this.debatingTime.getMinutes()),
-        debatingPeriodInSeconds = Math.round((debatingEnd - now) / 1000);
+        debatingPeriodInSeconds = parseInt(this.period) * 24 * 60 * 60;
 
       if (this.margin == '')
         this.margin = 0
@@ -275,8 +255,7 @@ export default {
   },
   watch: {
     amount: function() {this.validData()},
-    debatingPeriod: function() {this.validData()},
-    debatingTime: function() {this.validData()},
+    period: function() {this.validData()},
     margin: function() {this.validData()},
     selectedType: function() {
       this.amount = this.margin = '';

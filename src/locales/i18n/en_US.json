@@ -282,7 +282,7 @@
         "recipient-row": "Recipient",
         "take-row": "Take",
         "return-row": "Return",
-        "period-row": "Period",
+        "period-row": "Period, days",
         "margin-row": "Margin",
         "refund-row": "Refund",
         "status-row": "Status",
