@@ -3,10 +3,8 @@
       <div class="table-padding">
         <div class="card">
             <div class="card-content">
-                <p>{{ $t('lang.common.your-information') }}</p>
-                <address-block/>
+                <address-block></address-block>
                 <p>{{ $t('lang.common.allowed') }}: {{ allowed }} Libre</p>
-                <p>ETH: {{balanceETH}}</p>
                 <router-link :to="{ path: '/loans' }" class="button">
                     <div class="icon">
                         <i class="fas fa-arrow-left" size="is-small"></i>
@@ -17,7 +15,7 @@
         </div>
         <div class="level"></div>
           <div class="column">
-                <b-field horizontal label="Type" >
+                <b-field horizontal  :label="$t('lang.common.type')" >
                   <b-select :placeholder="$t('lang.common.select-type')" v-model="selectedType">
                     <option v-for="(key, type) in $libre.loansType" v-bind:value="key">
                       {{ type }}
@@ -75,8 +73,6 @@ export default {
       },
       selectedType: 0,
       allowed: 0,
-      balanceETH: 0,
-      balanceLibre: 0,
       msg: {
         type: 'is-danger',
         notes: []
@@ -91,8 +87,8 @@ export default {
     
     isValidAmount() {
       return this.$eth.isInteger(this.amount) && +this.amount > 0 && (
-        (this.selectedType == this.$libre.loansType.Libre && this.amount <= this.balanceLibre ) ||
-        (this.selectedType == this.$libre.loansType.ETH && this.amount < this.balanceETH) /* '<' not '<=' cause tx fee */
+        (this.selectedType == this.$libre.loansType.Libre && this.amount <= this.$store.state.balances.libre) ||
+        (this.selectedType == this.$libre.loansType.ETH && this.amount < this.$store.state.balances.eth) /* '<' not '<=' cause tx fee */
       )
     }
   },
@@ -128,24 +124,26 @@ export default {
 
     async allAvailable() {
       if (this.selectedType == this.$libre.loansType.ETH) {
-        this.amount = this.balanceETH;
+        this.amount = this.$store.state.balances.eth;
       } else {
-        this.amount = this.balanceLibre;
+        this.amount = this.$store.state.balances.libre;
       }
     },
 
     async updateData() {
-      this.allowed = this.$eth.toToken(await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address));
-      try {
-        this.balanceETH = +this.$eth.fromWei(await this.$eth.getBalance(this.$eth.yourAccount));
-      } catch (err) {
-        this.balanceETH = err;
-      }
-      this.balanceLibre = this.$eth.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount));
+      this.allowed = this.$eth.toToken(await this.$libre.token.allowance(this.$store.state.address, this.config.loans.address));
+      this.$store.dispatch('updateBalances', {
+          libre: this.$libre.token.balanceOf,
+          lbrs: this.$libre.liberty.balanceOf,
+          eth: this.$eth.getBalance,
+          ethConverter: this.$eth.fromWei,
+          tokenConverter: this.$eth.toToken,
+          address: this.$eth.loadAccounts
+      })
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address);
+      let allowance = +await this.$libre.token.allowance(this.$store.state.address, this.config.loans.address);
       let _waiting = this.$t('lang.common.tips.waiting'),
           _sending = this.$t('lang.common.tips.sending'),
           _success = this.$t('lang.common.success-low'),

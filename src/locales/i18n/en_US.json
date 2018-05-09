@@ -97,7 +97,6 @@
         "votes": "Votes",
         "yes": "yes",
         "your-address": "Your address",
-        "your-information": "Your information",
         "withdraw": "Withdraw",
         "tips": {
             "waiting": "waiting for confirmations...",
@@ -232,7 +231,9 @@
         "income": "Income",
         "description": "Description",
         "contract-available-balance": "Unused contract balance",
-        "ended": "ended"
+        "ended": "ended",
+        "not-enough-balance": "Not enough Libre on balance",
+        "please-valid-sum": "Please input valid amount"
     },
     "faucet": {
         "get-tokens": "Get tokens",

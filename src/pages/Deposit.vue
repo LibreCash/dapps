@@ -51,7 +51,8 @@
           :narrowed="false"
           :loading="plans.isLoading"
           :mobile-cards="true"
-          :selected.sync="plans.selected">
+          :selected.sync="plans.selected"
+          @select="calcProfit(amount, plans.selected ? plans.selected.id : 0)">
           <template slot-scope="props">
             <b-table-column label='ID'>
               <strong>{{ props.row.id }}</strong>
@@ -167,7 +168,6 @@ export default {
                 type: 'is-info',
                 notes: [this.$t('lang.deposit.tip-select-plan')]
             },
-            balance: 0,
             depositAvailable: 0
         }
     },
@@ -178,7 +178,7 @@ export default {
         newDepositEnable() {
             return +this.amount >= 0 && 
                    +this.amount >= this.plans.selected.minAmount &&
-                   +this.amount < this.balance
+                   +this.amount < this.$store.state.balances.libre
         }
     },
     methods: {
@@ -212,7 +212,7 @@ export default {
         },
 
         async approveLibre(amount) {
-            let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.deposit.address),
+            let allowance = +await this.$libre.token.allowance(this.$store.state.address, this.config.deposit.address),
                 _waiting = this.$t('lang.common.tips.waiting'),
                 _sending = this.$t('lang.common.tips.sending'),
                 _success = this.$t('lang.common.success-low'),
@@ -272,7 +272,6 @@ export default {
         },
 
         async claimDeposit(selectObject) {
-            //this.deposit.selected = null
             this.deposit.isClaiming = true
 
             try {
@@ -318,7 +317,7 @@ export default {
 
             let count = +await this.$libre.deposit.myDepositLength();
             for (let i=0; i < count; i++) {
-                let deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(this.$eth.yourAccount, i));
+                let deposit = this.$libre.getDepositObject(await this.$libre.deposit.deposits(this.$store.state.address, i));
 
                 if (deposit.timestamp == 0) 
                     continue
@@ -350,14 +349,18 @@ export default {
         },
 
         async checkOwner() {
-            this.plans.isOwner = this.$eth.yourAccount == await this.$libre.deposit.owner();
+            this.plans.isOwner = this.$store.state.address == await this.$libre.deposit.owner();
         },
 
         async calcProfit(amount, id) {
-            if (amount < this.plans.selected.minAmount)
+            if (!this.$eth.isInteger(amount) || +amount === 0)
+                this.setMessage("danger", [this.$t('lang.deposit.please-valid-sum')]);
+            else if (amount < this.plans.selected.minAmount)
                 this.setMessage("warning", [this.$t('lang.deposit.low-amount-disclaimer')]);
             else if (amount > this.needAmount)
                 this.setMessage("warning", [this.$t('lang.deposit.over-amount-disclaimer')]);
+            else if (amount > this.$store.state.balances.libre)
+                this.setMessage("warning", [this.$t('lang.deposit.not-enough-balance')])
             else if (this.$eth.toToken(await this.$libre.deposit.calcProfit(this.$eth.fromToken(amount), id)) > this.depositAvailable)
                 this.setMessage("warning", [this.$t('lang.deposit.over-possibilities')]);
             else
@@ -365,7 +368,14 @@ export default {
         },
 
         async getBalances() {
-            this.balance = this.$eth.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount));
+            this.$store.dispatch('updateBalances', {
+                libre: this.$libre.token.balanceOf,
+                lbrs: this.$libre.liberty.balanceOf,
+                eth: this.$eth.getBalance,
+                ethConverter: this.$eth.fromWei,
+                tokenConverter: this.$eth.toToken,
+                address: this.$eth.loadAccounts
+            })
             this.depositAvailable = this.$eth.toToken(await this.$libre.deposit.availableTokens());
             this.needAmount = this.$eth.toToken(await this.$libre.deposit.needAmount());
         }
@@ -382,10 +392,9 @@ export default {
             console.log(err)
         }
     },
-
     watch: {
         amount: function(newVal) {this.calcProfit(newVal, this.plans.selected.id)},
-        plans: function(newVal, oldVal) {this.calcProfit(this.amount, newVal.selected.id)}
+        plans: function(newVal) {this.calcProfit(this.amount, newVal.selected.id)}
     },
     components: {
         AddressBlock

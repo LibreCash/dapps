@@ -58,13 +58,13 @@ export default class ETH {
     return new Promise((resolve, reject) => {
       window.web3.eth.getAccounts((err, accounts) => {
         window.web3.eth.defaultAccount = accounts[0]
-        this.yourAccount = accounts[0]
+        //this.yourAccount = accounts[0]
 
         setInterval(() => {
-          if (web3.eth.accounts[0] !== this.yourAccount)
+          if (web3.eth.accounts[0] !== window.web3.eth.defaultAccount)
             location.reload()
         }, 1000)
-        resolve()
+        resolve(accounts[0])
       })
     })
   }

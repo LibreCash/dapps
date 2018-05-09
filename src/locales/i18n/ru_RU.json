@@ -97,7 +97,6 @@
         "votes": "Голоса",
         "yes": "да",
         "your-address": "Ваш адрес",
-        "your-information": "Ваша информация",
         "withdraw": "Вывод",
         "tips": {
             "waiting": "ожидает подтверждения...",
@@ -232,7 +231,9 @@
         "income": "Прибыль",
         "description": "Описание",
         "contract-available-balance": "Доступный баланс контракта",
-        "ended": "завершен"
+        "ended": "завершен",
+        "not-enough-balance": "Недостаточно Libre на балансе",
+        "please-valid-sum": "Введите сумму депозита"
     },
     "faucet": {
         "get-tokens": "Получить токены",

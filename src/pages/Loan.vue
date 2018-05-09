@@ -117,7 +117,7 @@ export default {
           this.btn.takeLoan.enable = true;
           this.btn.claim.enable = this.btn.return.enable = false;
 
-          if (this.loan.holder === this.$eth.yourAccount)
+          if (this.loan.holder === this.$store.state.address)
             this.btn.cancel.enable = true;
 
           let ETHActions = (this.loanType == 'ETH') ? [
@@ -136,10 +136,10 @@ export default {
         } else if (this.loan.status == this.$t('lang.common.statuses.used')) {
           this.btn.takeLoan.enable = this.btn.cancel.enable = false;
           
-          if (this.loan.holder === this.$eth.yourAccount)
+          if (this.loan.holder === this.$store.state.address)
             this.btn.claim.enable = true;
 
-          if (this.loan.recipient === this.$eth.yourAccount)
+          if (this.loan.recipient === this.$store.state.address)
             this.btn.return.enable = true;
         }
 
@@ -281,7 +281,7 @@ export default {
     },
 
     async approveLibre(amount) {
-      let allowance = +await this.$libre.token.allowance(this.$eth.yourAccount, this.config.loans.address);
+      let allowance = +await this.$libre.token.allowance(this.$store.state.address, this.config.loans.address);
       let _waiting = this.$t('lang.common.tips.waiting'),
           _sending = this.$t('lang.common.tips.sending'),
           _success = this.$t('lang.common.success-low'),

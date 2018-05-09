@@ -9,7 +9,7 @@
       <b-message :type="msg.type">{{ msg.text }}</b-message>
       <div class="level">
         <div class="flex level-item">
-            <button class="button is-primary is-large" v-bind:class="{'is-loading':isLoading}"
+            <button class="button is-primary is-large" v-bind:class="{'is-loading': isLoading}"
             @click="getTokens()" :disabled="isDisabled">{{ $t('lang.faucet.get-tokens') }}</button>
         </div>
       </div>
@@ -21,7 +21,6 @@ import AddressBlock from "@/components/AddressBlock";
 export default {
   data() {
     return {
-      balanceLiberty: this.$t('lang.common.loading-dots'),
       isLoading: false,
       msg: {
         type: "is-info",
@@ -32,25 +31,20 @@ export default {
   },
 
   methods: {
-    async loadLiberty() {
-      this.balanceLiberty = this.$eth.toToken(
-          +await this.$libre.liberty.balanceOf(
-            this.$eth.yourAccount
-          )
-        )
-        .toLocaleString();
-
+    async loadLiberty(got = false) {
       let balance = this.$eth.toToken(
           +await this.$libre.faucet.tokenBalance()
         ),
         isGot = await this.$libre.faucet.tokensSent(
-          this.$eth.yourAccount
+          this.$store.state.address
         );
 
-      if (!isGot && balance > 2000 && this.$eth.yourAccount) {
+      if (got) {
+        this.msg.text = this.$t('lang.faucet.tokens-sent');
+      } else if (!isGot && balance >= 2000 && this.$store.state.address) {
         this.isDisabled = false;
         this.msg.text = this.$t('lang.faucet.yes-you-can');
-      } else if (!this.$eth.yourAccount) {
+      } else if (!this.$store.state.address) {
         this.msg = {
           type: "is-danger",
           text: this.$t('lang.common.no-metamask')
@@ -73,8 +67,7 @@ export default {
 
         if (await this.$eth.isSuccess(txHash)) {
           this.$libre.notify(this.$t('lang.faucet.tokens-sent'));
-
-          this.loadLiberty();
+          this.loadLiberty(true);
         } else {
           this.$libre.notify(this.$t('lang.faucet.error-sending'),'is-info');
         }
@@ -82,7 +75,7 @@ export default {
       } catch (err) {
         let msg = this.$eth.getErrorMsg(err);
         console.log(msg);
-        this.$libre.notify(msg,'is-danger');
+        this.$libre.notify(msg, 'is-danger');
       }
       
       this.isLoading = false;
