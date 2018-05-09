@@ -1,66 +1,65 @@
 <template>
-    <div>
-      <div class="level"></div>
-      <div class="table-padding">
-        <div class="card">
-          <div class="card-content">
-            <address-block/>
-            <div> {{$t('lang.dao.now-row')}}  {{ $d($store.state.time, 'long+') }}</div>
-            <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
-            <div>{{ $t('lang.dao.min-count') }}: {{ $eth.toToken($libre.proposalParams.quorum) }} LBRS</div>
-            <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
-            <div class="level"></div>
-            <router-link :to="{ path: '/dao' }" class="button">
-              <div class="icon">
-                <i class="fas fa-arrow-left" size="is-small"></i>
-              </div>
-              <div>{{ $t('lang.common.back') }}</div>
-            </router-link>
-          </div>
+  <div>
+    <div class="level"></div>
+    <div class="table-padding">
+      <div class="card">
+        <div class="card-content">
+          <address-block/>
+          <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
+          <div>{{ $t('lang.dao.min-count') }}: {{ $eth.toToken($libre.proposalParams.quorum) }} LBRS</div>
+          <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
+          <div class="level"></div>
+          <router-link :to="{ path: '/dao' }" class="button">
+            <div class="icon">
+              <i class="fas fa-arrow-left" size="is-small"></i>
+            </div>
+            <div>{{ $t('lang.common.back') }}</div>
+          </router-link>
         </div>
-        <div class="level"></div>
-          <div class="card-content table-padding"> 
-        <b-table :data="proposalData"
-          :bordered="false"
-          :striped="true"
-          :narrowed="false"
-          :loading="isLoading"
-          :mobile-cards="true">
-          <template slot-scope="props">
-            <b-table-column :label="$t('lang.dao.name-row')">
-              <strong>{{ props.row.name }}</strong>
-            </b-table-column>
-            <td v-if="$eth.isAddress(props.row.value)" :data-label="$t('lang.common.value-row')" class="flex-mobile">
-              <a :href="$libre.addressToLink(props.row.value)" class="is-text-overflow">{{ props.row.value }}</a>
-            </td>
-            <b-table-column v-else :label="$t('lang.dao.value-row')" >
-              {{ props.row.value }}
-            </b-table-column>
-          </template>
-        </b-table>
+      </div>
+      <div class="level"></div>
+        <div class="card-content table-padding"> 
+          <b-table :data="proposalData"
+            :bordered="false"
+            :striped="true"
+            :narrowed="false"
+            :loading="isLoading"
+            :mobile-cards="true">
+            <template slot-scope="props">
+              <b-table-column :label="$t('lang.dao.name-row')">
+                <strong>{{ props.row.name }}</strong>
+              </b-table-column>
+              <td v-if="$eth.isAddress(props.row.value)" :data-label="$t('lang.common.value-row')" class="flex-mobile">
+                <a :href="$libre.addressToLink(props.row.value)" class="is-text-overflow">{{ props.row.value }}</a>
+              </td>
+              <b-table-column v-else :label="$t('lang.dao.value-row')" >
+                {{ props.row.value }}
+              </b-table-column>
+            </template>
+          </b-table>
         </div>
 
         <div class="level"></div>
         <div class="level is-mobile">
-            <div class="level-item has-text-centered">
-                <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="fas fa-thumbs-up"></i></button>
-            </div>
-            <div class="level-item has-text-centered">
-                <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="fas fa-thumbs-down"></i></button>
-            </div>
-            <div class="level-item has-text-centered">
-                <button class="button is-medium is-info" :class="{'is-loading': loadingExecute}" @click="execute()" :disabled="!enableExecute"><i class="fas fa-play"></i></button>
-            </div>
-            <div class="level-item has-text-centered">
-                <button class="button is-medium is-danger" :class="{'is-loading': loadingBlock}" @click="block()" :disabled="!enableBlock">
-                      <i class="fas fa-ban"></i>
-                </button>
-            </div>
-        </div>
-        </div>
-        <div class="level"></div>
-        <div class="level"></div>
-    </div>
+          <div class="level-item has-text-centered">
+            <button class="button is-success is-medium" v-on:click="vote(true)" :disabled="!enableVote"><i class="fas fa-thumbs-up"></i></button>
+          </div>
+          <div class="level-item has-text-centered">
+            <button class="button is-danger is-medium" v-on:click="vote(false)" :disabled="!enableVote"><i class="fas fa-thumbs-down"></i></button>
+          </div>
+          <div class="level-item has-text-centered">
+            <button class="button is-medium is-info" :class="{'is-loading': loadingExecute}" @click="execute()" :disabled="!enableExecute"><i class="fas fa-play"></i></button>
+          </div>
+          <div class="level-item has-text-centered">
+            <button class="button is-medium is-danger" :class="{'is-loading': loadingBlock}" @click="block()" :disabled="!enableBlock">
+              <i class="fas fa-ban"></i>
+            </button>
+          </div>
+      </div>
+      </div>
+      <div class="level"></div>
+      <div class="level"></div>
+  </div>
 </template>
 
 <script>
@@ -77,27 +76,21 @@ data () {
       enableBlock: false,
       loadingExecute: false,
       loadingBlock: false,
-      tokensCount: ''
     }
   },
   methods: {
     async updateEnabledButtons () {
         this.isActive = +this.proposal.status === this.$libre.proposalStatuses[0].number;
-        this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > this.now &&
+        this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > this.$store.state.time &&
                         !this.votes.voted &&
-                        this.tokensCount >= this.$eth.toToken(this.$libre.proposalParams.minBalance) &&
+                        this.$store.state.balances.libre >= this.$eth.toToken(this.$libre.proposalParams.minBalance) &&
                         this.isActive;
 
-        this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < this.now && 
+        this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < this.$store.state.time && 
             this.isActive &&
             (this.votes.yea > this.votes.nay) &&
             (this.votes.yea + this.votes.nay >= this.$eth.toToken(this.$libre.proposalParams.quorum));
         this.enableBlock = this.contractOwner && this.isActive;
-    },
-
-    async getTokensCount () {
-        await this.$libre.promiseLibre;
-        this.tokensCount = this.$eth.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount));
     },
 
     async loadProposal () {
@@ -192,7 +185,7 @@ data () {
     },
 
     async checkOwner() {
-        this.contractOwner = this.$eth.yourAccount === await this.$libre.dao.owner()
+        this.contractOwner = this.$store.state.address === await this.$libre.dao.owner()
     },
 
     async execute() {
@@ -241,7 +234,6 @@ async created () {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
       await this.checkOwner();
-      await this.getTokensCount();
       await this.loadProposal();
       this.selectedType = this.$libre.typeProposals[0];
     } catch (err) {
@@ -250,6 +242,6 @@ async created () {
   },
   components: {
     AddressBlock
-}
+  }
 }
 </script>

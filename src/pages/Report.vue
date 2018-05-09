@@ -155,7 +155,7 @@ export default {
       this.isLoading = false;
     },
     async checkOwner () {
-      this.owner = this.$eth.yourAccount == await this.$libre.report.owner()
+      this.owner = this.$store.state.address == await this.$libre.report.owner()
     }
   },
   async created () {
@@ -164,7 +164,7 @@ export default {
       await this.$libre.initPromise;
       this.loadReports();
       this.checkOwner();
-      this.reportNew.from = this.reportNew.to = this.$eth.yourAccount;
+      this.reportNew.from = this.reportNew.to = this.$store.state.address;
     } catch (err) {
       console.log(err)
     }

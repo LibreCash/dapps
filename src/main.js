@@ -28,7 +28,13 @@ router.beforeEach((to, from, next) => {
 
 const store = new Vuex.Store({
   state: {
-    time: 0
+    time: 0,
+    address: null,
+    balances: {
+      eth: 0,
+      libre: 0,
+      lbrs: 0
+    }
   },
   mutations: {
     setTime (state, _time) {
@@ -36,16 +42,34 @@ const store = new Vuex.Store({
     },
     initTicker (state) {
       setInterval(() => { state.time += 1000 }, 1000)
+    },
+    setAddress (state, _address) {
+      state.address = _address;
+    },
+    setBalances (state, _balances) {
+      state.balances = _balances;
     }
   },
   actions: {
     async startUpdating (context, updater) {
-      context.state.time = +(await updater())
       context.commit('setTime', +(await updater()))
       context.commit('initTicker')
       setInterval(async () => {
-        context.state.time = +(await updater())
+        context.commit('setTime', +(await updater()))
       }, 5 * 60 * 1000)
+    },
+    async updateAddress (context, updater) {
+      context.commit('setAddress', await updater())
+    },
+    async updateBalances (context, updaters) {
+      if (!context.state.address) {
+        context.commit('setAddress', await updaters.address())
+      }
+      context.commit('setBalances', {
+        eth: +updaters.ethConverter(await updaters.eth(context.state.address)),
+        libre: updaters.tokenConverter(await updaters.libre(context.state.address)),
+        lbrs: updaters.tokenConverter(await updaters.lbrs(context.state.address))
+      })
     }
   }
 })

@@ -1,15 +1,18 @@
 <template>
     <div>
-        <section v-show="this.$eth.yourAccount">
+        <section v-show="$store.state.address">
             <div class="flex-mobile">
                 <span>{{ $t('lang.common.your-address') }}:</span>
-                <a :href="$libre.addressToLink(this.$eth.yourAccount)" class="is-text-overflow">{{ $eth.yourAccount }}</a>
+                <a :href="$libre.addressToLink($store.state.address)" class="is-text-overflow">{{ $store.state.address }}</a>
             </div>
             <div>
-                {{ $t('lang.common.balances') }}: {{ balances.libre }} Libre, {{ balances.lbrs }} LBRS
+                {{ $t('lang.common.balances') }}: {{ $store.state.balances.eth }} ETH, {{ $store.state.balances.libre }} Libre, {{ $store.state.balances.lbrs }} LBRS
+            </div>
+            <div v-if="!hideTime">
+                {{ $t('lang.common.current-time') }}: {{ $store.state.time == 0 ? '' : $d($store.state.time, 'long+') }}
             </div>
         </section>
-        <section v-show="!this.$eth.yourAccount">
+        <section v-show="!$store.state.address">
             <div>
                 {{ $t('lang.common.no-metamask') }}
             </div>
@@ -18,26 +21,29 @@
 </template>
 <script>
 export default {
+    props: ['hideCurrentTime'],
     data() {
         return {
-            balances: {
-                libre:0,
-                lbrs:0
-            }
+            hideTime: this.hideCurrentTime
         }
-  },
+    },
 
-  async created() {
-    try {
-        await this.$eth.accountPromise;
-        await this.$libre.initPromise;
-        this.balances = {
-            libre: this.$eth.toToken(await this.$libre.token.balanceOf(this.$eth.yourAccount)),
-            lbrs: this.libertyBalance = this.$eth.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount))
-        } 
-    } catch(err) {
-        console.log(err);
+    async created() {
+        try {
+            await this.$eth.accountPromise;
+            await this.$libre.initPromise;
+
+            this.$store.dispatch('updateBalances', {
+                libre: this.$libre.token.balanceOf,
+                lbrs: this.$libre.liberty.balanceOf,
+                eth: this.$eth.getBalance,
+                ethConverter: this.$eth.fromWei,
+                tokenConverter: this.$eth.toToken,
+                address: this.$eth.loadAccounts
+            })
+        } catch(err) {
+            console.log(err);
+        }
     }
-  }
 }
 </script>

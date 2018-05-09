@@ -5,12 +5,11 @@
             <div class="card-content">
                 <address-block/>
                 <div class="flex-mobile">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow eth-address" :href="$libre.addressToLink(config.loans.address)">{{config.loans.address}}</a></div>
-                <div>{{ $t('lang.common.current-time') }}: {{ $d($store.state.time, 'long+') }}</div>
             </div>
         </div>
         <div class="level"></div>
         <nav class="level has-text-centered">
-          <div class="level-item" v-if="canCreate">
+          <div class="level-item" v-if="$store.state.address">
             <div>
               <p class="heading">{{ $t('lang.common.create') }}</p>
               <p><router-link :to="{ path: '/loans/new' }" class="button is-primary">{{ $t('lang.loans.new-offer') }}</router-link></p>
@@ -140,8 +139,7 @@ export default {
       isCompleted: false,
       isMine: false,
       loansCount: 0,
-      perPage: 10,
-      canCreate: true
+      perPage: 10
     }
   },
   methods: {
@@ -203,7 +201,6 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.canCreate = this.$eth.yourAccount != undefined;
       this.loadLoans()
     } catch (err) {
       console.log(err)

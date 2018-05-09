@@ -5,7 +5,7 @@
         <div class="column">
           <div class="card bm--card-equal-height">
             <div class="card-content">
-              <address-block />
+              <address-block :hideCurrentTime="true"/>
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@
         <p class="modal-card-title">{{ abiTitle }}</p>
       </header>
       <section class="modal-card-body">
-        <b-field label="Data">
+        <b-field>
           <b-input type="textarea" :value="abiData"></b-input>
         </b-field>
       </section>
@@ -314,7 +314,7 @@ export default {
       this.buyFee = 2.5;
       this.sellFee = 2.5;
       this.targetDeadline = 600;
-      this.targetWithdraw = this.$eth.yourAccount;
+      this.targetWithdraw = this.$store.state.address;
       this.newTargetsType = 'exchanger';
       this.newTargetsShown = true;
     },
@@ -383,9 +383,9 @@ export default {
     },
     async updateClaimed () {
       this.bank.claimed = +await this.$libre.bounty.bank.claimed();
-      this.bank.payment = this.$eth.toToken(+await this.$libre.bounty.bank.payments(this.$eth.yourAccount));
+      this.bank.payment = this.$eth.toToken(+await this.$libre.bounty.bank.payments(this.$store.state.address));
       this.exchanger.claimed = +await this.$libre.bounty.exchanger.claimed();
-      this.exchanger.payment = this.$eth.toToken(+await this.$libre.bounty.exchanger.payments(this.$eth.yourAccount));
+      this.exchanger.payment = this.$eth.toToken(+await this.$libre.bounty.exchanger.payments(this.$store.state.address));
     },
     // next are test methods for test methods
     async testEraseBankClaim () {
@@ -480,7 +480,7 @@ export default {
       this.loadTargets();
     },
     update (row) {
-      row.contract.checkInvariant(this.$eth.yourAccount).then((notHacked) => {
+      row.contract.checkInvariant(this.$store.state.address).then((notHacked) => {
         row.hacked = !notHacked;
       });
       this.updateClaimed();
@@ -532,7 +532,7 @@ export default {
                   this.$libre.getContract(this.config.bounty.exchanger.targets.exchanger.abi, target.address);
               }            
           });
-          this.searchData[searchDataLength - 1].contract.checkInvariant(this.$eth.yourAccount).then((notHacked) => {
+          this.searchData[searchDataLength - 1].contract.checkInvariant(this.$store.state.address).then((notHacked) => {
             this.searchData[searchDataLength - 1].hacked = !notHacked;
           });
         }

@@ -5,11 +5,11 @@
             <div class="card-content">
                 <address-block/>
                 <div class="flex-mobile">{{ $t('lang.contracts.dao') }}: 
-                  <a :href="$libre.addressToLink(contracts.dao)" target="_blank" class="is-text-overflow ">{{contracts.dao}}</a></div>
+                  <a :href="$libre.addressToLink(contracts.dao)" target="_blank" class="is-text-overflow ">{{contracts.dao}}</a>
+                </div>
                 <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
                   <a :href="$libre.addressToLink(contracts.lbrs)" target="_blank" class="is-text-overflow ">{{contracts.lbrs}}</a>
                 </div>
-                <div>{{ $t('lang.common.current-time') }}: {{ $store.state.time == 0 ? '' : $d($store.state.time, 'long+') }}</div>
                 <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-count') }}: {{ $eth.toToken($libre.proposalParams.quorum) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
@@ -17,7 +17,7 @@
         </div>
         <div class="level"></div>
         <nav class="level">
-          <div class="level-item has-text-centered" v-if="tokensCount >= $eth.toToken($libre.proposalParams.minBalance)">
+          <div class="level-item has-text-centered" v-if="$store.state.balances.lbrs >= $eth.toToken($libre.proposalParams.minBalance)">
             <div>
               <p class="heading">{{ $t('lang.common.create') }}</p>
               <p>
@@ -98,7 +98,7 @@
               <span v-if="!props.row.votingData.voted &&
                           (props.row.deadlineUnix > $store.state.time) &&
                           !props.row.loading &&
-                          (tokensCount >= $eth.toToken($libre.proposalParams.minBalance)) &&
+                          ($store.state.balances.lbrs >= $eth.toToken($libre.proposalParams.minBalance)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
                 <b-tooltip :label="$t('lang.dao.yea')" type="is-dark" position="is-bottom">
                   <button class="button" v-on:click="vote(props.row, true)"><i class="fas fa-thumbs-up"></i></button>
@@ -146,7 +146,6 @@ export default {
       },
       tableData: [],
       isLoading: false,
-      tokensCount: null,
       filter: "filterALL",
       currentPage: 1,
       perPage: 5,
@@ -171,7 +170,7 @@ export default {
             votingData: vote,
             yea: vote.yea,
             nay: vote.nay,
-            deadlineUnix: vote.deadline * 1000,
+            deadlineUnix: this.$eth.toTimestamp(vote.deadline),
             description: proposal.description,
             loading: false,
             status: this.$libre.proposalStatuses[+proposal.status].text
@@ -193,7 +192,7 @@ export default {
 
       await this.$libre.updateProposals(this.addProposal);
       if (this.tableData.length == 0) {
-        for(let i = this.$libre.proposals.length-1; i >=0; i--)
+        for(let i = this.$libre.proposals.length - 1; i >= 0; i--)
           this.addProposal(i)
       }
 
@@ -212,7 +211,7 @@ export default {
       this.isLoading = false
 
       var loginChecker = setInterval(() => {
-        if (this.$eth.yourAccount != null) {
+        if (this.$store.state.address != null) {
           clearInterval(loginChecker)
         }
       }, 1000)
@@ -294,10 +293,6 @@ export default {
       row.loading = false
     },
 
-    async getTokensCount () {
-      this.tokensCount = this.$eth.toToken(+await this.$libre.liberty.balanceOf(this.$eth.yourAccount),this.$libre.consts.DECIMALS)
-    },
-
     clearTimers() {
       this.tableData.forEach(element => {
         clearInterval(element.updateTimer)
@@ -313,10 +308,9 @@ export default {
         dao: this.config.dao.address,
         lbrs: await this.$libre.dao.sharesTokenAddress(),
       }
-      this.isOwner = (await this.$libre.dao.owner() === this.$eth.yourAccount);
+      this.isOwner = (await this.$libre.dao.owner() === this.$store.state.address);
 
       this.loadProposals();
-      this.getTokensCount();
     } catch (err) {
       console.log(err)
     }

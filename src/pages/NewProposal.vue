@@ -3,7 +3,7 @@
       <div class="table-padding">
         <div class="card">
           <div class="card-content">
-            <div>{{ $t('lang.common.token-count') }}: {{ tokensCount }} LBRS</div>
+            <address-block/>
             <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
             <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
             <router-link :to="{ path: '/dao' }" class="button">
@@ -100,6 +100,7 @@
 </template>
 
 <script>
+import AddressBlock from "@/components/AddressBlock";
 export default {
   data () {
     return {
@@ -156,10 +157,6 @@ export default {
     }
   },
   methods: {
-    async getTokensCount () {
-       this.tokensCount = this.$eth.toToken(await this.$libre.liberty.balanceOf(this.$eth.yourAccount));
-    },
-
     getType(fieldValid) {
         return fieldValid ? '' : 'is-danger'
     },
@@ -220,7 +217,6 @@ export default {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
-      this.getTokensCount();
       this.selectedType = this.typeProposals[0];
     } catch (err) {
       console.log(err)
@@ -231,6 +227,9 @@ export default {
       this.beneficiary = this.amount = this.transactionBytecode = this.buffer = '';
       this.debatingPeriod = this.debatingTime = new Date();
     }
+  },
+  components: {
+    AddressBlock
   }
 }
 </script>
