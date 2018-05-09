@@ -1,28 +1,26 @@
-> Blockchain report DAPP for Libre Project
+<h1 align="center">
+	<img width="200px" src="https://librebank.com/img/logo-libre.png" alt="LibreBank logo"></img>
+</h1>
 
-This DAPP use `Storage.sol` smartcontract from `ethcontract` repo
+## LibreBank dApps
 
-## Settings
-You can configure DAPP setting:
-1. Smartcontract address
-2. Node (ethereum network) address. By default: rinkeby metamask (infura) node
-3. Smartcontract ABI
+LibreBank dApps (decentalized apps) repository.
 
-Setting location: `src/plugins/eth/`
+### dApps List:
+1. ETH Blockchain Reports dApp.
+2. Fund StatusPage.
+3. Contract StatusPage.
+4. Deposit (Draft).
+5. DAO (Draft).
+6. Loans (Draft).
+7. Faucet (for testing in Rinkeby network, draft)
 
-
-## Build Setup
-
-``` bash
-# install dependencies
+## Getting Started
+```sh
+git clone https://github.com/LibreCash/dapps && cd dapps
 npm install
-
-# serve with hot reload at localhost:8080
 npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
 ```
+
+## License
+Code released under the [AGPL-3.0](LICENSE).
