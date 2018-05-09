@@ -118,6 +118,15 @@ p.card-header-title {
   width:100% !important;
 }
 
+.max-height {
+  max-height: 100% !important;
+}
+
+
+.full-height-field > .field-body, .full-height-field .control, button.full-height   {
+  height: 100%
+}
+
 @media screen and (max-width: 768px) {
 #app {
   margin-top:0;
@@ -126,6 +135,11 @@ p.card-header-title {
 .flex-mobile {
   display: flex;
 }
+
+.mobile-centered {
+  text-align: center;
+}
+
 table.has-mobile-cards {
   display:flex
 }

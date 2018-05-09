@@ -14,80 +14,85 @@
             </router-link>
           </div>
         </div>
-        <p>&nbsp;</p>
-        <b-field horizontal :label="$t('lang.common.type')" >
-          <b-select :placeholder="$t('lang.dao.select-type')" v-model="selectedType">
-              <option v-for="type in typeProposals" v-bind:value="type">
-                {{ type.text }}
-              </option>
-          </b-select>
-        </b-field>
-        <b-field horizontal v-if="selectedType['info']" :label="$t('lang.common.information')">
-          {{ selectedType['info'] }}
-        </b-field>
-        <b-field horizontal :label="selectedType['benef']" v-if="selectedType['benef']">
-            <b-field :type="getType(validBenef)">
-                <b-input 
-                    v-model="beneficiary" 
-                    placeholder="0x0000000000000000000000000000000000000000">
-                </b-input>
-            </b-field>
-        </b-field>
-        <b-field horizontal :label="selectedType['buf']" v-if="selectedType['buf']" >
-            <b-field :type="getType(validBuf)">
-                <b-input v-model="buffer" placeholder="0"></b-input>
-            </b-field>
-        </b-field>
-        <b-field horizontal :label="selectedType['amount']" v-if="selectedType['amount']">
-            <b-field :type="getType(validAmount)">
-                <b-input v-model="amount" placeholder="0"></b-input>
-            </b-field>
-        </b-field>
-        <b-field horizontal :label="selectedType['lock']" v-if="selectedType['lock']">
-          <b-select v-model="lock">
-            <option>true</option>
-            <option>false</option>
-          </b-select>
-        </b-field>
-        <b-field horizontal :label="$t('lang.dao.description-row')">
-            <b-input type="textarea" v-model="description"></b-input>
-        </b-field>
-        <b-field horizontal :label="$t('lang.dao.period-row')">
-            <b-field :type="getType(validPeriod)">
-                <b-datepicker
-                    placeholder="$t('lang.common.click-to-select')"
-                    v-model="debatingPeriod"
-                    icon="calendar"
-                    icon-pack="fas"
-                    expanded
-                    ></b-datepicker> 
-            </b-field>
-            <b-field :type="getType(validPeriod)">
-                  <b-timepicker
-                    placeholder="$t('lang.common.set-time')"
-                    icon="clock"
-                    v-model="debatingTime"
-                    icon-pack="fas"
-                    expanded
-                    ></b-timepicker>
-            </b-field>
-        </b-field>
-        <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" >
-            <b-field :message="bytecodeMessage" :type="validCode ? 'is-success' : 'is-danger'">
-                <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
-            </b-field>
-        </b-field>
-        <b-field horizontal>
-            <p class="control">
-                <button class="button is-primary" v-on:click="createProposal()"
-                    :disabled="!validAll"
-                    :class="{'is-loading': isLoading}">
-                  {{ $t('lang.dao.create-proposal') }}
-                </button>
-                <b-tag v-if="!validTokens">{{ $t('lang.dao.not-enough-tokens') }}</b-tag>
-                <b-tag v-if="!validPeriod">{{ $t('lang.dao.debating-period-1') }} {{ $libre.proposalParams.minTime / 60 / 60 }} {{ $t('lang.dao.debating-period-2') }}</b-tag>
-            </p>
-        </b-field>
+        <div class="level"></div>
+        <div class="column">
+          <b-field horizontal :label="$t('lang.common.type')" >
+            <b-select :placeholder="$t('lang.dao.select-type')" v-model="selectedType">
+                <option v-for="type in typeProposals" v-bind:value="type">
+                  {{ type.text }}
+                </option>
+            </b-select>
+          </b-field>
+          <b-field horizontal v-if="selectedType['info']" :label="$t('lang.common.information')">
+            {{ selectedType['info'] }}
+          </b-field>
+          <b-field horizontal :label="selectedType['benef']" v-if="selectedType['benef']">
+              <b-field :type="getType(validBenef)">
+                  <b-input 
+                      v-model="beneficiary" 
+                      placeholder="0x0000000000000000000000000000000000000000">
+                  </b-input>
+              </b-field>
+          </b-field>
+          <b-field horizontal :label="selectedType['buf']" v-if="selectedType['buf']" >
+              <b-field :type="getType(validBuf)">
+                  <b-input v-model="buffer" placeholder="0"></b-input>
+              </b-field>
+          </b-field>
+          <b-field horizontal :label="selectedType['amount']" v-if="selectedType['amount']">
+              <b-field :type="getType(validAmount)">
+                  <b-input v-model="amount" placeholder="0"></b-input>
+              </b-field>
+          </b-field>
+          <b-field horizontal :label="selectedType['lock']" v-if="selectedType['lock']">
+            <b-select v-model="lock">
+              <option>true</option>
+              <option>false</option>
+            </b-select>
+          </b-field>
+          <b-field horizontal :label="$t('lang.dao.description-row')">
+              <b-input type="textarea" v-model="description"></b-input>
+          </b-field>
+          <b-field horizontal :label="$t('lang.dao.period-row')">
+              <b-field :type="getType(validPeriod)">
+                  <b-datepicker
+                      placeholder="$t('lang.common.click-to-select')"
+                      v-model="debatingPeriod"
+                      icon="calendar"
+                      icon-pack="fas"
+                      expanded
+                      ></b-datepicker> 
+              </b-field>
+              <b-field :type="getType(validPeriod)">
+                    <b-timepicker
+                      placeholder="$t('lang.common.set-time')"
+                      icon="clock"
+                      v-model="debatingTime"
+                      icon-pack="fas"
+                      expanded
+                      ></b-timepicker>
+              </b-field>
+          </b-field>
+          <b-field horizontal :label="selectedType['code']" v-if="selectedType['code']" >
+              <b-field :message="bytecodeMessage" :type="validCode ? 'is-success' : 'is-danger'">
+                  <b-input type="textarea" v-model="transactionBytecode" placeholder="0"></b-input>
+              </b-field>
+          </b-field>
+          <b-field horizontal class="full-height-field">
+              <p class="control mobile-centered full-height">
+                  
+                  <button class="button is-primary full-height" v-on:click="createProposal()"
+                      :disabled="!validAll"
+                      :class="{'is-loading': isLoading}">
+                    {{ $t('lang.dao.create-proposal') }}
+                  </button>
+                  <div class="div">
+                  <b-tag v-if="!validTokens" class="full-height">{{ $t('lang.dao.not-enough-tokens') }}</b-tag>
+                  <b-tag v-if="!validPeriod" class="full-height">{{ $t('lang.dao.debating-period-1') }} {{ $libre.proposalParams.minTime / 60 / 60 }} {{ $t('lang.dao.debating-period-2') }}</b-tag>
+                  </div>
+              </p>
+          </b-field>
+        </div>
       </div>
       <div class="level"></div>
     </div>
