@@ -59,7 +59,7 @@
             <footer class="card-footer">
               <a v-if="bank.claimed && debugButtons" class="card-footer-item" v-on:click="testEraseBankClaim()">Unclaim</a>
               <a v-if="bank.payment > 0" class="card-footer-item" v-on:click="withdraw('bank')">{{ $t('lang.common.withdraw') }}</a>
-              <a class="card-footer-item" v-on:click="targetsBankModal()">{{ $t('lang.bounty.new-targets') }}</a>
+              <a v-if="$store.state.address" class="card-footer-item" v-on:click="targetsBankModal()">{{ $t('lang.bounty.new-targets') }}</a>
               <a class="card-footer-item" v-on:click="tabsBounty = 0; termsShown = true">{{ $t('lang.bounty.terms') }}</a>
             </footer>
           </div>
@@ -105,7 +105,7 @@
             <footer class="card-footer">
               <a v-if="exchanger.claimed && debugButtons" class="card-footer-item" v-on:click="testEraseExchangerClaim()">Unclaim</a>
               <a v-if="exchanger.payment > 0" class="card-footer-item" v-on:click="withdraw('exchanger')">{{ $t('lang.common.withdraw') }}</a>
-              <a class="card-footer-item" v-on:click="targetsExchangerModal()">{{ $t('lang.bounty.new-targets') }}</a>
+              <a v-if="$store.state.address" class="card-footer-item" v-on:click="targetsExchangerModal()">{{ $t('lang.bounty.new-targets') }}</a>
               <a class="card-footer-item" v-on:click="tabsBounty = 1; termsShown = true">{{ $t('lang.bounty.terms') }}</a>
             </footer>
           </div>

@@ -81,12 +81,14 @@ data () {
   methods: {
     async updateEnabledButtons () {
         this.isActive = +this.proposal.status === this.$libre.proposalStatuses[0].number;
-        this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > this.$store.state.time &&
+        this.enableVote = this.$store.state.address &&
+                        this.$eth.toTimestamp(this.votes.deadline) > this.$store.state.time &&
                         !this.votes.voted &&
                         this.$store.state.balances.libre >= this.$eth.toToken(this.$libre.proposalParams.minBalance) &&
                         this.isActive;
 
-        this.enableExecute = this.$eth.toTimestamp(this.votes.deadline) < this.$store.state.time && 
+        this.enableExecute = this.$store.state.address &&
+            this.$eth.toTimestamp(this.votes.deadline) < this.$store.state.time && 
             this.isActive &&
             (this.votes.yea > this.votes.nay) &&
             (this.votes.yea + this.votes.nay >= this.$eth.toToken(this.$libre.proposalParams.quorum));
