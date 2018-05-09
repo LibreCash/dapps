@@ -50,7 +50,7 @@
             </header>
              <div class="card-content">
               <div class="content chart">
-                <pie-chart :coins="pieChart" />
+                <pie-chart :data="pieChart"></pie-chart>
               </div>
              </div>
           </div>
@@ -81,8 +81,13 @@
 </style> 
 <script>
   import StatusCoins from '@/components/StatusCoins'
-  import PieChart from '@/components/PieChart'
+  import Vue from 'vue'
+  import VueChartkick from 'vue-chartkick'
+  import Chart from 'chart.js'
   import axios from 'axios'
+  
+  Vue.use(VueChartkick, {adapter: Chart})
+
   export default {
     data() {
       return {
@@ -181,7 +186,7 @@
           });
         }
 
-        this.pieChart = coins;
+        this.pieChart = coins.map((item)=>[item.name,item.balanceUSD]);
         this.maxCoin = maxCoin;
         this.minCoin = minCoin;
         this.isLoading = false;
@@ -199,8 +204,7 @@
     },
 
     components: {
-      StatusCoins,
-      PieChart
+      StatusCoins
     }
   };
 </script>

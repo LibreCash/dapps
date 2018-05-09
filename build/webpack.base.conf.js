@@ -38,6 +38,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      'chart.js': 'chart.js/dist/Chart.js'
     }
   },
   module: {
@@ -60,7 +61,7 @@ module.exports = {
             }]
           ],
           plugins: [
-            ["babel-plugin-transform-runtime", {
+            [ 'babel-plugin-transform-runtime' , {
               helpers: true,
               polyfill: true,
               regenerator: true
@@ -106,5 +107,6 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty'
-  }
+  },
+  
 }
