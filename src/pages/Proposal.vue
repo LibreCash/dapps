@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-content">
             <address-block/>
-            <div> {{$t('lang.dao.now-row')}}  {{ $d(now,'long+') }}</div>
+            <div> {{$t('lang.dao.now-row')}}  {{ $d($store.state.time, 'long+') }}</div>
             <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
             <div>{{ $t('lang.dao.min-count') }}: {{ $eth.toToken($libre.proposalParams.quorum) }} LBRS</div>
             <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
@@ -68,35 +68,19 @@ import AddressBlock from "@/components/AddressBlock";
 export default {
 data () {
     return {
-        proposalData: [],
-        isLoading: false,
-        currentProposal: '',
-        enableVote: false,
-        contractOwner: false,
-        enableExecute: false,
-        enableBlock: false,
-        loadingExecute: false,
-        loadingBlock: false,
-        tokensCount: '',
-        now:''
+      proposalData: [],
+      isLoading: false,
+      currentProposal: '',
+      enableVote: false,
+      contractOwner: false,
+      enableExecute: false,
+      enableBlock: false,
+      loadingExecute: false,
+      loadingBlock: false,
+      tokensCount: ''
     }
-},
-methods: {
-    async updateBlockTime() {
-        this.now = await this.$eth.getLatestBlockTime() * 1000;
-    },
-
-    startUpdatingTime() {
-        this.updatingBlockData = setInterval(() => {
-            this.updateBlockTime()
-        }, 10 * 60 * 1000 /* 10 minutes */);
-
-        this.updatingTicker = setInterval(async () => {
-            await this.updateEnabledButtons()
-        }, 1000);
-      
-    },
-
+  },
+  methods: {
     async updateEnabledButtons () {
         this.isActive = +this.proposal.status === this.$libre.proposalStatuses[0].number;
         this.enableVote = this.$eth.toTimestamp(this.votes.deadline) > this.now &&
@@ -109,14 +93,6 @@ methods: {
             (this.votes.yea > this.votes.nay) &&
             (this.votes.yea + this.votes.nay >= this.$eth.toToken(this.$libre.proposalParams.quorum));
         this.enableBlock = this.contractOwner && this.isActive;
-    },
-
-    clearTimers() {
-        let intervals = [
-            this.updatingTicker,
-            this.updatingBlockData
-        ];
-        intervals.forEach((interval) => clearInterval(interval))
     },
 
     async getTokensCount () {
@@ -189,7 +165,6 @@ methods: {
                 {name: this.$t('lang.dao.deadline-row'), value: this.$d(this.votes.deadline * 1000, 'long+')},
                 {name: this.$t('lang.dao.description-row'), value: this.proposal.description}
             )
-            await this.updateBlockTime();
             this.updateEnabledButtons();
         } catch (err) {
             console.log(err)
@@ -261,21 +236,17 @@ methods: {
   },
 async created () {
     try {
-        await this.$eth.accountPromise;
-        await this.$libre.initPromise;
-        await this.checkOwner();
-        await this.getTokensCount();
-        await this.loadProposal();
-        this.selectedType = this.$libre.typeProposals[0];
-        this.startUpdatingTime();
+      await this.$eth.accountPromise;
+      await this.$libre.initPromise;
+      await this.checkOwner();
+      await this.getTokensCount();
+      await this.loadProposal();
+      this.selectedType = this.$libre.typeProposals[0];
     } catch (err) {
         console.log(err)
     }
-},
-destroyed () {
-    this.clearTimers();
-},
-components: {
+  },
+  components: {
     AddressBlock
 }
 }

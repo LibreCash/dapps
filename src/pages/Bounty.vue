@@ -12,7 +12,7 @@
         <div class="column">
           <div class="card bm--card-equal-height">
             <div class="card-content">
-              {{ $t('lang.common.current-time') }}: {{ $d(curBlockchainTime * 1000, 'long+') }}
+              {{ $t('lang.common.current-time') }}: {{ $d($store.state.time, 'long+') }}
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@
                   <div class="control">
                     <b-taglist attached>
                       <b-tag>{{ $t('lang.common.deadline-low') }}</b-tag>
-                      <b-tag type="is-info">{{ bank.deadlineUnix == 0 ? '...' : $d(bank.deadlineUnix * 1000, 'short') }}</b-tag>
+                      <b-tag type="is-info">{{ bank.deadlineUnix == 0 ? '...' : $d(bank.deadlineUnix, 'short') }}</b-tag>
                     </b-taglist>
                   </div>
                   <div class="control">
@@ -84,7 +84,7 @@
                   <div class="control">
                     <b-taglist attached>
                       <b-tag>{{ $t('lang.common.deadline-low') }}</b-tag>
-                      <b-tag type="is-info">{{ exchanger.deadlineUnix == 0 ? '...' : $d(exchanger.deadlineUnix * 1000, 'short') }}</b-tag>
+                      <b-tag type="is-info">{{ exchanger.deadlineUnix == 0 ? '...' : $d(exchanger.deadlineUnix, 'short') }}</b-tag>
                     </b-taglist>
                   </div>
                   <div class="control">
@@ -137,8 +137,8 @@
             <b-tag>{{ props.row.type }}</b-tag>
             <b-tag v-if="(props.row.type == 'bank' && bank.claimed) ||
                     (props.row.type == 'exchanger' && exchanger.claimed)">{{ $t('lang.common.claimed') }}</b-tag>
-            <b-tag v-if="(props.row.type == 'bank' && bank.deadlineUnix < curBlockchainTime) ||
-                    (props.row.type == 'exchanger' && exchanger.deadlineUnix < curBlockchainTime)">{{ $t('lang.common.deadlined') }}</b-tag>
+            <b-tag v-if="(props.row.type == 'bank' && bank.deadlineUnix < $store.state.time) ||
+                    (props.row.type == 'exchanger' && exchanger.deadlineUnix < $store.state.time)">{{ $t('lang.common.deadlined') }}</b-tag>
           </b-table-column>
           <b-table-column :label="$t('lang.bounty.abi-row')" centered>
             <b-tooltip :label="$t('lang.bounty.get-abi-row')" type="is-dark" position="is-bottom">
@@ -158,8 +158,8 @@
             <b-tooltip :label="$t('lang.bounty.claim-row')" type="is-dark" position="is-bottom">
               <button class="button" v-on:click="claim(props.row)" :disabled="
                 !props.row.hacked ||
-                (props.row.type == 'bank' && (bank.claimed || bank.deadlineUnix < curBlockchainTime)) ||
-                (props.row.type == 'exchanger' && (exchanger.claimed || exchanger.deadlineUnix < curBlockchainTime))
+                (props.row.type == 'bank' && (bank.claimed || bank.deadlineUnix < $store.state.time)) ||
+                (props.row.type == 'exchanger' && (exchanger.claimed || exchanger.deadlineUnix < $store.state.time))
               "><i class="fas fa-bullseye"></i></button>
             </b-tooltip>
             <b-tooltip :label="$t('lang.bounty.kill-row')" type="is-dark" position="is-bottom">
@@ -270,7 +270,6 @@ export default {
       newTargetLoading: false,
       tableLoading: false,
       perPage: 10,
-      curBlockchainTime: 0,
       bountyBankAddress: '',
       bountyExchangerAddress: '',
       searchData: [],
@@ -293,12 +292,12 @@ export default {
       return (
         this.$libre.isValidFee(this.buyFee) && this.$libre.isValidFee(this.sellFee) &&
         (
-          (this.newTargetsType == 'bank' && this.bank.deadlineUnix > this.curBlockchainTime) ||
+          (this.newTargetsType == 'bank' && this.bank.deadlineUnix > this.$store.state.time) ||
           (
             this.newTargetsType == 'exchanger' &&
             this.$eth.isInteger(this.targetDeadline) &&
             this.$eth.isAddress(this.targetWithdraw) &&
-            this.exchanger.deadlineUnix > this.curBlockchainTime
+            this.exchanger.deadlineUnix > this.$store.state.time
           )
         )
       )
@@ -324,7 +323,7 @@ export default {
       let sellFee = this.sellFee * 100;
       let targetDeadline, targetWithdraw, txHash;
       if (this.newTargetsType == 'exchanger') {
-        targetDeadline = this.targetDeadline * 60 + this.curBlockchainTime;
+        targetDeadline = this.targetDeadline * 60 + this.$store.state.time;
         targetWithdraw = this.targetWithdraw;
       }
       try {
@@ -487,8 +486,8 @@ export default {
       this.exchanger.bounty = this.$eth.toToken(await this.$eth.getBalance(this.config.bounty.exchanger.address));
     },
     async getDeadlines () {
-      this.bank.deadlineUnix = +await this.$libre.bounty.bank.deadline();
-      this.exchanger.deadlineUnix = +await this.$libre.bounty.exchanger.deadline();
+      this.bank.deadlineUnix = +await this.$libre.bounty.bank.deadline() * 1000;
+      this.exchanger.deadlineUnix = +await this.$libre.bounty.exchanger.deadline() * 1000;
     },
     async loadTargets (e) {
       this.searchData = [];
@@ -538,26 +537,6 @@ export default {
       }
 
       this.tableLoading = false
-    },
-    async updateBlockTime() {
-      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
-    },
-    startUpdatingTime() {
-      this.curBlockchainTime = 0
-      this.updatingTicker = setInterval(() => {
-        this.curBlockchainTime++
-      }, 1000)
-      this.updatingBlockData = setInterval(() => {
-        this.updateBlockTime()
-      }, 10 * 60 * 1000 /* 10 minutes */)
-      this.updateBlockTime()
-    },
-    clearTimers() {
-      let intervals = [
-        this.updatingTicker,
-        this.updatingBlockData,
-      ]
-      intervals.forEach((interval) => clearInterval(interval))
     }
   },
   async created () {
@@ -566,7 +545,6 @@ export default {
       await this.$libre.initPromise;
       this.bountyBankAddress = this.config.bounty.bank.address;
       this.bountyExchangerAddress = this.config.bounty.exchanger.address;
-      this.startUpdatingTime();
       this.getBounties(); // no await, start async
       this.getDeadlines();
       this.loadTargets();
@@ -574,9 +552,6 @@ export default {
     } catch (err) {
       console.log(err)
     }
-  },
-  destroyed () {
-    this.clearTimers();
   },
   components: {
     AddressBlock

@@ -110,8 +110,7 @@ export default {
       lock: false,
       typeProposals: this.$libre.typeProposals,
       selectedType: '',
-      isLoading: false,
-      now: new Date()
+      isLoading: false
     }
   },
   computed: {
@@ -131,7 +130,7 @@ export default {
         let debatingEnd = new Date(this.debatingPeriod)
         // Refactor it  
         debatingEnd.setHours(this.debatingTime.getHours(), this.debatingTime.getMinutes())
-        return (debatingEnd - this.now) > this.$libre.proposalParams.minTime * 1000 + 10 * 1000 /* milliseconds */;
+        return (debatingEnd - this.$store.state.time) > this.$libre.proposalParams.minTime * 1000 + 10 * 1000 /* milliseconds */;
     },
 
     validCode() {
@@ -163,10 +162,9 @@ export default {
     async createProposal() {
       let 
         txHash,
-        now = new Date(),
         debatingEnd = (new Date(this.debatingPeriod))
           .setHours(this.debatingTime.getHours(),this.debatingTime.getMinutes()),
-        debatingPeriod = Math.round((debatingEnd - now) / 1000),
+        debatingPeriod = Math.round((debatingEnd - this.$store.state.time) / 1000),
         indexTP = this.$libre.typeProposals.indexOf(this.selectedType),
         amount = this.amount,
         buffer = this.buffer;
@@ -207,33 +205,21 @@ export default {
       catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$libre.notify(msg,'is-danger');
+        this.$libre.notify(msg, 'is-danger');
       }
 
       this.isLoading = false
     },
-    startValidDataTimer () {
-      this.validDataTimer = setInterval(() => {
-        this.now = Date.now();
-      }, 2000)
-    },
-    endValidDataTimer () {
-       clearInterval(this.validDataTimer);
-    }
   },
   async created () {
     try {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
       this.getTokensCount();
-      this.startValidDataTimer();
       this.selectedType = this.typeProposals[0];
     } catch (err) {
       console.log(err)
     }
-  },
-  async destroyed () {
-    this.endValidDataTimer();
   },
   watch: {
     selectedType: function() {

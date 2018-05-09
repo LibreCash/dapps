@@ -9,7 +9,7 @@
                 <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
                   <a :href="$libre.addressToLink(contracts.lbrs)" target="_blank" class="is-text-overflow ">{{contracts.lbrs}}</a>
                 </div>
-                <div>{{ $t('lang.common.current-time') }}: {{ curBlockchainTime == 0 ? '' : $d(curBlockchainTime * 1000, 'long+') }}</div>
+                <div>{{ $t('lang.common.current-time') }}: {{ $store.state.time == 0 ? '' : $d($store.state.time, 'long+') }}</div>
                 <div>{{ $t('lang.dao.min-to-vote') }}: {{ $eth.toToken($libre.proposalParams.minBalance) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-count') }}: {{ $eth.toToken($libre.proposalParams.quorum) }} LBRS</div>
                 <div>{{ $t('lang.dao.min-deadline', {period: $libre.proposalParams.minTime}) }}</div>
@@ -84,8 +84,8 @@
               {{ props.row.yea }} / {{ props.row.nay }}
             </b-table-column>
              <b-table-column :label="$t('lang.common.deadline')" centered>
-              <p>{{ $d(props.row.deadlineUnix * 1000, 'long+') }}</p>
-              <p v-if="props.row.deadlineUnix <= curBlockchainTime" class="tag is-warning is-rounded">
+              <p>{{ $d(props.row.deadlineUnix, 'long+') }}</p>
+              <p v-if="props.row.deadlineUnix <= $store.state.time" class="tag is-warning is-rounded">
                 {{ $t('lang.common.outdated') }}
               </p>
             </b-table-column>
@@ -96,7 +96,7 @@
               </b-tooltip>
               <!-- vote buttons -->
               <span v-if="!props.row.votingData.voted &&
-                          (props.row.deadlineUnix > curBlockchainTime) &&
+                          (props.row.deadlineUnix > $store.state.time) &&
                           !props.row.loading &&
                           (tokensCount >= $eth.toToken($libre.proposalParams.minBalance)) &&
                           (props.row.status === $libre.proposalStatuses[0].text)">
@@ -108,7 +108,7 @@
                 </b-tooltip>
               </span>
               <!-- execute button -->
-              <span v-else-if="props.row.deadlineUnix <= curBlockchainTime &&
+              <span v-else-if="props.row.deadlineUnix <= $store.state.time &&
                               (props.row.status === $libre.proposalStatuses[0].text) &&
                               !props.row.loading &&
                               (props.row.yea > props.row.nay) &&
@@ -141,16 +141,15 @@ export default {
   data () {
     return {  
       contracts:{
-        dao:null,
-        lbrs:null,
+        dao: null,
+        lbrs: null,
       },
       tableData: [],
       isLoading: false,
-      tokensCount:null,
+      tokensCount: null,
       filter: "filterALL",
       currentPage: 1,
       perPage: 5,
-      curBlockchainTime: 0,
       isOwner: false
     }
   },
@@ -172,10 +171,9 @@ export default {
             votingData: vote,
             yea: vote.yea,
             nay: vote.nay,
-            deadlineUnix: vote.deadline,
+            deadlineUnix: vote.deadline * 1000,
             description: proposal.description,
             loading: false,
-            updateTimer: null,
             status: this.$libre.proposalStatuses[+proposal.status].text
         })
       }
@@ -190,9 +188,6 @@ export default {
     },
 
     async loadProposals () {
-      await this.updateBlockTime();
-
-      this.clearTimers();
       this.tableData = []
       this.isLoading = true
 
@@ -216,7 +211,6 @@ export default {
 
       this.isLoading = false
 
-      this.startUpdatingTime()
       var loginChecker = setInterval(() => {
         if (this.$eth.yourAccount != null) {
           clearInterval(loginChecker)
@@ -267,7 +261,7 @@ export default {
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
-        this.$libre.notify(msg,'is-danger');
+        this.$libre.notify(msg, 'is-danger');
       }
       row.loading = false
     },
@@ -293,44 +287,14 @@ export default {
       row.loading = false
     },
 
-    async updateBlockTime() {
-      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
-    },
-
     async getTokensCount () {
       this.tokensCount = this.$eth.toToken(+await this.$libre.liberty.balanceOf(this.$eth.yourAccount),this.$libre.consts.DECIMALS)
-    },
-
-    startUpdatingTime() {
-      this.curBlockchainTime = 0
-      this.updatingTicker = setInterval(() => {
-        this.curBlockchainTime++
-      }, 1000)
-      this.updatingBlockData = setInterval(() => {
-        this.updateBlockTime()
-      }, 10 * 60 * 1000 /* 10 minutes */)
-      this.updateBlockTime()
-      this.numProposals = -1
-      this.updateTableData = setInterval(async () => {
-        var numProposals = +(await this.$libre.dao.numProposals());
-        if (this.numProposals === -1) {
-          this.numProposals = numProposals
-        }
-      }, 60 * 1000)
     },
 
     clearTimers() {
       this.tableData.forEach(element => {
         clearInterval(element.updateTimer)
       })
-
-      let intervals = [
-        this.updatingTicker,
-        this.updatingBlockData,
-        this.updateTableData
-      ]
-
-      intervals.forEach((interval) => clearInterval(interval))
     }
   },
   async created () {
@@ -339,8 +303,8 @@ export default {
       await this.$libre.initPromise;
 
       this.contracts = {
-        dao:this.config.dao.address,
-        lbrs:await this.$libre.dao.sharesTokenAddress(),
+        dao: this.config.dao.address,
+        lbrs: await this.$libre.dao.sharesTokenAddress(),
       }
       this.isOwner = (await this.$libre.dao.owner() === this.$eth.yourAccount);
 

@@ -5,7 +5,7 @@
             <div class="card-content">
                 <address-block/>
                 <div class="flex-mobile">{{ $t('lang.contracts.loans') }}: <a class="is-text-overflow eth-address" :href="$libre.addressToLink(config.loans.address)">{{config.loans.address}}</a></div>
-                <div>{{ $t('lang.common.current-time') }}: {{ $d(curBlockchainTime * 1000, 'long+') }}</div>
+                <div>{{ $t('lang.common.current-time') }}: {{ $d($store.state.time, 'long+') }}</div>
             </div>
         </div>
         <div class="level"></div>
@@ -141,7 +141,6 @@ export default {
       isMine: false,
       loansCount: 0,
       perPage: 10,
-      curBlockchainTime: 0,
       canCreate: true
     }
   },
@@ -198,28 +197,6 @@ export default {
       }
 
       this.tableLoading = false
-    },
-    async updateBlockTime() {
-      this.curBlockchainTime = +(await this.$eth.getLatestBlockTime())
-    },
-
-    startUpdatingTime() {
-      this.curBlockchainTime = 0
-      this.updatingTicker = setInterval(() => {
-        this.curBlockchainTime++
-      }, 1000)
-      this.updatingBlockData = setInterval(() => {
-        this.updateBlockTime()
-      }, 10 * 60 * 1000 /* 10 minutes */)
-      this.updateBlockTime()
-    },
-    clearTimers() {
-      let intervals = [
-        this.updatingTicker,
-        this.updatingBlockData,
-      ]
-
-      intervals.forEach((interval) => clearInterval(interval))
     }
   },
   async created () {
@@ -227,14 +204,10 @@ export default {
       await this.$eth.accountPromise;
       await this.$libre.initPromise;
       this.canCreate = this.$eth.yourAccount != undefined;
-      this.startUpdatingTime();
       this.loadLoans()
     } catch (err) {
       console.log(err)
     }
-  },
-  destroyed () {
-    this.clearTimers();
   },
   components: {
     AddressBlock
