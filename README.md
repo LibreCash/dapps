@@ -7,9 +7,13 @@
 LibreBank dApps (decentalized apps) repository.
 
 ### dApps List:
-1. ETH Blockchain reports DAPP.
-2. LibreBank Fund status page.
-3. LireBank contract status page.
+1. ETH Blockchain Reports dApp.
+2. Fund StatusPage.
+3. Contract StatusPage.
+4. Deposit (Draft).
+5. DAO (Draft).
+6. Loans (Draft).
+7. Faucet (for testing in Rinkeby network, draft)
 
 ## Getting Started
 ```sh
