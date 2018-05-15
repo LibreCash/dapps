@@ -43,7 +43,7 @@ export default {
 
       this.emissionStatus.push({
         type: 'address',
-        name: this.$t('lang.common.contract-address'),
+        name: t('lang.common.contract-address'),
         data: this.config.bank.address
       })
       let
@@ -61,10 +61,10 @@ export default {
         }
       });
       this.emissionStatus.push({
-        name: this.$t('lang.common.total-supply'),
+        name: t('lang.common.total-supply'),
         data: totalSupply !== 'error' ? `${this.$eth.toToken(totalSupply)} LIBRE` : '-'
       }, {
-        name: this.$t('lang.common.exchanger-balance'),
+        name: t('lang.common.exchanger-balance'),
         data: tokenBalance !== 'error' ? `${this.$eth.toToken(totalSupply)} LIBRE` : '-'
       });
 

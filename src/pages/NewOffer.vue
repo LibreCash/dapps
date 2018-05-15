@@ -67,7 +67,7 @@ export default {
       margin: '',
       period: '',
       button: {
-        name: this.$t('lang.loans.create-offer'),
+        name: t('lang.loans.create-offer'),
         disabled: true,
         isLoading: false
       },
@@ -111,15 +111,15 @@ export default {
       this.button.disabled = !valid
 
       if (this.button.disabled)
-        this.setMessage('danger', [this.$t('lang.common.please-enter-correct-info')]);
+        this.setMessage('danger', [t('lang.common.please-enter-correct-info')]);
       else if (this.selectedType == this.$libre.loansType.Libre && this.allowed < this.amount) {
         this.setMessage('warning', [
-          this.$t('lang.loans.message2-1'), // When creating the offer, you will need to make two transactions:
-          `${this.$t('lang.loans.message2-2')} ${this.amount} Libre`, // 1. Authorize the transfer of
-          this.$t('lang.loans.message2-3') // 2. Create Offer Transaction
+          t('lang.loans.message2-1'), // When creating the offer, you will need to make two transactions:
+          `${t('lang.loans.message2-2')} ${this.amount} Libre`, // 1. Authorize the transfer of
+          t('lang.loans.message2-3') // 2. Create Offer Transaction
         ]);
       } else
-        this.setMessage('info', [this.$t('lang.loans.you-can')]);
+        this.setMessage('info', [t('lang.loans.you-can')]);
     },
 
     async allAvailable() {
@@ -144,12 +144,12 @@ export default {
 
     async approveLibre(amount) {
       let allowance = +await this.$libre.token.allowance(this.$store.state.address, this.config.loans.address);
-      let _waiting = this.$t('lang.common.tips.waiting'),
-          _sending = this.$t('lang.common.tips.sending'),
-          _success = this.$t('lang.common.success-low'),
-          _fail = this.$t('lang.common.transaction-failed-low');
-      let disclaimer = this.$t('lang.deposit.available-disclaimer'),
-          authDisclaimer = this.$t('lang.deposit.authorize-disclaimer');
+      let _waiting = t('lang.common.tips.waiting'),
+          _sending = t('lang.common.tips.sending'),
+          _success = t('lang.common.success-low'),
+          _fail = t('lang.common.transaction-failed-low');
+      let disclaimer = t('lang.deposit.available-disclaimer'),
+          authDisclaimer = t('lang.deposit.authorize-disclaimer');
       let action = `1. ${authDisclaimer} ${this.$eth.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
@@ -166,11 +166,11 @@ export default {
     },
 
     async createLoan() {
-      let _waiting = this.$t('lang.common.tips.waiting'),
-          _sending = this.$t('lang.common.tips.sending'),
-          _success = this.$t('lang.common.success-low'),
-          _fail = this.$t('lang.common.transaction-failed-low');
-      let action = this.$t('lang.loans.create-offer-transaction');
+      let _waiting = t('lang.common.tips.waiting'),
+          _sending = t('lang.common.tips.sending'),
+          _success = t('lang.common.success-low'),
+          _fail = t('lang.common.transaction-failed-low');
+      let action = t('lang.loans.create-offer-transaction');
       let
         txHash,
         debatingPeriodInSeconds = parseInt(this.period) * 24 * 60 * 60;
@@ -189,7 +189,7 @@ export default {
               return
             }
             this.setMessage('info', [
-              this.$t('lang.common.please-confirm-sending'),
+              t('lang.common.please-confirm-sending'),
               `${action} - ${_waiting}`
             ]);
             txHash = await this.$libre.loans.giveLibre(
@@ -198,13 +198,13 @@ export default {
               this.$eth.fromToken(+this.margin)
             )
             this.setMessage('info', [
-              this.$t('lang.common.please-wait-for-sending'),
+              t('lang.common.please-wait-for-sending'),
               `${action} - ${_sending}`
             ]);
             break;
           case this.$libre.loansType.ETH:
             this.setMessage('info', [
-              this.$t('lang.common.please-confirm-sending'),
+              t('lang.common.please-confirm-sending'),
               `${action} - ${_waiting}`
             ])
             txHash = await this.$libre.loans.giveEth(
@@ -214,7 +214,7 @@ export default {
               { value: +this.$eth.toWei(this.amount, 'ether') }
             )
             this.setMessage('info', [
-              this.$t('lang.common.please-wait-for-sending'),
+              t('lang.common.please-wait-for-sending'),
               `${action} - ${_sending}`
             ])
             break;
@@ -223,9 +223,9 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/loans')
         } else {
-          this.$libre.notify(this.$t('lang.loans.creating-error'),'is-info');
+          this.$libre.notify(t('lang.loans.creating-error'),'is-info');
           this.setMessage('danger', [
-            this.$t('lang.common.ended-with-error'),
+            t('lang.common.ended-with-error'),
             action
           ]);
         }
@@ -234,7 +234,7 @@ export default {
         let msg = this.$eth.getErrorMsg(err);
         this.$libre.notify(msg, 'is-danger');
         this.setMessage('danger', [
-          `${this.$t('lang.common.ended-with-error')}:`,
+          `${t('lang.common.ended-with-error')}:`,
           msg
         ]);
       }

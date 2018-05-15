@@ -55,33 +55,33 @@ export default {
 
       this.reportData.push(
         {
-          name: this.$t("lang.reports.time-row"),
+          name: t("lang.reports.time-row"),
           data: report.date
         },
         {
-          name: this.$t("lang.reports.type-row"),
+          name: t("lang.reports.type-row"),
           data: report.tp
         },
         {
-          name: this.$t("lang.reports.description-row"),
+          name: t("lang.reports.description-row"),
           data: report.descr
         },
         {
-          name: this.$t("lang.reports.asset-row"),
+          name: t("lang.reports.asset-row"),
           data: report.asset
         },
         {
-          name: this.$t("lang.reports.from-row"),
+          name: t("lang.reports.from-row"),
           data: report.from,
           type: "address"
         },
         {
-          name: this.$t("lang.reports.to-row"),
+          name: t("lang.reports.to-row"),
           data: report.to,
           type: "address"
         },
         {
-          name: this.$t("lang.reports.value-row"),
+          name: t("lang.reports.value-row"),
           data: report.txAm
         }
       );

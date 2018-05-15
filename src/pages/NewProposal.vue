@@ -201,7 +201,7 @@ export default {
         if (await this.$eth.isSuccess(txHash)) {
           this.$router.push('/dao')
         } else {
-          this.$libre.notify(this.$t('lang.dao.create-error'),'is-info');
+          this.$libre.notify(t('lang.dao.create-error'),'is-info');
         }
       }
       catch(err) {

@@ -191,7 +191,7 @@
           }
 
           this.coinsData.push({
-            name: this.$t('lang.status.total'),
+            name: t('lang.status.total'),
             balanceUSD: this.allBalances.toLocaleString(),
             change24h: this.allChange24h.toLocaleString()
           });

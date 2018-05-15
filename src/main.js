@@ -12,6 +12,9 @@ import Config from './config'
 
 Vue.config.productionTip = false
 
+window.t = i18n.t.bind(i18n);
+window.d = i18n.d.bind(i18n);
+
 Vue.use(Config, { build: 'dao' })
 Vue.use(ETH, {})
 Vue.use(Libre, {})

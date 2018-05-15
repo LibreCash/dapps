@@ -108,12 +108,12 @@ data () {
             this.currentProposal = this.$libre.typeProposals[this.proposal.type]
             
             this.proposalData.push({
-                name: this.$t('lang.dao.type-row'),
+                name: t('lang.dao.type-row'),
                 value: this.currentProposal.text
             })
 
             this.proposalData.push({
-                name: this.$t('lang.dao.status-row'),
+                name: t('lang.dao.status-row'),
                 value: this.$libre.proposalStatuses[+this.proposal.status].text
             })
 
@@ -129,7 +129,7 @@ data () {
                 if (this.currentProposal["type"]) {
                     if ((this.currentProposal["type"] == '%')) amount = `${this.proposal.amount / 100} %`;
                     if ((this.currentProposal["type"] == 'bool')) amount = (this.proposal.amount === 1 ?
-                                    this.$t('lang.common.yes') : this.$t('lang.common.no'));
+                                    t('lang.common.yes') : t('lang.common.no'));
                 }
                             
                 this.proposalData.push({
@@ -156,9 +156,9 @@ data () {
             }
 
             this.proposalData.push(
-                {name: this.$t('lang.dao.voting-row'), value: `${this.votes.yea}/${this.votes.nay}`},
-                {name: this.$t('lang.dao.deadline-row'), value: this.$d(this.votes.deadline * 1000, 'long+')},
-                {name: this.$t('lang.dao.description-row'), value: this.proposal.description}
+                {name: t('lang.dao.voting-row'), value: `${this.votes.yea}/${this.votes.nay}`},
+                {name: t('lang.dao.deadline-row'), value: d(this.votes.deadline * 1000, 'long+')},
+                {name: t('lang.dao.description-row'), value: this.proposal.description}
             )
             this.updateEnabledButtons();
         } catch (err) {
@@ -174,9 +174,9 @@ data () {
             let txHash = await this.$libre.dao.vote(this.$route.params.id, support);
                 
             if (await this.$eth.isSuccess(txHash))
-                this.$libre.notify(this.$t('lang.tx.vote.success'));
+                this.$libre.notify(t('lang.tx.vote.success'));
             else
-                this.$libre.notify(this.$t('lang.tx.vote.fail'),'is-info');
+                this.$libre.notify(t('lang.tx.vote.fail'),'is-info');
             await this.$libre.updateProposal(this.$route.params.id);
             this.loadProposal();
         } catch(err) {
@@ -197,9 +197,9 @@ data () {
             let txHash = await this.$libre.dao.executeProposal(this.$route.params.id)
 
             if (await this.$eth.isSuccess(txHash)) {
-                this.$libre.notify(this.$t('lang.tx.execute.success'));
+                this.$libre.notify(t('lang.tx.execute.success'));
             } else {
-                this.$libre.notify(this.$t('lang.tx.execute.fail'),'is-info');
+                this.$libre.notify(t('lang.tx.execute.fail'),'is-info');
             }
         } catch(err) {
             let msg = this.$eth.getErrorMsg(err)
@@ -218,9 +218,9 @@ data () {
             let txHash = await this.$libre.dao.blockingProposal(this.$route.params.id);
 
             if (await this.$eth.isSuccess(txHash)) {
-                this.$libre.notify(this.$t('lang.tx.block.success'));
+                this.$libre.notify(t('lang.tx.block.success'));
             } else {
-                this.$libre.notify(this.$t('lang.tx.block.fail'),'is-info');
+                this.$libre.notify(t('lang.tx.block.fail'),'is-info');
             }
         } catch(err) {
             let msg = this.$eth.getErrorMsg(err)

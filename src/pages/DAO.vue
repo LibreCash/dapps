@@ -233,9 +233,9 @@ export default {
         let txHash = await this.$libre.dao.vote(id, support);
 
         if (await this.$eth.isSuccess(txHash))
-          this.$libre.notify(this.$t('lang.tx.vote.success'));
+          this.$libre.notify(t('lang.tx.vote.success'));
         else
-          this.$libre.notify(this.$t('lang.tx.vote.fail'),'is-info')
+          this.$libre.notify(t('lang.tx.vote.fail'),'is-info')
       } catch(err) {
         let msg = this.$eth.getErrorMsg(err)
         console.log(msg)
@@ -262,9 +262,9 @@ export default {
         let txHash = await this.$libre.dao.blockingProposal(row.id);
         
         if (await this.$eth.isSuccess(txHash))
-          this.$libre.notify(this.$t('lang.tx.block.success'));
+          this.$libre.notify(t('lang.tx.block.success'));
         else
-          this.$libre.notify(this.$t('lang.tx.block.fail'),'is-info');
+          this.$libre.notify(t('lang.tx.block.fail'),'is-info');
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {
@@ -285,9 +285,9 @@ export default {
         let txHash = await this.$libre.dao.executeProposal(id);
 
         if (await this.$eth.isSuccess(txHash))
-          this.$libre.notify(this.$t('lang.tx.execute.success'));
+          this.$libre.notify(t('lang.tx.execute.success'));
         else
-          this.$libre.notify(this.$t('lang.tx.execute.fail'),'is-info');
+          this.$libre.notify(t('lang.tx.execute.fail'),'is-info');
         let proposalStatus = (await this.$libre.updateProposal(row.id)).status;
         row.status = this.$libre.proposalStatuses[proposalStatus].text // it is "Finished" but we shall recheck
       } catch(err) {

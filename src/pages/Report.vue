@@ -126,13 +126,13 @@ export default {
       this.isLoading = true;
       try {
         let json = this.validateForm();
-        if (!json) throw this.$t('lang.reports.invalid-data');
+        if (!json) throw t('lang.reports.invalid-data');
         let txHash = await this.$libre.report.addNewReport(json);
         
         if (await this.$eth.isSuccess(txHash)) {
           await this.loadReports();
         } else {
-          this.$libre.notify(this.$t('lang.reports.create-error'),'is-info');
+          this.$libre.notify(t('lang.reports.create-error'),'is-info');
         }
       } catch (err) {
         console.log(err);

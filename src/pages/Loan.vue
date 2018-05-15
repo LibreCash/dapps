@@ -91,7 +91,7 @@ export default {
       },
       msg: {
         type: 'is-info',
-        notes: [this.$t('lang.common.please-select-action')]
+        notes: [t('lang.common.please-select-action')]
       }
     }
   },
@@ -113,7 +113,7 @@ export default {
 
         this.loan = this.$libre.getLoanObject(await this.$libre.loans[`getLoan${this.loanType == 'ETH' ? 'Eth' : 'Libre'}`](this.loanId));
 
-        if (this.loan.status == this.$t('lang.common.statuses.active')) {
+        if (this.loan.status == t('lang.common.statuses.active')) {
           this.btn.takeLoan.enable = this.$store.state.address;
           this.btn.claim.enable = this.btn.return.enable = false;
 
@@ -121,19 +121,19 @@ export default {
             this.btn.cancel.enable = true;
 
           let ETHActions = (this.loanType == 'ETH') ? [
-            this.$t('lang.loans.ethactions1'), // It consists of two transactions:
-            this.$t('lang.loans.ethactions2'), // - authorize the transfer tokens
-            this.$t('lang.loans.ethactions3')  // - take offer transaction
+            t('lang.loans.ethactions1'), // It consists of two transactions:
+            t('lang.loans.ethactions2'), // - authorize the transfer tokens
+            t('lang.loans.ethactions3')  // - take offer transaction
           ] : [];
 
           this.setMessage('warning', [
-            this.$t('lang.loans.message1-1'), // To take a loan you need:
-            this.$t('lang.loans.message1-2'), // 1. The current exchange rate. It consists of two transactions:
-            this.$t('lang.loans.message1-3'), // - requesting rates
-            this.$t('lang.loans.message1-4'), // - rate calculation
-            this.$t('lang.loans.message1-5')  // 2. Available amount of collateral.
+            t('lang.loans.message1-1'), // To take a loan you need:
+            t('lang.loans.message1-2'), // 1. The current exchange rate. It consists of two transactions:
+            t('lang.loans.message1-3'), // - requesting rates
+            t('lang.loans.message1-4'), // - rate calculation
+            t('lang.loans.message1-5')  // 2. Available amount of collateral.
           ].concat(ETHActions));
-        } else if (this.loan.status == this.$t('lang.common.statuses.used')) {
+        } else if (this.loan.status == t('lang.common.statuses.used')) {
           this.btn.takeLoan.enable = this.btn.cancel.enable = false;
           
           if (this.loan.holder === this.$store.state.address)
@@ -144,24 +144,24 @@ export default {
         }
 
         this.loanData.push(
-          {name: this.$t('lang.loans.type-row'), data: this.$route.params.type},
-          {name: this.$t('lang.loans.id-row'), data: +this.$route.params.id},
-          {name: this.$t('lang.loans.holder-row'), data: this.loan.holder, type: 'input'}
+          {name: t('lang.loans.type-row'), data: this.$route.params.type},
+          {name: t('lang.loans.id-row'), data: +this.$route.params.id},
+          {name: t('lang.loans.holder-row'), data: this.loan.holder, type: 'input'}
         )
 
-        if (this.loan.status != this.$t('lang.common.statuses.active')) {
-          this.loanData.push({name: this.$t('lang.loans.recipient-row'), data: this.$eth.isZeroAddress(this.loan.recipient) ? '-' : this.loan.recipient, type: this.$eth.isZeroAddress(this.loan.recipient)? '':'input'})
-          this.loanData.push({name: this.$t('lang.loans.take-row'), data: this.$d(this.loan.timestamp * 1000, 'long+')});
-          this.loanData.push({name: this.$t('lang.loans.return-row'), data: this.$d((this.loan.timestamp + this.loan.period) * 1000, 'long+')});
+        if (this.loan.status != t('lang.common.statuses.active')) {
+          this.loanData.push({name: t('lang.loans.recipient-row'), data: this.$eth.isZeroAddress(this.loan.recipient) ? '-' : this.loan.recipient, type: this.$eth.isZeroAddress(this.loan.recipient)? '':'input'})
+          this.loanData.push({name: t('lang.loans.take-row'), data: d(this.loan.timestamp * 1000, 'long+')});
+          this.loanData.push({name: t('lang.loans.return-row'), data: d((this.loan.timestamp + this.loan.period) * 1000, 'long+')});
         } else {
-          this.loanData.push({name: this.$t('lang.loans.period-row'), data: this.$libre.periodToString(this.loan.period)});
+          this.loanData.push({name: t('lang.loans.period-row'), data: this.$libre.periodToString(this.loan.period)});
         }
 
         this.loanData.push(
-          {name: this.$t('lang.loans.amount-row'), data: this.$eth.fromWei(this.loan.amount) + " " + this.$route.params.type},
-          {name: this.$t('lang.loans.margin-row'), data: this.$eth.fromWei(this.loan.margin) + " " + this.$route.params.type},
-          {name: this.$t('lang.loans.refund-row'), data: this.$eth.fromWei(this.loan.refund) + " " + this.$route.params.type},
-          {name: this.$t('lang.loans.status-row'), data: this.loan.status}
+          {name: t('lang.loans.amount-row'), data: this.$eth.fromWei(this.loan.amount) + " " + this.$route.params.type},
+          {name: t('lang.loans.margin-row'), data: this.$eth.fromWei(this.loan.margin) + " " + this.$route.params.type},
+          {name: t('lang.loans.refund-row'), data: this.$eth.fromWei(this.loan.refund) + " " + this.$route.params.type},
+          {name: t('lang.loans.status-row'), data: this.loan.status}
         )
       } catch (err) {
         console.log(err)
@@ -170,19 +170,19 @@ export default {
     },
 
     waitMessage(ready, all, price) {
-      let action = this.$t('lang.loans.auth-action');
-      let _success = this.$t('lang.common.success-low');
+      let action = t('lang.loans.auth-action');
+      let _success = t('lang.common.success-low');
       
-      let disclaimer = `${this.$t('lang.loans.act-disclaimer')} ${this.$eth.fromWei(price)} ETH)`,
-          secondAction = this.$t('lang.loans.act-2nd-action'); // 2. Rate calculation
+      let disclaimer = `${t('lang.loans.act-disclaimer')} ${this.$eth.fromWei(price)} ETH)`,
+          secondAction = t('lang.loans.act-2nd-action'); // 2. Rate calculation
 
       this.setMessage('success', [
         action,
         `${disclaimer} - ${_success}`,
-        this.$t('lang.loans.pls-wait-oracles'), // Please wait while we receive responses from oracles. It may take about 10 minutes...
+        t('lang.loans.pls-wait-oracles'), // Please wait while we receive responses from oracles. It may take about 10 minutes...
         '',
         secondAction,
-        all == 0 ? '' : this.$t('lang.loans.oracle-data', {ready, all})
+        all == 0 ? '' : t('lang.loans.oracle-data', {ready, all})
       ]);
     },
 
@@ -202,7 +202,7 @@ export default {
           await this.waitMessage(readyOracles, allOracles, price);
           if (+new Date() - beginTime > oracleTimeout) {
             clearInterval(checkInterval)
-            reject(this.$t('lang.common.timeout'));
+            reject(t('lang.common.timeout'));
           }
         }, 3000)
       })
@@ -211,15 +211,15 @@ export default {
     async actualizeRates() {
       let txHash;
       let bankState = this.$libre.bankState[+await this.$libre.bank.getState()];
-      let action = this.$t('lang.loans.auth-action');
+      let action = t('lang.loans.auth-action');
       let price = +await this.$libre.bank.requestPrice();
-      let _waiting = this.$t('lang.common.tips.waiting'),
-          _sending = this.$t('lang.common.tips.sending'),
-          _success = this.$t('lang.common.success-low'),
-          _fail = this.$t('lang.common.transaction-failed-low');
+      let _waiting = t('lang.common.tips.waiting'),
+          _sending = t('lang.common.tips.sending'),
+          _success = t('lang.common.success-low'),
+          _fail = t('lang.common.transaction-failed-low');
 
-      let disclaimer = `${this.$t('lang.loans.act-disclaimer')} ${this.$eth.fromWei(price)} ETH)`,
-          secondAction = this.$t('lang.loans.act-2nd-action'); // 2. Rate calculation
+      let disclaimer = `${t('lang.loans.act-disclaimer')} ${this.$eth.fromWei(price)} ETH)`,
+          secondAction = t('lang.loans.act-2nd-action'); // 2. Rate calculation
       if (bankState != 'PROCESSING_ORDERS') {
         if (bankState == 'REQUEST_RATES') {
           this.setMessage('info', [action, `${disclaimer} - ${_waiting}`, secondAction]);
@@ -282,12 +282,12 @@ export default {
 
     async approveLibre(amount) {
       let allowance = +await this.$libre.token.allowance(this.$store.state.address, this.config.loans.address);
-      let _waiting = this.$t('lang.common.tips.waiting'),
-          _sending = this.$t('lang.common.tips.sending'),
-          _success = this.$t('lang.common.success-low'),
-          _fail = this.$t('lang.common.transaction-failed-low');
-      let disclaimer = this.$t('lang.deposit.available-disclaimer'),
-          authDisclaimer = this.$t('lang.deposit.authorize-disclaimer');
+      let _waiting = t('lang.common.tips.waiting'),
+          _sending = t('lang.common.tips.sending'),
+          _success = t('lang.common.success-low'),
+          _fail = t('lang.common.transaction-failed-low');
+      let disclaimer = t('lang.deposit.available-disclaimer'),
+          authDisclaimer = t('lang.deposit.authorize-disclaimer');
       let action = `1. ${authDisclaimer} ${this.$eth.toToken(amount)} Libre`;
       if (allowance < amount) {
         this.setMessage('warning', [disclaimer, `${action} - ${_waiting}`]);
@@ -305,10 +305,10 @@ export default {
 
     async loanAction(action) {
       try {
-        let _waiting = this.$t('lang.common.tips.waiting'),
-            _sending = this.$t('lang.common.tips.sending'),
-            _success = this.$t('lang.common.success-low'),
-            _fail = this.$t('lang.common.transaction-failed-low');
+        let _waiting = t('lang.common.tips.waiting'),
+            _sending = t('lang.common.tips.sending'),
+            _success = t('lang.common.success-low'),
+            _fail = t('lang.common.transaction-failed-low');
         let value = 0;
         this.btn[action].isLoading = true;
         if (action === 'takeLoan' || action == 'claim') {

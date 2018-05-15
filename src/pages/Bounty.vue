@@ -343,9 +343,9 @@ export default {
         }
 
         if (await this.$eth.isSuccess(txHash))
-          this.$libre.notify(this.$t('lang.tx.targets-creation.success'));
+          this.$libre.notify(t('lang.tx.targets-creation.success'));
         else
-          this.$libre.notify(this.$t('lang.tx.targets-creation.fail'),'is-info');
+          this.$libre.notify(t('lang.tx.targets-creation.fail'),'is-info');
 
         this.newTargetLoading = false;
         this.newTargetsShown = false;
@@ -361,10 +361,10 @@ export default {
       if (row.name == this.$libre.contractNames.token) return this.config.bounty.bank.targets.token.abi;
       else if (row.name == this.$libre.contractNames.bank) return this.config.bounty.bank.targets.bank.abi;
       else if (row.name == this.$libre.contractNames.exchanger) return this.config.bounty.exchanger.targets.exchanger.abi;
-      else return this.$t('lang.bounty.no-abi');
+      else return t('lang.bounty.no-abi');
     },
     showABI (row) {
-      this.abiTitle = this.$t('lang.bounty.abi-title');
+      this.abiTitle = t('lang.bounty.abi-title');
       this.abiData = JSON.stringify(this.getABI(row));
       this.abiShown = true;
     },
@@ -378,7 +378,7 @@ export default {
     name: "_${name}",
     jsonInterface: ${ABI}
 });`;
-      this.abiTitle = this.$t('lang.bounty.mist-title');
+      this.abiTitle = t('lang.bounty.mist-title');
       this.abiShown = true;
     },
     async updateClaimed () {
@@ -439,9 +439,9 @@ export default {
         let txHash = (type == 'bank') ? await this.$libre.bounty.bank.withdrawPayments() :
                                         await this.$libre.bounty.exchanger.withdrawPayments();
         if (await this.$eth.isSuccess(txHash))
-          this.$libre.notify(this.$t('lang.tx.withdraw.success'));
+          this.$libre.notify(t('lang.tx.withdraw.success'));
         else
-          this.$libre.notify(this.$t('lang.tx.withdraw.fail'),'is-info');
+          this.$libre.notify(t('lang.tx.withdraw.fail'),'is-info');
       } catch(err) {
         this.$libre.notify(this.$eth.getErrorMsg(err), 'is-danger');
       }
@@ -455,9 +455,9 @@ export default {
         let txHash = await row.bountyContract.claim(row.address);
 
         if (await this.$eth.isSuccess(txHash))
-          this.$libre.notify(this.$t('lang.tx.claim.success'));
+          this.$libre.notify(t('lang.tx.claim.success'));
         else
-          this.$libre.notify(this.$t('lang.tx.claim.fail'),'is-info');
+          this.$libre.notify(t('lang.tx.claim.fail'),'is-info');
       } catch(err) {
         this.$libre.notify(this.$eth.getErrorMsg(err), 'is-danger');
       }
@@ -470,9 +470,9 @@ export default {
         let txHash = await row.bountyContract.suicideTarget(row.id);
 
         if (await this.$eth.isSuccess(txHash))
-          this.$libre.notify(this.$t('lang.tx.destruct.success'));
+          this.$libre.notify(t('lang.tx.destruct.success'));
         else
-          this.$libre.notify(this.$t('lang.tx.destruct.fail'),'is-info');
+          this.$libre.notify(t('lang.tx.destruct.fail'),'is-info');
       } catch(err) {
         this.$libre.notify(this.$eth.getErrorMsg(err), 'is-danger');
       }
