@@ -7,6 +7,9 @@
                 <div class="flex-mobile">{{ $t('lang.contracts.dao') }}: 
                   <a :href="$libre.addressToLink(contracts.dao)" target="_blank" class="is-text-overflow ">{{contracts.dao}}</a>
                 </div>
+                <div class="flex-mobile">{{ $t('lang.contracts.bank') }}: 
+                  <a :href="$libre.addressToLink(contracts.bank)" target="_blank" class="is-text-overflow ">{{contracts.bank}}</a>
+                </div>
                 <div class="flex-mobile">{{ $t('lang.contracts.liberty') }}: 
                   <a :href="$libre.addressToLink(contracts.lbrs)" target="_blank" class="is-text-overflow ">{{contracts.lbrs}}</a>
                 </div>
@@ -145,6 +148,7 @@ export default {
       contracts:{
         dao: null,
         lbrs: null,
+        bank: null
       },
       tableData: [],
       isLoading: false,
@@ -309,6 +313,7 @@ export default {
       this.contracts = {
         dao: this.config.dao.address,
         lbrs: await this.$libre.dao.sharesTokenAddress(),
+        bank: this.config.bank.address
       }
       this.isOwner = (await this.$libre.dao.owner() === this.$store.state.address);
 

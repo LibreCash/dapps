@@ -60,6 +60,14 @@ export default class Config {
           request: address => `https://explorer.zensystem.io/insight-api-zen/addr/${address}/?noTxList=1`,
           process: data => data.balance,
           href: address => `http://explorer.zenmine.pro/insight/address/${address}`
+        },
+        {
+          name: 'ETH exchanger',
+          symbol: 'ETH',
+          address: '0x869d0969915436e67cbf0e47a2c110333f00604b',
+          request: address => `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=NYWQ3JWMICSEVBIPHXWJNW6WQBNQEEZ94P`,
+          process: data => (+data.result / 10 ** 18).toFixed(7),
+          href: address => `https://etherscan.io/address/${address}`
         }
       ],
       coinmarketcap: {

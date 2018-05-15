@@ -121,7 +121,8 @@
         "loans": "Loans contract",
         "bounty": "Bounty contract",
         "reports": "Reports contract",
-        "faucet": "Faucet contract"
+        "faucet": "Faucet contract",
+        "bank": "LibreBank contract"
     },
     "bounty": {
         "bank-program": "Bank Bounty",
@@ -271,7 +272,9 @@
         "state-calc-rates": "Calculate Rates",
         "state-request-rates": "Request Rates",
         "total": "Total:",
-        "oracle-count": "Oracle count"
+        "oracle-count": "Oracle count",
+        "total-issued": "Total issued",
+        "reserve-percent": "Reserve percent"
     },
     "loans": {
         "take": "Take",

@@ -15,8 +15,8 @@
                   <div class="level-item level-left">
                     <div class="tags has-addons is-large">
                       <span class="tag is-md">{{ $t('lang.status.minimum-change') }}:</span>
-                      <span class="tag is-success is-md">{{ minCoin.name }}</span>
-                      <span class="tag is-info is-md">{{ minCoin.change24h.toLocaleString()}} USD</span>
+                      <span class="tag is-info is-md">{{ minCoin.name }}</span>
+                      <span class="tag is-md" :class="minCoin.change24h >= 0 ? 'is-success' : 'is-danger'">{{ minCoin.change24h.toLocaleString()}} USD</span>
                     </div>
                   </div>
                 </div>
@@ -25,8 +25,8 @@
                   <div class="level-item level-left">
                     <div class="tags has-addons is-md">
                       <span class="tag is-md">{{ $t('lang.status.maximum-change') }}:</span>
-                      <span class="tag is-success is-md">{{ maxCoin.name }}</span>
-                      <span class="tag is-info is-md">{{ maxCoin.change24h.toLocaleString()}} USD</span>
+                      <span class="tag is-info is-md">{{ maxCoin.name }}</span>
+                      <span class="tag is-md" :class="maxCoin.change24h >= 0 ? 'is-success' : 'is-danger'">{{ maxCoin.change24h.toLocaleString()}} USD</span>
                     </div>
                   </div>
                 </div>
@@ -35,10 +35,29 @@
                   <div class="level-item level-left">
                     <div class="tags has-addons is-md">
                       <span class="tag is-md">{{ $t('lang.status.total-change') }}:</span>
-                      <span class="tag is-info is-md">{{ allChange24h.toLocaleString()}} USD</span>
+                      <span class="tag is-md" :class="allChange24h >= 0 ? 'is-success' : 'is-danger'">{{ allChange24h.toLocaleString()}} USD</span>
                     </div>
                   </div>
                 </div>
+
+                <div class="level"> 
+                  <div class="level-item level-left">
+                    <div class="tags has-addons is-md">
+                      <span class="tag is-md">{{ $t('lang.status.total-issued') }}:</span>
+                      <span class="tag is-info is-md">{{ totalIssued.toLocaleString()}} Libre</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="level"> 
+                  <div class="level-item level-left">
+                    <div class="tags has-addons is-md">
+                      <span class="tag is-md">{{ $t('lang.status.reserve-percent') }}:</span>
+                      <span class="tag is-info is-md">{{ reservePercent.toLocaleString()}} %</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -90,6 +109,8 @@
         statisticsData: [],
         allBalances: 0,
         allChange24h: 0,
+        reservePercent: '',
+        totalIssued: 0,
         maxCoin: {
           name: "",
           change24h: 0
@@ -109,28 +130,23 @@
         this.coinsData = [];
         this.isLoading = true;
 
+        this.totalIssued =  this.$eth.toToken(await this.$libre.token.totalSupply());
+
         var coins = this.config.balance.coins;
 
         let response = await axios
           .get(this.config.balance.coinmarketcap.request(0))
           .catch(e => "error"),
-          nameCoins = coins.map(coin => coin.name),
+          nameCoins = coins.map(coin => coin.symbol || coin.name),
           countFind = 0,
           maxCoin,
           minCoin;
-
         if (response !== "error") {
-          for (let i = 0; i < response.data.length; i++) {
-            let coin = response.data[i],
-              index = nameCoins.indexOf(coin.symbol);
-
+          for (let i = 0; i < nameCoins.length; i++) {
+            let index = response.data.findIndex(x => x.symbol === nameCoins[i]);
             if (index >= 0) {
-              coins[index].price = coin.price_usd;
-              coins[index].change24h = +coin.percent_change_24h;
-
-              if (coins.length === ++countFind) {
-                break;
-              }
+              coins[i].price = response.data[index].price_usd;
+              coins[i].change24h = +response.data[index].percent_change_24h;
             }
           }
 
@@ -179,6 +195,8 @@
             balanceUSD: this.allBalances.toLocaleString(),
             change24h: this.allChange24h.toLocaleString()
           });
+
+          this.reservePercent =  (this.allBalances / this.totalIssued * 100).toFixed(2);
         }
 
         this.pieChart = coins;
