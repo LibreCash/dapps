@@ -58,6 +58,7 @@
         "description": "Description",
         "details": "Details",
         "ended-with-error": "The transaction ended with error",
+        "error-lower": "error",
         "execute": "Execute",
         "from": "From",
         "information": "Information",
@@ -274,7 +275,8 @@
         "total": "Total:",
         "oracle-count": "Oracle count",
         "total-issued": "Total issued",
-        "reserve-percent": "Reserve percent"
+        "reserve-percent": "Reserve percent",
+        "missing-data": "some info is missing"
     },
     "loans": {
         "take": "Take",
@@ -393,6 +395,7 @@
         "install-metamask": "Please install MetaMask to use it.",
         "user-rejected": "Transaction was rejected by user",
         "pls-unlock": "Please unlock you wallet.",
-        "only-network": "Please use {network} network"
+        "only-network": "Please use {network} network",
+        "network-error": "Network error"
     }
 }
