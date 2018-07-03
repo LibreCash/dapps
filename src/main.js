@@ -55,10 +55,18 @@ const store = new Vuex.Store({
   },
   actions: {
     async startUpdating (context, updater) {
-      context.commit('setTime', +(await updater()))
+      try {
+        context.commit('setTime', +(await updater()))
+      } catch (err) {
+        console.log("Couldn't update block time")
+      }
       context.commit('initTicker')
       setInterval(async () => {
-        context.commit('setTime', +(await updater()))
+        try {
+          context.commit('setTime', +(await updater()))
+        } catch (err) {
+          console.log("Couldn't update block time")
+        }
       }, 5 * 60 * 1000)
     },
     async updateAddress (context, updater) {

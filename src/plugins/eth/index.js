@@ -25,8 +25,10 @@ export default class ETH {
         this.metamask = true
         window.web3 = new Web3(window.web3.currentProvider)
         web3.version.getNetwork((error, result) => {
-          if (error) Vue.prototype.$snackbar.open({message: error, indefinite: true})
-          else {
+          if (error) {
+            if (Object.keys(error).length == 0) error = i18n.t('lang.messages.network-error');
+            Vue.prototype.$snackbar.open({message: error, indefinite: true})
+          } else {
             let
               network = {
                 '1': 'Main',
@@ -73,7 +75,8 @@ export default class ETH {
     return new Promise((resolve, reject) => {
       web3.eth.getBlock('latest', (error, dt) => {
         if (error) reject(error)
-        resolve(dt.timestamp)
+        if (dt === undefined) reject(new Error('getLatestBlockTime error'))
+        else resolve(dt.timestamp)
       })
     })
   }

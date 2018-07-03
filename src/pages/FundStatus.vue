@@ -11,53 +11,65 @@
             </header>
             <div class="card-content">
               <div class="content">
-                <div class="level">
-                  <div class="level-item level-left">
-                    <div class="tags has-addons is-large">
-                      <span class="tag is-md">{{ $t('lang.status.minimum-change') }}:</span>
-                      <span class="tag is-info is-md">{{ minCoin.name }}</span>
-                      <span class="tag is-md" :class="minCoin.change24h >= 0 ? 'is-success' : 'is-danger'">{{ minCoin.change24h.toLocaleString()}} USD</span>
+                <section v-show="noError">
+                  <div class="level" v-show="dataError">
+                    <div class="level-item level-left">
+                      <div class="tags has-addons is-md">
+                        <span class="tag is-md is-info">{{ $t('lang.status.missing-data') }}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="level">  
-                  <div class="level-item level-left">
-                    <div class="tags has-addons is-md">
-                      <span class="tag is-md">{{ $t('lang.status.maximum-change') }}:</span>
-                      <span class="tag is-info is-md">{{ maxCoin.name }}</span>
-                      <span class="tag is-md" :class="maxCoin.change24h >= 0 ? 'is-success' : 'is-danger'">{{ maxCoin.change24h.toLocaleString()}} USD</span>
+                  <div class="level">
+                    <div class="level-item level-left">
+                      <div class="tags has-addons is-large">
+                        <span class="tag is-md">{{ $t('lang.status.minimum-change') }}:</span>
+                        <span class="tag is-info is-md">{{ minCoin.name }}</span>
+                        <span class="tag is-md" :class="minCoin.change24h >= 0 ? 'is-success' : 'is-danger'">{{ minCoin.change24h.toLocaleString()}} USD</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="level"> 
-                  <div class="level-item level-left">
-                    <div class="tags has-addons is-md">
-                      <span class="tag is-md">{{ $t('lang.status.total-change') }}:</span>
-                      <span class="tag is-md" :class="allChange24h >= 0 ? 'is-success' : 'is-danger'">{{ allChange24h.toLocaleString()}} USD</span>
+                  <div class="level">  
+                    <div class="level-item level-left">
+                      <div class="tags has-addons is-md">
+                        <span class="tag is-md">{{ $t('lang.status.maximum-change') }}:</span>
+                        <span class="tag is-info is-md">{{ maxCoin.name }}</span>
+                        <span class="tag is-md" :class="maxCoin.change24h >= 0 ? 'is-success' : 'is-danger'">{{ maxCoin.change24h.toLocaleString()}} USD</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="level"> 
-                  <div class="level-item level-left">
-                    <div class="tags has-addons is-md">
-                      <span class="tag is-md">{{ $t('lang.status.total-issued') }}:</span>
-                      <span class="tag is-info is-md">{{ totalIssued.toLocaleString()}} Libre</span>
+                  <div class="level"> 
+                    <div class="level-item level-left">
+                      <div class="tags has-addons is-md">
+                        <span class="tag is-md">{{ $t('lang.status.total-change') }}:</span>
+                        <span class="tag is-md" :class="allChange24h >= 0 ? 'is-success' : 'is-danger'">{{ allChange24h.toLocaleString()}} USD</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="level"> 
-                  <div class="level-item level-left">
-                    <div class="tags has-addons is-md">
-                      <span class="tag is-md">{{ $t('lang.status.reserve-percent') }}:</span>
-                      <span class="tag is-info is-md">{{ reservePercent.toLocaleString()}} %</span>
+                  <div class="level"> 
+                    <div class="level-item level-left">
+                      <div class="tags has-addons is-md">
+                        <span class="tag is-md">{{ $t('lang.status.total-issued') }}:</span>
+                        <span class="tag is-info is-md">{{ totalIssued.toLocaleString()}} Libre</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
+                  <div class="level"> 
+                    <div class="level-item level-left">
+                      <div class="tags has-addons is-md">
+                        <span class="tag is-md">{{ $t('lang.status.reserve-percent') }}:</span>
+                        <span class="tag is-info is-md">{{ reservePercent.toLocaleString()}} %</span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                <section v-show="!noError">
+                  {{ $t('lang.common.error-lower') }}
+                </section>
               </div>
             </div>
           </div>
@@ -69,7 +81,12 @@
             </header>
              <div class="card-content">
               <div class="content chart">
-                <pie-chart :coins="pieChart" />
+                <section v-show="noError">
+                  <pie-chart :coins="pieChart" />
+                </section>
+                <section v-show="!noError">
+                  {{ $t('lang.common.error-lower') }}
+                </section>
               </div>
              </div>
           </div>
@@ -82,8 +99,13 @@
         <p class="card-header-title">{{ $t('lang.status.fund-assets') }}</p>
       </header>
       <div class="card-content">
-        <h2 class="has-text-centered">{{ $t('lang.status.sample-data') }}</h2>
-        <status-coins :tableData='coinsData' />
+        <section v-show="noError">
+          <h2 class="has-text-centered">{{ $t('lang.status.sample-data') }}</h2>
+          <status-coins :tableData='coinsData' />
+        </section>
+        <section v-show="!noError">
+          {{ $t('lang.common.error-lower') }}
+        </section>
       </div>
     </div>
     <b-loading :active.sync="isLoading" :canCancel="true"></b-loading>
@@ -121,7 +143,8 @@
         },
         isLoading: false,
         pieChart: undefined,
-        
+        noError: true,
+        dataError: false
       };
     },
   
@@ -130,7 +153,7 @@
         this.coinsData = [];
         this.isLoading = true;
 
-        this.totalIssued =  this.$eth.toToken(await this.$libre.token.totalSupply());
+        this.totalIssued = this.$eth.toToken(await this.$libre.token.totalSupply());
 
         var coins = this.config.balance.coins;
 
@@ -178,7 +201,8 @@
               if (minCoin == undefined || minCoin.change24h > coins[i].change24h)
                 minCoin = coins[i];
             } else {
-              coins[i].change24h = coins[i].balance = coins[i].balanceUSD = "-";
+              coins[i].change24h = coins[i].balance = coins[i].balanceUSD = t('lang.common.error-lower');
+              this.dataError = true;
             }
 
             this.coinsData.push({
@@ -208,11 +232,17 @@
 
     async created() {
       try {
-        await this.$eth.accountPromise,
-        await this.$libre.initPromise,
+        await this.$eth.accountPromise
+        await this.$libre.initPromise
+      } catch (err) {
+        console.log(err);
+        this.noError = false;
+      }
+      try {
         await this.getBalancesData()
       } catch (err) {
         console.log(err);
+        this.noError = false;
       }
     },
 

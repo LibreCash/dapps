@@ -58,6 +58,7 @@
         "description": "Описание",
         "details": "Детали",
         "ended-with-error": "Транзакция завершилась с ошибкой",
+        "error-lower": "ошибка",
         "execute": "Выполнить",
         "from": "Отправитель",
         "information": "Информация",
@@ -274,7 +275,8 @@
         "total": "Всего:",
         "oracle-count": "Количество оракулов",
         "total-issued": "Всего выпущено",
-        "reserve-percent": "Процент обеспечения"
+        "reserve-percent": "Процент обеспечения",
+        "missing-data": "некоторая информация отсутствует"
     },
     "loans": {
         "take": "Взять",
@@ -372,6 +374,7 @@
         "install-metamask": "Пожалуйста, установите MetaMask",
         "user-rejected": "Транзакция отменена пользователем",
         "pls-unlock": "Пожалуйста, разблокируйте ваш кошелек",
-        "only-network": "Пожалуйста, используйте {network} сеть"
+        "only-network": "Пожалуйста, используйте {network} сеть",
+        "network-error": "Ошибка сети"
     }
 }
