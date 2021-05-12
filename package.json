@@ -16,7 +16,7 @@
     "babel-plugin-transform-regenerator": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "buefy": "^0.6.5",
-    "chart.js": "^2.7.2",
+    "chart.js": "^2.9.4",
     "ethjs": "^0.3.3",
     "vue": "^2.5.16",
     "vue-chartkick": "^0.3.1",
